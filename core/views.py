@@ -1171,19 +1171,8 @@ def send_message(request):
     else:
         form = MessageForm()
 
-    # Filter recipients based on user role with optimized queries
-    if is_admin(request.user):
-        recipients = User.objects.all().select_related('student_profile', 'faculty_profile')
-    elif is_faculty(request.user):
-        recipients = User.objects.filter(
-            Q(is_staff=True) | Q(groups__name='Student')
-        ).select_related('student_profile')
-    elif is_student(request.user):
-        recipients = User.objects.filter(
-            Q(is_staff=True) | Q(groups__name='Faculty')
-        ).select_related('faculty_profile')
-    else:
-        recipients = User.objects.none()
+    # All users can message any other user in the system
+    recipients = User.objects.all().select_related('student_profile', 'faculty_profile').exclude(id=request.user.id)
 
     return render(request, 'communication/send_message.html', {
         'form': form,
