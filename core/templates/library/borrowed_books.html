@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Borrowing History</h2>
+
+<table class="table-auto w-full border">
+  <thead class="bg-gray-200">
+    <tr>
+      <th>Book</th>
+      <th>Issue Date</th>
+      <th>Due Date</th>
+      <th>Returned</th>
+      <th>Fine</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in borrowed_books %}
+    <tr class="border-t">
+      <td>{{ entry.book.title }}</td>
+      <td>{{ entry.issue_date }}</td>
+      <td>{{ entry.due_date }}</td>
+      <td>{{ entry.return_date|default:"Not Returned" }}</td>
+      <td>
+        {% if entry.is_overdue %}
+          Tsh {{ entry.fine_amount }}
+        {% else %}
+          -
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

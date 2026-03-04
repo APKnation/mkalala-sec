@@ -1,0 +1,140 @@
+{% extends './base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Student Dashboard</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3><i class="fas fa-user-graduate mr-2"></i>{{ student.roll_number }} - {{ user.get_full_name }}</h3>
+                    <p class="mb-1"><strong><i class="fas fa-building mr-1"></i>Department:</strong> {{ student.get_department_display }}</p>
+                    <p class="mb-1"><strong><i class="fas fa-envelope mr-1"></i>Email:</strong> {{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Courses Section -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-book mr-2"></i>Your Courses</h3>
+                </div>
+                <div class="card-body">
+                    {% if enriched_enrollments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Code</th>
+                                    <th>Grade</th>
+                                    <th>Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in enriched_enrollments %}
+                                <tr>
+                                    <td>{{ item.enrollment.course_offering.course.name }}</td>
+                                    <td>{{ item.enrollment.course_offering.course.code }}</td>
+                                    <td>
+                                        {% if item.enrollment.grade %}
+                                            <span class="badge badge-{% if item.enrollment.grade.grade >= 'C' %}success{% else %}warning{% endif %}">
+                                                {{ item.enrollment.grade.grade }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge badge-secondary">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 25px;">
+                                            <div class="progress-bar 
+                                                {% if item.attendance_percentage >= 75 %}bg-success
+                                                {% elif item.attendance_percentage >= 50 %}bg-warning
+                                                {% else %}bg-danger{% endif %}" 
+                                                role="progressbar" 
+                                                style="width: {{ item.attendance_percentage }}%" 
+                                                aria-valuenow="{{ item.attendance_percentage }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                                {{ item.attendance_present }}/{{ item.attendance_total }}
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">{{ item.attendance_percentage|floatformat:1 }}% attendance</small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-2"></i>You are not currently enrolled in any courses.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Fee Status Section -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h3 class="mb-0"><i class="fas fa-money-bill-wave mr-2"></i>Fee Status</h3>
+                </div>
+                <div class="card-body">
+                    {% if fees %}
+                    <div class="list-group">
+                        {% for fee in fees %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="mb-1">{{ fee.semester.name }}</h5>
+                                <span class="badge badge-{% if fee.is_paid %}success{% else %}danger{% endif %}">
+                                    {% if fee.is_paid %}Paid{% else %}Due{% endif %}
+                                </span>
+                            </div>
+                            <p class="mb-1">Amount: ₹{{ fee.amount }}</p>
+                            {% if not fee.is_paid %}
+                            <small class="text-danger">Due by: {{ fee.due_date|date:"M d, Y" }}</small>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle mr-2"></i>No fee records found.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        border: none;
+        border-radius: 0.35rem;
+    }
+    .card-header {
+        border-radius: 0.35rem 0.35rem 0 0 !important;
+    }
+    .progress {
+        border-radius: 10px;
+        background-color: #e9ecef;
+    }
+    .badge {
+        font-weight: 500;
+        padding: 0.35em 0.65em;
+    }
+    .table th {
+        border-top: none;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}

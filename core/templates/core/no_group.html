@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Access Denied</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8d7da; color: #721c24; padding: 40px; }
+        .container { background: #fff; border: 1px solid #f5c6cb; border-radius: 8px; padding: 30px; max-width: 400px; margin: 60px auto; text-align: center; }
+        h1 { color: #721c24; }
+        a { color: #721c24; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Access Denied</h1>
+        <p>Your account does not have a valid role assigned.<br>
+        Please contact the administrator for assistance.</p>
+        <a href="{% url 'login' %}">Return to Login</a>
+    </div>
+</body>
+</html>

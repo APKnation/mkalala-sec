@@ -1,0 +1,13 @@
+<div class="container mt-5">
+    <h2>Add Fee</h2>
+    <form method="post">
+        {% csrf_token %}
+        <select name="student" class="form-control">
+            {% for student in students %}
+                <option value="{{ student.id }}">{{ student }}</option>
+            {% endfor %}
+        </select>
+        <input type="number" name="amount" class="form-control" placeholder="Amount">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+</div>

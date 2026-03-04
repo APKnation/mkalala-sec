@@ -1,0 +1,424 @@
+{% extends './base.html' %}
+
+{% block title %}Edit {{ user.get_full_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header and Back Button -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+                <i class="fas fa-user-edit mr-2 text-blue-600"></i>
+                Edit User Profile
+            </h1>
+            <nav class="flex mt-2" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2">
+                    <li>
+                        <a href="{% url 'user_list' %}" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Users</a>
+                    </li>
+                    <li>
+                        <span class="mx-2 text-gray-400 dark:text-gray-500">/</span>
+                    </li>
+                    <li>
+                        <a href="{% url 'user_detail' user.id %}" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">{{ user.get_full_name }}</a>
+                    </li>
+                    <li>
+                        <span class="mx-2 text-gray-400 dark:text-gray-500">/</span>
+                    </li>
+                    <li class="text-sm text-gray-600 dark:text-gray-400 truncate" aria-current="page">
+                        Edit
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        <a href="{% url 'user_detail' user.id %}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md shadow-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <i class="fas fa-times mr-2 w-4 h-4"></i>
+            Cancel
+        </a>
+    </div>
+
+    <!-- Main Form -->
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <form method="post" enctype="multipart/form-data" class="space-y-8 divide-y divide-gray-200 dark:divide-gray-700">
+                {% csrf_token %}
+                
+                <!-- Basic Information Section -->
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                            <i class="fas fa-id-card mr-2 text-blue-600"></i>
+                            Basic Information
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Update the user's personal details
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <!-- Profile Picture -->
+                        <div class="sm:col-span-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-16 w-16 rounded-full overflow-hidden">
+{% if user.profile_picture %}
+    <img src="{{ user.profile_picture.url }}" class="h-10 w-10 rounded-full">
+{% else %}
+    <img src="/static/images/default-avatar.png" class="h-10 w-10 rounded-full">
+{% endif %}
+                                </div>
+                                <div class="ml-4">
+                                    <label for="{{ form.profile_picture.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Profile Picture
+                                    </label>
+                                    <div class="mt-1 flex items-center">
+                                        <input type="file" name="{{ form.profile_picture.name }}" id="{{ form.profile_picture.id_for_label }}" 
+                                               class="block w-full text-sm text-gray-500 dark:text-gray-400
+                                                      file:mr-4 file:py-2 file:px-4
+                                                      file:rounded-md file:border-0
+                                                      file:text-sm file:font-semibold
+                                                      file:bg-blue-50 dark:file:bg-gray-700 file:text-blue-700 dark:file:text-blue-400
+                                                      hover:file:bg-blue-100 dark:hover:file:bg-gray-600"
+                                               onchange="previewImage(this, 'profile-preview')">
+                                    </div>
+                                    {% if form.profile_picture.errors %}
+                                        <p class="mt-2 text-sm text-red-600">{{ form.profile_picture.errors.as_text }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- First Name -->
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                First Name
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" 
+                                       value="{{ form.first_name.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if form.first_name.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Last Name
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" 
+                                       value="{{ form.last_name.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if form.last_name.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="sm:col-span-4">
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Email Address
+                            </label>
+                            <div class="mt-1">
+                                <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" 
+                                       value="{{ form.email.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if form.email.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.email.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="sm:col-span-4">
+                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Phone Number
+                            </label>
+                            <div class="mt-1">
+                                <input type="tel" name="{{ form.phone.name }}" id="{{ form.phone.id_for_label }}" 
+                                       value="{{ form.phone.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if form.phone.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.phone.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="sm:col-span-6">
+                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Address
+                            </label>
+                            <div class="mt-1">
+                                <textarea name="{{ form.address.name }}" id="{{ form.address.id_for_label }}" rows="3"
+                                          class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">{{ form.address.value|default:'' }}</textarea>
+                                {% if form.address.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.address.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings Section -->
+                <div class="pt-8">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                            <i class="fas fa-user-cog mr-2 text-blue-600"></i>
+                            Account Settings
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Manage the user's account permissions and status
+                        </p>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <!-- Username -->
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Username
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" 
+                                       value="{{ form.username.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if form.username.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.username.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Groups -->
+                        <div class="sm:col-span-3">
+                            <label for="{{ form.groups.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Groups
+                            </label>
+                            <div class="mt-1">
+                                <select name="{{ form.groups.name }}" id="{{ form.groups.id_for_label }}" multiple
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    {% for group in form.groups.field.queryset %}
+                                        <option value="{{ group.id }}" {% if group in form.instance.groups.all %}selected{% endif %}>
+                                            {{ group.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if form.groups.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ form.groups.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- User Permissions -->
+                        <div class="sm:col-span-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Permissions
+                            </label>
+                            <div class="mt-2 space-y-2">
+                                {% for permission in form.user_permissions.field.queryset %}
+                                    <div class="relative flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input id="perm-{{ permission.id }}" name="{{ form.user_permissions.name }}" 
+                                                   type="checkbox" value="{{ permission.id }}"
+                                                   {% if permission in form.instance.user_permissions.all %}checked{% endif %}
+                                                   class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded">
+                                        </div>
+                                        <div class="ml-3 text-sm">
+                                            <label for="perm-{{ permission.id }}" class="font-medium text-gray-700 dark:text-gray-300">
+                                                {{ permission.name }}
+                                            </label>
+                                            <p class="text-gray-500 dark:text-gray-400">{{ permission.codename }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="sm:col-span-6">
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="{{ form.is_active.id_for_label }}" name="{{ form.is_active.name }}" 
+                                           type="checkbox" {% if form.is_active.value %}checked{% endif %}
+                                           class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded">
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label for="{{ form.is_active.id_for_label }}" class="font-medium text-gray-700 dark:text-gray-300">
+                                        Active Account
+                                    </label>
+                                    <p class="text-gray-500 dark:text-gray-400">
+                                        Uncheck to deactivate this user account
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Student/Teacher Specific Fields -->
+                {% if student_form %}
+                <div class="pt-8">
+                    <div>
+                        <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                            <i class="fas fa-graduation-cap mr-2 text-blue-600"></i>
+                            Student Information
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            Update the student-specific details
+                        </p>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <!-- Roll Number -->
+                        <div class="sm:col-span-3">
+                            <label for="{{ student_form.roll_number.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Roll Number
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="{{ student_form.roll_number.name }}" id="{{ student_form.roll_number.id_for_label }}" 
+                                       value="{{ student_form.roll_number.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if student_form.roll_number.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ student_form.roll_number.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="sm:col-span-3">
+                            <label for="{{ student_form.department.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Department
+                            </label>
+                            <div class="mt-1">
+                                <select name="{{ student_form.department.name }}" id="{{ student_form.department.id_for_label }}"
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    {% for value, label in student_form.department.field.choices %}
+                                        <option value="{{ value }}" {% if student_form.department.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if student_form.department.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ student_form.department.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Admission Year -->
+                        <div class="sm:col-span-2">
+                            <label for="{{ student_form.admission_year.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Admission Year
+                            </label>
+                            <div class="mt-1">
+                                <input type="number" name="{{ student_form.admission_year.name }}" id="{{ student_form.admission_year.id_for_label }}" 
+                                       value="{{ student_form.admission_year.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if student_form.admission_year.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ student_form.admission_year.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Current Semester -->
+                        <div class="sm:col-span-2">
+                            <label for="{{ student_form.current_semester.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Current Semester
+                            </label>
+                            <div class="mt-1">
+                                <select name="{{ student_form.current_semester.name }}" id="{{ student_form.current_semester.id_for_label }}"
+                                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                    {% for value, label in student_form.current_semester.field.choices %}
+                                        <option value="{{ value }}" {% if student_form.current_semester.value == value %}selected{% endif %}>
+                                            {{ label }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if student_form.current_semester.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ student_form.current_semester.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Batch -->
+                        <div class="sm:col-span-2">
+                            <label for="{{ student_form.batch.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Batch
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="{{ student_form.batch.name }}" id="{{ student_form.batch.id_for_label }}" 
+                                       value="{{ student_form.batch.value|default:'' }}"
+                                       class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                                {% if student_form.batch.errors %}
+                                    <p class="mt-2 text-sm text-red-600">{{ student_form.batch.errors.as_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Form Actions -->
+                <div class="pt-5">
+                    <div class="flex justify-end">
+                        <button type="reset" class="bg-white dark:bg-gray-700 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Reset
+                        </button>
+                        <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = function() {
+        preview.src = reader.result;
+    }
+
+   {% if form.instance.profile_picture %}
+    preview.src = "{{ form.instance.profile_picture.url }}";
+{% else %}
+    preview.src = "/static/images/default-avatar.png";
+{% endif %}
+
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize select2 for multiple select fields
+    const multipleSelects = document.querySelectorAll('select[multiple]');
+    multipleSelects.forEach(select => {
+        select.classList.add('select2');
+    });
+
+    // Initialize select2
+    if (typeof $ !== 'undefined') {
+        $('.select2').select2({
+            theme: 'classic',
+            width: '100%'
+        });
+    }
+
+    // Add confirmation for form reset
+    const resetButton = document.querySelector('button[type="reset"]');
+    if (resetButton) {
+        resetButton.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to reset all changes?')) {
+                e.preventDefault();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

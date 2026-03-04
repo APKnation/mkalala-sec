@@ -1,0 +1,203 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-display font-bold text-gray-900 mb-2">Inbox</h1>
+            <p class="text-gray-600">Manage your messages and communications</p>
+        </div>
+
+        <!-- Messages Container -->
+        <div class="bg-white rounded-2xl shadow-medium overflow-hidden">
+            <div class="bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-4 text-white">
+                <h2 class="text-xl font-bold flex items-center">
+                    <i class="fas fa-envelope mr-2"></i>Messages
+                    {% if messages %}
+                    <span class="ml-auto bg-white/20 px-3 py-1 rounded-full text-sm">
+                        {{ messages.count }} message{{ messages.count|pluralize }}
+                    </span>
+                    {% endif %}
+                </h2>
+            </div>
+            
+            <div class="p-6">
+                {% if messages %}
+                <div class="space-y-4">
+                    {% for msg in messages %}
+                    <div class="message-item {% if not msg.is_read %}unread{% endif %} animate-fade-in-up" style="animation-delay: {{ forloop.counter0|add:0 }}.1s">
+                        <div class="flex items-start justify-between p-4 rounded-xl border-2 {% if msg.is_read %}bg-white border-gray-200{% else %}bg-primary-50 border-primary-200{% endif %} hover:shadow-medium transition-all duration-300">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-primary-600 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-gray-900">{{ msg.subject }}</h3>
+                                        <p class="text-sm text-gray-600">From: {{ msg.sender.get_full_name|default:msg.sender.username }}</p>
+                                    </div>
+                                </div>
+                                <div class="text-gray-700 mb-3">{{ msg.body|truncatewords:30 }}</div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">
+                                        <i class="fas fa-calendar-alt mr-1"></i>
+                                        {{ msg.sent_at|date:"M d, Y H:i" }}
+                                    </span>
+                                    {% if not msg.is_read %}
+                                    <span class="badge badge-primary">Unread</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-2 ml-4">
+                                <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium transition-colors duration-200">
+                                    <i class="fas fa-reply mr-1"></i>Reply
+                                </a>
+                                <a href="#" class="text-success-600 hover:text-success-700 text-sm font-medium transition-colors duration-200">
+                                    <i class="fas fa-check mr-1"></i>Mark as Read
+                                </a>
+                                <a href="#" class="text-danger-600 hover:text-danger-700 text-sm font-medium transition-colors duration-200">
+                                    <i class="fas fa-trash mr-1"></i>Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-inbox text-3xl text-gray-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No Messages</h3>
+                    <p class="text-gray-600">Your inbox is empty. When you receive messages, they will appear here.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        {% if messages %}
+        <div class="mt-8 flex flex-col sm:flex-row gap-4">
+            <button onclick="markAllAsRead()" class="btn-secondary">
+                <i class="fas fa-check-double mr-2"></i>Mark All as Read
+            </button>
+            <button onclick="deleteAllMessages()" class="btn-danger">
+                <i class="fas fa-trash-alt mr-2"></i>Delete All Messages
+            </button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Additional styles for this page */
+.btn-secondary {
+    @apply bg-gradient-to-r from-secondary-500 to-secondary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
+.btn-danger {
+    @apply bg-gradient-to-r from-danger-500 to-danger-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
+.message-item {
+    @apply transition-all duration-300;
+}
+
+.message-item.unread {
+    @apply border-l-4 border-primary-500 bg-primary-50;
+}
+
+.message-item:hover {
+    @apply transform translate-x-1 shadow-large;
+}
+
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.badge-primary {
+    @apply bg-primary-100 text-primary-800;
+}
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for message actions
+    const messageItems = document.querySelectorAll('.message-item');
+    
+    messageItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (!e.target.closest('a')) {
+                // Mark as read when clicking on message
+                const unreadBadge = this.querySelector('.badge-primary');
+                if (unreadBadge) {
+                    unreadBadge.remove();
+                    this.classList.remove('unread');
+                }
+            }
+        });
+    });
+});
+
+function markAllAsRead() {
+    Swal.fire({
+        title: 'Mark All as Read?',
+        text: 'This will mark all messages in your inbox as read.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Mark All as Read'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // In a real application, this would make an AJAX call
+            const unreadMessages = document.querySelectorAll('.message-item.unread');
+            unreadMessages.forEach(msg => {
+                msg.classList.remove('unread');
+                const badge = msg.querySelector('.badge-primary');
+                if (badge) badge.remove();
+            });
+            
+            Swal.fire({
+                title: 'Success!',
+                text: 'All messages have been marked as read.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
+}
+
+function deleteAllMessages() {
+    Swal.fire({
+        title: 'Delete All Messages?',
+        text: 'This action cannot be undone. Are you sure you want to delete all messages?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Delete All',
+        confirmButtonClass: 'bg-danger-600'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // In a real application, this would make an AJAX call
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'All messages have been deleted.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                location.reload();
+            });
+        }
+    });
+}
+</script>
+{% endblock extra_js %}

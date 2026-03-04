@@ -1,0 +1,7 @@
+<ul>
+  {% for mat in materials %}
+    <li>
+      {{ mat.title }} - <a href="{{ mat.file.url }}" download>Download</a>
+    </li>
+  {% endfor %}
+</ul>

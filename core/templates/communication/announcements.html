@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <h2 class="text-3xl font-bold text-indigo-700 mb-6">Announcements</h2>
+
+  <ul class="space-y-4">
+    {% for announcement in announcements %}
+      <li class="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border-l-4 border-indigo-500">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ announcement.title }}</h3>
+        <p class="text-gray-600 mb-3">{{ announcement.message }}</p>
+        <div class="flex items-center text-sm text-gray-500">
+          <span class="mr-2">Posted by <span class="font-medium text-indigo-600">{{ announcement.created_by }}</span></span>
+          <span>•</span>
+          <span class="ml-2">{{ announcement.created_at|date:"M d, Y H:i" }}</span>
+        </div>
+      </li>
+    {% empty %}
+      <div class="text-center py-12">
+        <p class="text-gray-500 text-lg">No announcements available at this time.</p>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 mt-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+      </div>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

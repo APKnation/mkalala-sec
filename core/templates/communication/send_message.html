@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-xl font-semibold mb-4">Send Message</h2>
+<form method="post">
+  {% csrf_token %}
+  <label for="receiver">Recipient:</label>
+  <select name="receiver_id" required>
+    {% for user in users %}
+    <option value="{{ user.id }}">{{ user.get_full_name }}</option>
+    {% endfor %}
+  </select>
+  <label for="subject">Subject:</label>
+  <input type="text" name="subject" class="block w-full border mb-2" required>
+  <label for="body">Message:</label>
+  <textarea name="body" class="block w-full border mb-4" rows="5" required></textarea>
+  <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Send</button>
+</form>
+{% endblock %}

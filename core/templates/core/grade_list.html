@@ -1,0 +1,366 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-display font-bold text-gray-900 mb-2">Grade Management</h1>
+                <p class="text-gray-600">Manage and view student grades</p>
+            </div>
+            {% if request.user.is_faculty or request.user.is_admin %}
+            <a href="{% url 'grade_create' %}" class="btn-primary hover-lift">
+                <i class="fas fa-plus mr-2"></i>Add New Grade
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Filter Section -->
+        <div class="bg-white rounded-2xl shadow-medium p-6 mb-8">
+            <div class="flex flex-col lg:flex-row gap-4">
+                <form method="get" class="flex-1 flex flex-col lg:flex-row gap-4">
+                    {% if courses %}
+                    <div class="flex-1">
+                        <select name="course" class="form-input">
+                            <option value="">All Courses</option>
+                            {% for course in courses %}
+                            <option value="{{ course.id }}"
+                                    {% if request.GET.course == course.id|stringformat:"s" %}selected{% endif %}>
+                                {{ course.code }} - {{ course.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                    <button type="submit" class="btn-secondary">
+                        <i class="fas fa-filter mr-2"></i>Filter Results
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Grades Table -->
+        <div class="bg-white rounded-2xl shadow-medium overflow-hidden">
+            <div class="bg-gradient-to-r from-accent-500 to-accent-600 px-6 py-4 text-white">
+                <h2 class="text-xl font-bold flex items-center">
+                    <i class="fas fa-graduation-cap mr-2"></i>Grades List
+                </h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="table-modern">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Student</th>
+                            <th class="text-left">Course</th>
+                            <th class="text-left">Grade</th>
+                            <th class="text-left">Date Awarded</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                            <td class="font-medium text-gray-900">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-primary-600 text-xs"></i>
+                                    </div>
+                                    {{ grade.enrollment.student.user.get_full_name }}
+                                </div>
+                            </td>
+                            <td class="text-gray-600">
+                                <span class="badge badge-primary">{{ grade.enrollment.course_offering.course.code }}</span>
+                                <span class="ml-2 text-sm">{{ grade.enrollment.course_offering.course.name }}</span>
+                            </td>
+                            <td>
+                                <span class="grade-badge grade-{{ grade.grade|lower }}">
+                                    {{ grade.grade }}
+                                </span>
+                            </td>
+                            <td class="text-gray-600">
+                                <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
+                                {{ grade.awarded_on|date:"M d, Y" }}
+                            </td>
+                            <td class="text-right">
+                                <div class="flex justify-end space-x-2">
+                                    <a href="{% url 'grade_update' grade.pk %}" 
+                                       class="text-warning-600 hover:text-warning-700 p-2 rounded-lg hover:bg-warning-50 transition-colors duration-200" 
+                                       title="Edit Grade">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#" 
+                                       onclick="viewGradeDetails({{ grade.pk }})"
+                                       class="text-primary-600 hover:text-primary-700 p-2 rounded-lg hover:bg-primary-50 transition-colors duration-200" 
+                                       title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-12 text-gray-500">
+                                <i class="fas fa-clipboard-list text-4xl mb-4 block text-gray-300"></i>
+                                <p class="text-lg font-medium">No grades found</p>
+                                <p class="text-sm">Try adjusting your filters or add new grades.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        {% if grades %}
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="dashboard-card dashboard-card-primary">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-primary-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Total Grades</h5>
+                </div>
+                <p class="text-2xl font-bold text-primary-600">{{ grades.count }}</p>
+            </div>
+            
+            <div class="dashboard-card dashboard-card-success">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-trophy text-success-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Average Grade</h5>
+                </div>
+                <p class="text-2xl font-bold text-success-600">B+</p>
+            </div>
+            
+            <div class="dashboard-card dashboard-card-warning">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-warning-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">This Week</h5>
+                </div>
+                <p class="text-2xl font-bold text-warning-600">12</p>
+            </div>
+            
+            <div class="dashboard-card dashboard-card-secondary">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-secondary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-book text-secondary-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Courses</h5>
+                </div>
+                <p class="text-2xl font-bold text-secondary-600">{{ courses|length|default:0 }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="mt-8 flex flex-col sm:flex-row justify-between items-center">
+            <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+                Showing <span class="font-semibold">{{ page_obj.start_index }}</span> to 
+                <span class="font-semibold">{{ page_obj.end_index }}</span> of 
+                <span class="font-semibold">{{ page_obj.paginator.count }}</span> results
+            </div>
+            
+            <nav class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="px-3 py-2 text-sm font-medium text-white bg-primary-600 border border-primary-600">
+                        {{ num }}
+                    </span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                    <a href="?page={{ num }}" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 transition-colors duration-200">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Grade Details Modal -->
+<div id="gradeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-2xl mx-4 animate-fade-in-up">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-900">Grade Details</h3>
+            <button onclick="closeGradeModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div id="gradeModalContent">
+            <!-- Content will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<style>
+/* Additional styles for this page */
+.form-input {
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all duration-300 bg-white;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
+.btn-secondary {
+    @apply bg-gradient-to-r from-secondary-500 to-secondary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
+.table-modern {
+    @apply w-full;
+}
+
+.table-modern thead {
+    @apply bg-gradient-to-r from-accent-50 to-accent-100;
+}
+
+.table-modern th {
+    @apply px-6 py-4 text-left text-xs font-semibold text-accent-700 uppercase tracking-wider;
+}
+
+.table-modern td {
+    @apply px-6 py-4 border-t border-gray-100;
+}
+
+.table-modern tbody tr:hover {
+    @apply bg-gray-50;
+}
+
+.dashboard-card {
+    @apply bg-white rounded-2xl shadow-medium p-6 hover-lift transition-all duration-300;
+}
+
+.dashboard-card-primary {
+    @apply border-l-4 border-primary-500;
+}
+
+.dashboard-card-success {
+    @apply border-l-4 border-success-500;
+}
+
+.dashboard-card-warning {
+    @apply border-l-4 border-warning-500;
+}
+
+.dashboard-card-secondary {
+    @apply border-l-4 border-secondary-500;
+}
+
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.badge-primary {
+    @apply bg-primary-100 text-primary-800;
+}
+
+.grade-badge {
+    @apply inline-flex items-center justify-center w-10 h-10 rounded-full text-sm font-bold;
+}
+
+.grade-a { @apply bg-success-100 text-success-800; }
+.grade-b { @apply bg-primary-100 text-primary-800; }
+.grade-c { @apply bg-warning-100 text-warning-800; }
+.grade-d { @apply bg-danger-100 text-danger-800; }
+.grade-f { @apply bg-gray-100 text-gray-800; }
+
+/* Modal styles */
+.modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+    @apply bg-white rounded-2xl p-6 max-w-2xl mx-4 animate-fade-in-up;
+}
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to table rows
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(4px)';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+});
+
+// Modal functions
+function viewGradeDetails(gradeId) {
+    // In a real application, this would fetch grade details via AJAX
+    const modal = document.getElementById('gradeModal');
+    const content = document.getElementById('gradeModalContent');
+    
+    content.innerHTML = `
+        <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-500">Student Name</p>
+                    <p class="font-semibold">John Doe</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Course</p>
+                    <p class="font-semibold">CS101 - Introduction to Computer Science</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Grade</p>
+                    <p class="grade-badge grade-a">A</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Date Awarded</p>
+                    <p class="font-semibold">September 15, 2023</p>
+                </div>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500 mb-2">Instructor Comments</p>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-gray-700">Excellent performance throughout the semester. Strong understanding of core concepts and active participation in class discussions.</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeGradeModal() {
+    const modal = document.getElementById('gradeModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
+{% endblock extra_js %}

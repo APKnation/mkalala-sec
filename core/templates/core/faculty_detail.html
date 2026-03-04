@@ -1,0 +1,71 @@
+{% extends './base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">
+            <i class="fas fa-chalkboard-teacher me-2"></i>
+            {{ faculty.user.get_full_name }}
+        </h1>
+        <a href="{% url 'edit_faculty' faculty.user.id %}" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>Edit
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6 class="text-muted small">Email</h6>
+                        <p>{{ faculty.user.email }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted small">Department</h6>
+                        <p>{{ faculty.get_department_display }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted small">Designation</h6>
+                        <p>{{ faculty.get_designation_display }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted small">Specialization</h6>
+                        <p>{{ faculty.specialization }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-muted small">Joining Date</h6>
+                        <p>{{ faculty.joining_date|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">Courses Teaching</h5>
+                </div>
+                <div class="card-body">
+                    {% if faculty.course_offerings.all %}
+                    <div class="list-group">
+                        {% for offering in faculty.course_offerings.all %}
+                        <a href="{% url 'course_detail' offering.course.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ offering.course.name }} ({{ offering.section }})</span>
+                                <span class="badge bg-primary">{{ offering.semester.name }}</span>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No courses assigned</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

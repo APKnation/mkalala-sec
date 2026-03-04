@@ -1,0 +1,524 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+            {% if title %}{{ title }} | {% endif %}School Management System
+        {% endblock %}
+    </title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        accent: {
+                            50: '#fef3c7',
+                            100: '#fde68a',
+                            200: '#fcd34d',
+                            300: '#fbbf24',
+                            400: '#f59e0b',
+                            500: '#d97706',
+                            600: '#b45309',
+                            700: '#92400e',
+                            800: '#78350f',
+                            900: '#451a03',
+                            950: '#1c0a00',
+                        },
+                        success: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        warning: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                            950: '#451a03',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                            950: '#450a0a',
+                        },
+                        dark: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                            950: '#030712',
+                        },
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+                        'display': ['Poppins', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'Noto Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'slide-in-left': 'slideInLeft 0.6s ease-out',
+                        'bounce-in': 'bounceIn 0.8s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        slideInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' },
+                        },
+                        bounceIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.3)' },
+                            '50%': { opacity: '1', transform: 'scale(1.05)' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                    },
+                    backgroundImage: {
+                        'gradient-primary': 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                        'gradient-secondary': 'linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%)',
+                        'gradient-accent': 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                        'gradient-success': 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+                        'gradient-danger': 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+                        'gradient-hero': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/input.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <!-- CSRF Token for AJAX requests -->
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <!-- Navigation -->
+    <nav class="bg-white/90 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{% url 'dashboard' %}" class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-display font-bold text-gradient-primary">SchoolMS</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        {% if user.is_authenticated %}
+                            {% if is_student %}
+                                <a href="{% url 'student_dashboard' %}" class="nav-link">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                                </a>
+                                <a href="{% url 'view_timetable' %}" class="nav-link">
+                                    <i class="fas fa-calendar-alt mr-2"></i>Timetable
+                                </a>
+                                <a href="{% url 'gradebook_view' %}" class="nav-link">
+                                    <i class="fas fa-book mr-2"></i>Grades
+                                </a>
+                            {% elif is_faculty %}
+                                <a href="{% url 'faculty_dashboard' %}" class="nav-link">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                                </a>
+                                <a href="{% url 'attendance_list' %}" class="nav-link">
+                                    <i class="fas fa-clipboard-check mr-2"></i>Attendance
+                                </a>
+                                <a href="{% url 'grade_list' %}" class="nav-link">
+                                    <i class="fas fa-book mr-2"></i>Grades
+                                </a>
+                            {% elif is_admin %}
+                                <a href="{% url 'admin_dashboard' %}" class="nav-link">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                                </a>
+                                <div class="relative group">
+                                    <button class="nav-link flex items-center">
+                                        <i class="fas fa-users-cog mr-2"></i>Management
+                                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                                    </button>
+                                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                                        <a href="{% url 'user_management' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-t-xl">
+                                            <i class="fas fa-users mr-2"></i>User Management
+                                        </a>
+                                        <a href="{% url 'course_management' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600">
+                                            <i class="fas fa-book mr-2"></i>Course Management
+                                        </a>
+                                        <a href="{% url 'enrollment_list' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-b-xl">
+                                            <i class="fas fa-user-graduate mr-2"></i>Enrollments
+                                        </a>
+                                    </div>
+                                </div>
+                                <a href="{% url 'reports' %}" class="nav-link">
+                                    <i class="fas fa-chart-bar mr-2"></i>Reports
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <!-- Notifications -->
+                        <div class="relative">
+                            <button class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200">
+                                <i class="fas fa-bell text-lg"></i>
+                                {% if unread_messages_count %}
+                                <span class="absolute top-0 right-0 w-3 h-3 bg-danger-500 rounded-full animate-pulse"></span>
+                                {% endif %}
+                            </button>
+                        </div>
+
+                        <!-- User Dropdown -->
+                        <div class="relative group">
+                            <button class="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-50 transition-colors duration-200">
+                                <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                                <span class="hidden md:block text-sm font-medium text-gray-700">{{ user.get_full_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                                <a href="{% url 'profile' %}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-t-xl">
+                                    <i class="fas fa-user mr-3"></i>Profile
+                                </a>
+                                <a href="{% url 'inbox' %}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600">
+                                    <i class="fas fa-inbox mr-3"></i>Messages
+                                    {% if unread_messages_count %}
+                                    <span class="ml-auto bg-danger-500 text-white text-xs px-2 py-1 rounded-full">{{ unread_messages_count }}</span>
+                                    {% endif %}
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="{% url 'logout' %}" class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-xl">
+                                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn-outline">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Login
+                        </a>
+                        <a href="{% url 'register' %}" class="btn-primary">
+                            <i class="fas fa-user-plus mr-2"></i>Register
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                {% if user.is_authenticated %}
+                    {% if is_student %}
+                        <a href="{% url 'student_dashboard' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'view_timetable' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-calendar-alt mr-2"></i>Timetable
+                        </a>
+                        <a href="{% url 'gradebook_view' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-book mr-2"></i>Grades
+                        </a>
+                    {% elif is_faculty %}
+                        <a href="{% url 'faculty_dashboard' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'attendance_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-clipboard-check mr-2"></i>Attendance
+                        </a>
+                        <a href="{% url 'grade_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-book mr-2"></i>Grades
+                        </a>
+                    {% elif is_admin %}
+                        <a href="{% url 'admin_dashboard' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                        </a>
+                        <a href="{% url 'user_management' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-users-cog mr-2"></i>User Management
+                        </a>
+                        <a href="{% url 'course_management' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-book mr-2"></i>Course Management
+                        </a>
+                        <a href="{% url 'reports' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
+                            <i class="fas fa-chart-bar mr-2"></i>Reports
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="flex-1">
+        <!-- Breadcrumbs -->
+        {% block breadcrumbs %}
+        <nav class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                <ol class="flex items-center space-x-2 text-sm text-gray-500">
+                    <li>
+                        <a href="{% url 'dashboard' %}" class="hover:text-primary-600 transition-colors duration-200">
+                            <i class="fas fa-home mr-1"></i>Home
+                        </a>
+                    </li>
+                    {% block breadcrumb_items %}
+                    <li class="flex items-center">
+                        <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
+                        <span class="text-gray-700">{{ title|default:"Dashboard" }}</span>
+                    </li>
+                    {% endblock %}
+                </ol>
+            </div>
+        </nav>
+        {% endblock %}
+        
+        <!-- Messages -->
+        {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="space-y-3">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} animate-fade-in-up flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %} mr-3"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                    <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Page Header -->
+        {% block page_header %}
+        <div class="bg-white border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">{% block page_title %}{{ title|default:"Dashboard" }}{% endblock %}</h1>
+                        {% if page_description %}
+                        <p class="mt-2 text-gray-600">{{ page_description }}</p>
+                        {% endif %}
+                    </div>
+                    {% block page_actions %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+        
+        <!-- Main Content Block -->
+        {% block content %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-2xl shadow-medium p-8">
+                <h2 class="text-2xl font-semibold text-gray-900 mb-4">Welcome to the Dashboard</h2>
+                <p class="text-gray-600">Select an option from the navigation menu to get started.</p>
+            </div>
+        </div>
+        {% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-dark-800 to-dark-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- School Info -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-display font-bold text-gradient-primary">School Management System</span>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        A comprehensive solution for educational institutions, providing modern tools for administration, teaching, and learning.
+                    </p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Contact</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-center text-gray-300">
+                            <i class="fas fa-envelope mr-3 text-primary-400"></i>
+                            info@schoolmanagement.com
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <i class="fas fa-phone mr-3 text-primary-400"></i>
+                            +1 (555) 123-4567
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <i class="fas fa-map-marker-alt mr-3 text-primary-400"></i>
+                            123 Education Street, Learning City
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">
+                        © {% now "Y" %} School Management System. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Privacy</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Terms</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Support</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/modern-scripts.js' %}"></script>
+    
+    <!-- Current User Data for JavaScript -->
+    <script>
+        window.currentUser = {
+            id: {{ user.id|default:'null' }},
+            username: "{{ user.username|default:'' }}",
+            fullName: "{{ user.get_full_name|default:'' }}",
+            isStudent: {% if user.is_student %}true{% else %}false{% endif %},
+            isFaculty: {% if user.is_faculty %}true{% else %}false{% endif %},
+            isAdmin: {% if user.is_admin %}true{% else %}false{% endif %}
+        };
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const menuButton = event.target.closest('button[onclick="toggleMobileMenu()"]');
+            
+            if (!menu.contains(event.target) && !menuButton) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,7 @@
+<form method="post">
+    {% csrf_token %}
+    {% for course in courses %}
+        <label><input type="checkbox" name="courses" value="{{ course.id }}"> {{ course.name }}</label><br>
+    {% endfor %}
+    <button type="submit">Enroll</button>
+</form>

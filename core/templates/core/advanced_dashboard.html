@@ -1,0 +1,403 @@
+{% extends './base.html' %}
+
+{% block title %}Advanced Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-0">Welcome back, {{ user.get_full_name|default:user.username }}!</h1>
+                    <p class="text-muted mb-0">{{ now|date:"l, F d, Y" }}</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshDashboard()">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-download me-2"></i>Export
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="exportData('pdf')">PDF Report</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportData('excel')">Excel Sheet</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="exportData('csv')">CSV Data</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-4">
+        {% if user.is_student %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card primary">
+                <div class="icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="h4 mb-2">Enrolled Courses</h3>
+                <div class="stat-number" id="enrolled-courses">{{ enrolled_courses|default:6 }}</div>
+                <p class="text-muted small mb-0">Current semester</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card success">
+                <div class="icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="h4 mb-2">Current GPA</h3>
+                <div class="stat-number" id="current-gpa">{{ gpa|default:3.7 }}</div>
+                <p class="text-muted small mb-0">Excellent performance</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card info">
+                <div class="icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h3 class="h4 mb-2">Attendance Rate</h3>
+                <div class="stat-number" id="attendance-rate">{{ attendance_rate|default:92 }}%</div>
+                <p class="text-muted small mb-0">This semester</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card warning">
+                <div class="icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3 class="h4 mb-2">Fee Status</h3>
+                <div class="stat-number" id="fee-status">Paid</div>
+                <p class="text-muted small mb-0">All dues cleared</p>
+            </div>
+        </div>
+        {% elif user.is_faculty %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card primary">
+                <div class="icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="h4 mb-2">Courses Teaching</h3>
+                <div class="stat-number" id="teaching-courses">{{ teaching_courses|default:4 }}</div>
+                <p class="text-muted small mb-0">This semester</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card success">
+                <div class="icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="h4 mb-2">Total Students</h3>
+                <div class="stat-number" id="total-students">{{ total_students|default:156 }}</div>
+                <p class="text-muted small mb-0">Across all courses</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card info">
+                <div class="icon">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="h4 mb-2">Pending Tasks</h3>
+                <div class="stat-number" id="pending-tasks">{{ pending_tasks|default:8 }}</div>
+                <p class="text-muted small mb-0">Require attention</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card warning">
+                <div class="icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3 class="h4 mb-2">Office Hours</h3>
+                <div class="stat-number" id="office-hours">12</div>
+                <p class="text-muted small mb-0">This week</p>
+            </div>
+        </div>
+        {% elif user.is_admin %}
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card primary">
+                <div class="icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3 class="h4 mb-2">Total Students</h3>
+                <div class="stat-number" id="total-students-admin">{{ total_students|default:1250 }}</div>
+                <p class="text-muted small mb-0">Active enrollment</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card success">
+                <div class="icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3 class="h4 mb-2">Faculty Members</h3>
+                <div class="stat-number" id="faculty-members">{{ faculty_count|default:85 }}</div>
+                <p class="text-muted small mb-0">Full-time staff</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card info">
+                <div class="icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="h4 mb-2">Active Courses</h3>
+                <div class="stat-number" id="active-courses">{{ active_courses|default:142 }}</div>
+                <p class="text-muted small mb-0">This semester</p>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card warning">
+                <div class="icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3 class="h4 mb-2">Revenue</h3>
+                <div class="stat-number" id="revenue">$2.4M</div>
+                <p class="text-muted small mb-0">This semester</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Charts and Analytics Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Performance Analytics</h5>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-primary active" onclick="updateChart('week')">Week</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="updateChart('month')">Month</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="updateChart('year')">Year</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if user.is_student %}
+                        <a href="{% url 'course_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-search me-2"></i>Browse Courses
+                        </a>
+                        <a href="{% url 'gradebook_view' %}" class="btn btn-outline-success">
+                            <i class="fas fa-chart-bar me-2"></i>View Grades
+                        </a>
+                        <a href="{% url 'view_timetable' %}" class="btn btn-outline-info">
+                            <i class="fas fa-calendar me-2"></i>My Schedule
+                        </a>
+                        <a href="{% url 'inbox' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-envelope me-2"></i>Messages
+                            {% if unread_messages_count %}
+                            <span class="badge bg-danger ms-1">{{ unread_messages_count }}</span>
+                            {% endif %}
+                        </a>
+                        {% elif user.is_faculty %}
+                        <a href="{% url 'attendance_list' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-clipboard-check me-2"></i>Mark Attendance
+                        </a>
+                        <a href="{% url 'grade_list' %}" class="btn btn-outline-success">
+                            <i class="fas fa-graduation-cap me-2"></i>Submit Grades
+                        </a>
+                        <a href="{% url 'course_management' %}" class="btn btn-outline-info">
+                            <i class="fas fa-book-open me-2"></i>Manage Courses
+                        </a>
+                        <a href="{% url 'inbox' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-envelope me-2"></i>Messages
+                        </a>
+                        {% elif user.is_admin %}
+                        <a href="{% url 'user_management' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-users-cog me-2"></i>User Management
+                        </a>
+                        <a href="{% url 'course_management' %}" class="btn btn-outline-success">
+                            <i class="fas fa-book me-2"></i>Course Management
+                        </a>
+                        <a href="{% url 'reports' %}" class="btn btn-outline-info">
+                            <i class="fas fa-chart-pie me-2"></i>View Reports
+                        </a>
+                        <a href="{% url 'system_logs' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-history me-2"></i>System Logs
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities and Notifications -->
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Activities</h5>
+                    <button class="btn btn-sm btn-outline-primary" onclick="loadMoreActivities()">
+                        <i class="fas fa-plus me-1"></i>Load More
+                    </button>
+                </div>
+                <div class="card-body p-0" id="recent-activities">
+                    <div class="activity-item d-flex align-items-center p-3 border-bottom">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-user-plus text-primary"></i>
+                        </div>
+                        <div class="activity-content flex-grow-1">
+                            <p class="mb-0">New student enrolled in Computer Science</p>
+                            <small class="text-muted">2 minutes ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex align-items-center p-3 border-bottom">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-graduation-cap text-success"></i>
+                        </div>
+                        <div class="activity-content flex-grow-1">
+                            <p class="mb-0">Grades submitted for Mathematics 101</p>
+                            <small class="text-muted">15 minutes ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex align-items-center p-3 border-bottom">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-clipboard-check text-info"></i>
+                        </div>
+                        <div class="activity-content flex-grow-1">
+                            <p class="mb-0">Attendance marked for Physics Lab</p>
+                            <small class="text-muted">1 hour ago</small>
+                        </div>
+                    </div>
+                    <div class="activity-item d-flex align-items-center p-3">
+                        <div class="activity-icon me-3">
+                            <i class="fas fa-credit-card text-warning"></i>
+                        </div>
+                        <div class="activity-content flex-grow-1">
+                            <p class="mb-0">Fee payment received from 5 students</p>
+                            <small class="text-muted">2 hours ago</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Notifications</h5>
+                    <span class="badge bg-danger" id="notification-count">3 New</span>
+                </div>
+                <div class="card-body p-0" id="notifications">
+                    <div class="notification-item p-3 border-bottom border-start border-4 border-info">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-info-circle text-info me-3 mt-1"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">System Maintenance</h6>
+                                <p class="mb-1 small">Scheduled maintenance tomorrow at 2:00 AM</p>
+                                <small class="text-muted">1 hour ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notification-item p-3 border-bottom border-start border-4 border-warning">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-exclamation-triangle text-warning me-3 mt-1"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Fee Payment Reminder</h6>
+                                <p class="mb-1 small">Due date approaching for next semester</p>
+                                <small class="text-muted">3 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="notification-item p-3 border-start border-4 border-success">
+                        <div class="d-flex align-items-start">
+                            <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">Registration Open</h6>
+                                <p class="mb-1 small">Course registration for next semester is now open</p>
+                                <small class="text-muted">5 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Initialize Performance Chart
+let performanceChart;
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    performanceChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Activity Score',
+                data: [85, 88, 92, 87, 90, 85, 89],
+                borderColor: 'rgb(79, 70, 229)',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                tension: 0.4
+            }, {
+                label: 'Performance',
+                data: [90, 85, 88, 92, 89, 87, 91],
+                borderColor: 'rgb(6, 182, 212)',
+                backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+});
+
+// Update Chart based on time period
+function updateChart(period) {
+    const labels = {
+        'week': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        'month': ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        'year': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    };
+    
+    performanceChart.data.labels = labels[period];
+    performanceChart.update();
+}
+
+// Refresh Dashboard
+function refreshDashboard() {
+    location.reload();
+}
+
+// Export Data
+function exportData(format) {
+    // Simulate export functionality
+    SchoolManagement.showMessage(`Exporting data as ${format.toUpperCase()}...`, 'info');
+    setTimeout(() => {
+        SchoolManagement.showMessage(`Data exported successfully!`, 'success');
+    }, 2000);
+}
+
+// Load More Activities
+function loadMoreActivities() {
+    SchoolManagement.showMessage('Loading more activities...', 'info');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends './base.html' %}
+
+{% block title %}System Settings{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8 px-4">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center">
+            <i class="fas fa-cogs mr-3 text-blue-500"></i>System Settings
+        </h1>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">General Settings</h2>
+        </div>
+        <div class="p-6">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="academic_year" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Academic Year
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                        </div>
+                        <input type="text" id="academic_year" name="academic_year"
+                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                               placeholder="e.g., 2024-2025">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="semester" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Semester
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-book-open text-gray-400"></i>
+                        </div>
+                        <select id="semester" name="semester"
+                                class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <option value="">Select a Semester</option>
+                            <option value="1">First Semester</option>
+                            <option value="2">Second Semester</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    <i class="fas fa-save mr-2"></i>Save Settings
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

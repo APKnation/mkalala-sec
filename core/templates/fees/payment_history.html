@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Payment History</h2>
+
+{% if payments %}
+<table class="table-auto w-full border-collapse border border-gray-300">
+  <thead class="bg-gray-200">
+    <tr>
+      <th class="border border-gray-300 px-4 py-2">Academic Year</th>
+      <th class="border border-gray-300 px-4 py-2">Amount Paid</th>
+      <th class="border border-gray-300 px-4 py-2">Date</th>
+      <th class="border border-gray-300 px-4 py-2">Receipt</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for payment in payments %}
+    <tr>
+      <td class="border border-gray-300 px-4 py-2">{{ payment.academic_year }}</td>
+      <td class="border border-gray-300 px-4 py-2">{{ payment.amount_paid }}</td>
+      <td class="border border-gray-300 px-4 py-2">{{ payment.paid_on|date:"M d, Y" }}</td>
+      <td class="border border-gray-300 px-4 py-2">
+        {% if payment.receipt_file %}
+          <a href="{{ payment.receipt_file.url }}" class="text-blue-600 underline" download>Download</a>
+        {% else %}
+          N/A
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No payments found.</p>
+{% endif %}
+{% endblock %}

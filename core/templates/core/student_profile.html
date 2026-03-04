@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <img src="{{ student.profile_picture.url|default:'/static/default_profile.png' }}" 
+             class="profile-img">
+        <h2>{{ user.get_full_name }}</h2>
+        <p>Roll Number: {{ student.roll_number }}</p>
+    </div>
+
+    <div class="profile-details">
+        <h3>Academic Information</h3>
+        <p><strong>Department:</strong> {{ student.department.name }}</p>
+        <p><strong>Batch:</strong> {{ student.batch }}</p>
+
+        <h3>Contact Information</h3>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Phone:</strong> {{ student.phone|default:"Not provided" }}</p>
+        <p><strong>Address:</strong> {{ student.address|default:"Not provided" }}</p>
+    </div>
+
+    <a href="{% url 'update_profile' %}" class="btn btn-primary">Edit Profile</a>
+    <a href="{% url 'change_password' %}" class="btn btn-secondary">Change Password</a>
+</div>
+{% endblock %}
