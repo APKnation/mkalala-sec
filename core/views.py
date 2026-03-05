@@ -5,11 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from django.contrib import messages
-from .forms import FacultyProfileForm
-from .models import FacultyProfile
 from django.views.generic import CreateView
-from .models import Course
-from .forms import CourseForm
 from django.contrib.auth.decorators import user_passes_test
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
@@ -31,12 +27,6 @@ from .models import (
     ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
     ReportCard, Material, Schedule, ForumPost
 )
-from .forms import (
-    UserForm, StudentProfileForm, FacultyProfileForm, AdminProfileForm,
-    CourseForm, CourseOfferingForm, EnrollmentForm, GradeForm,
-    AttendanceForm, FeeForm, LeaveRequestForm, MessageForm,
-    ForumTopicForm, ForumPostForm, MaterialUploadForm
-)
 
 User = get_user_model()
 class StudentDetailView(DetailView):
@@ -46,13 +36,31 @@ class StudentDetailView(DetailView):
 
 class CourseListView(View):
     def get(self, request):
-        return render(request, 'core/course_list.html')  
+        # Get all courses with related data
+        courses = Course.objects.select_related('department').prefetch_related('enrollment_set').all()
+        departments = Department.objects.all()
+        
+        # Get statistics
+        total_courses = courses.count()
+        active_courses = courses.filter(is_active=True).count()
+        total_enrollments = Enrollment.objects.filter(course__in=courses).count()
+        
+        context = {
+            'courses': courses,
+            'departments': departments,
+            'total_courses': total_courses,
+            'active_courses': active_courses,
+            'total_enrollments': total_enrollments,
+        }
+        return render(request, 'core/course_list.html', context)  
 class CourseManagementView(View):
     def get(self, request):
         return render(request, 'core/course_management.html') 
 @login_required
 @user_passes_test(is_admin)
 def faculty_register(request):
+    from .forms import FacultyUserForm, FacultyProfileForm
+    
     if request.method == 'POST':
         user_form = FacultyUserForm(request.POST)
         profile_form = FacultyProfileForm(request.POST, request.FILES)
@@ -76,6 +84,8 @@ def faculty_list(request):
     faculty_members = FacultyProfile.objects.select_related('user')
     return render(request, 'core/faculty_list.html', {'faculty_members': faculty_members})
 class StudentUpdateView(UpdateView):
+    from .forms import StudentProfileForm
+    
     model = StudentProfile
     form_class = StudentProfileForm
     template_name = 'students/student_form.html'  # adjust to your template path
@@ -99,6 +109,8 @@ class FacultyDetailView(LoginRequiredMixin, DetailView):
         # Add any additional context data here if needed
         return context
 class FacultyUpdateView(UpdateView):
+    from .forms import FacultyProfileForm
+    
     model = FacultyProfile
     form_class = FacultyProfileForm
     template_name = 'core/faculty_edit.html'
@@ -308,19 +320,24 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        user = self.request.user
+        from .forms import StudentProfileForm, FacultyProfileForm, AdminProfileForm
         
-        if hasattr(user, 'student_profile'):
-            context['profile_form'] = StudentProfileForm(instance=user.student_profile)
-        elif hasattr(user, 'faculty_profile'):
-            context['profile_form'] = FacultyProfileForm(instance=user.faculty_profile)
-        elif hasattr(user, 'admin_profile'):
-            context['profile_form'] = AdminProfileForm(instance=user.admin_profile)
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        
+        # Add profile form based on user role
+        if hasattr(self.request.user, 'student_profile'):
+            context['profile_form'] = StudentProfileForm(instance=self.request.user.student_profile)
+        elif hasattr(self.request.user, 'faculty_profile'):
+            context['profile_form'] = FacultyProfileForm(instance=self.request.user.faculty_profile)
+        elif hasattr(self.request.user, 'admin_profile'):
+            context['profile_form'] = AdminProfileForm(instance=self.request.user.admin_profile)
         
         return context
 
     def post(self, request, *args, **kwargs):
+        from .forms import StudentProfileForm, FacultyProfileForm, AdminProfileForm
+        
         self.object = self.get_object()
         form = self.get_form()
         
@@ -356,7 +373,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 class CustomLoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('dashboard')
+            return self.redirect_based_on_role(request.user)
         form = AuthenticationForm()
         return render(request, 'core/login.html', {'form': form})
 
@@ -365,17 +382,157 @@ class CustomLoginView(View):
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-            return redirect('dashboard')
+            return self.redirect_based_on_role(user)
         else:
             messages.error(request, 'Invalid username or password.')
             return render(request, 'core/login.html', {'form': form})
+    
+    def redirect_based_on_role(self, user):
+        """Redirect user based on their role"""
+        if user.role == 'normal':
+            return redirect('public_home')
+        elif user.role == 'student':
+            return redirect('student_dashboard')
+        elif user.role == 'teacher':
+            return redirect('teacher_dashboard')
+        elif user.role == 'headmaster':
+            return redirect('headmaster_dashboard')
+        elif user.role == 'admin':
+            return redirect('admin_dashboard')
+        else:
+            return redirect('public_home')
 
 class CustomLogoutView(View):
     def get(self, request):
         logout(request)
-        return redirect('login')
+        return redirect('public_home')
+
+# Public Registration Views
+from .forms import PublicUserRegistrationForm, StaffRegistrationForm
+
+class PublicRegisterView(CreateView):
+    """Registration for normal users and students"""
+    model = User
+    form_class = PublicUserRegistrationForm
+    template_name = 'core/public_register.html'
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data['password1'])
+        user.save()
+        
+        # Create profile based on role
+        if user.role == 'student':
+            user.is_student = True
+            user.save()
+            # StudentProfile will be created when student completes admission
+            messages.success(self.request, "Student registration successful! Please complete your admission application.")
+        else:
+            messages.success(self.request, "Account created successfully! You can now login.")
+        
+        return super().form_valid(form)
+
+class StaffRegisterView(CreateView):
+    """Registration for staff roles (teacher, headmaster, admin)"""
+    model = User
+    form_class = StaffRegistrationForm
+    template_name = 'core/staff_register.html'
+    success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data['password1'])
+        user.save()
+        
+        # Set role flags and create appropriate profile
+        if user.role == 'teacher':
+            user.is_faculty = True
+            user.save()
+            # FacultyProfile will need to be created by admin
+            messages.success(self.request, "Teacher registration successful! Your profile will be completed by the school administration.")
+        elif user.role == 'headmaster':
+            user.is_headmaster = True
+            user.save()
+            # HeadmasterProfile will need to be created by admin
+            messages.success(self.request, "Headmaster registration successful! Your profile will be completed by the school administration.")
+        elif user.role == 'admin':
+            user.is_admin = True
+            user.save()
+            # AdminProfile will need to be created by super admin
+            messages.success(self.request, "Admin registration successful! Your profile will be completed by the super administrator.")
+        
+        return super().form_valid(form)
+
+# Role-based Dashboard Views
+class RoleBasedDashboardView(LoginRequiredMixin, View):
+    def get(self, request):
+        return self.redirect_based_on_role(request.user)
+    
+    def redirect_based_on_role(self, user):
+        """Redirect user based on their role"""
+        if user.role == 'normal':
+            return redirect('public_home')
+        elif user.role == 'student':
+            return redirect('student_dashboard')
+        elif user.role == 'teacher':
+            return redirect('teacher_dashboard')
+        elif user.role == 'headmaster':
+            return redirect('headmaster_dashboard')
+        elif user.role == 'admin':
+            return redirect('admin_dashboard')
+        else:
+            return redirect('public_home')
+
+# Teacher Dashboard
+@login_required
+def teacher_dashboard(request):
+    if not request.user.role == 'teacher':
+        return redirect('public_home')
+    
+    context = {
+        'user': request.user,
+        'role': 'Teacher',
+        'courses': Course.objects.all(),  # Will be filtered by teacher's assignments
+        'students_count': User.objects.filter(role='student').count(),
+    }
+    return render(request, 'core/teacher_dashboard.html', context)
+
+# Headmaster Dashboard
+@login_required
+def headmaster_dashboard(request):
+    if not request.user.role == 'headmaster':
+        return redirect('public_home')
+    
+    context = {
+        'user': request.user,
+        'role': 'Head of School',
+        'total_students': User.objects.filter(role='student').count(),
+        'total_teachers': User.objects.filter(role='teacher').count(),
+        'total_staff': User.objects.filter(role__in=['teacher', 'admin', 'headmaster']).count(),
+        'courses': Course.objects.all(),
+    }
+    return render(request, 'core/headmaster_dashboard.html', context)
+
+# School Admin Dashboard
+@login_required
+def admin_dashboard(request):
+    if not request.user.role == 'admin':
+        return redirect('public_home')
+    
+    context = {
+        'user': request.user,
+        'role': 'School Administrator',
+        'total_users': User.objects.all().count(),
+        'students': User.objects.filter(role='student').count(),
+        'teachers': User.objects.filter(role='teacher').count(),
+        'pending_registrations': User.objects.filter(role__in=['teacher', 'headmaster', 'admin']).count(),
+    }
+    return render(request, 'core/admin_dashboard.html', context)
 
 class BaseRegisterView(CreateView):
+    from .forms import UserForm
+    
     model = User
     form_class = UserForm
     template_name = 'core/register.html'
@@ -464,6 +621,8 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return is_admin(self.request.user)
 
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    from .forms import UserForm
+    
     model = User
     form_class = UserForm
     template_name = 'core/edit_user.html'
@@ -546,10 +705,12 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
 class CreateCourseView(View):
     def get(self, request):
+        from .forms import CourseForm
         form = CourseForm()
         return render(request, 'core/create_course.html', {'form': form})
 
     def post(self, request):
+        from .forms import CourseForm
         form = CourseForm(request.POST)
         if form.is_valid():
             form.save()
@@ -819,6 +980,8 @@ class EnrollmentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
 
 class EnrollmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    from .forms import EnrollmentForm
+    
     model = Enrollment
     form_class = EnrollmentForm
     template_name = 'core/enrollment_form.html'
@@ -832,6 +995,8 @@ class EnrollmentCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
 class EnrollmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    from .forms import EnrollmentForm
+    
     model = Enrollment
     form_class = EnrollmentForm
     template_name = 'core/enrollment_form.html'
@@ -885,6 +1050,8 @@ class GradeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
 
 class GradeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    from .forms import GradeForm
+    
     model = Grade
     form_class = GradeForm
     template_name = 'core/grade_form.html'
@@ -907,6 +1074,8 @@ class GradeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
 class GradeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    from .forms import GradeForm
+    
     model = Grade
     form_class = GradeForm
     template_name = 'core/grade_form.html'
@@ -968,6 +1137,8 @@ class AttendanceListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
 
 class AttendanceCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    from .forms import AttendanceForm
+    
     model = Attendance
     form_class = AttendanceForm
     template_name = 'core/attendance_form.html'
@@ -989,6 +1160,8 @@ class AttendanceCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
 class AttendanceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    from .forms import AttendanceForm
+    
     model = Attendance
     form_class = AttendanceForm
     template_name = 'core/attendance_form.html'
@@ -1035,6 +1208,8 @@ class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
 
 class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    from .forms import FeeForm
+    
     model = Fee
     form_class = FeeForm
     template_name = 'core/fee_form.html'
@@ -1048,6 +1223,8 @@ class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return super().form_valid(form)
 
 class FeeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    from .forms import FeeForm
+    
     model = Fee
     form_class = FeeForm
     template_name = 'core/fee_form.html'
@@ -1088,6 +1265,8 @@ def leave_requests_list(request):
     })
 
 class LeaveRequestCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    from .forms import LeaveRequestForm
+    
     model = LeaveRequest
     form_class = LeaveRequestForm
     template_name = 'core/leave_request_form.html'
@@ -1215,6 +1394,8 @@ def topic_detail(request, topic_id):
     })
 
 class CreateTopicView(LoginRequiredMixin, CreateView):
+    from .forms import ForumTopicForm
+    
     model = ForumTopic
     form_class = ForumTopicForm
     template_name = 'communication/create_topic.html'
@@ -1475,9 +1656,65 @@ def get_context_data(self, **kwargs):
     # //Course
 
 
+# Public-facing views
+def public_home(request):
+    """Public home page for visitors"""
+    return render(request, 'core/public_home.html')
+
+def public_about(request):
+    """Public about page"""
+    return render(request, 'core/public_about.html')
+
+def public_courses(request):
+    """Public courses catalog page"""
+    return render(request, 'core/public_courses.html')
+
+def public_admissions(request):
+    """Public admissions page"""
+    return render(request, 'core/public_admissions.html')
+
+def public_contact(request):
+    """Public contact page"""
+    return render(request, 'core/public_contact.html')
+
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Course, Department
+from django.db.models import Avg, Count
+from django.utils import timezone
+from datetime import timedelta
+
+@login_required
+def grade_list(request):
+    # Get all grades with related data
+    grades = Grade.objects.select_related(
+        'enrollment__student__user',
+        'enrollment__course_offering__course',
+        'enrollment__course_offering__faculty__user'
+    ).all()
+    
+    # Get courses for filtering
+    courses = Course.objects.select_related('department').all()
+    
+    # Get statistics
+    total_grades = grades.count()
+    average_grade = grades.aggregate(avg_grade=Avg('grade'))['avg_grade']
+    recent_grades = grades.filter(awarded_on__gte=timezone.now() - timedelta(days=7)).count()
+    
+    # Filter by course if specified
+    course_filter = request.GET.get('course')
+    if course_filter:
+        grades = grades.filter(enrollment__course_offering__course_id=course_filter)
+    
+    context = {
+        'grades': grades,
+        'courses': courses,
+        'total_grades': total_grades,
+        'average_grade': average_grade,
+        'recent_grades': recent_grades,
+    }
+    return render(request, 'core/grade_list.html', context)
 
 def course_list(request):
     courses = Course.objects.all()

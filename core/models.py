@@ -31,10 +31,20 @@ class Department(models.Model):
         super().save(*args, **kwargs)
 
 class User(AbstractUser):
+    ROLE_CHOICES = [
+        ('normal', _('Normal User')),
+        ('student', _('Student')),
+        ('teacher', _('Teacher')),
+        ('headmaster', _('Head of School')),
+        ('admin', _('School Admin')),
+    ]
+    
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='normal')
     is_student = models.BooleanField(default=False)
     is_faculty = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_parent = models.BooleanField(default=False)
+    is_headmaster = models.BooleanField(default=False)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     groups = models.ManyToManyField(
@@ -56,6 +66,21 @@ class User(AbstractUser):
         if self.profile_picture and hasattr(self.profile_picture, 'url'):
             return self.profile_picture.url
         return '/static/images/default-avatar.png'
+    
+    def is_normal_user(self):
+        return self.role == 'normal'
+    
+    def is_teacher_role(self):
+        return self.role == 'teacher'
+    
+    def is_headmaster_role(self):
+        return self.role == 'headmaster'
+    
+    def is_school_admin(self):
+        return self.role == 'admin'
+    
+    def get_role_display_name(self):
+        return dict(self.ROLE_CHOICES).get(self.role, 'Unknown')
 
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
@@ -105,10 +130,20 @@ class AdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     access_level = models.CharField(max_length=50, choices=ACCESS_LEVEL_CHOICES)
-    profile_picture = models.ImageField(upload_to='faculty_pics/', blank=True, null=True)  # ← Add this
+    profile_picture = models.ImageField(upload_to='faculty_pics/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.get_full_name()} ({self.get_access_level_display()})"
+
+class HeadmasterProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='headmaster_profile')
+    appointment_date = models.DateField()
+    years_of_experience = models.PositiveIntegerField(default=0)
+    qualification = models.CharField(max_length=200, blank=True)
+    profile_picture = models.ImageField(upload_to='headmaster_pics/', blank=True, null=True)
+
+    def __str__(self):
+        return f"Headmaster {self.user.get_full_name()}"
 
 class ParentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='parent_profile')
@@ -192,18 +227,20 @@ class FeeCategory(models.Model):
 
 class Fee(models.Model):
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
-    fee_structure = models.ForeignKey(FeeStructure, on_delete=models.CASCADE)
+    fee_structure = models.ForeignKey(FeeStructure, on_delete=models.CASCADE, null=True, blank=True, default=None)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     due_date = models.DateField()
     paid_date = models.DateField(blank=True, null=True)
     receipt_number = models.CharField(max_length=MAX_NAME_LENGTH, blank=True, null=True)
     is_paid = models.BooleanField(default=False)
-    semester = models.CharField(max_length=10)
-    category = models.CharField(max_length=100)  # ← Add this line
+    semester = models.CharField(max_length=10, default='1')
+    category = models.CharField(max_length=100, default='Tuition')
 
 
     def __str__(self):
-        return f"{self.student} - {self.fee_structure.name} - {self.amount}"
+        if self.fee_structure:
+            return f"{self.student} - {self.fee_structure.name} - {self.amount}"
+        return f"{self.student} - {self.category} - {self.amount}"
 
 class Payment(models.Model):
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='payments')
@@ -274,11 +311,11 @@ class LeaveRequest(models.Model):
     ]
 
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='leave_requests')
-    course_offering = models.ForeignKey(CourseOffering, on_delete=models.CASCADE, related_name='leave_requests')
+    course_offering = models.ForeignKey(CourseOffering, on_delete=models.CASCADE, related_name='leave_requests', null=True, blank=True)
     start_date = models.DateField()
     end_date = models.DateField()
     reason = models.TextField()
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)  # ← Add this
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
 
     status = models.CharField(max_length=10, choices=LEAVE_STATUS_CHOICES, default='Pending')
     submitted_at = models.DateTimeField(auto_now_add=True)

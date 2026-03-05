@@ -13,27 +13,35 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    # Public-facing URLs
+    path('', views.public_home, name='public_home'),
+    path('home/', views.public_home, name='public_home_alt'),
+    path('about/', views.public_about, name='public_about'),
+    path('courses/', views.public_courses, name='public_courses'),
+    path('admissions/', views.public_admissions, name='public_admissions'),
+    path('contact/', views.public_contact, name='public_contact'),
+    
     # Authentication URLs
-    path('', views.CustomLoginView.as_view(), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     
     # Registration URLs
-    path('register/student/', views.RegisterStudentView.as_view(), name='register'),
+    path('register/', views.PublicRegisterView.as_view(), name='public_register'),
+    path('register/student/', views.PublicRegisterView.as_view(), name='register_student'),
+    path('register/staff/', views.StaffRegisterView.as_view(), name='staff_register'),
     path('faculty/register/', faculty_register, name='faculty_register'),
     
-    # Dashboard URLs
-    path('dashboard', views.DashboardView.as_view(), name='dashboard'),  # Role-based redirect view
-    path('student/dashboard/', views.StudentDashboardView.as_view(), name='student_dashboard'),
-    path('faculty/dashboard/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),
-    path('dashboard/admin/', views.AdminDashboardView.as_view(), name='admin_dashboard'),
-    path('activity-logs/', views.ActivityLogView.as_view(), name='system_logs'),
-    path('user-management/', views.UserManagementView.as_view(), name='user_management'),
-
+    # Role-based Dashboard URLs
+    path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
+    path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
+    path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
+    path('dashboard/headmaster/', views.headmaster_dashboard, name='headmaster_dashboard'),
+    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
+    path('dashboard/faculty/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),  # Legacy
+    
     # Profile URLs
     path('profile/', views.ProfileView.as_view(), name='profile'),
-    # path('profile/update/', views.ProfileUpdateView.as_view(), name='profile_update'),
     path('profile/update/', views.ProfileUpdateView.as_view(), name='update_profile'),
-
     
     # User Management URLs
     path('users/', views.UserListView.as_view(), name='user_list'),

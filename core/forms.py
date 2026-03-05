@@ -4,7 +4,6 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.db.models import Q
-from django import forms
 from .models import Course, Department
 from .models import (
     Department, AdminProfile, StudentProfile, FacultyProfile,
@@ -16,10 +15,16 @@ from .models import (
 User = get_user_model()
 
 class UserForm(UserCreationForm):
+    role = forms.ChoiceField(
+        choices=User.ROLE_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+        })
+    )
+    
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name',
-                 'is_student', 'is_faculty', 'is_admin', 'is_parent']
+        fields = ['username', 'email', 'first_name', 'last_name', 'role']
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
@@ -33,20 +38,100 @@ class UserForm(UserCreationForm):
             'last_name': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
-            'is_student': forms.CheckboxInput(attrs={
-                'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'placeholder': 'Enter username'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Enter email address'})
+        self.fields['first_name'].widget.attrs.update({'placeholder': 'Enter first name'})
+        self.fields['last_name'].widget.attrs.update({'placeholder': 'Enter last name'})
+
+class PublicUserRegistrationForm(UserCreationForm):
+    """Registration form for public users (normal users and students)"""
+    role = forms.ChoiceField(
+        choices=[
+            ('normal', 'Normal User'),
+            ('student', 'Student'),
+        ],
+        initial='normal',
+        widget=forms.RadioSelect(attrs={
+            'class': 'space-y-2'
+        })
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Choose a username'
             }),
-            'is_faculty': forms.CheckboxInput(attrs={
-                'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Enter your email'
             }),
-            'is_admin': forms.CheckboxInput(attrs={
-                'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+            'first_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'First name'
             }),
-            'is_parent': forms.CheckboxInput(attrs={
-                'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+            'last_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Last name'
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Enter password'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Confirm password'
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['role'].label = "Account Type"
+        self.fields['role'].help_text = "Select 'Student' if you want to join the school as a student"
+
+class StaffRegistrationForm(UserCreationForm):
+    """Registration form for staff roles (teacher, headmaster, admin)"""
+    role = forms.ChoiceField(
+        choices=[
+            ('teacher', 'Teacher'),
+            ('headmaster', 'Head of School'),
+            ('admin', 'School Admin'),
+        ],
+        widget=forms.Select(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+        })
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+        }
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in ['password1', 'password2']:
@@ -54,6 +139,44 @@ class UserForm(UserCreationForm):
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             })
         self.fields['username'].help_text = None
+
+class FacultyUserForm(UserCreationForm):
+    """Form for creating faculty users by admin"""
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].help_text = None
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_faculty = True
+        user.role = 'teacher'
+        if commit:
+            user.save()
+        return user
 
     def clean(self):
         cleaned_data = super().clean()

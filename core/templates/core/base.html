@@ -173,352 +173,322 @@
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <!-- Navigation -->
-    <nav class="bg-white/90 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-gray-200">
+    <nav class="bg-white/95 backdrop-blur-lg shadow-lg sticky top-0 z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center">
-                    <a href="{% url 'dashboard' %}" class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <a href="{% url 'public_home' %}" class="flex items-center space-x-3 group">
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                             <i class="fas fa-graduation-cap text-white text-lg"></i>
                         </div>
-                        <span class="text-xl font-display font-bold text-gradient-primary">SchoolMS</span>
+                        <span class="text-xl font-display font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">SchoolMS</span>
                     </a>
                 </div>
 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
+                    <div class="ml-10 flex items-baseline space-x-1">
+                        <!-- Public Navigation -->
+                        <a href="{% url 'public_home' %}" class="nav-link {% if request.resolver_match.url_name == 'public_home' %}active{% endif %}">
+                            <i class="fas fa-home mr-2"></i>Home
+                        </a>
+                        <a href="{% url 'public_courses' %}" class="nav-link {% if request.resolver_match.url_name == 'public_courses' %}active{% endif %}">
+                            <i class="fas fa-book mr-2"></i>Courses
+                        </a>
+                        <a href="{% url 'public_about' %}" class="nav-link {% if request.resolver_match.url_name == 'public_about' %}active{% endif %}">
+                            <i class="fas fa-info-circle mr-2"></i>About
+                        </a>
+                        <a href="{% url 'public_admissions' %}" class="nav-link {% if request.resolver_match.url_name == 'public_admissions' %}active{% endif %}">
+                            <i class="fas fa-graduation-cap mr-2"></i>Admissions
+                        </a>
+                        <a href="{% url 'public_contact' %}" class="nav-link {% if request.resolver_match.url_name == 'public_contact' %}active{% endif %}">
+                            <i class="fas fa-phone mr-2"></i>Contact
+                        </a>
+                        
+                        <!-- Authenticated User Navigation -->
                         {% if user.is_authenticated %}
-                            {% if is_student %}
-                                <a href="{% url 'student_dashboard' %}" class="nav-link">
-                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                            <div class="border-l border-gray-300 ml-2 pl-2">
+                                {% if user.role == 'student' %}
+                                    <a href="{% url 'student_dashboard' %}" class="nav-link">
+                                        <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                                    </a>
+                                {% elif user.role == 'teacher' %}
+                                    <a href="{% url 'teacher_dashboard' %}" class="nav-link">
+                                        <i class="fas fa-chalkboard-teacher mr-2"></i>Teacher Dashboard
+                                    </a>
+                                {% elif user.role == 'headmaster' %}
+                                    <a href="{% url 'headmaster_dashboard' %}" class="nav-link">
+                                        <i class="fas fa-user-tie mr-2"></i>Headmaster
+                                    </a>
+                                {% elif user.role == 'admin' %}
+                                    <a href="{% url 'admin_dashboard' %}" class="nav-link">
+                                        <i class="fas fa-cog mr-2"></i>Admin
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Login/Signup for non-authenticated users -->
+                        {% if not user.is_authenticated %}
+                            <div class="border-l border-gray-300 ml-2 pl-2">
+                                <a href="{% url 'login' %}" class="nav-link">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Login
                                 </a>
-                                <a href="{% url 'view_timetable' %}" class="nav-link">
-                                    <i class="fas fa-calendar-alt mr-2"></i>Timetable
+                                <a href="{% url 'public_register' %}" class="nav-link bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                    <i class="fas fa-user-plus mr-2"></i>Sign Up
                                 </a>
-                                <a href="{% url 'gradebook_view' %}" class="nav-link">
-                                    <i class="fas fa-book mr-2"></i>Grades
-                                </a>
-                            {% elif is_faculty %}
-                                <a href="{% url 'faculty_dashboard' %}" class="nav-link">
-                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-                                </a>
-                                <a href="{% url 'attendance_list' %}" class="nav-link">
-                                    <i class="fas fa-clipboard-check mr-2"></i>Attendance
-                                </a>
-                                <a href="{% url 'grade_list' %}" class="nav-link">
-                                    <i class="fas fa-book mr-2"></i>Grades
-                                </a>
-                            {% elif is_admin %}
-                                <a href="{% url 'admin_dashboard' %}" class="nav-link">
-                                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-                                </a>
-                                <div class="relative group">
-                                    <button class="nav-link flex items-center">
-                                        <i class="fas fa-users-cog mr-2"></i>Management
-                                        <i class="fas fa-chevron-down ml-1 text-xs"></i>
-                                    </button>
-                                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                                        <a href="{% url 'user_management' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-t-xl">
-                                            <i class="fas fa-users mr-2"></i>User Management
-                                        </a>
-                                        <a href="{% url 'course_management' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600">
-                                            <i class="fas fa-book mr-2"></i>Course Management
-                                        </a>
-                                        <a href="{% url 'enrollment_list' %}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-b-xl">
-                                            <i class="fas fa-user-graduate mr-2"></i>Enrollments
-                                        </a>
-                                    </div>
-                                </div>
-                                <a href="{% url 'reports' %}" class="nav-link">
-                                    <i class="fas fa-chart-bar mr-2"></i>Reports
-                                </a>
-                            {% endif %}
+                            </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <!-- User Menu -->
-                <div class="flex items-center space-x-4">
-                    {% if user.is_authenticated %}
-                        <!-- Notifications -->
-                        <div class="relative">
-                            <button class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200">
-                                <i class="fas fa-bell text-lg"></i>
-                                {% if unread_messages_count %}
-                                <span class="absolute top-0 right-0 w-3 h-3 bg-danger-500 rounded-full animate-pulse"></span>
-                                {% endif %}
-                            </button>
-                        </div>
-
-                        <!-- User Dropdown -->
-                        <div class="relative group">
-                            <button class="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-50 transition-colors duration-200">
-                                <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-user text-white text-sm"></i>
+                <!-- Right side buttons -->
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        {% if user.is_authenticated %}
+                            <!-- User Menu -->
+                            <div class="relative">
+                                <button onclick="toggleUserMenu()" class="flex items-center space-x-3 text-gray-700 hover:text-primary-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200">
+                                    <div class="w-8 h-8 bg-gradient-to-r from-primary-400 to-accent-400 rounded-full flex items-center justify-center">
+                                        <span class="text-white font-semibold text-sm">{{ user.first_name.0|default:user.username.0|upper }}</span>
+                                    </div>
+                                    <span class="font-medium">{{ user.get_full_name|default:user.username }}</span>
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </button>
+                                
+                                <!-- User Dropdown Menu -->
+                                <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden">
+                                    <div class="px-4 py-3 border-b border-gray-100">
+                                        <p class="text-sm font-semibold text-gray-900">{{ user.get_full_name|default:user.username }}</p>
+                                        <p class="text-xs text-gray-500">{{ user.email }}</p>
+                                        <p class="text-xs text-primary-600 font-medium">{{ user.get_role_display_name }}</p>
+                                    </div>
+                                    <div class="py-2">
+                                        <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                            <i class="fas fa-user mr-2"></i>Profile
+                                        </a>
+                                        <a href="{% url 'inbox' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                            <i class="fas fa-envelope mr-2"></i>Messages
+                                        </a>
+                                        <a href="{% url 'dashboard' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                                            <i class="fas fa-cog mr-2"></i>Settings
+                                        </a>
+                                    </div>
+                                    <div class="border-t border-gray-100 py-2">
+                                        <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200">
+                                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                        </a>
+                                    </div>
                                 </div>
-                                <span class="hidden md:block text-sm font-medium text-gray-700">{{ user.get_full_name|default:user.username }}</span>
-                                <i class="fas fa-chevron-down text-xs text-gray-500"></i>
-                            </button>
-                            <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                                <a href="{% url 'profile' %}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-t-xl">
-                                    <i class="fas fa-user mr-3"></i>Profile
-                                </a>
-                                <a href="{% url 'inbox' %}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-600">
-                                    <i class="fas fa-inbox mr-3"></i>Messages
-                                    {% if unread_messages_count %}
-                                    <span class="ml-auto bg-danger-500 text-white text-xs px-2 py-1 rounded-full">{{ unread_messages_count }}</span>
-                                    {% endif %}
-                                </a>
-                                <div class="border-t border-gray-100"></div>
-                                <a href="{% url 'logout' %}" class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-xl">
-                                    <i class="fas fa-sign-out-alt mr-3"></i>Logout
-                                </a>
                             </div>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn-outline">
-                            <i class="fas fa-sign-in-alt mr-2"></i>Login
-                        </a>
-                        <a href="{% url 'register' %}" class="btn-primary">
-                            <i class="fas fa-user-plus mr-2"></i>Register
-                        </a>
-                    {% endif %}
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn-outline">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Login
+                            </a>
+                            <a href="{% url 'register' %}" class="btn-primary">
+                                <i class="fas fa-user-plus mr-2"></i>Register
+                            </a>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <!-- Mobile menu button -->
                 <div class="md:hidden">
-                    <button type="button" class="p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200" onclick="toggleMobileMenu()">
-                        <i class="fas fa-bars text-lg"></i>
+                    <button onclick="toggleMobileMenu()" class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-50 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Navigation -->
+        <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
             <div class="px-2 pt-2 pb-3 space-y-1">
+                <!-- Public Links -->
+                <a href="{% url 'public_home' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'public_home' %}active{% endif %}">
+                    <i class="fas fa-home mr-3"></i>Home
+                </a>
+                <a href="{% url 'public_courses' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'public_courses' %}active{% endif %}">
+                    <i class="fas fa-book mr-3"></i>Courses
+                </a>
+                <a href="{% url 'public_about' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'public_about' %}active{% endif %}">
+                    <i class="fas fa-info-circle mr-3"></i>About
+                </a>
+                <a href="{% url 'public_admissions' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'public_admissions' %}active{% endif %}">
+                    <i class="fas fa-graduation-cap mr-3"></i>Admissions
+                </a>
+                <a href="{% url 'public_contact' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'public_contact' %}active{% endif %}">
+                    <i class="fas fa-phone mr-3"></i>Contact
+                </a>
+                
                 {% if user.is_authenticated %}
-                    {% if is_student %}
-                        <a href="{% url 'student_dashboard' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                    <div class="border-t border-gray-200 pt-2 mt-2">
+                        {% if is_student %}
+                            <a href="{% url 'student_dashboard' %}" class="mobile-nav-link">
+                                <i class="fas fa-tachometer-alt mr-3"></i>Student Dashboard
+                            </a>
+                        {% elif is_faculty %}
+                            <a href="{% url 'faculty_dashboard' %}" class="mobile-nav-link">
+                                <i class="fas fa-chalkboard-teacher mr-3"></i>Faculty Dashboard
+                            </a>
+                        {% elif is_admin %}
+                            <a href="{% url 'admin_dashboard' %}" class="mobile-nav-link">
+                                <i class="fas fa-cog mr-3"></i>Admin Dashboard
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'profile' %}" class="mobile-nav-link">
+                            <i class="fas fa-user mr-3"></i>Profile
                         </a>
-                        <a href="{% url 'view_timetable' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-calendar-alt mr-2"></i>Timetable
+                        <a href="{% url 'inbox' %}" class="mobile-nav-link">
+                            <i class="fas fa-envelope mr-3"></i>Messages
                         </a>
-                        <a href="{% url 'gradebook_view' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-book mr-2"></i>Grades
+                        <a href="{% url 'logout' %}" class="mobile-nav-link text-red-600">
+                            <i class="fas fa-sign-out-alt mr-3"></i>Logout
                         </a>
-                    {% elif is_faculty %}
-                        <a href="{% url 'faculty_dashboard' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                    </div>
+                {% else %}
+                    <div class="border-t border-gray-200 pt-2 mt-2 space-y-1">
+                        <a href="{% url 'login' %}" class="mobile-nav-link">
+                            <i class="fas fa-sign-in-alt mr-3"></i>Login
                         </a>
-                        <a href="{% url 'attendance_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-clipboard-check mr-2"></i>Attendance
+                        <a href="{% url 'register' %}" class="mobile-nav-link">
+                            <i class="fas fa-user-plus mr-3"></i>Register
                         </a>
-                        <a href="{% url 'grade_list' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-book mr-2"></i>Grades
-                        </a>
-                    {% elif is_admin %}
-                        <a href="{% url 'admin_dashboard' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
-                        </a>
-                        <a href="{% url 'user_management' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-users-cog mr-2"></i>User Management
-                        </a>
-                        <a href="{% url 'course_management' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-book mr-2"></i>Course Management
-                        </a>
-                        <a href="{% url 'reports' %}" class="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50">
-                            <i class="fas fa-chart-bar mr-2"></i>Reports
-                        </a>
-                    {% endif %}
+                    </div>
                 {% endif %}
             </div>
         </div>
     </nav>
-    
+
     <!-- Main Content -->
-    <main class="flex-1">
-        <!-- Breadcrumbs -->
-        {% block breadcrumbs %}
-        <nav class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-                <ol class="flex items-center space-x-2 text-sm text-gray-500">
-                    <li>
-                        <a href="{% url 'dashboard' %}" class="hover:text-primary-600 transition-colors duration-200">
-                            <i class="fas fa-home mr-1"></i>Home
-                        </a>
-                    </li>
-                    {% block breadcrumb_items %}
-                    <li class="flex items-center">
-                        <i class="fas fa-chevron-right mx-2 text-gray-400"></i>
-                        <span class="text-gray-700">{{ title|default:"Dashboard" }}</span>
-                    </li>
-                    {% endblock %}
-                </ol>
-            </div>
-        </nav>
-        {% endblock %}
-        
-        <!-- Messages -->
-        {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="space-y-3">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} animate-fade-in-up flex items-center justify-between">
-                    <div class="flex items-center">
-                        <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %} mr-3"></i>
-                        <span>{{ message }}</span>
-                    </div>
-                    <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200" onclick="this.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-        
-        <!-- Page Header -->
-        {% block page_header %}
-        <div class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900">{% block page_title %}{{ title|default:"Dashboard" }}{% endblock %}</h1>
-                        {% if page_description %}
-                        <p class="mt-2 text-gray-600">{{ page_description }}</p>
-                        {% endif %}
-                    </div>
-                    {% block page_actions %}
-                    {% endblock %}
-                </div>
-            </div>
-        </div>
-        {% endblock %}
-        
-        <!-- Main Content Block -->
-        {% block content %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="bg-white rounded-2xl shadow-medium p-8">
-                <h2 class="text-2xl font-semibold text-gray-900 mb-4">Welcome to the Dashboard</h2>
-                <p class="text-gray-600">Select an option from the navigation menu to get started.</p>
-            </div>
-        </div>
-        {% endblock %}
-    </main>
-    
+    {% block content %}{% endblock %}
+
     <!-- Footer -->
-    <footer class="bg-gradient-to-r from-dark-800 to-dark-900 text-white">
+    <footer class="bg-gray-900 text-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- School Info -->
-                <div class="col-span-1 md:col-span-2">
+                <div>
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
-                            <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
                         </div>
-                        <span class="text-xl font-display font-bold text-gradient-primary">School Management System</span>
+                        <span class="text-xl font-display font-bold">SchoolMS</span>
                     </div>
-                    <p class="text-gray-300 leading-relaxed">
-                        A comprehensive solution for educational institutions, providing modern tools for administration, teaching, and learning.
+                    <p class="text-gray-400">
+                        Providing quality education and fostering excellence since 1965.
                     </p>
-                    <div class="flex space-x-4 mt-6">
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'public_home' %}" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="{% url 'public_courses' %}" class="text-gray-400 hover:text-white transition-colors">Courses</a></li>
+                        <li><a href="{% url 'public_admissions' %}" class="text-gray-400 hover:text-white transition-colors">Admissions</a></li>
+                        <li><a href="{% url 'public_contact' %}" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Student Portal</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Library</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Calendar</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Connect</h3>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center hover:bg-white/20 transition-colors duration-200">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
                     </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">About Us</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Contact</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Privacy Policy</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Terms of Service</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Contact Info -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
-                    <ul class="space-y-3">
-                        <li class="flex items-center text-gray-300">
-                            <i class="fas fa-envelope mr-3 text-primary-400"></i>
-                            info@schoolmanagement.com
-                        </li>
-                        <li class="flex items-center text-gray-300">
-                            <i class="fas fa-phone mr-3 text-primary-400"></i>
-                            +1 (555) 123-4567
-                        </li>
-                        <li class="flex items-center text-gray-300">
-                            <i class="fas fa-map-marker-alt mr-3 text-primary-400"></i>
-                            123 Education Street, Learning City
-                        </li>
-                    </ul>
+                    <p class="text-gray-400">
+                        <i class="fas fa-envelope mr-2"></i>info@school.edu
+                    </p>
+                    <p class="text-gray-400">
+                        <i class="fas fa-phone mr-2"></i>+1 (555) 123-4567
+                    </p>
                 </div>
             </div>
             
-            <div class="border-t border-gray-700 mt-8 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-400 text-sm">
-                        © {% now "Y" %} School Management System. All rights reserved.
-                    </p>
-                    <div class="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Privacy</a>
-                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Terms</a>
-                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors duration-200">Support</a>
-                    </div>
-                </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 School Management System. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <!-- Navigation CSS -->
+    <style>
+    .nav-link {
+        @apply text-gray-700 hover:text-primary-600 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50;
+    }
     
-    <!-- JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="{% static 'js/modern-scripts.js' %}"></script>
+    .nav-link.active {
+        @apply text-primary-600 bg-primary-50;
+    }
     
-    <!-- Current User Data for JavaScript -->
+    .mobile-nav-link {
+        @apply text-gray-700 hover:text-primary-600 hover:bg-gray-50 block px-3 py-2 rounded-lg text-base font-medium transition-all duration-200;
+    }
+    
+    .mobile-nav-link.active {
+        @apply text-primary-600 bg-primary-50;
+    }
+    
+    .btn-primary {
+        @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-4 py-2 rounded-lg shadow-medium hover:shadow-large transition-all duration-300;
+    }
+    
+    .btn-outline {
+        @apply border-2 border-gray-300 text-gray-700 font-medium px-4 py-2 rounded-lg hover:border-primary-500 hover:text-primary-600 transition-all duration-300;
+    }
+    </style>
+
+    <!-- Navigation JavaScript -->
     <script>
-        window.currentUser = {
-            id: {{ user.id|default:'null' }},
-            username: "{{ user.username|default:'' }}",
-            fullName: "{{ user.get_full_name|default:'' }}",
-            isStudent: {% if user.is_student %}true{% else %}false{% endif %},
-            isFaculty: {% if user.is_faculty %}true{% else %}false{% endif %},
-            isAdmin: {% if user.is_admin %}true{% else %}false{% endif %}
-        };
-
-        // Mobile menu toggle
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobileMenu');
-            const menuButton = event.target.closest('button[onclick="toggleMobileMenu()"]');
-            
-            if (!menu.contains(event.target) && !menuButton) {
+    function toggleUserMenu() {
+        const menu = document.getElementById('userMenu');
+        menu.classList.toggle('hidden');
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function closeMenu(e) {
+            if (!e.target.closest('#userMenu') && !e.target.closest('button[onclick="toggleUserMenu()"]')) {
                 menu.classList.add('hidden');
+                document.removeEventListener('click', closeMenu);
             }
         });
-    </script>
+    }
     
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        menu.classList.toggle('hidden');
+    }
+    
+    // Close mobile menu when clicking on a link
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                document.getElementById('mobileMenu').classList.add('hidden');
+            });
+        });
+    });
+    </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

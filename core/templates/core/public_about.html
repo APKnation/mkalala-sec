@@ -1,0 +1,477 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-br from-primary-600 via-accent-600 to-secondary-700 text-white overflow-hidden">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute inset-0">
+            <div class="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-display font-bold mb-6">
+                    About Our Institution
+                </h1>
+                <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                    Learn about our rich history, mission, and commitment to excellence in education.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="group">
+                    <div class="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-bullseye text-2xl text-primary-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        To provide transformative education that empowers students to become innovative leaders, critical thinkers, and responsible global citizens. We are committed to fostering an inclusive learning environment that promotes academic excellence, research, and community engagement.
+                    </p>
+                </div>
+                
+                <div class="group">
+                    <div class="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-eye text-2xl text-success-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Our Vision</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        To be a globally recognized institution of excellence, known for our innovative teaching methods, cutting-edge research, and the success of our graduates. We aspire to shape the future by addressing society's challenges through education, discovery, and service.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History Section -->
+    <section class="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                    Our History
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    From humble beginnings to becoming a leading institution of higher learning.
+                </p>
+            </div>
+            
+            <div class="relative">
+                <!-- Timeline -->
+                <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-primary-200 to-accent-200"></div>
+                
+                <div class="space-y-12">
+                    <div class="flex items-center">
+                        <div class="flex-1 text-right pr-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-medium hover:shadow-2xl transition-all duration-300">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">1965 - Foundation</h3>
+                                <p class="text-gray-600">
+                                    Established with a vision to provide quality education to the local community. Started with just 50 students and 5 faculty members.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-bold z-10">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <div class="flex-1 pl-8"></div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex-1 pr-8"></div>
+                        <div class="w-12 h-12 bg-success-600 rounded-full flex items-center justify-center text-white font-bold z-10">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="flex-1 text-left pl-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-medium hover:shadow-2xl transition-all duration-300">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">1985 - First Graduation</h3>
+                                <p class="text-gray-600">
+                                    Celebrated our first graduating class of 25 students. Marked the beginning of our tradition of academic excellence.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex-1 text-right pr-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-medium hover:shadow-2xl transition-all duration-300">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">1995 - Expansion</h3>
+                                <p class="text-gray-600">
+                                    Added new departments and research facilities. Student enrollment grew to 500 with 50 faculty members.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-warning-600 rounded-full flex items-center justify-center text-white font-bold z-10">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="flex-1 pl-8"></div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex-1 pr-8"></div>
+                        <div class="w-12 h-12 bg-secondary-600 rounded-full flex items-center justify-center text-white font-bold z-10">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="flex-1 text-left pl-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-medium hover:shadow-2xl transition-all duration-300">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">2010 - Modernization</h3>
+                                <p class="text-gray-600">
+                                    Launched modern facilities, technology integration, and international partnerships. Became a recognized research institution.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="flex-1 text-right pr-8">
+                            <div class="bg-white p-6 rounded-2xl shadow-medium hover:shadow-2xl transition-all duration-300">
+                                <h3 class="text-xl font-bold text-gray-900 mb-2">2024 - Present</h3>
+                                <p class="text-gray-600">
+                                    Now serving 2,500+ students with 150+ faculty members. Offering 50+ programs across multiple disciplines with global recognition.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 bg-accent-600 rounded-full flex items-center justify-center text-white font-bold z-10">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="flex-1 pl-8"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                    Our Core Values
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    The principles that guide everything we do.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-accent-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-lightbulb text-3xl text-primary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Innovation</h3>
+                    <p class="text-gray-600">
+                        Embracing creativity and new ideas to solve complex challenges and advance knowledge.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-success-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-handshake text-3xl text-success-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Integrity</h3>
+                    <p class="text-gray-600">
+                        Upholding the highest ethical standards in all our actions and decisions.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-warning-100 to-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users text-3xl text-warning-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Inclusivity</h3>
+                    <p class="text-gray-600">
+                        Creating a welcoming environment where diversity is celebrated and everyone belongs.
+                    </p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-secondary-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-award text-3xl text-secondary-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Excellence</h3>
+                    <p class="text-gray-600">
+                        Striving for the highest quality in teaching, research, and student experience.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership Section -->
+    <section class="py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                    Leadership Team
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Meet the dedicated individuals guiding our institution toward excellence.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl shadow-medium overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-primary-400 to-accent-500 relative">
+                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute bottom-4 left-4 text-white">
+                            <h3 class="text-xl font-bold">Dr. Sarah Johnson</h3>
+                            <p class="text-blue-100">Chancellor</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">
+                            Leading our institution with over 20 years of experience in higher education and a passion for student success.
+                        </p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-primary-600 hover:text-primary-700">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            <a href="#" class="text-primary-600 hover:text-primary-700">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-medium overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-success-400 to-emerald-500 relative">
+                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute bottom-4 left-4 text-white">
+                            <h3 class="text-xl font-bold">Dr. Michael Chen</h3>
+                            <p class="text-green-100">Vice Chancellor</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">
+                            Overseeing academic affairs and research initiatives with a focus on innovation and global partnerships.
+                        </p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-success-600 hover:text-success-700">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            <a href="#" class="text-success-600 hover:text-success-700">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-medium overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                    <div class="h-64 bg-gradient-to-br from-warning-400 to-amber-500 relative">
+                        <div class="absolute inset-0 bg-black/20"></div>
+                        <div class="absolute bottom-4 left-4 text-white">
+                            <h3 class="text-xl font-bold">Dr. Emily Rodriguez</h3>
+                            <p class="text-yellow-100">Dean of Students</p>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-600 mb-4">
+                            Dedicated to creating an exceptional student experience and fostering a vibrant campus community.
+                        </p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="text-warning-600 hover:text-warning-700">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            <a href="#" class="text-warning-600 hover:text-warning-700">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campus Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                    Our Campus
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    A beautiful, modern campus designed for learning, collaboration, and growth.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-building text-primary-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Modern Facilities</h3>
+                            <p class="text-gray-600">
+                                State-of-the-art classrooms, laboratories, libraries, and recreational spaces designed for optimal learning.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-wifi text-success-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Technology Integration</h3>
+                            <p class="text-gray-600">
+                                High-speed internet, smart classrooms, and advanced computing resources throughout the campus.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-dumbbell text-warning-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Sports & Recreation</h3>
+                            <p class="text-gray-600">
+                                Comprehensive sports facilities, gymnasium, swimming pool, and outdoor recreational areas.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-utensils text-secondary-600"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Dining Options</h3>
+                            <p class="text-gray-600">
+                                Multiple dining halls, cafes, and food courts offering diverse culinary options.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl p-8 h-96 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-map-marked-alt text-6xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600">Interactive Campus Map</p>
+                        <p class="text-sm text-gray-500 mt-2">Explore our beautiful 100-acre campus</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-br from-primary-600 to-accent-600 text-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-display font-bold mb-6">
+                Join Our Community
+            </h2>
+            <p class="text-xl mb-8 text-blue-100">
+                Become part of a vibrant academic community dedicated to excellence and innovation.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'public_admissions' %}" class="btn-primary bg-white text-primary-600 hover:bg-gray-100">
+                    <i class="fas fa-rocket mr-2"></i>Apply Now
+                </a>
+                <a href="{% url 'public_contact' %}" class="btn-outline border-white text-white hover:bg-white hover:text-primary-600">
+                    <i class="fas fa-phone mr-2"></i>Schedule a Visit
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.btn-primary {
+    background: linear-gradient(to right, #3b82f6, #2563eb);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #2563eb, #1d4ed8);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    border: 2px solid white;
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background: white;
+    color: #3b82f6;
+}
+
+.shadow-medium {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-2xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+}
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Add animation to timeline items when they come into view
+    const timelineItems = document.querySelectorAll('.flex.items-center');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '0';
+                entry.target.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    entry.target.style.transition = 'all 0.6s ease-out';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, 100);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    
+    timelineItems.forEach(item => observer.observe(item));
+});
+</script>
+{% endblock extra_js %}

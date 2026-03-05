@@ -1,91 +1,207 @@
 {% extends 'core/base.html' %}
+
 {% block content %}
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header Section -->
+        <!-- Page Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-                <h1 class="text-3xl font-display font-bold text-gray-900 mb-2">Course Catalog</h1>
-                <p class="text-gray-600">Browse and manage all available courses</p>
+                <h1 class="text-3xl font-display font-bold text-gray-900 mb-2">Course Management</h1>
+                <p class="text-gray-600">Manage and view all courses in the system</p>
             </div>
-            <a href="{% url 'course_create' %}" class="btn-primary hover-lift">
-                <i class="fas fa-plus mr-2"></i>Add New Course
-            </a>
+            {% if request.user.is_admin or request.user.is_faculty %}
+            <div class="flex space-x-3">
+                <button onclick="exportCourses()" class="btn-secondary">
+                    <i class="fas fa-download mr-2"></i>Export
+                </button>
+                <a href="{% url 'course_create' %}" class="btn-primary">
+                    <i class="fas fa-plus mr-2"></i>Add Course
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="dashboard-card dashboard-card-primary">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-book text-primary-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Total Courses</h5>
+                </div>
+                <p class="text-2xl font-bold text-primary-600">{{ total_courses }}</p>
+            </div>
+            
+            <div class="dashboard-card dashboard-card-success">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-circle text-success-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Active Courses</h5>
+                </div>
+                <p class="text-2xl font-bold text-success-600">{{ active_courses }}</p>
+            </div>
+            
+            <div class="dashboard-card dashboard-card-warning">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-warning-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-warning-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Total Enrollments</h5>
+                </div>
+                <p class="text-2xl font-bold text-warning-600">{{ total_enrollments }}</p>
+            </div>
+            
+            <div class="dashboard-card dashboard-card-secondary">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 bg-secondary-100 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-building text-secondary-600"></i>
+                    </div>
+                    <h5 class="ml-3 font-medium text-gray-900">Departments</h5>
+                </div>
+                <p class="text-2xl font-bold text-secondary-600">{{ departments.count }}</p>
+            </div>
         </div>
 
         <!-- Search and Filter Section -->
         <div class="bg-white rounded-2xl shadow-medium p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="relative">
-                    <input type="text" placeholder="Search courses..." class="form-input pl-12">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            <div class="flex flex-col lg:flex-row gap-4">
+                <div class="flex-1">
+                    <div class="relative">
+                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" 
+                               id="searchInput" 
+                               placeholder="Search courses by name, code, or instructor..." 
+                               class="form-input pl-12"
+                               onkeyup="filterCourses()">
+                    </div>
                 </div>
-                <select class="form-input">
-                    <option value="">All Departments</option>
-                    <option value="cs">Computer Science</option>
-                    <option value="ee">Electrical Engineering</option>
-                    <option value="me">Mechanical Engineering</option>
-                </select>
-                <select class="form-input">
-                    <option value="">All Credit Levels</option>
-                    <option value="1">1 Credit</option>
-                    <option value="2">2 Credits</option>
-                    <option value="3">3 Credits</option>
-                    <option value="4">4 Credits</option>
-                </select>
+                <div class="flex space-x-3">
+                    <select id="departmentFilter" class="form-input" onchange="filterCourses()">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="statusFilter" class="form-input" onchange="filterCourses()">
+                        <option value="">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <button onclick="resetFilters()" class="btn-outline">
+                        <i class="fas fa-redo mr-2"></i>Reset
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Courses Table -->
         <div class="bg-white rounded-2xl shadow-medium overflow-hidden">
+            <div class="bg-gradient-to-r from-accent-500 to-accent-600 px-6 py-4 text-white">
+                <h2 class="text-xl font-bold flex items-center">
+                    <i class="fas fa-graduation-cap mr-2"></i>Courses List
+                    <span class="ml-auto bg-white/20 px-3 py-1 rounded-full text-sm">
+                        {{ courses.count }} courses
+                    </span>
+                </h2>
+            </div>
+            
             <div class="overflow-x-auto">
-                <table class="table-modern">
+                <table class="table-modern" id="coursesTable">
                     <thead>
                         <tr>
-                            <th class="text-left">Course Name</th>
-                            <th class="text-left">Code</th>
+                            <th class="text-left cursor-pointer" onclick="sortTable('code')">
+                                Course Code <i class="fas fa-sort text-gray-400"></i>
+                            </th>
+                            <th class="text-left cursor-pointer" onclick="sortTable('name')">
+                                Course Name <i class="fas fa-sort text-gray-400"></i>
+                            </th>
                             <th class="text-left">Department</th>
-                            <th class="text-left">Syllabus</th>
                             <th class="text-left">Credits</th>
+                            <th class="text-left">Enrolled</th>
+                            <th class="text-left">Status</th>
                             <th class="text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for course in courses %}
-                        <tr class="hover:bg-gray-50 transition-colors duration-200">
-                            <td class="font-semibold text-gray-900">{{ course.name }}</td>
-                            <td class="text-gray-600">
+                        <tr class="course-row animate-fade-in-up" 
+                            data-course-id="{{ course.id }}"
+                            data-course-name="{{ course.name|lower }}"
+                            data-course-code="{{ course.code|lower }}"
+                            data-department-id="{{ course.department.id }}"
+                            data-status="{% if course.is_active %}active{% else %}inactive{% endif %}">
+                            <td class="font-medium text-gray-900">
                                 <span class="badge badge-primary">{{ course.code }}</span>
                             </td>
-                            <td class="text-gray-600">{{ course.department.name }}</td>
-                            <td class="text-gray-600">
-                                <a href="{{ course.syllabus.url }}" class="text-primary-600 hover:text-primary-700" target="_blank">
-                                    <i class="fas fa-file-pdf mr-1"></i>View
-                                </a>
+                            <td class="text-gray-700">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-accent-100 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-book-open text-accent-600 text-xs"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">{{ course.name }}</p>
+                                        {% if course.description %}
+                                        <p class="text-xs text-gray-500">{{ course.description|truncatewords:10 }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </td>
                             <td class="text-gray-600">
-                                <span class="badge badge-secondary">{{ course.credits }} Credits</span>
+                                <span class="badge badge-secondary">{{ course.department.name }}</span>
+                            </td>
+                            <td class="text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock text-gray-400 mr-2"></i>
+                                    {{ course.credits }}
+                                </div>
+                            </td>
+                            <td class="text-gray-600">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-graduate text-gray-400 mr-2"></i>
+                                    {{ course.enrollment_set.count }}
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-badge {% if course.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if course.is_active %}
+                                    <i class="fas fa-check-circle mr-1"></i>Active
+                                    {% else %}
+                                    <i class="fas fa-times-circle mr-1"></i>Inactive
+                                    {% endif %}
+                                </span>
                             </td>
                             <td class="text-right">
                                 <div class="flex justify-end space-x-2">
-                                    <a href="{% url 'course_update' course.pk %}" class="text-primary-600 hover:text-primary-700 p-2 rounded-lg hover:bg-primary-50 transition-colors duration-200" title="Edit">
+                                    <button onclick="viewCourseDetails({{ course.id }})" 
+                                            class="text-primary-600 hover:text-primary-700 p-2 rounded-lg hover:bg-primary-50 transition-colors duration-200" 
+                                            title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    {% if request.user.is_admin or request.user.is_faculty %}
+                                    <a href="{% url 'course_update' course.pk %}" 
+                                       class="text-warning-600 hover:text-warning-700 p-2 rounded-lg hover:bg-warning-50 transition-colors duration-200" 
+                                       title="Edit Course">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{% url 'course_detail' course.pk %}" class="text-secondary-600 hover:text-secondary-700 p-2 rounded-lg hover:bg-secondary-50 transition-colors duration-200" title="View">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a href="{% url 'course_delete' course.pk %}" class="text-danger-600 hover:text-danger-700 p-2 rounded-lg hover:bg-danger-50 transition-colors duration-200" title="Delete">
+                                    <button onclick="confirmDeleteCourse({{ course.id }}, '{{ course.name }}')" 
+                                            class="text-danger-600 hover:text-danger-700 p-2 rounded-lg hover:bg-danger-50 transition-colors duration-200" 
+                                            title="Delete Course">
                                         <i class="fas fa-trash"></i>
-                                    </a>
+                                    </button>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center py-12 text-gray-500">
-                                <i class="fas fa-inbox text-4xl mb-4 block text-gray-300"></i>
+                            <td colspan="7" class="text-center py-12 text-gray-500">
+                                <i class="fas fa-graduation-cap text-4xl mb-4 block text-gray-300"></i>
                                 <p class="text-lg font-medium">No courses found</p>
-                                <p class="text-sm">Get started by adding your first course.</p>
+                                <p class="text-sm">Try adjusting your filters or add new courses.</p>
                             </td>
                         </tr>
                         {% endfor %}
@@ -95,62 +211,90 @@
         </div>
 
         <!-- Pagination -->
-        {% if courses.has_other_pages %}
         <div class="mt-8 flex flex-col sm:flex-row justify-between items-center">
             <div class="text-sm text-gray-600 mb-4 sm:mb-0">
-                Showing <span class="font-semibold">{{ courses.start_index }}</span> to 
-                <span class="font-semibold">{{ courses.end_index }}</span> of 
-                <span class="font-semibold">{{ courses.paginator.count }}</span> results
+                Showing <span class="font-semibold" id="showingCount">0</span> of 
+                <span class="font-semibold">{{ courses.count }}</span> courses
             </div>
             
-            <nav class="flex space-x-2">
-                {% if courses.has_previous %}
-                    <a href="?page=1" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 transition-colors duration-200">
-                        <i class="fas fa-angle-double-left"></i>
-                    </a>
-                    <a href="?page={{ courses.previous_page_number }}" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
-                        <i class="fas fa-angle-left"></i>
-                    </a>
-                {% endif %}
-                
-                {% for num in courses.paginator.page_range %}
-                    {% if courses.number == num %}
-                    <span class="px-3 py-2 text-sm font-medium text-white bg-primary-600 border border-primary-600">
-                        {{ num }}
-                    </span>
-                    {% elif num > courses.number|add:'-3' and num < courses.number|add:'3' %}
-                    <a href="?page={{ num }}" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
-                        {{ num }}
-                    </a>
-                    {% endif %}
-                {% endfor %}
-                
-                {% if courses.has_next %}
-                    <a href="?page={{ courses.next_page_number }}" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors duration-200">
-                        <i class="fas fa-angle-right"></i>
-                    </a>
-                    <a href="?page={{ courses.paginator.num_pages }}" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 transition-colors duration-200">
-                        <i class="fas fa-angle-double-right"></i>
-                    </a>
-                {% endif %}
-            </nav>
+            <div class="flex space-x-2">
+                <button onclick="previousPage()" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-50 transition-colors duration-200">
+                    <i class="fas fa-angle-left"></i>
+                </button>
+                <button onclick="nextPage()" class="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-50 transition-colors duration-200">
+                    <i class="fas fa-angle-right"></i>
+                </button>
+            </div>
         </div>
-        {% endif %}
+    </div>
+</div>
+
+<!-- Course Details Modal -->
+<div id="courseModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-4xl mx-4 animate-fade-in-up max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-900">Course Details</h3>
+            <button onclick="closeCourseModal()" class="text-gray-400 hover:text-gray-600 transition-colors duration-200">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div id="courseModalContent">
+            <!-- Content will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-6 max-w-md mx-4 animate-fade-in-up">
+        <div class="text-center mb-4">
+            <div class="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-2xl text-danger-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Delete Course?</h3>
+            <p class="text-gray-600">Are you sure you want to delete "<span id="deleteCourseName"></span>"? This action cannot be undone.</p>
+        </div>
+        <div class="flex justify-center space-x-3">
+            <button onclick="closeDeleteModal()" class="btn-outline">Cancel</button>
+            <button onclick="deleteCourse()" class="btn-danger">
+                <i class="fas fa-trash mr-2"></i>Delete
+            </button>
+        </div>
     </div>
 </div>
 
 <style>
 /* Additional styles for this page */
+.form-input {
+    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-accent-500 focus:ring-2 focus:ring-accent-200 transition-all duration-300 bg-white;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
+.btn-secondary {
+    @apply bg-gradient-to-r from-secondary-500 to-secondary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
+.btn-outline {
+    @apply border-2 border-gray-300 text-gray-700 font-medium px-6 py-3 rounded-xl hover:border-primary-500 hover:text-primary-600 transition-all duration-300;
+}
+
+.btn-danger {
+    @apply bg-gradient-to-r from-danger-500 to-danger-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+}
+
 .table-modern {
     @apply w-full;
 }
 
 .table-modern thead {
-    @apply bg-gradient-to-r from-primary-50 to-primary-100;
+    @apply bg-gradient-to-r from-accent-50 to-accent-100;
 }
 
 .table-modern th {
-    @apply px-6 py-4 text-left text-xs font-semibold text-primary-700 uppercase tracking-wider;
+    @apply px-6 py-4 text-left text-xs font-semibold text-accent-700 uppercase tracking-wider;
 }
 
 .table-modern td {
@@ -161,12 +305,24 @@
     @apply bg-gray-50;
 }
 
-.form-input {
-    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-300 bg-white;
+.dashboard-card {
+    @apply bg-white rounded-2xl shadow-medium p-6 hover-lift transition-all duration-300;
 }
 
-.btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300;
+.dashboard-card-primary {
+    @apply border-l-4 border-primary-500;
+}
+
+.dashboard-card-success {
+    @apply border-l-4 border-success-500;
+}
+
+.dashboard-card-warning {
+    @apply border-l-4 border-warning-500;
+}
+
+.dashboard-card-secondary {
+    @apply border-l-4 border-secondary-500;
 }
 
 .badge {
@@ -180,5 +336,328 @@
 .badge-secondary {
     @apply bg-secondary-100 text-secondary-800;
 }
+
+.status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.status-active {
+    @apply bg-success-100 text-success-800;
+}
+
+.status-inactive {
+    @apply bg-gray-100 text-gray-800;
+}
+
+.course-row {
+    @apply transition-all duration-300;
+}
+
+.course-row:hover {
+    @apply transform translate-x-1;
+}
+
+/* Modal styles */
+.modal-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+    @apply bg-white rounded-2xl p-6 max-w-4xl mx-4 animate-fade-in-up;
+}
 </style>
+
 {% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+let currentCourseId = null;
+let currentPage = 1;
+let filteredCourses = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize filtered courses
+    filteredCourses = Array.from(document.querySelectorAll('.course-row'));
+    updateShowingCount();
+    
+    // Add hover effects to table rows
+    const tableRows = document.querySelectorAll('.course-row');
+    tableRows.forEach(row => {
+        row.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(4px)';
+        });
+        row.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+});
+
+function filterCourses() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const departmentFilter = document.getElementById('departmentFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    
+    filteredCourses = Array.from(document.querySelectorAll('.course-row')).filter(row => {
+        const courseName = row.dataset.courseName;
+        const courseCode = row.dataset.courseCode;
+        const departmentId = row.dataset.departmentId;
+        const status = row.dataset.status;
+        
+        const matchesSearch = courseName.includes(searchTerm) || courseCode.includes(searchTerm);
+        const matchesDepartment = !departmentFilter || departmentId === departmentFilter;
+        const matchesStatus = !statusFilter || status === statusFilter;
+        
+        return matchesSearch && matchesDepartment && matchesStatus;
+    });
+    
+    // Hide/show rows
+    document.querySelectorAll('.course-row').forEach(row => {
+        if (filteredCourses.includes(row)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    updateShowingCount();
+}
+
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('departmentFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    filterCourses();
+}
+
+function updateShowingCount() {
+    const visibleCount = document.querySelectorAll('.course-row:not([style*="display: none"])').length;
+    document.getElementById('showingCount').textContent = visibleCount;
+}
+
+function sortTable(column) {
+    const table = document.getElementById('coursesTable');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('.course-row'));
+    
+    rows.sort((a, b) => {
+        let aValue, bValue;
+        
+        if (column === 'code') {
+            aValue = a.dataset.courseCode;
+            bValue = b.dataset.courseCode;
+        } else if (column === 'name') {
+            aValue = a.dataset.courseName;
+            bValue = b.dataset.courseName;
+        }
+        
+        return aValue.localeCompare(bValue);
+    });
+    
+    // Reorder rows in DOM
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+function viewCourseDetails(courseId) {
+    currentCourseId = courseId;
+    const modal = document.getElementById('courseModal');
+    const content = document.getElementById('courseModalContent');
+    
+    // Show loading state
+    content.innerHTML = `
+        <div class="text-center py-8">
+            <div class="spinner spinner-lg mx-auto mb-4"></div>
+            <p class="text-gray-600">Loading course details...</p>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    
+    // Simulate API call - in real app, this would fetch data
+    setTimeout(() => {
+        content.innerHTML = `
+            <div class="space-y-6">
+                <div class="bg-gradient-to-r from-primary-50 to-accent-50 rounded-xl p-6">
+                    <h4 class="text-lg font-bold text-gray-900 mb-4">Course Information</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Course Code</p>
+                            <p class="font-semibold">CS101</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Credits</p>
+                            <p class="font-semibold">3</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Department</p>
+                            <p class="font-semibold">Computer Science</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Status</p>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-4">Description</h4>
+                    <p class="text-gray-700">Introduction to computer programming and problem solving. Students will learn fundamental programming concepts and develop problem-solving skills.</p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-4">Syllabus</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <ul class="space-y-2 text-gray-700">
+                            <li><i class="fas fa-check text-success-600 mr-2"></i>Introduction to Programming</li>
+                            <li><i class="fas fa-check text-success-600 mr-2"></i>Data Types and Variables</li>
+                            <li><i class="fas fa-check text-success-600 mr-2"></i>Control Structures</li>
+                            <li><i class="fas fa-check text-success-600 mr-2"></i>Functions and Methods</li>
+                            <li><i class="fas fa-check text-success-600 mr-2"></i>Object-Oriented Programming</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold text-gray-900 mb-4">Enrolled Students</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-2xl font-bold text-primary-600">45</p>
+                        <p class="text-gray-600">students currently enrolled</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }, 1000);
+}
+
+function closeCourseModal() {
+    const modal = document.getElementById('courseModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function confirmDeleteCourse(courseId, courseName) {
+    currentCourseId = courseId;
+    document.getElementById('deleteCourseName').textContent = courseName;
+    const modal = document.getElementById('deleteModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function deleteCourse() {
+    if (currentCourseId) {
+        // In a real application, this would make an AJAX call to delete the course
+        Swal.fire({
+            title: 'Deleting...',
+            text: 'Please wait while we delete the course.',
+            icon: 'info',
+            showConfirmButton: false,
+            timer: 2000
+        }).then(() => {
+            // Remove the course row from table
+            const courseRow = document.querySelector(`[data-course-id="${currentCourseId}"]`);
+            if (courseRow) {
+                courseRow.style.transition = 'all 0.3s ease';
+                courseRow.style.opacity = '0';
+                courseRow.style.transform = 'translateX(-100%)';
+                setTimeout(() => {
+                    courseRow.remove();
+                    updateShowingCount();
+                }, 300);
+            }
+            
+            closeDeleteModal();
+            
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Course has been deleted successfully.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        });
+    }
+}
+
+function exportCourses() {
+    Swal.fire({
+        title: 'Export Courses',
+        text: 'Choose export format:',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3b82f6',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Export as Excel',
+        showDenyButton: true,
+        denyButtonText: 'Export as PDF',
+        denyButtonColor: '#dc2626'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Exporting...',
+                text: 'Preparing Excel file...',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                Swal.fire({
+                    title: 'Export Complete!',
+                    text: 'Courses exported successfully as Excel file.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        } else if (result.isDenied) {
+            Swal.fire({
+                title: 'Exporting...',
+                text: 'Preparing PDF file...',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                Swal.fire({
+                    title: 'Export Complete!',
+                    text: 'Courses exported successfully as PDF file.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        }
+    });
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        // Implement pagination logic
+        console.log('Going to page:', currentPage);
+    }
+}
+
+function nextPage() {
+    // Implement pagination logic
+    currentPage++;
+    console.log('Going to page:', currentPage);
+}
+
+// Add spinner styles
+const style = document.createElement('style');
+style.textContent = `
+    .spinner {
+        @apply animate-spin rounded-full border-2 border-gray-200 border-t-primary-500;
+    }
+    .spinner-lg {
+        @apply w-12 h-12;
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock extra_js %}

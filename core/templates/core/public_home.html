@@ -1,0 +1,484 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-primary-600 via-accent-600 to-secondary-700 text-white overflow-hidden">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="absolute inset-0">
+        <div class="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-white/5 rounded-full blur-2xl"></div>
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-6xl font-display font-bold mb-6 animate-fade-in-up">
+                Welcome to Excellence in O-Level Education
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto animate-fade-in-up" style="animation-delay: 0.2s">
+                Nurturing young minds for Form 1-4 secondary education following Tanzanian curriculum standards.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style="animation-delay: 0.4s">
+                <a href="{% url 'public_courses' %}" class="btn-primary bg-white text-primary-600 hover:bg-gray-100">
+                    <i class="fas fa-book-open mr-2"></i>Explore Subjects
+                </a>
+                <a href="{% url 'public_admissions' %}" class="btn-outline border-white text-white hover:bg-white hover:text-primary-600">
+                    <i class="fas fa-school mr-2"></i>Apply for Form 1
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Stats Section -->
+<section class="py-16 bg-gradient-to-br from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="text-center group cursor-pointer">
+                <div class="w-20 h-20 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-users text-3xl text-primary-600"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-2">800+</h3>
+                <p class="text-gray-600">Students</p>
+            </div>
+            <div class="text-center group cursor-pointer">
+                <div class="w-20 h-20 bg-success-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-chalkboard-teacher text-3xl text-success-600"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-2">45+</h3>
+                <p class="text-gray-600">Qualified Teachers</p>
+            </div>
+            <div class="text-center group cursor-pointer">
+                <div class="w-20 h-20 bg-warning-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-graduation-cap text-3xl text-warning-600"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-2">95%</h3>
+                <p class="text-gray-600">NECTA Pass Rate</p>
+            </div>
+            <div class="text-center group cursor-pointer">
+                <div class="w-20 h-20 bg-secondary-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-trophy text-3xl text-secondary-600"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-2">15+</h3>
+                <p class="text-gray-600">Years of Excellence</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Academic Programs Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                O-Level Academic Programs
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Comprehensive Tanzanian curriculum preparing students for NECTA examinations.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="group bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-calculator text-2xl text-primary-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Sciences</h3>
+                <p class="text-gray-600 mb-6">
+                    Biology, Chemistry, Physics, and Mathematics for strong foundation in sciences.
+                </p>
+                <div class="flex items-center text-primary-600 font-semibold group-hover:text-primary-700">
+                    <span>Learn More</span>
+                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform duration-300"></i>
+                </div>
+            </div>
+            
+            <div class="group bg-gradient-to-br from-success-50 to-emerald-50 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-success-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-language text-2xl text-success-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Languages</h3>
+                <p class="text-gray-600 mb-6">
+                    Kiswahili, English Language, and Literature for communication excellence.
+                </p>
+                <div class="flex items-center text-success-600 font-semibold group-hover:text-success-700">
+                    <span>Learn More</span>
+                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform duration-300"></i>
+                </div>
+            </div>
+            
+            <div class="group bg-gradient-to-br from-warning-50 to-amber-50 rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-warning-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-globe-africa text-2xl text-warning-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Social Studies</h3>
+                <p class="text-gray-600 mb-6">
+                    History, Geography, Civics, and Entrepreneurship for holistic development.
+                </p>
+                <div class="flex items-center text-warning-600 font-semibold group-hover:text-warning-700">
+                    <span>Learn More</span>
+                    <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform duration-300"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="{% url 'public_courses' %}" class="btn-primary">
+                <i class="fas fa-list mr-2"></i>View All Subjects
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Form Levels Section -->
+<section class="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                Complete O-Level Journey
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Four years of comprehensive education preparing students for national examinations.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white rounded-2xl shadow-medium p-6 text-center hover:shadow-2xl transition-all duration-300">
+                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-primary-600">F1</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Form 1</h3>
+                <p class="text-gray-600 text-sm">Foundation building with core subjects and orientation to secondary education.</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-medium p-6 text-center hover:shadow-2xl transition-all duration-300">
+                <div class="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-success-600">F2</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Form 2</h3>
+                <p class="text-gray-600 text-sm">Subject specialization and preparation for Form 2 national examinations.</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-medium p-6 text-center hover:shadow-2xl transition-all duration-300">
+                <div class="w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-warning-600">F3</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Form 3</h3>
+                <p class="text-gray-600 text-sm">Advanced studies and preparation for mock examinations.</p>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-medium p-6 text-center hover:shadow-2xl transition-all duration-300">
+                <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="text-2xl font-bold text-secondary-600">F4</span>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Form 4</h3>
+                <p class="text-gray-600 text-sm">Final preparation for NECTA CSEE examinations.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- News & Events Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                Latest News & Events
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Stay updated with the latest happenings at our school.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <article class="bg-white rounded-2xl shadow-medium overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                <div class="h-48 bg-gradient-to-br from-primary-400 to-accent-500 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/20"></div>
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">Academic</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <time class="text-sm text-gray-500 mb-2">March 15, 2024</time>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
+                        Form 2 NECTA Examinations Begin
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        Our Form 2 students begin their national examinations with comprehensive preparation.
+                    </p>
+                    <a href="#" class="text-primary-600 font-semibold hover:text-primary-700">
+                        Read More <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </article>
+            
+            <article class="bg-white rounded-2xl shadow-medium overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                <div class="h-48 bg-gradient-to-br from-success-400 to-emerald-500 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/20"></div>
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">Event</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <time class="text-sm text-gray-500 mb-2">March 20, 2024</time>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-success-600 transition-colors duration-300">
+                        Form 1 Orientation Day
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        Welcome our new Form 1 students and parents to the school community.
+                    </p>
+                    <a href="#" class="text-success-600 font-semibold hover:text-success-700">
+                        Register Now <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </article>
+            
+            <article class="bg-white rounded-2xl shadow-medium overflow-hidden group hover:shadow-2xl transition-all duration-300">
+                <div class="h-48 bg-gradient-to-br from-warning-400 to-amber-500 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-black/20"></div>
+                    <div class="absolute bottom-4 left-4 text-white">
+                        <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">Achievement</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <time class="text-sm text-gray-500 mb-2">March 10, 2024</time>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-warning-600 transition-colors duration-300">
+                        Regional Science Competition Winners
+                    </h3>
+                    <p class="text-gray-600 mb-4">
+                        Our students excel in the regional science competition bringing home trophies.
+                    </p>
+                    <a href="#" class="text-warning-600 font-semibold hover:text-warning-700">
+                        Celebrate Success <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-4">
+                What Our Students Say
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Hear from our students about their experiences and achievements.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl p-8 relative">
+                <div class="absolute -top-4 -right-4 w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-quote-left text-2xl text-primary-600"></i>
+                </div>
+                <p class="text-gray-700 mb-6 italic">
+                    "This school has prepared me well for my NECTA examinations. The teachers are dedicated and the environment is perfect for learning."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-primary-200 rounded-full mr-4"></div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Amina Mohamed</h4>
+                        <p class="text-sm text-gray-600">Form 4 Student</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-success-50 to-emerald-50 rounded-2xl p-8 relative">
+                <div class="absolute -top-4 -right-4 w-16 h-16 bg-success-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-quote-left text-2xl text-success-600"></i>
+                </div>
+                <p class="text-gray-700 mb-6 italic">
+                    "The science laboratories are well-equipped and the practical lessons have helped me understand complex concepts easily."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-success-200 rounded-full mr-4"></div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Joseph Mwangi</h4>
+                        <p class="text-sm text-gray-600">Form 3 Student</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-warning-50 to-amber-50 rounded-2xl p-8 relative">
+                <div class="absolute -top-4 -right-4 w-16 h-16 bg-warning-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-quote-left text-2xl text-warning-600"></i>
+                </div>
+                <p class="text-gray-700 mb-6 italic">
+                    "The sports programs and extracurricular activities have helped me develop leadership skills and confidence."
+                </p>
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-warning-200 rounded-full mr-4"></div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900">Grace Ndlovu</h4>
+                        <p class="text-sm text-gray-600">Form 2 Student</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-br from-primary-600 to-accent-600 text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-display font-bold mb-6">
+            Ready to Join Our School?
+        </h2>
+        <p class="text-xl mb-8 text-blue-100">
+            Give your child the best O-Level education following Tanzanian curriculum standards.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'public_admissions' %}" class="btn-primary bg-white text-primary-600 hover:bg-gray-100">
+                <i class="fas fa-paper-plane mr-2"></i>Apply for Form 1
+            </a>
+            <a href="{% url 'public_contact' %}" class="btn-outline border-white text-white hover:bg-white hover:text-primary-600">
+                <i class="fas fa-phone mr-2"></i>Schedule Visit
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+.btn-primary {
+    background: linear-gradient(to right, #3b82f6, #2563eb);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #2563eb, #1d4ed8);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    border: 2px solid white;
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    background: transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background: white;
+    color: #3b82f6;
+}
+
+@keyframes fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out;
+}
+
+.shadow-medium {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-2xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.hover-lift:hover {
+    transform: translateY(-4px);
+}
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+    
+    // Add parallax effect to hero section
+    const heroSection = document.querySelector('section');
+    if (heroSection) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = heroSection.querySelector('.absolute');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    }
+    
+    // Add counter animation for stats
+    const stats = document.querySelectorAll('.text-3xl');
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const finalValue = target.textContent;
+                
+                if (finalValue.includes('+')) {
+                    animateCounter(target, parseInt(finalValue.replace('+', '')), '+');
+                } else if (finalValue.includes('%')) {
+                    animateCounter(target, parseInt(finalValue.replace('%', '')), '%');
+                }
+                
+                observer.unobserve(target);
+            }
+        });
+    }, observerOptions);
+    
+    stats.forEach(stat => observer.observe(stat));
+});
+
+function animateCounter(element, target, suffix = '') {
+    let current = 0;
+    const increment = target / 50;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current) + suffix;
+    }, 30);
+}
+</script>
+{% endblock extra_js %}

@@ -1,33 +1,310 @@
-{% extends './base.html' %}
+{% extends 'core/base.html' %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6">
-    <!-- Header Section -->
-<div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <!-- Title and Description -->
-        <div>
-            <h1 class="text-3xl font-extrabold text-gray-900 dark:text-white flex items-center">
-                <i class="fas fa-tachometer-alt text-indigo-600 dark:text-indigo-400 mr-3 text-2xl"></i>
-                Admin Dashboard
-            </h1>
-            <p class="text-gray-600 dark:text-gray-300 mt-2 text-sm md:text-base">
-                Overview and quick actions to manage the system efficiently.
-            </p>
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-green-600 to-green-700 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold">School Admin Dashboard</h1>
+                    <p class="text-green-100 mt-1">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="text-right">
+                        <p class="text-sm text-green-100">Role</p>
+                        <p class="font-semibold">{{ role }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-cog text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-users text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Total Users</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_users }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-user-graduate text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Students</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ students }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Teachers</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ teachers }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-user-clock text-orange-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Pending Registrations</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ pending_registrations }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Quick Actions Dropdown -->
-        <div class="relative">
-            <button id="quickActionsButton" class="flex items-center px-5 py-2.5 bg-green-500 hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-600 text-white text-sm font-medium rounded-lg shadow-md transition duration-150 focus:outline-none">
-                <i class="fas fa-cog mr-2"></i>
-                Quick Actions
-                <i class="fas fa-chevron-down ml-3 text-sm"></i>
-            </button>
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - System Overview -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- User Management Overview -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-900">User Management</h2>
+                        <a href="{% url 'user_management' %}" class="text-green-600 hover:text-green-700 text-sm font-medium">
+                            View All →
+                        </a>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-sm text-gray-600">Normal Users</span>
+                                        <span class="text-sm font-semibold text-gray-600">{{ total_users|add:"-"|add:students|add:teachers|add:pending_registrations }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-gray-600 h-2 rounded-full" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-sm text-gray-600">Students</span>
+                                        <span class="text-sm font-semibold text-blue-600">{{ students }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-sm text-gray-600">Teachers</span>
+                                        <span class="text-sm font-semibold text-purple-600">{{ teachers }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-purple-600 h-2 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-sm text-gray-600">Pending</span>
+                                        <span class="text-sm font-semibold text-orange-600">{{ pending_registrations }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-orange-600 h-2 rounded-full" style="width: 5%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Registrations</h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm text-gray-900">John Doe - Teacher</span>
+                                    <span class="text-xs text-gray-500">2 hours ago</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm text-gray-900">Jane Smith - Student</span>
+                                    <span class="text-xs text-gray-500">5 hours ago</span>
+                                </div>
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span class="text-sm text-gray-900">Mike Johnson - Normal</span>
+                                    <span class="text-xs text-gray-500">1 day ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div id="quickActionsMenu" class="hidden absolute right-0 mt-2 w-64 bg-green-500 dark:bg-blue-900 rounded-lg shadow-xl z-20 border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div class="py-2">
-                    <a href="{% url 'register' %}" class="flex items-center px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <i class="fas fa-user-plus mr-3 text-indigo-600 dark:text-indigo-400"></i> Add New Student
+                <!-- System Activity -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">System Activity</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                <i class="fas fa-user-plus text-green-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900">New user registration: teacher account created</p>
+                                <p class="text-xs text-gray-500">10 minutes ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                <i class="fas fa-user-check text-blue-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900">Student profile approved by headmaster</p>
+                                <p class="text-xs text-gray-500">1 hour ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                <i class="fas fa-cog text-purple-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900">System configuration updated</p>
+                                <p class="text-xs text-gray-500">3 hours ago</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                <i class="fas fa-database text-orange-600 text-xs"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900">Database backup completed successfully</p>
+                                <p class="text-xs text-gray-500">6 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Quick Actions & System Info -->
+            <div class="space-y-6">
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+                    
+                    <div class="space-y-3">
+                        <a href="{% url 'user_management' %}" class="block w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                            <i class="fas fa-users-cog mr-2"></i>Manage Users
+                        </a>
+                        <a href="{% url 'register_student' %}" class="block w-full text-left px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                            <i class="fas fa-user-plus mr-2"></i>Add Student
+                        </a>
+                        <a href="{% url 'faculty_register' %}" class="block w-full text-left px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                            <i class="fas fa-chalkboard-teacher mr-2"></i>Add Teacher
+                        </a>
+                        <a href="{% url 'system_logs' %}" class="block w-full text-left px-4 py-3 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors">
+                            <i class="fas fa-list-alt mr-2"></i>View System Logs
+                        </a>
+                        <a href="#" class="block w-full text-left px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
+                            <i class="fas fa-database mr-2"></i>Backup Database
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Pending Approvals -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">Pending Approvals</h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Staff Registrations</p>
+                                <p class="text-xs text-gray-600">Teachers, Headmasters, Admins</p>
+                            </div>
+                            <span class="bg-orange-200 text-orange-800 text-xs px-2 py-1 rounded-full">{{ pending_registrations }}</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Student Admissions</p>
+                                <p class="text-xs text-gray-600">Awaiting profile completion</p>
+                            </div>
+                            <span class="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full">8</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Information -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">System Information</h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">System Version</span>
+                            <span class="text-sm font-semibold text-gray-900">v2.1.0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Last Backup</span>
+                            <span class="text-sm font-semibold text-green-600">6 hours ago</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Database Size</span>
+                            <span class="text-sm font-semibold text-gray-900">245 MB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Active Sessions</span>
+                            <span class="text-sm font-semibold text-gray-900">42</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Health -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6">System Health</h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Database Status</span>
+                            <span class="flex items-center text-green-600">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Healthy
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Server Load</span>
+                            <span class="flex items-center text-green-600">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Normal
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Storage Space</span>
+                            <span class="flex items-center text-yellow-600">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                75% Used
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
                     </a>
                     <a href="{% url 'course_create' %}" class="flex items-center px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
                         <i class="fas fa-book-medical mr-3 text-emerald-600 dark:text-emerald-400"></i> Add Course

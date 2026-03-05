@@ -1,0 +1,189 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <i class="fas fa-chalkboard-teacher text-white text-2xl"></i>
+                </div>
+            </div>
+            <h2 class="text-3xl font-display font-bold text-gray-900 mb-2">Staff Registration</h2>
+            <p class="text-gray-600">Register as a school staff member</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Role Selection -->
+                <div>
+                    <label for="{{ form.role.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-user-tie mr-2 text-secondary-600"></i>Staff Role
+                    </label>
+                    {{ form.role }}
+                    {% if form.role.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.role.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-xs text-gray-500">Select your intended role at the school</p>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Personal Information</h3>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                Username <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                    First Name <span class="text-red-500">*</span>
+                                </label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Last Name <span class="text-red-500">*</span>
+                                </label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                                Email Address <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Section -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">Security</h3>
+                    
+                    <div>
+                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Password <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">Must be at least 8 characters with letters and numbers</p>
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            Confirm Password <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Important Notice -->
+                <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-amber-600"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-amber-800">Important Notice</h3>
+                            <div class="mt-2 text-sm text-amber-700">
+                                <p>After registration, your account will require approval from the school administration before you can access staff features.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <label class="flex items-start">
+                        <input type="checkbox" required class="mt-1 mr-3 w-4 h-4 text-secondary-600 border-gray-300 rounded focus:ring-secondary-500">
+                        <div class="flex-1">
+                            <span class="text-sm text-gray-700">
+                                I agree to the <a href="#" class="text-secondary-600 hover:text-secondary-700 underline">Terms and Conditions</a> 
+                                and <a href="#" class="text-secondary-600 hover:text-secondary-700 underline">Privacy Policy</a>
+                            </span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-secondary-600 to-secondary-700 text-white font-semibold py-3 px-4 rounded-lg hover:from-secondary-700 hover:to-secondary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500 transition-all duration-200 transform hover:scale-[1.02]">
+                        <i class="fas fa-user-plus mr-2"></i>Register as Staff
+                    </button>
+                </div>
+
+                <!-- Login Link -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="text-secondary-600 hover:text-secondary-700 font-medium">Sign in here</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Public Registration Link -->
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Looking for student or public registration? 
+                <a href="{% url 'public_register' %}" class="text-primary-600 hover:text-primary-700 font-medium">
+                    Register here
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: white;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+    outline: none;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+</style>
+{% endblock %}
