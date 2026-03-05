@@ -25,7 +25,7 @@ from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all the
 from .models import (
     User, Course, Department, StudentProfile, FacultyProfile, AdminProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
-    ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
+    CourseOffering, Semester, ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
     ReportCard, Material, Schedule, ForumPost
 )
 
@@ -38,7 +38,7 @@ class StudentDetailView(DetailView):
 class CourseListView(View):
     def get(self, request):
         # Get all courses with related data
-        courses = Course.objects.select_related('department').prefetch_related('enrollment_set').all()
+        courses = Course.objects.select_related('department').prefetch_related('offerings__enrollments').all()
         departments = Department.objects.all()
         
         # Get statistics
@@ -780,11 +780,19 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
             student = self.request.user.student_profile
         except StudentProfile.DoesNotExist:
             # Create a StudentProfile for the user
+            # Get or create a default department first
+            from .models import Department
+            department, created = Department.objects.get_or_create(
+                code='GEN',
+                defaults={'name': 'General Studies', 'slug': 'general-studies'}
+            )
+            
             student = StudentProfile.objects.create(
                 user=self.request.user,
                 roll_number=f"STU{self.request.user.id:06d}",
                 admission_year=timezone.now().year,
-                current_semester=1
+                current_semester=1,
+                department=department
             )
         
         # Get enrollments with related data
@@ -793,34 +801,56 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         ).select_related(
             'course_offering__course',
             'course_offering__faculty'
-        ).prefetch_related('grade_set', 'attendance_set')
+        ).prefetch_related('attendances')
         
         # Calculate attendance percentages
         enriched_enrollments = []
         for enrollment in enrollments:
-            total_classes = enrollment.attendance_set.count()
-            present_classes = enrollment.attendance_set.filter(status='P').count()
+            total_classes = enrollment.attendances.count()
+            present_classes = enrollment.attendances.filter(status='P').count()
             attendance_percentage = (present_classes / total_classes * 100) if total_classes > 0 else 0
             
             enriched_enrollments.append({
                 'enrollment': enrollment,
                 'attendance_percentage': attendance_percentage,
-                'grade': enrollment.grade_set.first()
+                'grade': getattr(enrollment, 'grade', None)
             })
         
         context.update({
             'student': student,
-            'enrollments': enriched_enrollments,
+            'enriched_enrollments': enriched_enrollments,
             'upcoming_exams': ExamSchedule.objects.filter(
                 course__in=[e.course_offering.course for e in enrollments],
                 date__gte=timezone.now()
             ).order_by('date')[:5],
-            'unpaid_fees': Fee.objects.filter(student=student, paid=False),
+            'unpaid_fees': Fee.objects.filter(student=student, is_paid=False),
             'recent_announcements': Announcement.objects.filter(
                 Q(target_audience='All') | Q(target_audience='Students')
-            ).order_by('-created_at')[:5]
+            ).order_by('-created_at')[:5],
+            'available_courses': self.get_available_courses(student),
         })
+        
         return context
+
+    def get_available_courses(self, student):
+        """Get courses available for enrollment"""
+        # Get courses the student is not already enrolled in
+        enrolled_course_ids = Enrollment.objects.filter(
+            student=student
+        ).values_list('course_offering__course__id', flat=True)
+        
+        # Get available course offerings for current semester
+        current_semester = Semester.objects.filter(is_current=True).first()
+        
+        if current_semester:
+            available_courses = CourseOffering.objects.filter(
+                semester=current_semester
+            ).exclude(
+                course__id__in=enrolled_course_ids
+            ).select_related('course', 'faculty').order_by('course__name')
+            
+            return available_courses
+        return CourseOffering.objects.none()
 
 class CreateCourseView(View):
     def get(self, request):
@@ -831,26 +861,27 @@ def enroll_course(request):
     if not is_student(request.user):
         return redirect('dashboard')
     
-    student = request.user.student_profile
-    available_courses = Course.objects.exclude(
-        enrollments__student=student
-    )
-    
     if request.method == 'POST':
-        course_id = request.POST.get('course_id')
-        if course_id:
-            course = get_object_or_404(Course, pk=course_id)
-            Enrollment.objects.create(
-                student=student,
-                course_offering=course.current_offering(),
-                enrollment_date=timezone.now()
-            )
-            messages.success(request, f"Successfully enrolled in {course.name}")
+        course_offering_id = request.POST.get('course_offering_id')
+        if course_offering_id:
+            course_offering = get_object_or_404(CourseOffering, pk=course_offering_id)
+            student = request.user.student_profile
+            
+            # Check if already enrolled
+            if Enrollment.objects.filter(student=student, course_offering=course_offering).exists():
+                messages.warning(request, f"You are already enrolled in {course_offering.course.name}")
+            else:
+                # Create enrollment
+                Enrollment.objects.create(
+                    student=student,
+                    course_offering=course_offering,
+                    enrollment_date=timezone.now()
+                )
+                messages.success(request, f"Successfully enrolled in {course_offering.course.name}")
+            
             return redirect('student_dashboard')
     
-    return render(request, 'core/enroll_course.html', {
-        'available_courses': available_courses
-    })
+    return redirect('student_dashboard')
 
 @login_required
 def view_timetable(request):
@@ -961,7 +992,18 @@ class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             'total_courses': Course.objects.count(),
             'active_enrollments': Enrollment.objects.count(),
             'pending_approvals': User.objects.filter(is_active=False).count(),
-            'recent_activity': ActivityLog.objects.all().order_by('-timestamp')[:10]
+            'recent_activity': ActivityLog.objects.all().order_by('-timestamp')[:10],
+            # Enhanced data for admin visibility
+            'recent_enrollments': Enrollment.objects.select_related(
+                'student__user', 
+                'course_offering__course',
+                'course_offering__faculty__user'
+            ).order_by('-enrollment_date')[:10],
+            'students_by_department': StudentProfile.objects.values('department__name').annotate(count=Count('id')),
+            'enrollments_by_course': Enrollment.objects.values(
+                'course_offering__course__name'
+            ).annotate(count=Count('id')).order_by('-count')[:10],
+            'pending_students': StudentProfile.objects.filter(enrollments__isnull=True).count(),
         })
         return context
 
@@ -1493,7 +1535,7 @@ class ParentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView)
             'child': child,
             'attendance': AttendanceRecord.objects.filter(student=child).order_by('-date')[:5],
             'grades': Grade.objects.filter(student=child).order_by('-awarded_on')[:5],
-            'unpaid_fees': Fee.objects.filter(student=child, paid=False),
+            'unpaid_fees': Fee.objects.filter(student=child, is_paid=False),
             'announcements': Announcement.objects.filter(
                 Q(target_audience='All') | Q(target_audience='Parents')
             ).order_by('-created_at')[:5]

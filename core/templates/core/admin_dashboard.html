@@ -1,5 +1,7 @@
 {% extends 'core/base.html' %}
 
+{% block title %}Admin Dashboard - School Management System{% endblock %}
+
 {% block content %}
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
@@ -7,13 +9,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
                 <div class="text-center sm:text-left">
-                    <h1 class="text-2xl sm:text-3xl font-bold">School Admin Dashboard</h1>
-                    <p class="text-green-100 mt-1">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+                    <h1 class="text-2xl sm:text-3xl font-bold">System Administration</h1>
+                    <p class="text-green-100 mt-1">Complete control over school management system</p>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="text-right">
-                        <p class="text-sm text-green-100">Role</p>
-                        <p class="font-semibold">{{ role }}</p>
+                        <p class="text-sm text-green-100">Administrator</p>
+                        <p class="font-semibold">{{ user.get_full_name|default:user.username }}</p>
                     </div>
                     <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                         <i class="fas fa-cog text-xl"></i>
@@ -27,7 +29,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Quick Stats -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
                         <i class="fas fa-users text-green-600 text-xl"></i>
@@ -35,544 +37,227 @@
                     <div>
                         <p class="text-sm text-gray-600">Total Users</p>
                         <p class="text-2xl font-bold text-gray-900">{{ total_users }}</p>
+                        <p class="text-xs text-green-600 mt-1">+{{ pending_registrations }} pending</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
                         <i class="fas fa-user-graduate text-blue-600 text-xl"></i>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600">Students</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ students }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_students }}</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
                         <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
                     </div>
                     <div>
                         <p class="text-sm text-gray-600">Teachers</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ teachers }}</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_faculty }}</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500 hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-user-clock text-orange-600 text-xl"></i>
+                        <i class="fas fa-user-tie text-orange-600 text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-sm text-gray-600">Pending Registrations</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ pending_registrations }}</p>
+                        <p class="text-sm text-gray-600">Pending</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ pending_approvals }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500 hover:shadow-lg transition-shadow">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                        <i class="fas fa-graduation-cap text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Courses</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ total_courses }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Grid -->
+        <!-- Main Content Area -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Left Column - System Overview -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- User Management Overview -->
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-8">
+                <!-- Recent Student Enrollments -->
                 <div class="bg-white rounded-xl shadow-md p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-gray-900">User Management</h2>
-                        <a href="{% url 'user_management' %}" class="text-green-600 hover:text-green-700 text-sm font-medium">
-                            View All →
-                        </a>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Student Enrollments</h3>
+                    <div class="space-y-3">
+                        {% for enrollment in recent_enrollments %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-user-graduate text-green-600 text-xs"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">
+                                        {{ enrollment.student.roll_number }} - {{ enrollment.student.user.get_full_name }}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        Enrolled in {{ enrollment.course_offering.course.name }}
+                                        {% if enrollment.course_offering.course.is_subject %}(Subject){% else %}(Course){% endif %}
+                                    </p>
+                                    <p class="text-xs text-gray-400">
+                                        {{ enrollment.enrollment_date|date:"M d, Y, H:i" }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                                    {% if enrollment.course_offering.faculty %}bg-blue-100 text-blue-800{% else %}bg-gray-100 text-gray-600{% endif %}">
+                                    {% if enrollment.course_offering.faculty %}
+                                        {{ enrollment.course_offering.faculty.user.get_full_name }}
+                                    {% else %}
+                                        Not Assigned
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-inbox text-4xl mb-3"></i>
+                            <p class="text-lg font-medium">No recent enrollments</p>
+                            <p class="text-sm">Students will appear here when they enroll in subjects</p>
+                        </div>
+                        {% endfor %}
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
-                            <div class="space-y-3">
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-sm text-gray-600">Normal Users</span>
-                                        <span class="text-sm font-semibold text-gray-600">{{ total_users|add:"-"|add:students|add:teachers|add:pending_registrations }}</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-gray-600 h-2 rounded-full" style="width: 15%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-sm text-gray-600">Students</span>
-                                        <span class="text-sm font-semibold text-blue-600">{{ students }}</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-sm text-gray-600">Teachers</span>
-                                        <span class="text-sm font-semibold text-purple-600">{{ teachers }}</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-purple-600 h-2 rounded-full" style="width: 20%"></div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="flex justify-between items-center mb-1">
-                                        <span class="text-sm text-gray-600">Pending</span>
-                                        <span class="text-sm font-semibold text-orange-600">{{ pending_registrations }}</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-orange-600 h-2 rounded-full" style="width: 5%"></div>
-                                    </div>
+                </div>
+
+                <!-- Popular Courses -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Popular Courses</h3>
+                    <div class="space-y-3">
+                        {% for course_stat in enrollments_by_course %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div>
+                                <p class="font-medium text-gray-900">{{ course_stat.course_offering__course__name }}</p>
+                                <p class="text-sm text-gray-500">{{ course_stat.count }} student{{ course_stat.count|pluralize }}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                                    #{{ course_stat.count }}
+                                </span>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-6 text-gray-500">
+                            <i class="fas fa-chart-bar text-4xl mb-3"></i>
+                            <p class="text-lg font-medium">No course enrollment data available</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Department Distribution -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Students by Department</h3>
+                    <div class="space-y-3">
+                        {% for dept_stat in students_by_department %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div>
+                                <p class="font-medium text-gray-900">{{ dept_stat.department__name }}</p>
+                                <p class="text-sm text-gray-500">{{ dept_stat.count }} student{{ dept_stat.count|pluralize }}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-purple-500 h-2 rounded-full transition-all duration-500" style="width: {{ dept_stat.count|default:0 }}%"></div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Registrations</h3>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                                    <span class="text-sm text-gray-900">John Doe - Teacher</span>
-                                    <span class="text-xs text-gray-500">2 hours ago</span>
-                                </div>
-                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                                    <span class="text-sm text-gray-900">Jane Smith - Student</span>
-                                    <span class="text-xs text-gray-500">5 hours ago</span>
-                                </div>
-                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                                    <span class="text-sm text-gray-900">Mike Johnson - Normal</span>
-                                    <span class="text-xs text-gray-500">1 day ago</span>
-                                </div>
-                            </div>
+                        {% empty %}
+                        <div class="text-center py-6 text-gray-500">
+                            <i class="fas fa-building text-4xl mb-3"></i>
+                            <p class="text-lg font-medium">No department data available</p>
                         </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a href="{% url 'user_list' %}" class="block w-full text-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-users mr-2"></i>
+                            Manage Users
+                        </a>
+                        <a href="/admin/core/studentprofile/" class="block w-full text-center bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-user-graduate mr-2"></i>
+                            Manage Students
+                        </a>
+                        <a href="/admin/core/enrollment/" class="block w-full text-center bg-purple-500 hover:bg-purple-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-book mr-2"></i>
+                            Manage Enrollments
+                        </a>
+                        <a href="{% url 'course_list' %}" class="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-lg font-medium transition-colors duration-200">
+                            <i class="fas fa-graduation-cap mr-2"></i>
+                            Manage Courses
+                        </a>
                     </div>
                 </div>
 
                 <!-- System Activity -->
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-6">System Activity</h2>
-                    
                     <div class="space-y-4">
+                        {% for activity in recent_activity %}
                         <div class="flex items-start">
                             <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-1">
                                 <i class="fas fa-user-plus text-green-600 text-xs"></i>
                             </div>
                             <div class="flex-1">
-                                <p class="text-sm text-gray-900">New user registration: teacher account created</p>
-                                <p class="text-xs text-gray-500">10 minutes ago</p>
+                                <p class="text-sm text-gray-900">{{ activity.action }}: {{ activity.model }}</p>
+                                <p class="text-xs text-gray-500">{{ activity.timestamp|date:"M d, Y, H:i" }}</p>
                             </div>
                         </div>
-                        
-                        <div class="flex items-start">
-                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                                <i class="fas fa-user-check text-blue-600 text-xs"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm text-gray-900">Student profile approved by headmaster</p>
-                                <p class="text-xs text-gray-500">1 hour ago</p>
-                            </div>
+                        {% empty %}
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-list text-4xl mb-3"></i>
+                            <p class="text-lg font-medium">No recent activity</p>
                         </div>
-                        
-                        <div class="flex items-start">
-                            <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                                <i class="fas fa-cog text-purple-600 text-xs"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm text-gray-900">System configuration updated</p>
-                                <p class="text-xs text-gray-500">3 hours ago</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                                <i class="fas fa-database text-orange-600 text-xs"></i>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-sm text-gray-900">Database backup completed successfully</p>
-                                <p class="text-xs text-gray-500">6 hours ago</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column - Quick Actions & System Info -->
-            <div class="space-y-6">
-                <!-- Quick Actions -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
-                    
-                    <div class="space-y-3">
-                        <a href="{% url 'user_management' %}" class="block w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
-                            <i class="fas fa-users-cog mr-2"></i>Manage Users
-                        </a>
-                        <a href="{% url 'register_student' %}" class="block w-full text-left px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
-                            <i class="fas fa-user-plus mr-2"></i>Add Student
-                        </a>
-                        <a href="{% url 'faculty_register' %}" class="block w-full text-left px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
-                            <i class="fas fa-chalkboard-teacher mr-2"></i>Add Teacher
-                        </a>
-                        <a href="{% url 'system_logs' %}" class="block w-full text-left px-4 py-3 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors">
-                            <i class="fas fa-list-alt mr-2"></i>View System Logs
-                        </a>
-                        <a href="#" class="block w-full text-left px-4 py-3 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
-                            <i class="fas fa-database mr-2"></i>Backup Database
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Pending Approvals -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">Pending Approvals</h2>
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Staff Registrations</p>
-                                <p class="text-xs text-gray-600">Teachers, Headmasters, Admins</p>
-                            </div>
-                            <span class="bg-orange-200 text-orange-800 text-xs px-2 py-1 rounded-full">{{ pending_registrations }}</span>
-                        </div>
-                        
-                        <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900">Student Admissions</p>
-                                <p class="text-xs text-gray-600">Awaiting profile completion</p>
-                            </div>
-                            <span class="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full">8</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- System Information -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">System Information</h2>
-                    
-                    <div class="space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-sm text-gray-600">System Version</span>
-                            <span class="text-sm font-semibold text-gray-900">v2.1.0</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-sm text-gray-600">Last Backup</span>
-                            <span class="text-sm font-semibold text-green-600">6 hours ago</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-sm text-gray-600">Database Size</span>
-                            <span class="text-sm font-semibold text-gray-900">245 MB</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-sm text-gray-600">Active Sessions</span>
-                            <span class="text-sm font-semibold text-gray-900">42</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- System Health -->
-                <div class="bg-white rounded-xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-gray-900 mb-6">System Health</h2>
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Database Status</span>
-                            <span class="flex items-center text-green-600">
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Healthy
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Server Load</span>
-                            <span class="flex items-center text-green-600">
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Normal
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600">Storage Space</span>
-                            <span class="flex items-center text-yellow-600">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>
-                                75% Used
-                            </span>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
-                    </a>
-                    <a href="{% url 'course_create' %}" class="flex items-center px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <i class="fas fa-book-medical mr-3 text-emerald-600 dark:text-emerald-400"></i> Add Course
-                    </a>
-                    <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
-                    <a href="{% url 'system_settings' %}" class="flex items-center px-4 py-3 text-sm text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                        <i class="fas fa-cogs mr-3 text-amber-600 dark:text-amber-400"></i> System Settings
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <!-- Students Card -->
-        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-xs hover:shadow-sm transition-shadow duration-300 border-l-4 border-amber-500">
-            <div class="p-5">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Students</p>
-                        <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{ student_count }}</p>
-                    </div>
-                    <div class="bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-full">
-                        <i class="fas fa-users text-indigo-600 dark:text-indigo-400 text-lg"></i>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a href="{% url 'student_list' %}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
-                        View all →
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Faculty Card -->
-        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-xs hover:shadow-sm transition-shadow duration-300 border-l-4 border-amber-500">
-            <div class="p-5">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Faculty</p>
-                        <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{ faculty_count }}</p>
-                    </div>
-                    <div class="bg-emerald-50 dark:bg-emerald-900/30 p-3 rounded-full">
-                        <i class="fas fa-chalkboard-teacher text-emerald-600 dark:text-emerald-400 text-lg"></i>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a href="{% url 'faculty_list' %}" class="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors">
-                        View all →
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Courses Card -->
-        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-xs hover:shadow-sm transition-shadow duration-300 border-l-4 border-amber-500">
-            <div class="p-5">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Courses</p>
-                        <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{ course_count }}</p>
-                    </div>
-                    <div class="bg-cyan-50 dark:bg-cyan-900/30 p-3 rounded-full">
-                        <i class="fas fa-book-open text-cyan-600 dark:text-cyan-400 text-lg"></i>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <a href="{% url 'course_list' %}" class="text-sm font-medium text-cyan-600 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 transition-colors">
-                        View all →
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Active Sessions Card -->
-        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-xs hover:shadow-sm transition-shadow duration-300 border-l-4 border-amber-500">
-            <div class="p-5">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Active Sessions</p>
-                        <p class="text-2xl font-bold text-gray-800 dark:text-white mt-1">{{ active_sessions }}</p>
-                    </div>
-                    <div class="bg-amber-50 dark:bg-amber-900/30 p-3 rounded-full">
-                        <i class="fas fa-user-clock text-amber-600 dark:text-amber-400 text-lg"></i>
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <span class="text-sm font-medium text-amber-600 dark:text-amber-400">Live Users</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Activity and Quick Access -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
-        <!-- Recent Activity -->
-        <div class="lg:col-span-2 bg-blue dark:bg-blue-700 rounded-lg shadow-xs overflow-hidden">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-                    <i class="fas fa-history text-indigo-600 dark:text-indigo-400 mr-2"></i>Recent Activity
-                </h2>
-                <a href="{% url 'activity_log' %}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
-                    View All
-                </a>
-            </div>
-            <div class="divide-y divide-gray-200 dark:divide-gray-600">
-                {% for activity in recent_activities %}
-<div class="bg-blue-100 dark:bg-blue-900 rounded-lg shadow-xs overflow-hidden">
-                    <div class="flex items-start">
-                        <div class="flex-shrink-0 p-2 rounded-lg bg-{{ activity.type }}-50 dark:bg-{{ activity.type }}-900/30 text-{{ activity.type }}-600 dark:text-{{ activity.type }}-400 mr-3">
-                            <i class="fas fa-{{ activity.icon }}"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium text-gray-800 dark:text-white">{{ activity.title }}</p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">{{ activity.description }}</p>
-                        </div>
-                        <div class="ml-4 text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                            {{ activity.time|timesince }} ago
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="p-8 text-center">
-                    <i class="fas fa-info-circle text-gray-400 dark:text-gray-500 text-3xl mb-3"></i>
-                    <p class="text-gray-500 dark:text-gray-400">No recent activity found</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Quick Access -->
-<div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow-xs overflow-hidden">
-            <div class="p-4 border-b border-gray-200 dark:border-gray-600">
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-                    <i class="fas fa-bolt text-amber-600 dark:text-amber-400 mr-2"></i>Quick Access
-                </h2>
-            </div>
-            <div class="p-4 space-y-2">
-                <a href="{% url 'user_approval' %}" class="flex items-center justify-between p-3 rounded-md border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors">
-                    <div class="flex items-center">
-                        <div class="p-2 rounded-md bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 mr-3">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <span class="text-gray-700 dark:text-gray-200">Pending Approvals</span>
-                    </div>
-                    {% if pending_approvals %}
-                    <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
-                        {{ pending_approvals }}
-                    </span>
-                    {% endif %}
-                </a>
-                <a href="{% url 'course_management' %}" class="flex items-center p-3 rounded-md border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors">
-                    <div class="p-2 rounded-md bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 mr-3">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <span class="text-gray-700 dark:text-gray-200">Course Management</span>
-                </a>
-                <a href="{% url 'reports' %}" class="flex items-center p-3 rounded-md border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors">
-                    <div class="p-2 rounded-md bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 mr-3">
-                        <i class="fas fa-chart-pie"></i>
-                    </div>
-                    <span class="text-gray-700 dark:text-gray-200">Generate Reports</span>
-                </a>
-                <a href="{% url 'system_logs' %}" class="flex items-center p-3 rounded-md border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors">
-                    <div class="p-2 rounded-md bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 mr-3">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <span class="text-gray-700 dark:text-gray-200">System Logs</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Registrations -->
-    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-xs overflow-hidden">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
-            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-                <i class="fas fa-user-plus text-indigo-600 dark:text-indigo-400 mr-2"></i>Recent Registrations
-            </h2>
-            <a href="{% url 'user_management' %}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
-                Manage Users
-            </a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-600">
-                <thead class="bg-gray-50 dark:bg-gray-600">
-                    <tr>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date Joined</th>
-                        <th scope="col" class="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-5 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
-                    {% for user in recent_users %}
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-600/50 transition-colors">
-                        <td class="px-5 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-white">
-                            {{ user.get_full_name }}
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                            {{ user.email }}
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {% if user.is_student %}bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200
-                                {% elif user.is_faculty %}bg-cyan-100 dark:bg-cyan-900/30 text-cyan-800 dark:text-cyan-200
-                                {% else %}bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200{% endif %}">
-                                {% if user.is_student %}Student
-                                {% elif user.is_faculty %}Faculty
-                                {% else %}Admin{% endif %}
-                            </span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                            {{ user.date_joined|date:"M d, Y" }}
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {% if user.is_active %}bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200
-                                {% else %}bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200{% endif %}">
-                                {% if user.is_active %}Active{% else %}Inactive{% endif %}
-                            </span>
-                        </td>
-                        <td class="px-5 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <div class="flex justify-end space-x-1">
-                                <a href="{% url 'user_detail' user.id %}" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 p-1.5 rounded-md hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{% url 'edit_user' user.id %}" class="text-amber-600 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-300 p-1.5 rounded-md hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                            <i class="fas fa-user-slash text-2xl mb-2"></i>
-                            <p>No recent registrations found</p>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript for dropdown toggle -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Quick Actions Dropdown
-        const quickActionsButton = document.getElementById('quickActionsButton');
-        const quickActionsMenu = document.getElementById('quickActionsMenu');
+// Quick Actions Menu
+function toggleQuickActions() {
+    const menu = document.getElementById('quickActionsMenu');
+    const button = document.getElementById('quickActionsButton');
+    
+    if (menu && button) {
+        menu.classList.toggle('hidden');
         
-        quickActionsButton.addEventListener('click', function() {
-            quickActionsMenu.classList.toggle('hidden');
-        });
-
-        // Close dropdown when clicking outside
+        // Close menu when clicking outside
         document.addEventListener('click', function(event) {
-            if (!quickActionsButton.contains(event.target) && !quickActionsMenu.contains(event.target)) {
-                quickActionsMenu.classList.add('hidden');
+            if (!button.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.add('hidden');
             }
         });
-    });
+    }
+}
 </script>
+
 {% endblock %}

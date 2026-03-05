@@ -3,7 +3,7 @@
 {% block title %}Login - School Management System{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 py-12">
+<div class="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center px-4 py-12">
     <!-- Background Pattern -->
     <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
     
@@ -11,7 +11,7 @@
         <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
             <div class="flex flex-col lg:flex-row">
                 <!-- Left Side - Branding & Info -->
-                <div class="lg:w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 lg:p-12 text-white">
+                <div class="lg:w-1/2 bg-gradient-to-br from-green-600 to-emerald-700 p-8 lg:p-12 text-white">
                     <div class="h-full flex flex-col justify-center">
                         <!-- Logo -->
                         <div class="flex items-center mb-8">
@@ -20,14 +20,14 @@
                             </div>
                             <div>
                                 <h1 class="text-2xl font-bold">SchoolMS</h1>
-                                <p class="text-blue-100 text-sm">Tanzania O-Level Management</p>
+                                <p class="text-green-100 text-sm">Tanzania O-Level Management</p>
                             </div>
                         </div>
                         
                         <!-- Welcome Message -->
                         <div class="mb-8">
                             <h2 class="text-3xl font-bold mb-4">Welcome Back!</h2>
-                            <p class="text-blue-100 text-lg leading-relaxed">
+                            <p class="text-green-100 text-lg leading-relaxed">
                                 Access your personalized dashboard and manage your academic journey with our comprehensive school management system.
                             </p>
                         </div>
@@ -40,7 +40,7 @@
                                 </div>
                                 <div>
                                     <h3 class="font-semibold">Secure Access</h3>
-                                    <p class="text-blue-100 text-sm">Role-based authentication system</p>
+                                    <p class="text-green-100 text-sm">Role-based authentication system</p>
                                 </div>
                             </div>
                             
@@ -50,7 +50,7 @@
                                 </div>
                                 <div>
                                     <h3 class="font-semibold">Multi-Role Support</h3>
-                                    <p class="text-blue-100 text-sm">Students, Teachers, Admin & Staff</p>
+                                    <p class="text-green-100 text-sm">Students, Teachers, Admin & Staff</p>
                                 </div>
                             </div>
                             
@@ -60,7 +60,7 @@
                                 </div>
                                 <div>
                                     <h3 class="font-semibold">Mobile Friendly</h3>
-                                    <p class="text-blue-100 text-sm">Access anywhere, anytime</p>
+                                    <p class="text-green-100 text-sm">Access anywhere, anytime</p>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                         <!-- Quote -->
                         <div class="mt-8 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
                             <p class="text-sm italic">"Education is the passport to the future, for tomorrow belongs to those who prepare for it today."</p>
-                            <p class="text-xs mt-2 text-blue-100">- Malcolm X</p>
+                            <p class="text-xs mt-2 text-green-100">- Malcolm X</p>
                         </div>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
                             {% if message.tags == 'error' %}bg-red-50 border-red-500 text-red-900{% endif %}
                             {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-900{% endif %}
                             {% if message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-900{% endif %}
-                            {% if message.tags == 'info' %}bg-blue-50 border-blue-500 text-blue-900{% endif %}">
+                            {% if message.tags == 'info' %}bg-green-50 border-green-500 text-green-900{% endif %}">
                             <div class="flex items-center">
                                 <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} mr-3"></i>
                                 <span class="text-sm font-medium">{{ message }}</span>
@@ -109,7 +109,7 @@
                         <!-- Username Field -->
                         <div class="space-y-2">
                             <label for="username" class="block text-sm font-semibold text-gray-700">
-                                <i class="fas fa-user mr-2 text-blue-600"></i>Username
+                                <i class="fas fa-user mr-2 text-green-600"></i>Username
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -118,7 +118,7 @@
                                 <input type="text" 
                                        name="username" 
                                        id="username" 
-                                       class="block w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 focus:bg-white"
+                                       class="block w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 bg-gray-50 focus:bg-white"
                                        placeholder="Enter your username" 
                                        required
                                        autocomplete="username">
@@ -128,7 +128,7 @@
                         <!-- Password Field -->
                         <div class="space-y-2">
                             <label for="password" class="block text-sm font-semibold text-gray-700">
-                                <i class="fas fa-lock mr-2 text-blue-600"></i>Password
+                                <i class="fas fa-lock mr-2 text-green-600"></i>Password
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -137,12 +137,12 @@
                                 <input type="password" 
                                        name="password" 
                                        id="password" 
-                                       class="block w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 focus:bg-white"
+                                       class="block w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all duration-300 bg-gray-50 focus:bg-white"
                                        placeholder="Enter your password" 
                                        required
                                        autocomplete="current-password">
                                 <button type="button" 
-                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-600 transition-colors duration-200" 
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-green-600 transition-colors duration-200" 
                                         id="togglePassword">
                                     <i class="fas fa-eye" id="passwordIcon"></i>
                                 </button>
@@ -152,16 +152,16 @@
                         <!-- Remember Me & Forgot Password -->
                         <div class="flex items-center justify-between">
                             <div class="flex items-center">
-                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
                                 <label for="remember" class="ml-2 text-sm text-gray-700">Remember me</label>
                             </div>
-                            <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+                            <a href="#" class="text-sm text-green-600 hover:text-green-700 font-medium transition-colors duration-200">
                                 Forgot password?
                             </a>
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" id="submitBtn">
+                        <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" id="submitBtn">
                             <span class="flex items-center justify-center">
                                 <i class="fas fa-sign-in-alt mr-2"></i>
                                 <span id="btnText">Sign In</span>
@@ -171,28 +171,6 @@
                                 </svg>
                             </span>
                         </button>
-
-                        <!-- Divider -->
-                        <div class="relative my-6">
-                            <div class="absolute inset-0 flex items-center">
-                                <div class="w-full border-t border-gray-200"></div>
-                            </div>
-                            <div class="relative flex justify-center text-sm">
-                                <span class="px-4 bg-white text-gray-500">or continue with</span>
-                            </div>
-                        </div>
-
-                        <!-- Social Login Buttons -->
-                        <div class="grid grid-cols-2 gap-3">
-                            <button type="button" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md">
-                                <i class="fab fa-google mr-2 text-red-500"></i>
-                                <span class="text-sm font-medium">Google</span>
-                            </button>
-                            <button type="button" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md">
-                                <i class="fab fa-microsoft mr-2 text-blue-500"></i>
-                                <span class="text-sm font-medium">Microsoft</span>
-                            </button>
-                        </div>
 
                         <!-- Sign Up Link -->
                         <div class="text-center pt-4 border-t border-gray-100">
@@ -208,15 +186,6 @@
             </div>
         </div>
         
-        <!-- Footer -->
-        <div class="text-center mt-8 text-gray-500 text-sm">
-            <p>&copy; 2024 SchoolMS. All rights reserved.</p>
-            <div class="flex justify-center space-x-4 mt-2">
-                <a href="#" class="hover:text-gray-700 transition-colors">Privacy Policy</a>
-                <a href="#" class="hover:text-gray-700 transition-colors">Terms of Service</a>
-                <a href="#" class="hover:text-gray-700 transition-colors">Contact Support</a>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -224,8 +193,8 @@
 /* Background Pattern */
 .bg-grid-pattern {
     background-image: 
-        linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+        linear-gradient(rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.1) 1px, transparent 1px);
     background-size: 50px 50px;
 }
 
@@ -319,22 +288,6 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
         btnText.textContent = 'Signing in...';
         spinner.classList.remove('hidden');
-    });
-
-    // Social login handlers (mock)
-    document.querySelectorAll('button[type="button"]').forEach(btn => {
-        if (btn.textContent.includes('Google') || btn.textContent.includes('Microsoft')) {
-            btn.addEventListener('click', function() {
-                const provider = this.textContent.trim();
-                Swal.fire({
-                    title: `${provider} Login`,
-                    text: `${provider} authentication will be available soon.`,
-                    icon: 'info',
-                    confirmButtonColor: '#3b82f6',
-                    confirmButtonText: 'OK'
-                });
-            });
-        }
     });
 
     // Forgot password handler

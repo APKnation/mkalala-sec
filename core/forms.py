@@ -48,13 +48,12 @@ class UserForm(UserCreationForm):
         self.fields['last_name'].widget.attrs.update({'placeholder': 'Enter last name'})
 
 class PublicUserRegistrationForm(UserCreationForm):
-    """Registration form for public users (normal users and students)"""
+    """Registration form for students only"""
     role = forms.ChoiceField(
         choices=[
-            ('normal', 'Normal User'),
             ('student', 'Student'),
         ],
-        initial='normal',
+        initial='student',
         widget=forms.RadioSelect(attrs={
             'class': 'space-y-2'
         })
@@ -93,7 +92,10 @@ class PublicUserRegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['role'].label = "Account Type"
-        self.fields['role'].help_text = "Select 'Student' if you want to join the school as a student"
+        self.fields['role'].help_text = "Student registration for school enrollment"
+        # Hide the role field since we only want students
+        self.fields['role'].widget = forms.HiddenInput()
+        self.fields['role'].initial = 'student'
 
 class StaffRegistrationForm(UserCreationForm):
     """Registration form for staff roles (teacher, headmaster, admin)"""

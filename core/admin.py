@@ -15,6 +15,19 @@ from .models import (
 
 User = get_user_model()
 
+# Inline classes for better admin interface
+class GradeInline(admin.TabularInline):
+    model = Grade
+    extra = 0
+    readonly_fields = ('awarded_on',)
+    can_delete = False
+
+class AttendanceInline(admin.TabularInline):
+    model = Attendance
+    extra = 0
+    readonly_fields = ('date',)
+    can_delete = True
+
 # Custom User Admin
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_student', 'is_faculty', 'is_admin', 'is_parent', 'is_active')
@@ -52,9 +65,17 @@ class AdminProfileAdmin(admin.ModelAdmin):
 
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('roll_number', 'user', 'department', 'admission_year', 'current_semester', 'gpa', 'cgpa')
+    list_display = ('roll_number', 'user', 'department', 'admission_year', 'current_semester', 'gpa', 'cgpa', 'get_enrollments_count')
     search_fields = ('roll_number', 'user__username', 'user__first_name', 'user__last_name')
     list_filter = ('department', 'admission_year', 'current_semester')
+    readonly_fields = ('roll_number',)
+    ordering = ('-admission_year', 'roll_number')
+    
+    def get_enrollments_count(self, obj):
+        """Display number of enrollments for this student"""
+        count = obj.enrollments.count()
+        return f"{count} enrolled"
+    get_enrollments_count.short_description = 'Enrollments'
 
 @admin.register(FacultyProfile)
 class FacultyProfileAdmin(admin.ModelAdmin):
@@ -87,9 +108,44 @@ class CourseOfferingAdmin(admin.ModelAdmin):
 
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ('student', 'course_offering', 'enrollment_date')
-    list_filter = ('course_offering__semester', 'course_offering__course__department')
-    search_fields = ('student__roll_number', 'student__user__first_name')
+    list_display = ('student_info', 'course_info', 'enrollment_date', 'get_attendance_rate', 'get_grade')
+    list_filter = ('course_offering__semester', 'course_offering__course__department', 'enrollment_date')
+    search_fields = ('student__roll_number', 'student__user__first_name', 'course_offering__course__name', 'course_offering__course__code')
+    readonly_fields = ('enrollment_date',)
+    ordering = ('-enrollment_date',)
+    list_per_page = 25
+    
+    # Add inline editing for related objects
+    inlines = [GradeInline, AttendanceInline]
+    
+    def student_info(self, obj):
+        """Display student roll number and name"""
+        return f"{obj.student.roll_number} - {obj.student.user.get_full_name()}"
+    student_info.short_description = 'Student'
+    
+    def course_info(self, obj):
+        """Display course code and name"""
+        course = obj.course_offering.course
+        term = 'Subject' if course.is_subject else 'Course'
+        return f"{course.code} - {course.name} ({term})"
+    course_info.short_description = 'Course/Subject'
+    
+    def get_attendance_rate(self, obj):
+        """Calculate and display attendance rate"""
+        total = obj.attendances.count()
+        present = obj.attendances.filter(status='P').count()
+        if total > 0:
+            rate = (present / total) * 100
+            return f"{rate:.1f}%"
+        return "N/A"
+    get_attendance_rate.short_description = 'Attendance'
+    
+    def get_grade(self, obj):
+        """Display grade if available"""
+        if hasattr(obj, 'grade') and obj.grade:
+            return obj.grade.grade
+        return "Pending"
+    get_grade.short_description = 'Grade'
 
 @admin.register(Grade)
 class GradeAdmin(admin.ModelAdmin):

@@ -13,8 +13,16 @@ MAX_TITLE_LENGTH = 255
 MAX_CODE_LENGTH = 20
 
 class Department(models.Model):
+    EDUCATION_LEVEL_CHOICES = [
+        ('olevel', 'O-Level (Form 1-4)'),
+        ('alevel', 'A-Level (Form 5-6)'),
+        ('primary', 'Primary School'),
+        ('tertiary', 'Tertiary/University'),
+    ]
+    
     code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=MAX_NAME_LENGTH)
+    education_level = models.CharField(max_length=10, choices=EDUCATION_LEVEL_CHOICES, default='olevel')
     slug = models.SlugField(max_length=120, unique=True, blank=True)
     description = models.TextField(blank=True)
 
@@ -181,6 +189,16 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.code} - {self.name}"
+    
+    @property
+    def is_subject(self):
+        """Returns True if this course should be called a 'subject' (for O-Level)"""
+        return self.department.education_level == 'olevel'
+    
+    @property
+    def display_name(self):
+        """Returns 'Subject' or 'Course' based on education level"""
+        return 'Subject' if self.is_subject else 'Course'
     
 
     
@@ -377,7 +395,7 @@ class Announcement(models.Model):
 
 class Schedule(models.Model):
     name = models.CharField(max_length=100)
-    date = models.DateField()
+    date = models.DateField(default=timezone.now)
     start_time = models.TimeField()
     end_time = models.TimeField()
 

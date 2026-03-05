@@ -188,7 +188,7 @@
 
                 <!-- Desktop Navigation -->
                 <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-1">
+                    <div class="ml-10 flex items-baseline space-x-6">
                         <!-- Public Navigation -->
                         <a href="{% url 'public_home' %}" class="nav-link {% if request.resolver_match.url_name == 'public_home' %}active{% endif %}">
                             <i class="fas fa-home mr-2"></i>Home
@@ -300,7 +300,7 @@
 
         <!-- Mobile Navigation Menu -->
         <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <div class="px-2 pt-2 pb-3 space-y-1">
+            <div class="px-2 pt-2 pb-3 space-y-3">
                 <!-- Public Links -->
                 <a href="{% url 'public_home' %}" class="mobile-nav-link {% if request.resolver_match.url_name == 'public_home' %}active{% endif %}">
                     <i class="fas fa-home mr-3"></i>Home
@@ -344,7 +344,7 @@
                         </a>
                     </div>
                 {% else %}
-                    <div class="border-t border-gray-200 pt-2 mt-2 space-y-1">
+                    <div class="border-t border-gray-200 pt-2 mt-2 space-y-3">
                         <a href="{% url 'login' %}" class="mobile-nav-link">
                             <i class="fas fa-sign-in-alt mr-3"></i>Login
                         </a>
