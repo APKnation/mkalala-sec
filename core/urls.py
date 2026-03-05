@@ -26,7 +26,7 @@ urlpatterns = [
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     
     # Registration URLs
-    path('register/', views.PublicRegisterView.as_view(), name='public_register'),
+    path('register/', views.PublicRegisterView.as_view(), name='register'),  # Main registration URL
     path('register/student/', views.PublicRegisterView.as_view(), name='register_student'),
     path('register/staff/', views.StaffRegisterView.as_view(), name='staff_register'),
     path('faculty/register/', faculty_register, name='faculty_register'),

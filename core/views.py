@@ -14,6 +14,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count, Avg
 from django.urls import reverse_lazy, reverse
+from django.utils import timezone
 from django.views.generic import (
     ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
 )
@@ -163,18 +164,20 @@ class StudentListView(ListView):
 # ======================
 # Permission Helpers
 # ======================
-def is_admin(user):
-    return user.is_authenticated and (user.is_superuser or user.groups.filter(name='Admin').exists())
+def is_student(user):
+    return user.is_authenticated and hasattr(user, 'role') and user.role == 'student'
 
 def is_faculty(user):
-    return user.is_authenticated and user.groups.filter(name='Faculty').exists()
-
-def is_student(user):
-    return user.is_authenticated and user.groups.filter(name='Student').exists()
+    return user.is_authenticated and hasattr(user, 'role') and user.role in ['teacher', 'headmaster']
 
 def is_parent(user):
-    return user.is_authenticated and hasattr(user, 'parent_profile')
+    return user.is_authenticated and hasattr(user, 'role') and user.role == 'parent'
 
+def is_admin(user):
+    return user.is_authenticated and hasattr(user, 'role') and user.role == 'admin'
+
+def is_headmaster(user):
+    return user.is_authenticated and hasattr(user, 'role') and user.role == 'headmaster'
 # ======================
 # Core Views
 # ======================
@@ -270,11 +273,18 @@ class UserApprovalView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def test_func(self):
         # Only allow admins or staff to access this view
         return self.request.user.is_staff
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
-    template_name = 'core/user_list.html'  # Adjust path accordingly
+    template_name = 'core/admin_user_list.html'
     context_object_name = 'users'
-    paginate_by = 20  # optional pagination
+    paginate_by = 20
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        queryset = User.objects.all().order_by('-date_joined')
+        return queryset
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'core/dashboard.html'  # fallback template (optional)
 
@@ -520,15 +530,31 @@ def admin_dashboard(request):
     if not request.user.role == 'admin':
         return redirect('public_home')
     
+    # Get comprehensive statistics
+    total_users = User.objects.all().count()
+    students = User.objects.filter(role='student').count()
+    teachers = User.objects.filter(role='teacher').count()
+    headmasters = User.objects.filter(role='headmaster').count()
+    admins = User.objects.filter(role='admin').count()
+    
+    # Pending registrations (users who haven't been approved)
+    pending_registrations = User.objects.filter(is_active=False).count()
+    
+    # Get recent users for activity feed
+    recent_users = User.objects.order_by('-date_joined')[:5]
+    
     context = {
         'user': request.user,
         'role': 'School Administrator',
-        'total_users': User.objects.all().count(),
-        'students': User.objects.filter(role='student').count(),
-        'teachers': User.objects.filter(role='teacher').count(),
-        'pending_registrations': User.objects.filter(role__in=['teacher', 'headmaster', 'admin']).count(),
+        'total_users': total_users,
+        'students': students,
+        'teachers': teachers,
+        'headmasters': headmasters,
+        'admins': admins,
+        'pending_registrations': pending_registrations,
+        'recent_users': recent_users,
     }
-    return render(request, 'core/admin_dashboard.html', context)
+    return render(request, 'core/admin_dashboard_full.html', context)
 
 class BaseRegisterView(CreateView):
     from .forms import UserForm
@@ -606,11 +632,11 @@ def add_user(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, f"User {user.username} created successfully")
-            return redirect('user_management')
+            return redirect('user_list')
         messages.error(request, "Please correct the errors below.")
     else:
         form = UserForm()
-    return render(request, 'core/add_user.html', {'form': form})
+    return render(request, 'core/admin_add_user.html', {'form': form})
 
 class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = User
@@ -748,7 +774,18 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        student = self.request.user.student_profile
+        
+        # Check if student has a profile, if not create one
+        try:
+            student = self.request.user.student_profile
+        except StudentProfile.DoesNotExist:
+            # Create a StudentProfile for the user
+            student = StudentProfile.objects.create(
+                user=self.request.user,
+                roll_number=f"STU{self.request.user.id:06d}",
+                admission_year=timezone.now().year,
+                current_semester=1
+            )
         
         # Get enrollments with related data
         enrollments = Enrollment.objects.filter(
