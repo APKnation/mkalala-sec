@@ -4,10 +4,10 @@
 <div class="min-h-screen bg-gray-50">
     <!-- Header -->
     <div class="bg-gradient-to-r from-green-600 to-green-700 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold">School Admin Dashboard</h1>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                <div class="text-center sm:text-left">
+                    <h1 class="text-2xl sm:text-3xl font-bold">School Admin Dashboard</h1>
                     <p class="text-green-100 mt-1">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -24,9 +24,9 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Quick Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
             <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
                 <div class="flex items-center">
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">

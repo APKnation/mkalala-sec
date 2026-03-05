@@ -231,14 +231,7 @@
                         
                         <!-- Login/Signup for non-authenticated users -->
                         {% if not user.is_authenticated %}
-                            <div class="border-l border-gray-300 ml-2 pl-2">
-                                <a href="{% url 'login' %}" class="nav-link">
-                                    <i class="fas fa-sign-in-alt mr-2"></i>Login
-                                </a>
-                                <a href="{% url 'public_register' %}" class="nav-link bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
-                                    <i class="fas fa-user-plus mr-2"></i>Sign Up
-                                </a>
-                            </div>
+                            <!-- Login/Register moved to right side for better UX -->
                         {% endif %}
                     </div>
                 </div>
@@ -283,12 +276,15 @@
                                 </div>
                             </div>
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn-outline">
-                                <i class="fas fa-sign-in-alt mr-2"></i>Login
-                            </a>
-                            <a href="{% url 'register' %}" class="btn-primary">
-                                <i class="fas fa-user-plus mr-2"></i>Register
-                            </a>
+                            <!-- Login/Signup for non-authenticated users -->
+                            <div class="flex items-center space-x-3">
+                                <a href="{% url 'login' %}" class="btn-outline">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                                </a>
+                                <a href="{% url 'register' %}" class="btn-primary">
+                                    <i class="fas fa-user-plus mr-2"></i>Register
+                                </a>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -455,6 +451,42 @@
     
     .btn-outline {
         @apply border-2 border-gray-300 text-gray-700 font-medium px-4 py-2 rounded-lg hover:border-primary-500 hover:text-primary-600 transition-all duration-300;
+    }
+    
+    /* Responsive utilities */
+    .responsive-container {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+    
+    .responsive-grid {
+        @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+    }
+    
+    .responsive-card {
+        @apply bg-white rounded-xl shadow-md p-4 sm:p-6;
+    }
+    
+    .responsive-header {
+        @apply text-xl sm:text-2xl lg:text-3xl font-bold;
+    }
+    
+    .responsive-text {
+        @apply text-sm sm:text-base;
+    }
+    
+    /* Mobile-first responsive adjustments */
+    @media (max-width: 640px) {
+        .responsive-grid {
+            @apply grid-cols-1 gap-4;
+        }
+        
+        .responsive-card {
+            @apply p-4;
+        }
+        
+        .responsive-header {
+            @apply text-xl;
+        }
     }
     </style>
 

@@ -17,21 +17,25 @@ User = get_user_model()
 
 # Custom User Admin
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name', 'is_student', 'is_faculty', 'is_admin', 'is_parent')
-    list_filter = ('is_student', 'is_faculty', 'is_admin', 'is_parent')
+    list_display = ('username', 'email', 'first_name', 'last_name', 'role', 'is_student', 'is_faculty', 'is_admin', 'is_parent', 'is_active')
+    list_filter = ('role', 'is_student', 'is_faculty', 'is_admin', 'is_parent', 'is_active')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'profile_picture')}),
+        (_('Role'), {'fields': ('role',)}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        (_('Role flags'), {'fields': ('is_student', 'is_faculty', 'is_admin', 'is_parent')}),
+        (_('Role flags'), {'fields': ('is_student', 'is_faculty', 'is_admin', 'is_parent', 'is_headmaster')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'is_student', 'is_faculty', 'is_admin', 'is_parent'),
+            'fields': ('username', 'email', 'password1', 'password2', 'role', 'is_student', 'is_faculty', 'is_admin', 'is_parent', 'is_headmaster'),
         }),
     )
+
+# Register the User model with the custom admin
+admin.site.register(User, CustomUserAdmin)
 
 # Model Admins
 @admin.register(Department)

@@ -1,219 +1,268 @@
 {% extends './base.html' %}
 
-{% block title %}Modern Sign In{% endblock %}
+{% block title %}Login - School Management System{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 flex items-center justify-center px-4 py-12">
-    <div class="absolute inset-0 bg-pattern-dots opacity-10"></div>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center px-4 py-12">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
     
-    <div class="relative w-full max-w-md">
-        <!-- Logo Section -->
-        <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-2xl mb-4 animate-float">
-                <i class="fas fa-graduation-cap text-4xl text-primary-600"></i>
-            </div>
-            <h1 class="text-3xl font-display font-bold text-white mb-2 animate-fade-in-up">School Management System</h1>
-            <p class="text-primary-100 animate-fade-in-up" style="animation-delay: 0.1s">Welcome back! Please sign in to continue</p>
-        </div>
-
-        <!-- Login Card -->
-        <div class="glass-card p-8 animate-fade-in-up" style="animation-delay: 0.2s">
-            <!-- Form Header -->
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">Sign In</h2>
-                <p class="text-gray-600">Enter your credentials to access your account</p>
-            </div>
-
-            <!-- Messages -->
-            {% if messages %}
-            <div class="mb-6 space-y-3">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} animate-fade-in-up flex items-center justify-between">
-                    <div class="flex items-center">
-                        <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %} mr-3"></i>
-                        <span>{{ message }}</span>
+    <div class="relative w-full max-w-5xl">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div class="flex flex-col lg:flex-row">
+                <!-- Left Side - Branding & Info -->
+                <div class="lg:w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 lg:p-12 text-white">
+                    <div class="h-full flex flex-col justify-center">
+                        <!-- Logo -->
+                        <div class="flex items-center mb-8">
+                            <div class="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center mr-4">
+                                <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold">SchoolMS</h1>
+                                <p class="text-blue-100 text-sm">Tanzania O-Level Management</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Welcome Message -->
+                        <div class="mb-8">
+                            <h2 class="text-3xl font-bold mb-4">Welcome Back!</h2>
+                            <p class="text-blue-100 text-lg leading-relaxed">
+                                Access your personalized dashboard and manage your academic journey with our comprehensive school management system.
+                            </p>
+                        </div>
+                        
+                        <!-- Features -->
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-shield-alt text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">Secure Access</h3>
+                                    <p class="text-blue-100 text-sm">Role-based authentication system</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">Multi-Role Support</h3>
+                                    <p class="text-blue-100 text-sm">Students, Teachers, Admin & Staff</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-mobile-alt text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold">Mobile Friendly</h3>
+                                    <p class="text-blue-100 text-sm">Access anywhere, anytime</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quote -->
+                        <div class="mt-8 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                            <p class="text-sm italic">"Education is the passport to the future, for tomorrow belongs to those who prepare for it today."</p>
+                            <p class="text-xs mt-2 text-blue-100">- Malcolm X</p>
+                        </div>
                     </div>
-                    <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors duration-200" onclick="this.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Login Form -->
-            <form method="POST" action="{% url 'login' %}" class="space-y-5" id="loginForm">
-                {% csrf_token %}
                 
-                <!-- Username Field -->
-                <div class="form-group">
-                    <label for="username" class="form-label">
-                        <i class="fas fa-user mr-2 text-primary-600"></i>Username
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <i class="fas fa-user"></i>
-                        </span>
-                        <input type="text" 
-                               name="username" 
-                               id="username" 
-                               class="form-input pl-12" 
-                               placeholder="Enter your username" 
-                               required
-                               autocomplete="username">
+                <!-- Right Side - Login Form -->
+                <div class="lg:w-1/2 p-8 lg:p-12">
+                    <!-- Form Header -->
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Sign In</h2>
+                        <p class="text-gray-600">Enter your credentials to access your account</p>
                     </div>
-                </div>
 
-                <!-- Password Field -->
-                <div class="form-group">
-                    <label for="password" class="form-label">
-                        <i class="fas fa-lock mr-2 text-primary-600"></i>Password
-                    </label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                            <i class="fas fa-lock"></i>
-                        </span>
-                        <input type="password" 
-                               name="password" 
-                               id="password" 
-                               class="form-input pl-12 pr-12" 
-                               placeholder="Enter your password" 
-                               required
-                               autocomplete="current-password">
-                        <button type="button" 
-                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-primary-600 transition-colors duration-200" 
-                                id="togglePassword">
-                            <i class="fas fa-eye" id="passwordIcon"></i>
+                    <!-- Messages -->
+                    {% if messages %}
+                    <div class="mb-6 space-y-3">
+                        {% for message in messages %}
+                        <div class="p-4 rounded-xl border-l-4 shadow-sm flex items-center justify-between animate-fade-in-up
+                            {% if message.tags == 'error' %}bg-red-50 border-red-500 text-red-900{% endif %}
+                            {% if message.tags == 'success' %}bg-green-50 border-green-500 text-green-900{% endif %}
+                            {% if message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-900{% endif %}
+                            {% if message.tags == 'info' %}bg-blue-50 border-blue-500 text-blue-900{% endif %}">
+                            <div class="flex items-center">
+                                <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} mr-3"></i>
+                                <span class="text-sm font-medium">{{ message }}</span>
+                            </div>
+                            <button type="button" class="ml-4 text-gray-400 hover:text-gray-600 transition-colors" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Login Form -->
+                    <form method="POST" action="{% url 'login' %}" class="space-y-6" id="loginForm">
+                        {% csrf_token %}
+                        
+                        <!-- Username Field -->
+                        <div class="space-y-2">
+                            <label for="username" class="block text-sm font-semibold text-gray-700">
+                                <i class="fas fa-user mr-2 text-blue-600"></i>Username
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input type="text" 
+                                       name="username" 
+                                       id="username" 
+                                       class="block w-full pl-10 pr-3 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 focus:bg-white"
+                                       placeholder="Enter your username" 
+                                       required
+                                       autocomplete="username">
+                            </div>
+                        </div>
+
+                        <!-- Password Field -->
+                        <div class="space-y-2">
+                            <label for="password" class="block text-sm font-semibold text-gray-700">
+                                <i class="fas fa-lock mr-2 text-blue-600"></i>Password
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input type="password" 
+                                       name="password" 
+                                       id="password" 
+                                       class="block w-full pl-10 pr-10 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 bg-gray-50 focus:bg-white"
+                                       placeholder="Enter your password" 
+                                       required
+                                       autocomplete="current-password">
+                                <button type="button" 
+                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-blue-600 transition-colors duration-200" 
+                                        id="togglePassword">
+                                    <i class="fas fa-eye" id="passwordIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Remember Me & Forgot Password -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="remember" class="ml-2 text-sm text-gray-700">Remember me</label>
+                            </div>
+                            <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200">
+                                Forgot password?
+                            </a>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" id="submitBtn">
+                            <span class="flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt mr-2"></i>
+                                <span id="btnText">Sign In</span>
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" id="spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V8c0 2.5-1.5 4.5-3.5 4.5S4 10.5 4 8z"></path>
+                                </svg>
+                            </span>
                         </button>
-                    </div>
-                </div>
 
-                <!-- Remember Me & Forgot Password -->
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="remember" name="remember" class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                        <label for="remember" class="ml-2 text-sm text-gray-700">Remember me</label>
-                    </div>
-                    <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium transition-colors duration-200">
-                        Forgot password?
-                    </a>
-                </div>
+                        <!-- Divider -->
+                        <div class="relative my-6">
+                            <div class="absolute inset-0 flex items-center">
+                                <div class="w-full border-t border-gray-200"></div>
+                            </div>
+                            <div class="relative flex justify-center text-sm">
+                                <span class="px-4 bg-white text-gray-500">or continue with</span>
+                            </div>
+                        </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="btn-primary w-full py-3 font-semibold">
-                    <i class="fas fa-sign-in-alt mr-2"></i>
-                    <span class="btn-text">Sign In</span>
-                    <div class="spinner spinner-sm ml-2"></div>
-                </button>
+                        <!-- Social Login Buttons -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md">
+                                <i class="fab fa-google mr-2 text-red-500"></i>
+                                <span class="text-sm font-medium">Google</span>
+                            </button>
+                            <button type="button" class="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl text-gray-700 bg-white hover:bg-gray-50 transition-all duration-300 hover:shadow-md">
+                                <i class="fab fa-microsoft mr-2 text-blue-500"></i>
+                                <span class="text-sm font-medium">Microsoft</span>
+                            </button>
+                        </div>
 
-                <!-- Divider -->
-                <div class="text-center my-4">
-                    <span class="text-gray-500">or continue with</span>
+                        <!-- Sign Up Link -->
+                        <div class="text-center pt-4 border-t border-gray-100">
+                            <p class="text-gray-600 text-sm">
+                                Don't have an account? 
+                                <a href="{% url 'register' %}" class="text-blue-600 hover:text-blue-700 font-semibold transition-colors duration-200">
+                                    Sign up here
+                                </a>
+                            </p>
+                        </div>
+                    </form>
                 </div>
-
-                <!-- Social Login Buttons -->
-                <div class="grid grid-cols-2 gap-3">
-                    <button type="button" class="btn-outline hover-lift">
-                        <i class="fab fa-google mr-2"></i>Google
-                    </button>
-                    <button type="button" class="btn-outline hover-lift">
-                        <i class="fab fa-microsoft mr-2"></i>Microsoft
-                    </button>
-                </div>
-
-                <!-- Sign Up Link -->
-                <div class="text-center mt-4">
-                    <p class="text-gray-600">
-                        Don't have an account? 
-                        <a href="{% url 'register' %}" class="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200">
-                            Sign up here
-                        </a>
-                    </p>
-                </div>
-            </form>
+            </div>
         </div>
-
-        <!-- Footer Links -->
-        <div class="text-center mt-8 animate-fade-in-up" style="animation-delay: 0.3s">
-            <div class="flex justify-center space-x-6 text-primary-100 text-sm">
-                <a href="#" class="hover:text-white transition-colors duration-200">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition-colors duration-200">Terms of Service</a>
-                <a href="#" class="hover:text-white transition-colors duration-200">Contact Support</a>
+        
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-500 text-sm">
+            <p>&copy; 2024 SchoolMS. All rights reserved.</p>
+            <div class="flex justify-center space-x-4 mt-2">
+                <a href="#" class="hover:text-gray-700 transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-gray-700 transition-colors">Terms of Service</a>
+                <a href="#" class="hover:text-gray-700 transition-colors">Contact Support</a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Additional styles for this page */
-.form-input {
-    @apply w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-all duration-300 bg-white;
+/* Background Pattern */
+.bg-grid-pattern {
+    background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
 }
 
-.form-label {
-    @apply block text-sm font-semibold text-gray-700 mb-2;
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-6 py-3 rounded-xl shadow-medium hover:shadow-large hover-lift transition-all duration-300 relative overflow-hidden;
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
 }
 
-.btn-primary:hover {
-    @apply bg-gradient-to-r from-primary-600 to-primary-700;
+/* Focus styles */
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.btn-primary.loading {
-    @apply opacity-75 cursor-not-allowed;
+/* Button loading state */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
-.btn-outline {
-    @apply border-2 border-gray-300 text-gray-700 font-medium px-4 py-2 rounded-xl hover:border-primary-500 hover:text-primary-600 transition-all duration-300;
-}
-
-.alert {
-    @apply p-4 rounded-xl border-l-4 shadow-soft flex items-center justify-between;
-}
-
-.alert-success {
-    @apply bg-success-50 border-success-500 text-success-900;
-}
-
-.alert-error {
-    @apply bg-danger-50 border-danger-500 text-danger-900;
-}
-
-.alert-info {
-    @apply bg-blue-50 border-blue-500 text-blue-900;
-}
-
-.alert-warning {
-    @apply bg-warning-50 border-warning-500 text-warning-900;
-}
-
-.spinner {
-    @apply animate-spin rounded-full border-2 border-gray-200 border-t-primary-500 hidden;
-}
-
-.spinner-sm {
-    @apply w-4 h-4;
-}
-
-.btn-primary.loading .spinner {
-    @apply inline-block;
-}
-
-.btn-primary.loading .btn-text {
-    @apply opacity-50;
-}
-
-/* Animation for form elements */
-.form-group {
-    @apply animate-fade-in-up;
-}
-
-/* Glassmorphism effect */
-.glass-card {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-xl;
+/* Mobile adjustments */
+@media (max-width: 1024px) {
+    .bg-grid-pattern {
+        background-size: 30px 30px;
+    }
 }
 </style>
 
@@ -227,6 +276,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
     const passwordIcon = document.getElementById('passwordIcon');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const spinner = document.getElementById('spinner');
 
     // Password visibility toggle
     if (togglePassword && passwordInput && passwordIcon) {
@@ -247,7 +299,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission with loading state
     form.addEventListener('submit', function(e) {
-        const submitBtn = form.querySelector('button[type="submit"]');
         const username = document.getElementById('username').value;
         const password = passwordInput.value;
 
@@ -265,28 +316,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Show loading state
-        submitBtn.classList.add('loading');
         submitBtn.disabled = true;
-    });
-
-    // Add floating animation to form elements
-    const formGroups = document.querySelectorAll('.form-group');
-    formGroups.forEach((group, index) => {
-        group.style.animationDelay = `${index * 0.1}s`;
+        btnText.textContent = 'Signing in...';
+        spinner.classList.remove('hidden');
     });
 
     // Social login handlers (mock)
-    document.querySelectorAll('.btn-outline').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const provider = this.textContent.trim();
-            Swal.fire({
-                title: `${provider} Login`,
-                text: `${provider} authentication is not implemented yet.`,
-                icon: 'info',
-                confirmButtonColor: '#3b82f6',
-                confirmButtonText: 'OK'
+    document.querySelectorAll('button[type="button"]').forEach(btn => {
+        if (btn.textContent.includes('Google') || btn.textContent.includes('Microsoft')) {
+            btn.addEventListener('click', function() {
+                const provider = this.textContent.trim();
+                Swal.fire({
+                    title: `${provider} Login`,
+                    text: `${provider} authentication will be available soon.`,
+                    icon: 'info',
+                    confirmButtonColor: '#3b82f6',
+                    confirmButtonText: 'OK'
+                });
             });
-        });
+        }
     });
 
     // Forgot password handler
@@ -294,18 +342,23 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         Swal.fire({
             title: 'Password Reset',
-            text: 'Please contact your administrator to reset your password.',
+            text: 'Please contact your school administrator to reset your password.',
             icon: 'info',
             confirmButtonColor: '#3b82f6',
             confirmButtonText: 'OK'
         });
     });
 
-    // Add enter key support for form submission
-    form.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            form.dispatchEvent(new Event('submit'));
-        }
+    // Add input focus effects
+    const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('transform', 'scale-105');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('transform', 'scale-105');
+        });
     });
 });
 </script>
