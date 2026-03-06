@@ -8,7 +8,7 @@ from .views import CourseListView
 from .views import CourseDetailView
 from .views import CourseDeleteView
 from .views import CourseManagementView
-from .views import SubjectListView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView
+from .views import SubjectListView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView, SubjectEnrollmentListView
 
 from django.conf import settings
 from django.conf.urls.static import static

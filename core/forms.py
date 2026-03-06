@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
+from django.utils import timezone
 from django.db.models import Q
 from .models import (
     Department, AdminProfile, StudentProfile, FacultyProfile,
