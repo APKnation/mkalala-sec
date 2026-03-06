@@ -1,0 +1,243 @@
+{% extends 'core/student_dashboard.html' %}
+{% load static %}
+
+{% block title %}Timetable - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="h3 mb-0">My Timetable</h1>
+                    <p class="mb-0 opacity-75">View your class schedule and timetable</p>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex gap-3">
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Student ID</small>
+                            <strong>{{ student.roll_number }}</strong>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Current Level</small>
+                            <strong>{{ student.get_current_level_display }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content-body">
+        {% if current_semester %}
+            <!-- Semester Info -->
+            <div class="stat-card mb-4">
+                <h5 class="fw-bold mb-3"><i class="fas fa-calendar-alt me-2"></i>Current Semester</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Semester:</strong> {{ current_semester.name }}</p>
+                        <p class="mb-2"><strong>Start Date:</strong> {{ current_semester.start_date|date:"F d, Y" }}</p>
+                        <p class="mb-0"><strong>End Date:</strong> {{ current_semester.end_date|date:"F d, Y" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                        <p class="mb-2"><strong>Enrolled Courses:</strong> {{ enrollments|length }}</p>
+                        <p class="mb-0"><strong>Total Classes:</strong> {{ timetable_entries|length }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timetable Grid -->
+            <div class="stat-card">
+                <h5 class="fw-bold mb-4"><i class="fas fa-clock me-2"></i>Weekly Schedule</h5>
+                
+                {% if timetable_entries %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered timetable-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 120px;">Time</th>
+                                    <th class="text-center">Monday</th>
+                                    <th class="text-center">Tuesday</th>
+                                    <th class="text-center">Wednesday</th>
+                                    <th class="text-center">Thursday</th>
+                                    <th class="text-center">Friday</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for time_slot in time_slots %}
+                                    <tr>
+                                        <td class="time-slot text-center fw-bold">{{ time_slot }}</td>
+                                        {% for day in days_of_week %}
+                                            <td class="schedule-cell">
+                                                {% for entry in organized_timetable.day %}
+                                                    {% if entry.start_time == time_slot %}
+                                                        <div class="class-entry">
+                                                            <div class="course-name">{{ entry.course_offering.course.code }}</div>
+                                                            <div class="course-title">{{ entry.course_offering.course.name|truncatechars:20 }}</div>
+                                                            <div class="faculty-name">{{ entry.course_offering.faculty.user.get_full_name }}</div>
+                                                            {% if entry.room %}
+                                                                <div class="room-info">
+                                                                    <i class="fas fa-door-open"></i> {{ entry.room }}
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Classes Scheduled</h5>
+                        <p class="text-muted">Your timetable will appear here once classes are scheduled.</p>
+                    </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <!-- No Active Semester -->
+            <div class="stat-card">
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No Active Semester</h5>
+                    <p class="text-muted">There is currently no active semester. Please check back later.</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_courses' %}" class="btn btn-primary w-100">
+                                <i class="fas fa-book-open me-2"></i>My Courses
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_assignments' %}" class="btn btn-info w-100">
+                                <i class="fas fa-tasks me-2"></i>Assignments
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_exams' %}" class="btn btn-success w-100">
+                                <i class="fas fa-clipboard-list me-2"></i>Exam Schedule
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_profile' %}" class="btn btn-secondary w-100">
+                                <i class="fas fa-user me-2"></i>My Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timetable-table {
+    font-size: 0.9rem;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timetable-table th {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 12px 8px;
+    vertical-align: middle;
+}
+
+.timetable-table td {
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    vertical-align: top;
+    height: 80px;
+}
+
+.time-slot {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #6c757d;
+    border-right: 2px solid #dee2e6;
+}
+
+.schedule-cell {
+    position: relative;
+    background: white;
+}
+
+.class-entry {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+    padding: 8px;
+    height: 100%;
+    color: white;
+    font-size: 0.75rem;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.class-entry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.course-name {
+    font-weight: 700;
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.course-title {
+    font-size: 0.7rem;
+    opacity: 0.9;
+    margin-bottom: 2px;
+}
+
+.faculty-name {
+    font-size: 0.65rem;
+    opacity: 0.8;
+    margin-bottom: 2px;
+}
+
+.room-info {
+    font-size: 0.6rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+    .timetable-table {
+        font-size: 0.7rem;
+    }
+    
+    .timetable-table th,
+    .timetable-table td {
+        padding: 4px;
+    }
+    
+    .class-entry {
+        padding: 4px;
+        font-size: 0.65rem;
+    }
+}
+</style>
+{% endblock %}

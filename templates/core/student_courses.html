@@ -1,0 +1,151 @@
+{% extends 'core/student_dashboard.html' %}
+{% load static %}
+
+{% block title %}My Courses - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="h3 mb-0">My Courses</h1>
+                    <p class="mb-0 opacity-75">Manage your course enrollments and track progress</p>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex gap-3">
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Current Level</small>
+                            <strong>{{ student.get_current_level_display }}</strong>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Total Courses</small>
+                            <strong>{{ enrollments|length }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content-body">
+        <!-- Enrolled Courses -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-book-open me-2"></i> Current Enrollments</h5>
+                    {% if enrollments %}
+                        {% for enrollment_data in enrollments %}
+                            <div class="course-card p-3 mb-3 bg-light rounded">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6">
+                                        <h6 class="mb-1">{{ enrollment_data.enrollment.course_offering.course.name }}</h6>
+                                        <p class="mb-1 text-muted">{{ enrollment_data.enrollment.course_offering.course.code }}</p>
+                                        <small class="text-muted">
+                                            Instructor: {{ enrollment_data.enrollment.course_offering.faculty.user.get_full_name }}
+                                        </small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-center">
+                                            <span class="attendance-badge {% if enrollment_data.attendance_percentage >= 75 %}bg-success{% elif enrollment_data.attendance_percentage >= 50 %}bg-warning{% else %}bg-danger{% endif %} text-white">
+                                                {{ enrollment_data.attendance_percentage|floatformat:0 }}%
+                                            </span>
+                                            <br><small class="text-muted">Attendance</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="text-end">
+                                            {% if enrollment_data.grade %}
+                                                <span class="badge bg-info">{{ enrollment_data.grade.grade }}</span>
+                                                <br><small class="text-muted">Current Grade</small>
+                                            {% else %}
+                                                <span class="badge bg-secondary">In Progress</span>
+                                                <br><small class="text-muted">Status</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No courses enrolled yet</h5>
+                            <p class="text-muted">Check the available courses below to get started.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Available Courses for Enrollment -->
+        {% if available_courses %}
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-plus-circle me-2"></i> Available Courses for Enrollment</h5>
+                    <div class="row">
+                        {% for course_offering in available_courses %}
+                            <div class="col-md-6 mb-3">
+                                <div class="border rounded p-3">
+                                    <h6 class="mb-1">{{ course_offering.course.name }}</h6>
+                                    <p class="mb-2 text-muted">{{ course_offering.course.code }}</p>
+                                    <p class="mb-2 small">{{ course_offering.course.description|truncatewords:20 }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            Instructor: {{ course_offering.faculty.user.get_full_name }}
+                                        </small>
+                                        <form method="post" action="{% url 'enroll_course' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="course_offering_id" value="{{ course_offering.id }}">
+                                            <button type="submit" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-plus me-1"></i>Enroll
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Semester Information -->
+        {% if current_semester %}
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-calendar-alt me-2"></i> Current Semester</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Semester:</strong> {{ current_semester.name }}</p>
+                            <p class="mb-2"><strong>Start Date:</strong> {{ current_semester.start_date|date:"F d, Y" }}</p>
+                            <p class="mb-0"><strong>End Date:</strong> {{ current_semester.end_date|date:"F d, Y" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Total Enrolled:</strong> {{ enrollments|length }} courses</p>
+                            <p class="mb-2"><strong>Average Attendance:</strong> 
+                                {% if enrollments %}
+                                    {% if average_attendance %}
+                                        {{ average_attendance|floatformat:1 }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </p>
+                            <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

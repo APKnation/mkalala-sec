@@ -1,0 +1,224 @@
+{% extends 'core/student_dashboard.html' %}
+{% load static %}
+
+{% block title %}My Profile - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="h3 mb-0">My Profile</h1>
+                    <p class="mb-0 opacity-75">Manage your personal information and account settings</p>
+                </div>
+                <div class="col-auto">
+                    <div class="d-flex gap-3">
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Student ID</small>
+                            <strong>{{ student.roll_number }}</strong>
+                        </div>
+                        <div class="text-end">
+                            <small class="d-block opacity-75">Current Level</small>
+                            <strong>{{ student.get_current_level_display }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content-body">
+        <!-- Profile Overview -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <div class="text-center">
+                        {% if student.profile_picture %}
+                            <img src="{{ student.profile_picture.url }}" class="rounded-circle mb-3" width="150" height="150" alt="Profile Picture">
+                        {% else %}
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
+                                <i class="fas fa-user fa-3x text-white"></i>
+                            </div>
+                        {% endif %}
+                        <h5 class="fw-bold">{{ student.user.get_full_name }}</h5>
+                        <p class="text-muted">{{ student.get_current_level_display }}</p>
+                        <p class="text-muted mb-0">Roll Number: {{ student.roll_number }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-4"><i class="fas fa-user-circle me-2"></i>Personal Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Full Name:</strong> {{ student.user.get_full_name }}</p>
+                            <p class="mb-2"><strong>Email:</strong> {{ student.user.email }}</p>
+                            <p class="mb-2"><strong>Phone:</strong> {{ student.phone_number|default:"Not provided" }}</p>
+                            <p class="mb-2"><strong>Date of Birth:</strong> {{ student.date_of_birth|date:"F d, Y"|default:"Not provided" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><strong>Gender:</strong> {{ student.get_gender_display }}</p>
+                            <p class="mb-2"><strong>Department:</strong> {{ student.department.name|default:"Not assigned" }}</p>
+                            <p class="mb-2"><strong>Admission Year:</strong> {{ student.admission_year }}</p>
+                            <p class="mb-2"><strong>Current Semester:</strong> {{ student.current_semester }}</p>
+                        </div>
+                    </div>
+                    {% if student.address %}
+                        <div class="mt-3">
+                            <p class="mb-2"><strong>Address:</strong></p>
+                            <p class="text-muted">{{ student.address }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Academic Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card academic">
+                    <div class="stat-icon academic">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ enrollments_count }}</h4>
+                    <p class="text-muted mb-0">Enrolled Courses</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card fee">
+                    <div class="stat-icon fee">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ total_fees|floatformat:0 }}</h4>
+                    <p class="text-muted mb-0">Total Fees (TZS)</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card achievement">
+                    <div class="stat-icon achievement">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ achievements_count }}</h4>
+                    <p class="text-muted mb-0">Achievements</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="border-left-color: #10b981;">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ student.current_semester }}</h4>
+                    <p class="text-muted mb-0">Current Semester</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Academic Progress -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-graduation-cap me-2"></i> Academic Progress</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Enrollment History</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Academic Year</th>
+                                            <th>Semester</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>{{ student.admission_year }}/{{ student.admission_year|add:1 }}</td>
+                                            <td>Semester {{ student.current_semester }}</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3">Academic Summary</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-2"><strong>Current Level:</strong> {{ student.get_current_level_display }}</p>
+                                    <p class="mb-2"><strong>Department:</strong> {{ student.department.name|default:"Not assigned" }}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-2"><strong>Admission Type:</strong> Regular</p>
+                                    <p class="mb-2"><strong>Student Status:</strong> <span class="badge bg-success">Enrolled</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Information -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-address-card me-2"></i> Contact Information</h5>
+                    <div class="mb-3">
+                        <p class="mb-2"><strong>Primary Email:</strong> {{ student.user.email }}</p>
+                        <p class="mb-2"><strong>Phone Number:</strong> {{ student.phone_number|default:"Not provided" }}</p>
+                        <p class="mb-2"><strong>Emergency Contact:</strong> {{ student.emergency_contact_name|default:"Not provided" }}</p>
+                        <p class="mb-2"><strong>Emergency Phone:</strong> {{ student.emergency_contact_phone|default:"Not provided" }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-map-marker-alt me-2"></i> Address Information</h5>
+                    <div class="mb-3">
+                        {% if student.address %}
+                            <p class="mb-2"><strong>Residential Address:</strong></p>
+                            <p class="text-muted">{{ student.address }}</p>
+                        {% else %}
+                            <p class="text-muted">No address information provided</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-cogs me-2"></i> Quick Actions</h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_settings' %}" class="btn btn-primary w-100">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_fees' %}" class="btn btn-info w-100">
+                                <i class="fas fa-money-bill-wave me-2"></i>View Fees
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_results' %}" class="btn btn-success w-100">
+                                <i class="fas fa-chart-line me-2"></i>View Results
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'student_messages' %}" class="btn btn-warning w-100">
+                                <i class="fas fa-envelope me-2"></i>Messages
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

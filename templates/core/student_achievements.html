@@ -1,0 +1,417 @@
+{% extends 'core/student_dashboard.html' %}
+{% load static %}
+
+{% block title %}Achievements - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0">Achievements</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{% url 'student_dashboard' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Achievements</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="content">
+        <div class="container-fluid">
+            <!-- Achievement Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card academic">
+                        <div class="stat-icon academic">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1">{{ total_achievements }}</h4>
+                        <p class="text-muted mb-0">Total Achievements</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card info">
+                        <div class="stat-icon info">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1">{{ total_participations }}</h4>
+                        <p class="text-muted mb-0">Activities Joined</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card success">
+                        <div class="stat-icon success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1">{{ attended_activities }}</h4>
+                        <p class="text-muted mb-0">Activities Attended</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card warning">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <h4 class="fw-bold mb-1">{{ attendance_rate }}%</h4>
+                        <p class="text-muted mb-0">Attendance Rate</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements by Year -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-trophy me-2"></i>Achievements by Year
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if achievements_by_year %}
+                                {% for year, year_achievements in achievements_by_year.items %}
+                                    <div class="mb-4">
+                                        <h6 class="text-primary fw-bold mb-3">
+                                            <i class="fas fa-calendar me-2"></i>{{ year }}
+                                            <span class="badge bg-secondary ms-2">{{ year_achievements|length }} achievements</span>
+                                        </h6>
+                                        <div class="row">
+                                            {% for achievement in year_achievements %}
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card border-left-primary">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-start">
+                                                                <div class="flex-shrink-0">
+                                                                    <div class="achievement-icon">
+                                                                        <i class="fas fa-award fa-2x text-warning"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex-grow-1 ms-3">
+                                                                    <h6 class="card-title">{{ achievement.title }}</h6>
+                                                                    {% if achievement.description %}
+                                                                        <p class="card-text text-muted small">{{ achievement.description|truncatechars:100 }}</p>
+                                                                    {% endif %}
+                                                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                                                        <small class="text-muted">
+                                                                            <i class="fas fa-calendar-alt me-1"></i>
+                                                                            {{ achievement.date_awarded|date:"M d, Y" }}
+                                                                        </small>
+                                                                        {% if achievement.awarded_by %}
+                                                                            <small class="text-muted">
+                                                                                <i class="fas fa-user me-1"></i>
+                                                                                {{ achievement.awarded_by }}
+                                                                            </small>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                    {% if achievement.is_recent %}
+                                                                        <span class="badge bg-success mt-2">Recent</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Achievements Yet</h5>
+                                    <p class="text-muted">You haven't earned any achievements yet. Keep participating in activities!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Participation -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-calendar-check me-2"></i>Activity Participation
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if participations %}
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Activity</th>
+                                                <th>Type</th>
+                                                <th>Registered On</th>
+                                                <th>Attendance Status</th>
+                                                <th>Days Since Registration</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for participation in participations %}
+                                                <tr>
+                                                    <td>
+                                                        <strong>{{ participation.activity.title }}</strong>
+                                                        {% if participation.is_recent %}
+                                                            <span class="badge bg-success ms-2">Recent</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-secondary">{{ participation.activity.activity_type }}</span>
+                                                    </td>
+                                                    <td>{{ participation.registered_on|date:"M d, Y H:i" }}</td>
+                                                    <td>
+                                                        <span class="badge bg-{{ participation.attendance_class }}">
+                                                            {{ participation.attendance_status }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-light text-dark">{{ participation.days_since_registered }} days ago</span>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Activity Participation</h5>
+                                    <p class="text-muted">You haven't participated in any activities yet. Join some activities to start building your profile!</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participation by Type & Recent Activity -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-pie me-2"></i>Participation by Type
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if participations_by_type %}
+                                {% for activity_type, type_data in participations_by_type.items %}
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <h6 class="mb-1">{{ activity_type }}</h6>
+                                            <small class="text-muted">{{ type_data.count }} activities</small>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="text-muted">{{ type_data.count }} joined</small>
+                                        </div>
+                                    </div>
+                                    <div class="progress mb-3">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ type_data.percentage|floatformat:0 }}%">
+                                            {{ type_data.count }}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <i class="fas fa-chart-pie fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted small">No participation data available</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>Recent Activity
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if participations %}
+                                {% for participation in participations|slice:":5" %}
+                                    <div class="d-flex align-items-center mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                                        <div class="flex-shrink-0">
+                                            <div class="activity-icon">
+                                                <i class="fas fa-calendar-check fa-2x text-info"></i>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <h6 class="mb-1">{{ participation.activity.title }}</h6>
+                                            <p class="mb-1 text-muted small">{{ participation.activity.activity_type }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">{{ participation.registered_on|date:"M d, Y" }}</small>
+                                                <span class="badge bg-{{ participation.attendance_class }} badge-sm">
+                                                    {{ participation.attendance_status }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <i class="fas fa-history fa-2x text-muted mb-2"></i>
+                                    <p class="text-muted small">No recent activity</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="stat-card">
+                        <h5 class="fw-bold mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <a href="#" class="btn btn-primary w-100">
+                                    <i class="fas fa-calendar-plus me-2"></i>Join Activities
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="#" class="btn btn-info w-100">
+                                    <i class="fas fa-list me-2"></i>All Activities
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="{% url 'student_profile' %}" class="btn btn-success w-100">
+                                    <i class="fas fa-user me-2"></i>My Profile
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="{% url 'student_dashboard' %}" class="btn btn-secondary w-100">
+                                    <i class="fas fa-home me-2"></i>Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #3b82f6;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stat-card.info { border-left-color: #3b82f6; }
+.stat-card.success { border-left-color: #10b981; }
+.stat-card.warning { border-left-color: #f59e0b; }
+.stat-card.academic { border-left-color: #8b5cf6; }
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: white;
+}
+
+.stat-icon.info { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+.stat-icon.success { background: linear-gradient(135deg, #10b981, #059669); }
+.stat-icon.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.stat-icon.academic { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.border-left-primary {
+    border-left: 4px solid #3b82f6 !important;
+}
+
+.achievement-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.activity-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3b82f6, #1e40af);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table th {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+}
+
+.text-center.py-5 {
+    padding: 3rem 0;
+}
+
+.fa-3x {
+    font-size: 3rem;
+}
+</style>
+{% endblock %}

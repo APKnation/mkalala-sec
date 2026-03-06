@@ -13,7 +13,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q, Count, Avg, Sum
-from django.db.models import Sum as DBSum  # Alias to ensure no conflicts
+from django.db.models import Q, Count, Avg, Sum as DBSum  # Alias to ensure no conflicts
+from django.db.models.functions import Now
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (
@@ -22,13 +23,14 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm
+from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm
 
 from .models import (
     User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
     CourseOffering, Semester, ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
-    ReportCard, Material, Schedule, ForumPost, NECTAExam, Subject, SubjectEnrollment
+    ReportCard, Material, Schedule, ForumPost, NECTAExam, Subject, SubjectEnrollment, SchoolCalendar, 
+    Notification, Participation, SystemSetting, TimeTable, Assignment, Submission
 )
 
 User = get_user_model()
@@ -140,9 +142,6 @@ class ActivityLogView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['is_admin'] = is_admin(self.request.user)
         return context
-# ======================
-# Permission Helpers
-# ======================
 def is_student(user):
     return user.is_authenticated and hasattr(user, 'role') and user.role == 'student'
 
@@ -507,16 +506,14 @@ def headmaster_dashboard(request):
 @login_required
 def admin_dashboard(request):
     # Debug information
-    print(f"DEBUG: admin_dashboard called - VERSION 2.0")
+    print(f"DEBUG: admin_dashboard called - ENHANCED VERSION")
     print(f"DEBUG: request.user = {request.user}")
-    print(f"DEBUG: request.user type = {type(request.user)}")
-    print(f"DEBUG: hasattr(request.user, 'models') = {hasattr(request.user, 'models')}")
-    print(f"DEBUG: Sum import test = {Sum}")
     
     if not request.user.role == 'admin':
         messages.error(request, "You don't have permission to access to admin dashboard.")
         return redirect('public_home')
     
+    # Basic user statistics
     total_users = User.objects.all().count()
     students = User.objects.filter(role='student').count()
     teachers = User.objects.filter(role='teacher').count()
@@ -529,26 +526,82 @@ def admin_dashboard(request):
     # Enhanced student information
     recent_students = StudentProfile.objects.select_related('user', 'department').order_by('-id')[:10]
     total_enrollments = Enrollment.objects.count()
-    # Remove is_active filter since field doesn't exist
     active_enrollments = Enrollment.objects.count()
     
-    # Fee information
-    total_fees_collected = Fee.objects.filter(is_paid=True).aggregate(total=DBSum('amount'))['total'] or 0
+    # Fee information with better formatting
+    from django.db.models import Sum
+    total_fees_collected = Fee.objects.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
     pending_fees = Fee.objects.filter(is_paid=False).count()
     overdue_fees = Fee.objects.filter(is_paid=False, due_date__lt=timezone.now().date()).count()
     
     # Recent enrollments with course information
     recent_enrollments = Enrollment.objects.select_related(
-        'student__user', 'course', 'semester'
+        'student__user', 'course_offering__course', 'course_offering__semester'
     ).order_by('-enrollment_date')[:10]
     
     # Get recent users for activity feed
     recent_users = User.objects.order_by('-date_joined')[:5]
     
+    # Get message statistics for admin
+    from django.db.models import Q
+    received_messages = Message.objects.filter(recipient=request.user)
+    unread_count = received_messages.filter(is_read=False).count()
+    
     # Student statistics by form level
     students_by_form = {}
     for form_num in range(1, 5):
-        students_by_form[f'Form {form_num}'] = StudentProfile.objects.filter(current_form=form_num).count()
+        students_by_form[f'Form_{form_num}'] = StudentProfile.objects.filter(current_form=form_num).count()
+    
+    # Calculate progress ring offset for Form 1 students
+    form_1_count = students_by_form.get('Form_1', 0)
+    if students > 0:
+        progress_offset = 377 - (form_1_count * 377 / students)
+    else:
+        progress_offset = 377
+    
+    # Additional statistics for enhanced dashboard
+    total_courses = Course.objects.count()
+    total_departments = Department.objects.count()
+    total_course_offerings = CourseOffering.objects.count()
+    
+    # Recent activities
+    recent_activities = []
+    for enrollment in recent_enrollments:
+        recent_activities.append({
+            'type': 'enrollment',
+            'description': f'{enrollment.student.user.get_full_name} enrolled in {enrollment.course_offering.course.name}',
+            'timestamp': enrollment.enrollment_date,
+            'icon': 'user-plus',
+            'color': 'primary'
+        })
+    
+    # Get school information
+    try:
+        school_info = SystemSetting.objects.first()
+        if not school_info:
+            school_info = type('SchoolInfo', (), {
+                'name': 'School Management System',
+                'motto': 'Excellence in Education',
+                'vision': 'To provide quality education',
+                'mission': 'Empowering students for success',
+                'contact_phone': '+255 123 456 789',
+                'contact_email': 'info@school.ac.tz',
+                'address': 'Dar es Salaam, Tanzania',
+                'examination_center_number': 'PS123456',
+                'founded_year': '2000'
+            })()
+    except:
+        school_info = type('SchoolInfo', (), {
+            'name': 'School Management System',
+            'motto': 'Excellence in Education',
+            'vision': 'To provide quality education',
+            'mission': 'Empowering students for success',
+            'contact_phone': '+255 123 456 789',
+            'contact_email': 'info@school.ac.tz',
+            'address': 'Dar es Salaam, Tanzania',
+            'examination_center_number': 'PS123456',
+            'founded_year': '2000'
+        })()
     
     context = {
         'user': request.user,
@@ -560,9 +613,14 @@ def admin_dashboard(request):
         'headmasters': headmasters,
         'admins': admins,
         'pending_registrations': pending_registrations,
+        # Enhanced statistics
+        'total_courses': total_courses,
+        'total_departments': total_departments,
+        'total_course_offerings': total_course_offerings,
         # Student information
         'recent_students': recent_students,
         'students_by_form': students_by_form,
+        'progress_offset': progress_offset,
         # Enrollment information
         'total_enrollments': total_enrollments,
         'active_enrollments': active_enrollments,
@@ -571,10 +629,15 @@ def admin_dashboard(request):
         'total_fees_collected': total_fees_collected,
         'pending_fees': pending_fees,
         'overdue_fees': overdue_fees,
+        # Message information
+        'unread_count': unread_count,
         # Activity feed
         'recent_users': recent_users,
+        'recent_activities': recent_activities,
+        # School information
+        'school_info': school_info,
     }
-    return render(request, 'core/admin_dashboard_full.html', context)
+    return render(request, 'core/admin_dashboard_enhanced.html', context)
 
 # ======================
 # Student Management Views
@@ -588,6 +651,114 @@ class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     
     def test_func(self):
         return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        queryset = StudentProfile.objects.select_related('user').order_by('user__first_name', 'user__last_name')
+        
+        # Search functionality
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(user__first_name__icontains=search_query) |
+                Q(user__last_name__icontains=search_query) |
+                Q(user__username__icontains=search_query) |
+                Q(roll_number__icontains=search_query) |
+                Q(user__email__icontains=search_query)
+            )
+        
+        # Filter by form
+        form_filter = self.request.GET.get('form', '')
+        if form_filter:
+            queryset = queryset.filter(current_form=form_filter)
+        
+        # Filter by status
+        status_filter = self.request.GET.get('status', '')
+        if status_filter == 'active':
+            queryset = queryset.filter(user__is_active=True)
+        elif status_filter == 'inactive':
+            queryset = queryset.filter(user__is_active=False)
+            
+        return queryset
+
+@login_required
+@user_passes_test(is_admin)
+def admin_student_create(request):
+    """Create a new student"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            roll_number = request.POST.get('roll_number')
+            department = request.POST.get('department')
+            admission_year = request.POST.get('admission_year')
+            current_form = request.POST.get('current_form')
+            current_semester = request.POST.get('current_semester')
+            phone = request.POST.get('phone', '')
+            address = request.POST.get('address', '')
+            necta_exam_number = request.POST.get('necta_exam_number', '')
+            birth_certificate_number = request.POST.get('birth_certificate_number', '')
+            previous_school = request.POST.get('previous_school', '')
+            
+            # Validate required fields
+            if not all([first_name, last_name, username, email, password, roll_number, 
+                       department, admission_year, current_form, current_semester]):
+                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Check if roll number already exists
+            if StudentProfile.objects.filter(roll_number=roll_number).exists():
+                messages.error(request, 'Roll number already exists. Please use a different roll number.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Create user account
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                role='student',
+                is_active=True
+            )
+            
+            # Create student profile
+            student = StudentProfile.objects.create(
+                user=user,
+                roll_number=roll_number,
+                department=department,
+                admission_year=int(admission_year),
+                current_form=int(current_form),
+                current_semester=int(current_semester),
+                phone=phone,
+                address=address,
+                necta_exam_number=necta_exam_number,
+                birth_certificate_number=birth_certificate_number,
+                previous_school=previous_school
+            )
+            
+            messages.success(request, f'Student {first_name} {last_name} has been successfully added to the system!', extra_tags='success')
+            return redirect('admin_student_list')
+            
+        except Exception as e:
+            messages.error(request, f'An error occurred while creating the student: {str(e)}', extra_tags='error')
+            return redirect('admin_student_list')
+    
+    # If GET request, redirect to student list
+    return redirect('admin_student_list')
     
     def get_queryset(self):
         return StudentProfile.objects.select_related('user', 'department').order_by('-id')
@@ -1082,6 +1253,1030 @@ class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # ======================
 # Student Views
 # ======================
+
+@login_required
+@user_passes_test(is_student)
+def student_courses(request):
+    """Student courses page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get student enrollments with related data
+    enrollments = Enrollment.objects.filter(
+        student=student
+    ).select_related(
+        'course_offering__course',
+        'course_offering__faculty',
+        'course_offering__semester'
+    ).prefetch_related('attendances')
+    
+    # Calculate attendance percentages
+    enriched_enrollments = []
+    total_attendance = 0
+    for enrollment in enrollments:
+        total_classes = enrollment.attendances.count()
+        present_classes = enrollment.attendances.filter(status='P').count()
+        attendance_percentage = (present_classes / total_classes * 100) if total_classes > 0 else 0
+        
+        total_attendance += attendance_percentage
+        
+        enriched_enrollments.append({
+            'enrollment': enrollment,
+            'attendance_percentage': attendance_percentage,
+            'grade': getattr(enrollment, 'grade', None)
+        })
+    
+    # Calculate average attendance
+    average_attendance = total_attendance / len(enrollments) if enrollments else 0
+    
+    # Get available courses for enrollment
+    available_courses = []
+    current_semester = Semester.objects.filter(is_current=True).first()
+    if current_semester:
+        enrolled_course_ids = enrollments.values_list('course_offering__course__id', flat=True)
+        available_courses = CourseOffering.objects.filter(
+            semester=current_semester
+        ).exclude(
+            course__id__in=enrolled_course_ids
+        ).select_related('course', 'faculty').order_by('course__name')
+    
+    context = {
+        'student': student,
+        'enrollments': enriched_enrollments,
+        'average_attendance': average_attendance,
+        'available_courses': available_courses,
+        'current_semester': current_semester,
+    }
+    
+    return render(request, 'core/student_courses.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_results(request):
+    """Student academic results page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get NECTA exam results
+    necta_exams = NECTAExam.objects.filter(student=student).order_by('-exam_year', '-exam_month')
+    
+    # Calculate performance statistics
+    total_exams = necta_exams.count()
+    average_grade = 0
+    best_grade = 'N/A'
+    pass_rate = 0
+    
+    if total_exams > 0:
+        total_points = sum(exam.get_grade_points() for exam in necta_exams)
+        average_grade = total_points / total_exams
+        
+        # Calculate best grade
+        grade_points = [exam.get_grade_points() for exam in necta_exams]
+        if grade_points:
+            best_grade = max(grade_points)
+            # Convert points back to grade
+            if best_grade >= 4:
+                best_grade = 'A'
+            elif best_grade >= 3:
+                best_grade = 'B'
+            elif best_grade >= 2:
+                best_grade = 'C'
+            elif best_grade >= 1:
+                best_grade = 'D'
+            else:
+                best_grade = 'F'
+        
+        # Calculate pass rate (assuming A, B, C, D are passes)
+        passing_grades = sum(1 for exam in necta_exams if exam.get_grade_points() >= 1)
+        pass_rate = (passing_grades / total_exams) * 100
+    
+    # Group exams by subject for performance analysis
+    subject_performance = {}
+    for exam in necta_exams:
+        subject_name = exam.get_subject_display()
+        if subject_name not in subject_performance:
+            subject_performance[subject_name] = {
+                'exams': [],
+                'total_score': 0,
+                'total_points': 0,
+                'best_grade': 'N/A',
+                'pass_rate': 0
+            }
+        
+        subject_performance[subject_name]['exams'].append(exam)
+        subject_performance[subject_name]['total_score'] += exam.score or 0
+        subject_performance[subject_name]['total_points'] += exam.get_grade_points()
+    
+    # Calculate subject-wise statistics
+    for subject_name, data in subject_performance.items():
+        exams = data['exams']
+        if exams:
+            # Average score
+            data['average_score'] = data['total_score'] / len(exams)
+            
+            # Average grade points
+            data['average_grade_points'] = data['total_points'] / len(exams)
+            
+            # Best grade for this subject
+            subject_points = [exam.get_grade_points() for exam in exams]
+            best_points = max(subject_points)
+            if best_points >= 4:
+                data['best_grade'] = 'A'
+            elif best_points >= 3:
+                data['best_grade'] = 'B'
+            elif best_points >= 2:
+                data['best_grade'] = 'C'
+            elif best_points >= 1:
+                data['best_grade'] = 'D'
+            else:
+                data['best_grade'] = 'F'
+            
+            # Pass rate for this subject
+            passing_count = sum(1 for exam in exams if exam.get_grade_points() >= 1)
+            data['pass_rate'] = (passing_count / len(exams)) * 100
+            
+            data['total_assessments'] = len(exams)
+    
+    # Get regular grades from enrollments
+    enrollment_grades = Grade.objects.filter(
+        enrollment__student=student
+    ).select_related('enrollment__course_offering__course').order_by('-awarded_on')
+    
+    context = {
+        'student': student,
+        'necta_results': necta_exams,
+        'enrollment_grades': enrollment_grades,
+        'total_exams': total_exams,
+        'average_grade': average_grade,
+        'best_grade': best_grade,
+        'pass_rate': round(pass_rate, 1),
+        'subject_performance': subject_performance,
+    }
+    
+    return render(request, 'core/student_results.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_timetable(request):
+    """Student timetable page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get current semester
+    current_semester = Semester.objects.filter(is_current=True).first()
+    
+    # Get student's course enrollments for current semester
+    enrollments = Enrollment.objects.filter(
+        student=student
+    ).select_related('course_offering__course')
+    
+    if current_semester:
+        # Get timetable entries for student's courses
+        course_ids = enrollments.values_list('course_offering__course__id', flat=True)
+        timetable_entries = TimeTable.objects.filter(
+            course_offering__course__id__in=course_ids,
+            semester=current_semester
+        ).select_related('course_offering__course', 'course_offering__faculty').order_by('day', 'start_time')
+    else:
+        timetable_entries = TimeTable.objects.none()
+    
+    # Organize timetable by day
+    days_of_week = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+    organized_timetable = {}
+    
+    for day in days_of_week:
+        organized_timetable[day] = []
+    
+    # Add entries to organized structure
+    for entry in timetable_entries:
+        day_key = entry.day
+        if day_key in organized_timetable:
+            organized_timetable[day_key].append(entry)
+    
+    # Generate unique time slots
+    time_slots = set()
+    for entry in timetable_entries:
+        time_slots.add(entry.start_time.strftime('%H:%M'))
+    
+    # Sort time slots
+    time_slots = sorted(list(time_slots))
+    
+    # Add empty time slots if no entries exist
+    if not time_slots:
+        time_slots = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
+    
+    context = {
+        'student': student,
+        'current_semester': current_semester,
+        'timetable_entries': timetable_entries,
+        'organized_timetable': organized_timetable,
+        'days_of_week': days_of_week,
+        'time_slots': time_slots,
+        'enrollments': enrollments,
+    }
+    
+    return render(request, 'core/student_timetable.html', context)
+
+class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    def test_func(self):
+        return is_student(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            student = self.request.user.student_profile
+        except StudentProfile.DoesNotExist:
+            return redirect('student_dashboard')
+        
+        # Get student's enrollments
+        enrollments = Enrollment.objects.filter(student=student).select_related('course_offering__course')
+        
+        # Get assignments for student's courses
+        course_offerings = enrollments.values_list('course_offering__id', flat=True)
+        assignments = Assignment.objects.filter(
+            course_offering__id__in=course_offerings
+        ).select_related('course_offering__course').order_by('-created_at')
+        
+        # Get student's submissions
+        submissions = {}
+        for assignment in assignments:
+            try:
+                submission = Submission.objects.get(assignment=assignment, student=student)
+                submissions[assignment.id] = submission
+            except Submission.DoesNotExist:
+                submissions[assignment.id] = None
+        
+        context['student'] = student
+        context['assignments'] = assignments
+        context['submissions'] = submissions
+        
+        return context
+
+    def get_template_names(self):
+        return ['core/student_dashboard.html']
+
+@login_required
+@user_passes_test(is_student)
+def student_assignments(request):
+    """Student assignments page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get student's enrollments
+    enrollments = Enrollment.objects.filter(student=student).select_related('course_offering__course')
+    
+    # Get assignments for student's courses
+    course_offerings = enrollments.values_list('course_offering__id', flat=True)
+    assignments = Assignment.objects.filter(
+        course_offering__id__in=course_offerings
+    ).select_related('course_offering__course').order_by('-created_at')
+    
+    # Get student's submissions
+    submissions = {}
+    for assignment in assignments:
+        try:
+            submission = Submission.objects.get(assignment=assignment, student=student)
+            submissions[assignment.id] = submission
+        except Submission.DoesNotExist:
+            submissions[assignment.id] = None
+    
+    # Calculate statistics
+    submitted_count = len([s for s in submissions.values() if s is not None])
+    pending_count = len(assignments) - submitted_count
+    
+    # Calculate overdue assignments
+    now = timezone.now()
+    overdue_count = 0
+    for assignment in assignments:
+        if assignment.due_date and assignment.due_date < now:
+            submission = submissions.get(assignment.id)
+            if not submission:
+                overdue_count += 1
+    
+    # Add helper methods to assignment objects
+    for assignment in assignments:
+        assignment.is_overdue = assignment.due_date and assignment.due_date < now
+        assignment.is_due_soon = assignment.due_date and (assignment.due_date - now).days <= 3
+        assignment.get_status_display = lambda: 'Submitted' if assignment.id in submissions and submissions[assignment.id] else 'Not Submitted'
+        
+        # Add grade display method to submissions
+        if assignment.id in submissions and submissions[assignment.id]:
+            submission = submissions[assignment.id]
+            if submission.score is not None:
+                # Calculate percentage
+                submission.score_percentage = (submission.score / assignment.max_score) * 100 if assignment.max_score > 0 else 0
+                
+                if submission.score_percentage >= 80:
+                    grade_display = 'Excellent'
+                elif submission.score_percentage >= 60:
+                    grade_display = 'Good'
+                elif submission.score_percentage >= 40:
+                    grade_display = 'Satisfactory'
+                else:
+                    grade_display = 'Needs Improvement'
+                submission.get_grade_display = lambda: grade_display
+            else:
+                submission.get_grade_display = lambda: 'Not Graded'
+    
+    context = {
+        'student': student,
+        'assignments': assignments,
+        'submissions': submissions,
+        'submitted_count': submitted_count,
+        'pending_count': pending_count,
+        'overdue_count': overdue_count,
+    }
+    
+    return render(request, 'core/student_assignments.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_exams(request):
+    """Student exams page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get student's enrollments
+    enrollments = Enrollment.objects.filter(student=student).select_related('course_offering__course')
+    
+    # Get upcoming exams for student's courses
+    course_offerings = enrollments.values_list('course_offering__course__id', flat=True)
+    upcoming_exams = ExamSchedule.objects.filter(
+        course__id__in=course_offerings,
+        date__gte=timezone.now().date()
+    ).select_related('course').order_by('date', 'start_time')
+    
+    # Get past exams
+    past_exams = ExamSchedule.objects.filter(
+        course__id__in=course_offerings,
+        date__lt=timezone.now().date()
+    ).select_related('course').order_by('-date', '-start_time')[:10]
+    
+    # Calculate exam statistics
+    total_exams = upcoming_exams.count() + past_exams.count()
+    upcoming_count = upcoming_exams.count()
+    past_count = past_exams.count()
+    
+    # Calculate exam distribution by type
+    exam_types = {}
+    for exam in upcoming_exams:
+        exam_types[exam.exam_type] = exam_types.get(exam.exam_type, 0) + 1
+    for exam in past_exams:
+        exam_types[exam.exam_type] = exam_types.get(exam.exam_type, 0) + 1
+    
+    # Add helper methods to exam objects
+    today = timezone.now().date()
+    tomorrow = today + timezone.timedelta(days=1)
+    
+    for exam in upcoming_exams:
+        days_until = (exam.date - today).days
+        exam.days_until = days_until
+        exam.is_today = exam.date == today
+        exam.is_tomorrow = exam.date == tomorrow
+        exam.is_urgent = days_until <= 3
+        
+        # Add status display method
+        if exam.date == today:
+            exam.status_display = 'Exam Day'
+            exam.status_class = 'danger'
+        elif days_until <= 3:
+            exam.status_display = 'Soon'
+            exam.status_class = 'warning'
+        else:
+            exam.status_display = 'Scheduled'
+            exam.status_class = 'success'
+    
+    for exam in past_exams:
+        days_ago = (today - exam.date).days
+        exam.days_ago = days_ago
+        exam.status_display = 'Completed'
+        exam.status_class = 'success'
+    
+    context = {
+        'student': student,
+        'upcoming_exams': upcoming_exams,
+        'past_exams': past_exams,
+        'total_exams': total_exams,
+        'upcoming_count': upcoming_count,
+        'past_count': past_count,
+        'exam_types': exam_types,
+        'today': today,
+        'tomorrow': tomorrow,
+    }
+    
+    return render(request, 'core/student_exams.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_library(request):
+    """Student library page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get currently borrowed books
+    borrowed_books = BorrowedBook.objects.filter(
+        student=student,
+        return_date__isnull=True
+    ).select_related('book').order_by('due_date')
+    
+    # Get borrowing history
+    borrowing_history = BorrowedBook.objects.filter(
+        student=student
+    ).select_related('book').order_by('-issue_date')[:20]
+    
+    # Calculate overdue books
+    overdue_books = borrowed_books.filter(due_date__lt=timezone.now().date())
+    
+    # Get available books for browsing
+    available_books = Book.objects.filter(
+        available_copies__gt=0
+    ).order_by('title')
+    
+    # Get popular books (most borrowed)
+    popular_books = Book.objects.annotate(
+        borrow_count=Count('borrowedbook')
+    ).order_by('-borrow_count')[:10]
+    
+    # Get books by category
+    categories = Book.objects.values('category').annotate(
+        count=Count('id')
+    ).order_by('category')
+    
+    # Calculate library statistics
+    total_borrowed = borrowing_history.count()
+    total_overdue = overdue_books.count()
+    currently_borrowed = borrowed_books.count()
+    
+    # Add helper methods to borrowed books
+    for borrowed_book in borrowed_books:
+        borrowed_book.days_until_due = (borrowed_book.due_date - timezone.now().date()).days
+        borrowed_book.is_overdue = borrowed_book.due_date < timezone.now().date()
+        borrowed_book.days_overdue = (timezone.now().date() - borrowed_book.due_date).days if borrowed_book.is_overdue else 0
+        
+        # Status display
+        if borrowed_book.is_overdue:
+            borrowed_book.status_display = 'Overdue'
+            borrowed_book.status_class = 'danger'
+        elif borrowed_book.days_until_due <= 3:
+            borrowed_book.status_display = 'Due Soon'
+            borrowed_book.status_class = 'warning'
+        else:
+            borrowed_book.status_display = 'Borrowed'
+            borrowed_book.status_class = 'info'
+    
+    # Add helper methods to history books
+    for history_book in borrowing_history:
+        history_book.is_returned = history_book.return_date is not None
+        if history_book.is_returned:
+            history_book.status_display = 'Returned'
+            history_book.status_class = 'success'
+        else:
+            history_book.status_display = 'Borrowed'
+            history_book.status_class = 'info'
+    
+    context = {
+        'student': student,
+        'borrowed_books': borrowed_books,
+        'borrowing_history': borrowing_history,
+        'overdue_books': overdue_books,
+        'available_books': available_books,
+        'popular_books': popular_books,
+        'categories': categories,
+        'total_borrowed': total_borrowed,
+        'total_overdue': total_overdue,
+        'currently_borrowed': currently_borrowed,
+    }
+    
+    return render(request, 'core/student_library.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_achievements(request):
+    """Student achievements page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get student achievements
+    achievements = Achievement.objects.filter(student=student).order_by('-date_awarded')
+    
+    # Get activity participation
+    participations = Participation.objects.filter(
+        student=student
+    ).select_related('activity').order_by('-registered_on')
+    
+    # Calculate achievement statistics
+    total_achievements = achievements.count()
+    total_participations = participations.count()
+    attended_activities = participations.filter(attended=True).count()
+    
+    # Group achievements by year
+    achievements_by_year = {}
+    for achievement in achievements:
+        year = achievement.date_awarded.year
+        if year not in achievements_by_year:
+            achievements_by_year[year] = []
+        achievements_by_year[year].append(achievement)
+    
+    # Group participations by activity type
+    participations_by_type = {}
+    max_participation_count = 0
+    for participation in participations:
+        activity_type = participation.activity.activity_type
+        if activity_type not in participations_by_type:
+            participations_by_type[activity_type] = []
+        participations_by_type[activity_type].append(participation)
+        # Track max for percentage calculation
+        if len(participations_by_type[activity_type]) > max_participation_count:
+            max_participation_count = len(participations_by_type[activity_type])
+    
+    # Add percentage data for progress bars
+    for activity_type, type_participations in participations_by_type.items():
+        participations_by_type[activity_type] = {
+            'participations': type_participations,
+            'count': len(type_participations),
+            'percentage': (len(type_participations) / max_participation_count * 100) if max_participation_count > 0 else 0
+        }
+    
+    # Calculate attendance rate
+    attendance_rate = 0
+    if total_participations > 0:
+        attendance_rate = round((attended_activities / total_participations) * 100, 1)
+    
+    # Add helper methods to achievements
+    for achievement in achievements:
+        achievement.years_ago = (timezone.now().date().year - achievement.date_awarded.year)
+        achievement.is_recent = achievement.date_awarded.year >= timezone.now().date().year - 1
+    
+    # Add helper methods to participations
+    for participation in participations:
+        participation.days_since_registered = (timezone.now().date() - participation.registered_on.date()).days
+        participation.is_recent = participation.registered_on.date() >= timezone.now().date() - timezone.timedelta(days=30)
+        participation.attendance_status = 'Attended' if participation.attended else 'Not Attended'
+        participation.attendance_class = 'success' if participation.attended else 'warning'
+    
+    context = {
+        'student': student,
+        'achievements': achievements,
+        'participations': participations,
+        'achievements_by_year': achievements_by_year,
+        'participations_by_type': participations_by_type,
+        'total_achievements': total_achievements,
+        'total_participations': total_participations,
+        'attended_activities': attended_activities,
+        'attendance_rate': attendance_rate,
+    }
+    
+    return render(request, 'core/student_achievements.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_fees(request):
+    """Student fees page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get all fees for student
+    fees = Fee.objects.filter(student=student).order_by('-due_date')
+    
+    # Calculate fee statistics
+    total_fees = fees.aggregate(total=DBSum('amount'))['total'] or 0
+    paid_fees = fees.filter(is_paid=True).aggregate(total=DBSum('amount'))['total'] or 0
+    outstanding_fees = fees.filter(is_paid=False).aggregate(total=DBSum('amount'))['total'] or 0
+    overdue_fees = fees.filter(is_paid=False, due_date__lt=timezone.now().date())
+    
+    # Get payment history
+    payments = Payment.objects.filter(student=student).order_by('-payment_date')[:10]
+    
+    # Group fees by category
+    fees_by_category = {}
+    for fee in fees:
+        if fee.category not in fees_by_category:
+            fees_by_category[fee.category] = {
+                'fees': [],
+                'total': 0,
+                'count': 0,
+                'percentage': 0
+            }
+        fees_by_category[fee.category]['fees'].append(fee)
+        fees_by_category[fee.category]['total'] += float(fee.amount)
+        fees_by_category[fee.category]['count'] += 1
+    
+    # Group fees by semester
+    fees_by_semester = {}
+    for fee in fees:
+        if fee.semester not in fees_by_semester:
+            fees_by_semester[fee.semester] = {
+                'fees': [],
+                'total': 0,
+                'count': 0,
+                'percentage': 0
+            }
+        fees_by_semester[fee.semester]['fees'].append(fee)
+        fees_by_semester[fee.semester]['total'] += float(fee.amount)
+        fees_by_semester[fee.semester]['count'] += 1
+    
+    # Calculate percentages
+    if total_fees > 0:
+        for category, data in fees_by_category.items():
+            data['percentage'] = (data['total'] / total_fees) * 100
+        
+        for semester, data in fees_by_semester.items():
+            data['percentage'] = (data['total'] / total_fees) * 100
+    
+    # Calculate payment statistics
+    total_payments = payments.aggregate(total=DBSum('amount'))['total'] or 0
+    payment_count = payments.count()
+    
+    # Add helper methods to fees
+    for fee in fees:
+        fee.days_until_due = (fee.due_date - timezone.now().date()).days
+        fee.is_overdue = fee.due_date < timezone.now().date() and not fee.is_paid
+        fee.is_due_soon = fee.due_date >= timezone.now().date() and (fee.due_date - timezone.now().date()).days <= 7 and not fee.is_paid
+        
+        # Calculate days overdue if overdue
+        if fee.is_overdue:
+            fee.days_overdue = abs((timezone.now().date() - fee.due_date).days)
+        else:
+            fee.days_overdue = 0
+        
+        # Status display
+        if fee.is_paid:
+            fee.status_display = 'Paid'
+            fee.status_class = 'success'
+        elif fee.is_overdue:
+            fee.status_display = 'Overdue'
+            fee.status_class = 'danger'
+        elif fee.is_due_soon:
+            fee.status_display = 'Due Soon'
+            fee.status_class = 'warning'
+        else:
+            fee.status_display = 'Pending'
+            fee.status_class = 'info'
+    
+    # Add helper methods to payments
+    for payment in payments:
+        payment.days_ago = (timezone.now().date() - payment.payment_date.date()).days
+        payment.is_recent = payment.payment_date.date() >= timezone.now().date() - timezone.timedelta(days=30)
+    
+    context = {
+        'student': student,
+        'fees': fees,
+        'fees_by_category': fees_by_category,
+        'fees_by_semester': fees_by_semester,
+        'total_fees': total_fees,
+        'paid_fees': paid_fees,
+        'outstanding_fees': outstanding_fees,
+        'overdue_count': overdue_fees.count(),
+        'payments': payments,
+        'total_payments': total_payments,
+        'payment_count': payment_count,
+    }
+    
+    return render(request, 'core/student_fees.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_messages(request):
+    """Student messages page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get received messages
+    received_messages = Message.objects.filter(
+        recipient=request.user
+    ).select_related('sender').order_by('-sent_at')
+    
+    # Get sent messages
+    sent_messages = Message.objects.filter(
+        sender=request.user
+    ).select_related('recipient').order_by('-sent_at')
+    
+    # Count unread messages
+    unread_count = received_messages.filter(is_read=False).count()
+    
+    # Calculate total messages
+    total_messages = received_messages.count() + sent_messages.count()
+    
+    # Add helper methods to messages
+    for message in received_messages:
+        message.days_ago = (timezone.now().date() - message.sent_at.date()).days
+        message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
+        message.sender_name = message.sender.get_full_name() or message.sender.username
+        message.sender_role = 'Staff' if message.sender.is_staff else ('Admin' if message.sender.is_superuser else 'User')
+    
+    for message in sent_messages:
+        message.days_ago = (timezone.now().date() - message.sent_at.date()).days
+        message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
+        message.recipient_name = message.recipient.get_full_name() or message.recipient.username
+        message.recipient_role = 'Staff' if message.recipient.is_staff else ('Admin' if message.recipient.is_superuser else 'User')
+    
+    # Get potential recipients (teachers and staff)
+    from .models import User
+    potential_recipients = User.objects.filter(
+        Q(is_staff=True) | Q(is_superuser=True)
+    ).exclude(id=request.user.id).order_by('first_name', 'last_name')
+    
+    # Get current date for template comparisons
+    today = timezone.now().date()
+    yesterday = today - timezone.timedelta(days=1)
+    
+    context = {
+        'student': student,
+        'received_messages': received_messages,
+        'sent_messages': sent_messages,
+        'unread_count': unread_count,
+        'total_messages': total_messages,
+        'potential_recipients': potential_recipients,
+        'today': today,
+        'yesterday': yesterday,
+    }
+    
+    return render(request, 'core/student_messages.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def admin_messages(request):
+    """Admin messages page"""
+    try:
+        # Get admin profile (if exists)
+        admin_profile = request.user.adminprofile
+    except:
+        # If no admin profile exists, create a basic one
+        admin_profile = None
+    
+    # Get received messages
+    received_messages = Message.objects.filter(
+        recipient=request.user
+    ).select_related('sender').order_by('-sent_at')
+    
+    # Get sent messages
+    sent_messages = Message.objects.filter(
+        sender=request.user
+    ).select_related('recipient').order_by('-sent_at')
+    
+    # Count unread messages
+    unread_count = received_messages.filter(is_read=False).count()
+    
+    # Calculate total messages
+    total_messages = received_messages.count() + sent_messages.count()
+    
+    # Add helper methods to messages
+    for message in received_messages:
+        message.days_ago = (timezone.now().date() - message.sent_at.date()).days
+        message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
+        message.sender_name = message.sender.get_full_name() or message.sender.username
+        message.sender_role = 'Student' if message.sender.role == 'student' else ('Teacher' if message.sender.role == 'teacher' else ('Headmaster' if message.sender.role == 'headmaster' else 'Admin'))
+    
+    for message in sent_messages:
+        message.days_ago = (timezone.now().date() - message.sent_at.date()).days
+        message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
+        message.recipient_name = message.recipient.get_full_name() or message.recipient.username
+        message.recipient_role = 'Student' if message.recipient.role == 'student' else ('Teacher' if message.recipient.role == 'teacher' else ('Headmaster' if message.recipient.role == 'headmaster' else 'Admin'))
+    
+    # Get potential recipients (all users except self)
+    from .models import User
+    potential_recipients = User.objects.filter(
+        Q(is_staff=True) | Q(is_superuser=True) | Q(role__in=['student', 'teacher', 'headmaster'])
+    ).exclude(id=request.user.id).order_by('first_name', 'last_name')
+    
+    # Get current date for template comparisons
+    today = timezone.now().date()
+    yesterday = today - timezone.timedelta(days=1)
+    
+    context = {
+        'admin': admin_profile,
+        'received_messages': received_messages,
+        'sent_messages': sent_messages,
+        'unread_count': unread_count,
+        'total_messages': total_messages,
+        'potential_recipients': potential_recipients,
+        'today': today,
+        'yesterday': yesterday,
+        'user': request.user,
+        'role': 'School Administrator',
+    }
+    
+    return render(request, 'core/admin_messages.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_announcements(request):
+    """Student announcements page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get announcements for students
+    announcements = Announcement.objects.filter(
+        Q(target_audience='All') | Q(target_audience='Students')
+    ).select_related('created_by').order_by('-created_at')
+    
+    # Get current date for template comparisons
+    today = timezone.now().date()
+    yesterday = today - timezone.timedelta(days=1)
+    
+    context = {
+        'student': student,
+        'announcements': announcements,
+        'today': today,
+        'yesterday': yesterday,
+    }
+    
+    return render(request, 'core/student_announcements.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_activities(request):
+    """Student activities page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get upcoming activities
+    upcoming_activities = Activity.objects.filter(
+        date__gte=timezone.now().date()
+    ).order_by('date')
+    
+    # Get student's participations
+    participations = Participation.objects.filter(
+        student=student
+    ).select_related('activity').order_by('-registered_on')
+    
+    # Add helper methods to participations
+    for participation in participations:
+        participation.days_since_registered = (timezone.now().date() - participation.registered_on.date()).days
+    
+    # Get past activities
+    past_activities = Activity.objects.filter(
+        date__lt=timezone.now().date()
+    ).order_by('-date')[:10]
+    
+    context = {
+        'student': student,
+        'upcoming_activities': upcoming_activities,
+        'participations': participations,
+        'past_activities': past_activities,
+    }
+    
+    return render(request, 'core/student_activities.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_profile_view(request):
+    """Student profile page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    # Get student statistics
+    enrollments = Enrollment.objects.filter(student=student).count()
+    total_fees = Fee.objects.filter(student=student).aggregate(total=DBSum('amount'))['total'] or 0
+    achievements_count = Achievement.objects.filter(student=student).count()
+    
+    context = {
+        'student': student,
+        'enrollments_count': enrollments,
+        'total_fees': total_fees,
+        'achievements_count': achievements_count,
+    }
+    
+    return render(request, 'core/student_profile.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def student_settings(request):
+    """Student settings page"""
+    try:
+        student = request.user.student_profile
+    except StudentProfile.DoesNotExist:
+        return redirect('student_dashboard')
+    
+    if request.method == 'POST':
+        # Handle different form submissions
+        if 'profile_form' in request.POST:
+            # Handle profile update
+            user_form = UserUpdateForm(request.POST, instance=request.user)
+            profile_form = StudentProfileForm(request.POST, request.FILES, instance=student)
+            
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                
+                # Handle profile picture upload separately
+                if 'profile_picture' in request.FILES:
+                    profile_picture = request.FILES['profile_picture']
+                    
+                    # Validate file type
+                    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+                    if profile_picture.content_type not in allowed_types:
+                        messages.error(request, 'Invalid file type. Please upload JPEG, PNG, GIF, or WebP images.', extra_tags='error')
+                        return redirect('student_settings')
+                    
+                    # Validate file size (max 5MB)
+                    if profile_picture.size > 5 * 1024 * 1024:
+                        messages.error(request, 'File too large. Please upload an image smaller than 5MB.', extra_tags='error')
+                        return redirect('student_settings')
+                    
+                    # Save the profile picture
+                    profile_form.save()
+                    
+                    # Log the successful upload
+                    print(f"Profile picture uploaded for student {student.roll_number}: {profile_picture.name}")
+                    
+                    messages.success(request, f'Profile picture "{profile_picture.name}" uploaded successfully!', extra_tags='profile_picture')
+                else:
+                    profile_form.save()
+                    messages.success(request, 'Profile updated successfully!', extra_tags='success')
+                
+                return redirect('student_settings')
+            else:
+                # Add specific error messages
+                if user_form.errors:
+                    for field, errors in user_form.errors.items():
+                        for error in errors:
+                            messages.error(request, f'{field.replace("_", " ").title()}: {error}', extra_tags='error')
+                
+                if profile_form.errors:
+                    for field, errors in profile_form.errors.items():
+                        for error in errors:
+                            messages.error(request, f'{field.replace("_", " ").title()}: {error}', extra_tags='error')
+        
+        elif 'account_form' in request.POST:
+            # Handle account settings
+            user_form = UserUpdateForm(request.POST, instance=request.user)
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, 'Account settings updated successfully!', extra_tags='success')
+                return redirect('student_settings')
+            else:
+                for field, errors in user_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'{field.replace("_", " ").title()}: {error}', extra_tags='error')
+        
+        elif 'contact_form' in request.POST:
+            # Handle contact information update
+            profile_form = StudentProfileForm(request.POST, instance=student)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Contact information updated successfully!', extra_tags='success')
+                return redirect('student_settings')
+            else:
+                for field, errors in profile_form.errors.items():
+                    for error in errors:
+                        messages.error(request, f'{field.replace("_", " ").title()}: {error}', extra_tags='error')
+        
+        elif 'password_form' in request.POST:
+            # Handle password change
+            old_password = request.POST.get('old_password')
+            new_password1 = request.POST.get('new_password1')
+            new_password2 = request.POST.get('new_password2')
+            
+            if request.user.check_password(old_password):
+                if new_password1 == new_password2:
+                    if len(new_password1) >= 8:
+                        request.user.set_password(new_password1)
+                        request.user.save()
+                        messages.success(request, 'Password changed successfully!', extra_tags='success')
+                        return redirect('student_settings')
+                    else:
+                        messages.error(request, 'Password must be at least 8 characters long.', extra_tags='error')
+                else:
+                    messages.error(request, 'New passwords do not match.', extra_tags='error')
+            else:
+                messages.error(request, 'Current password is incorrect.', extra_tags='error')
+    
+    # Initialize forms for GET request
+    user_form = UserUpdateForm(instance=request.user)
+    profile_form = StudentProfileForm(instance=student)
+    
+    context = {
+        'student': student,
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+    
+    return render(request, 'core/student_settings_clean.html', context)
+
 class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'core/student_dashboard.html'
     
@@ -1132,21 +2327,170 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
                 'grade': getattr(enrollment, 'grade', None)
             })
         
+        # School Information - Get from database or create default
+        try:
+            # Try to get school information from system settings
+            school_name = SystemSetting.objects.get(key='school_name').value
+            school_motto = SystemSetting.objects.get(key='school_motto').value
+            school_vision = SystemSetting.objects.get(key='school_vision').value
+            school_mission = SystemSetting.objects.get(key='school_mission').value
+            school_address = SystemSetting.objects.get(key='school_address').value
+            school_phone = SystemSetting.objects.get(key='school_phone').value
+            school_email = SystemSetting.objects.get(key='school_email').value
+            school_website = SystemSetting.objects.get(key='school_website').value
+            school_founded_year = SystemSetting.objects.get(key='school_founded_year').value
+            school_type = SystemSetting.objects.get(key='school_type').value
+            school_registration = SystemSetting.objects.get(key='school_registration').value
+            school_exam_center = SystemSetting.objects.get(key='school_exam_center').value
+        except (SystemSetting.DoesNotExist, KeyError):
+            # Default values if no settings exist
+            school_name = 'Mkalala Secondary School'
+            school_motto = 'Education for Excellence'
+            school_vision = 'To be a center of academic excellence and moral development'
+            school_mission = 'To provide quality education that prepares students for higher education and life challenges'
+            school_address = 'P.O. Box 1234, Mkalala, Tanzania'
+            school_phone = '+255 123 456 789'
+            school_email = 'info@mkalala.sc.tz'
+            school_website = 'www.mkalala.sc.tz'
+            school_founded_year = '2005'
+            school_type = 'O-Level Secondary School'
+            school_registration = 'REG.12345/6789'
+            school_exam_center = 'CSEE/FTNA Center'
+        
+        school_info = {
+            'name': school_name,
+            'motto': school_motto,
+            'vision': school_vision,
+            'mission': school_mission,
+            'address': school_address,
+            'phone': school_phone,
+            'email': school_email,
+            'website': school_website,
+            'founded_year': school_founded_year,
+            'school_type': school_type,
+            'registration_number': school_registration,
+            'examination_center': school_exam_center,
+        }
+        
+        # Academic Performance Data
+        necta_exams = NECTAExam.objects.filter(student=student).order_by('-exam_year', '-exam_month')
+        average_grade = self.calculate_average_grade(necta_exams)
+        academic_performance = {
+            'total_exams': necta_exams.count(),
+            'average_grade': average_grade,
+            'best_subject': self.get_best_subject(necta_exams),
+            'subjects_taken': necta_exams.values_list('subject', flat=True).distinct().count(),
+            'recent_exams': necta_exams[:5],
+            'progress_stroke_dasharray': (average_grade + 5) * 31.4,  # Calculate for SVG progress ring
+        }
+        
+        # Fee Information
+        fees = Fee.objects.filter(student=student).order_by('-due_date')
+        fee_summary = {
+            'total_fees': fees.aggregate(total=DBSum('amount'))['total'] or 0,
+            'paid_fees': fees.filter(is_paid=True).aggregate(total=DBSum('amount'))['total'] or 0,
+            'outstanding_fees': fees.filter(is_paid=False).aggregate(total=DBSum('amount'))['total'] or 0,
+            'overdue_fees': fees.filter(is_paid=False, due_date__lt=timezone.now().date()).count(),
+            'recent_fees': fees[:5],
+        }
+        
+        # Library Information
+        borrowed_books = BorrowedBook.objects.filter(student=student, return_date__isnull=True)
+        library_info = {
+            'active_borrowed_books': borrowed_books.count(),
+            'overdue_books': borrowed_books.filter(due_date__lt=timezone.now().date()).count(),
+            'total_borrowed_history': BorrowedBook.objects.filter(student=student).count(),
+            'recent_borrowed': borrowed_books[:5],
+        }
+        
+        # Activity Participation
+        participations = Participation.objects.filter(student=student).select_related('activity')
+        activity_info = {
+            'total_activities': participations.count(),
+            'attended_activities': participations.filter(attended=True).count(),
+            'upcoming_activities': Activity.objects.filter(date__gte=timezone.now())[:5],
+            'recent_participations': participations.order_by('-registered_on')[:5],
+        }
+        
+        # Achievements
+        achievements = Achievement.objects.filter(student=student).order_by('-date_awarded')
+        
+        # Messages and Notifications
+        unread_messages = Message.objects.filter(recipient=self.request.user, is_read=False).count()
+        notifications = Notification.objects.filter(recipient=self.request.user, is_read=False).order_by('-created_at')[:5]
+        
         context.update({
+            # Student Information
             'student': student,
             'enriched_enrollments': enriched_enrollments,
+            
+            # School Information
+            'school_info': school_info,
+            
+            # Academic Data
             'upcoming_exams': ExamSchedule.objects.filter(
                 course__in=[e.course_offering.course for e in enrollments],
                 date__gte=timezone.now()
             ).order_by('date')[:5],
+            'academic_performance': academic_performance,
+            
+            # Fee Information
+            'fee_summary': fee_summary,
             'unpaid_fees': Fee.objects.filter(student=student, is_paid=False),
+            
+            # Library Information
+            'library_info': library_info,
+            
+            # Activities
+            'activity_info': activity_info,
+            'achievements': achievements,
+            
+            # Communications
             'recent_announcements': Announcement.objects.filter(
                 Q(target_audience='All') | Q(target_audience='Students')
             ).order_by('-created_at')[:5],
+            'unread_messages': unread_messages,
+            'notifications': notifications,
+            
+            # Course Information
             'available_courses': self.get_available_courses(student),
+            
+            # Current Academic Calendar
+            'current_calendar': SchoolCalendar.objects.filter(is_current=True).first(),
         })
         
         return context
+
+    def calculate_average_grade(self, necta_exams):
+        """Calculate average grade points from NECTA exams"""
+        if not necta_exams:
+            return 0.0
+        
+        total_points = sum(exam.get_grade_points() for exam in necta_exams)
+        return total_points / necta_exams.count()
+    
+    def get_best_subject(self, necta_exams):
+        """Get the subject with best performance"""
+        if not necta_exams:
+            return None
+        
+        subject_performance = {}
+        for exam in necta_exams:
+            subject = exam.get_subject_display()
+            if subject not in subject_performance:
+                subject_performance[subject] = []
+            subject_performance[subject].append(exam.get_grade_points())
+        
+        best_subject = None
+        best_average = 0
+        
+        for subject, points_list in subject_performance.items():
+            average = sum(points_list) / len(points_list)
+            if average > best_average:
+                best_average = average
+                best_subject = subject
+        
+        return best_subject
 
     def get_available_courses(self, student):
         """Get courses available for enrollment"""
@@ -1289,36 +2633,7 @@ def upload_material(request, course_id):
 # ======================
 # Admin Views
 # ======================
-class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    template_name = 'core/admin_dashboard.html'
-    
-    def test_func(self):
-        return is_admin(self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        # System statistics
-        context.update({
-            'total_students': StudentProfile.objects.count(),
-            'total_faculty': FacultyProfile.objects.count(),
-            'total_courses': Course.objects.count(),
-            'active_enrollments': Enrollment.objects.count(),
-            'pending_approvals': User.objects.filter(is_active=False).count(),
-            'recent_activity': ActivityLog.objects.all().order_by('-timestamp')[:10],
-            # Enhanced data for admin visibility
-            'recent_enrollments': Enrollment.objects.select_related(
-                'student__user', 
-                'course_offering__course',
-                'course_offering__faculty__user'
-            ).order_by('-enrollment_date')[:10],
-            'students_by_department': StudentProfile.objects.values('department__name').annotate(count=Count('id')),
-            'enrollments_by_course': Enrollment.objects.values(
-                'course_offering__course__name'
-            ).annotate(count=Count('id')).order_by('-count')[:10],
-            'pending_students': StudentProfile.objects.filter(enrollments__isnull=True).count(),
-        })
-        return context
+# Note: Admin dashboard is handled by admin_dashboard() function above
 
 class SystemSettingsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'core/system_settings.html'

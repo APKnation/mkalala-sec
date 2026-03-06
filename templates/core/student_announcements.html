@@ -1,0 +1,275 @@
+{% extends 'core/student_dashboard.html' %}
+{% load static %}
+
+{% block title %}Announcements - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<style>
+.announcement-card {
+    background: white !important;
+    border-radius: 0.75rem !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    margin-bottom: 1.5rem !important;
+    border-left: 4px solid #3b82f6 !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.announcement-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.announcement-title {
+    color: #2d3748 !important;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.announcement-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #718096 !important;
+    font-size: 0.875rem;
+}
+
+.announcement-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 50px !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.announcement-content {
+    color: #4a5568 !important;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.announcement-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    margin-top: 1rem;
+}
+
+.announcement-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.author-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.announcement-date {
+    color: #718096 !important;
+    font-size: 0.875rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #718096 !important;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #cbd5e0 !important;
+    margin-bottom: 1rem;
+}
+
+.empty-state h5 {
+    color: #4a5568 !important;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #718096 !important;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .announcement-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .announcement-meta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .announcement-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Announcements</h1>
+        <p class="text-muted mb-0">Stay updated with the latest school news and events</p>
+    </div>
+    <div>
+        <button class="btn btn-primary" onclick="location.reload()">
+            <i class="fas fa-sync-alt me-2"></i>Refresh
+        </button>
+    </div>
+</div>
+
+<!-- Announcements List -->
+{% if announcements %}
+    {% for announcement in announcements %}
+        <div class="announcement-card">
+            <div class="announcement-header">
+                <h3 class="announcement-title">{{ announcement.title }}</h3>
+                <div class="announcement-meta">
+                    {% if announcement.priority == 'high' %}
+                        <span class="badge bg-danger announcement-badge">High Priority</span>
+                    {% elif announcement.priority == 'medium' %}
+                        <span class="badge bg-warning announcement-badge">Medium Priority</span>
+                    {% else %}
+                        <span class="badge bg-info announcement-badge">Normal</span>
+                    {% endif %}
+                    {% if announcement.is_active %}
+                        <span class="badge bg-success announcement-badge">Active</span>
+                    {% else %}
+                        <span class="badge bg-secondary announcement-badge">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="announcement-content">
+                {{ announcement.content|linebreaks }}
+            </div>
+            
+            {% if announcement.attachments %}
+                <div class="mb-3">
+                    <h6 class="text-muted mb-2">
+                        <i class="fas fa-paperclip me-2"></i>Attachments
+                    </h6>
+                    {% for attachment in announcement.attachments %}
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-file me-2 text-muted"></i>
+                            <a href="{{ attachment.file.url }}" target="_blank" class="text-primary">
+                                {{ attachment.filename }}
+                            </a>
+                            <small class="text-muted">({{ attachment.size|filesizeformat }})</small>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="announcement-footer">
+                <div class="announcement-author">
+                    <div class="author-avatar">
+                        {{ announcement.created_by.get_full_name|first|upper }}
+                    </div>
+                    <div>
+                        <div class="fw-bold">{{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</div>
+                        <div class="text-muted small">
+                            {% if announcement.created_by.is_staff %}
+                                Staff
+                            {% elif announcement.created_by.is_superuser %}
+                                Administrator
+                            {% else %}
+                                User
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="announcement-date">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    {{ announcement.created_at|date:"M d, Y" }}
+                    {% if announcement.created_at.date == today %}
+                        <span class="badge bg-success ms-2">Today</span>
+                    {% elif announcement.created_at.date == yesterday %}
+                        <span class="badge bg-secondary ms-2">Yesterday</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <i class="fas fa-bullhorn"></i>
+        <h5>No Announcements</h5>
+        <p>There are no announcements at the moment. Check back later for updates and important information.</p>
+    </div>
+{% endif %}
+
+<script>
+// Auto-refresh announcements every 5 minutes
+function autoRefreshAnnouncements() {
+    setTimeout(() => {
+        location.reload();
+    }, 300000); // 5 minutes in milliseconds
+}
+
+// Optional: Enable auto-refresh if desired
+// autoRefreshAnnouncements();
+
+// Mark announcement as read (if needed)
+function markAsRead(announcementId) {
+    fetch(`/announcements/mark-read/${announcementId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Announcement marked as read');
+        }
+    })
+    .catch(error => {
+        console.error('Error marking announcement as read:', error);
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

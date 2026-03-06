@@ -1,0 +1,511 @@
+{% extends 'core/student_dashboard.html' %}
+{% load static %}
+
+{% block title %}Messages - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="fas fa-envelope me-2"></i>My Messages
+            </h2>
+            <p class="text-muted mb-0">Manage your communications with teachers and administrators</p>
+        </div>
+        <div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#composeModal">
+                <i class="fas fa-plus me-2"></i>Compose Message
+            </button>
+        </div>
+    </div>
+
+    <!-- Message Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card info">
+                <div class="stat-icon info">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ received_messages|length }}</h4>
+                <p class="text-muted mb-0">Received</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card success">
+                <div class="stat-icon success">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ sent_messages|length }}</h4>
+                <p class="text-muted mb-0">Sent</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card warning">
+                <div class="stat-icon warning">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ unread_count }}</h4>
+                <p class="text-muted mb-0">Unread</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card academic">
+                <div class="stat-icon academic">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h4 class="fw-bold mb-1">{{ total_messages }}</h4>
+                <p class="text-muted mb-0">Total Messages</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Tabs -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <ul class="nav nav-tabs card-header-tabs" id="messageTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="received-tab" data-bs-toggle="tab" data-bs-target="#received" type="button" role="tab">
+                        <i class="fas fa-inbox me-2"></i>Received Messages
+                        {% if unread_count > 0 %}
+                            <span class="badge bg-warning ms-2">{{ unread_count }}</span>
+                        {% endif %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sent-tab" data-bs-toggle="tab" data-bs-target="#sent" type="button" role="tab">
+                        <i class="fas fa-paper-plane me-2"></i>Sent Messages
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="tab-content" id="messageTabsContent">
+                <!-- Received Messages -->
+                <div class="tab-pane fade show active" id="received" role="tabpanel">
+                    {% if received_messages %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>From</th>
+                                        <th>Subject</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for message in received_messages %}
+                                        <tr class="{% if not message.is_read %}table-warning{% endif %}">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                        {{ message.sender.get_full_name|first|upper }}
+                                                    </div>
+                                                    <div>
+                                                        <strong>{{ message.sender.get_full_name|default:message.sender.username }}</strong>
+                                                        {% if message.sender.is_staff %}
+                                                            <span class="badge bg-info ms-2">Staff</span>
+                                                        {% elif message.sender.is_superuser %}
+                                                            <span class="badge bg-danger ms-2">Admin</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="message-subject">
+                                                    <strong>{{ message.subject|truncatechars:50 }}</strong>
+                                                    {% if not message.is_read %}
+                                                        <i class="fas fa-circle text-primary ms-2" title="Unread"></i>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="mb-0 text-muted">{{ message.body|truncatechars:100 }}</p>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">{{ message.sent_at|date:"M d, Y H:i" }}</small>
+                                                {% if message.sent_at.date == today %}
+                                                    <span class="badge bg-success ms-2">Today</span>
+                                                {% elif message.sent_at.date == yesterday %}
+                                                    <span class="badge bg-secondary ms-2">Yesterday</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if message.is_read %}
+                                                    <span class="badge bg-success">Read</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning">Unread</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewMessageModal{{ message.id }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#replyModal{{ message.id }}">
+                                                        <i class="fas fa-reply"></i>
+                                                    </button>
+                                                    {% if not message.is_read %}
+                                                        <button class="btn btn-success" onclick="markAsRead({{ message.id }})">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    {% endif %}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Received Messages</h5>
+                            <p class="text-muted">You haven't received any messages yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Sent Messages -->
+                <div class="tab-pane fade" id="sent" role="tabpanel">
+                    {% if sent_messages %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>To</th>
+                                        <th>Subject</th>
+                                        <th>Message</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for message in sent_messages %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                        {{ message.recipient.get_full_name|first|upper }}
+                                                    </div>
+                                                    <div>
+                                                        <strong>{{ message.recipient.get_full_name|default:message.recipient.username }}</strong>
+                                                        {% if message.recipient.is_staff %}
+                                                            <span class="badge bg-info ms-2">Staff</span>
+                                                        {% elif message.recipient.is_superuser %}
+                                                            <span class="badge bg-danger ms-2">Admin</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>{{ message.subject|truncatechars:50 }}</strong>
+                                            </td>
+                                            <td>
+                                                <p class="mb-0 text-muted">{{ message.body|truncatechars:100 }}</p>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">{{ message.sent_at|date:"M d, Y H:i" }}</small>
+                                                {% if message.sent_at.date == today %}
+                                                    <span class="badge bg-success ms-2">Today</span>
+                                                {% elif message.sent_at.date == yesterday %}
+                                                    <span class="badge bg-secondary ms-2">Yesterday</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if message.is_read %}
+                                                    <span class="badge bg-success">Read</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning">Unread</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#viewSentMessageModal{{ message.id }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-paper-plane fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Sent Messages</h5>
+                            <p class="text-muted">You haven't sent any messages yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'student_dashboard' %}" class="btn btn-outline-primary w-100">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'student_announcements' %}" class="btn btn-outline-info w-100">
+                <i class="fas fa-bullhorn me-2"></i>Announcements
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'student_profile' %}" class="btn btn-outline-success w-100">
+                <i class="fas fa-user me-2"></i>Profile
+            </a>
+        </div>
+        <div class="col-md-3 mb-3">
+            <a href="{% url 'student_courses' %}" class="btn btn-outline-warning w-100">
+                <i class="fas fa-book-open me-2"></i>Courses
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Compose Message Modal -->
+<div class="modal fade" id="composeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-pen me-2"></i>Compose New Message
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{% url 'send_message' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="recipient" class="form-label">Recipient</label>
+                        <select class="form-select" id="recipient" name="recipient" required>
+                            <option value="">Select recipient...</option>
+                            {% for recipient in potential_recipients %}
+                                <option value="{{ recipient.id }}">
+                                    {{ recipient.get_full_name|default:recipient.username }}
+                                    {% if recipient.is_superuser %}
+                                        - Admin
+                                    {% elif recipient.is_staff %}
+                                        - Staff
+                                    {% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" class="form-control" id="subject" name="subject" required placeholder="Enter message subject">
+                    </div>
+                    <div class="mb-3">
+                        <label for="body" class="form-label">Message</label>
+                        <textarea class="form-control" id="body" name="body" rows="6" required placeholder="Type your message here..."></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Received Message Modals -->
+{% for message in received_messages %}
+<div class="modal fade" id="viewMessageModal{{ message.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ message.subject }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                            {{ message.sender.get_full_name|first|upper }}
+                        </div>
+                        <div>
+                            <strong>{{ message.sender.get_full_name|default:message.sender.username }}</strong>
+                            <small class="text-muted ms-2">{{ message.sent_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-light p-3 rounded">
+                    {{ message.body|linebreaks }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#replyModal{{ message.id }}">
+                    <i class="fas fa-reply me-2"></i>Reply
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Reply Modals -->
+{% for message in received_messages %}
+<div class="modal fade" id="replyModal{{ message.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reply to: {{ message.subject }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="bg-light p-2 rounded mb-3">
+                        <small class="text-muted">Original message from {{ message.sender.get_full_name|default:message.sender.username }}:</small>
+                        <p class="mb-0">{{ message.body|truncatechars:150 }}</p>
+                    </div>
+                </div>
+                <form method="post" action="{% url 'send_message' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="recipient" value="{{ message.sender.id }}">
+                    <input type="hidden" name="subject" value="Re: {{ message.subject }}">
+                    <div class="mb-3">
+                        <label for="reply_body_{{ message.id }}" class="form-label">Your Reply</label>
+                        <textarea class="form-control" id="reply_body_{{ message.id }}" name="body" rows="4" required placeholder="Type your reply here..."></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Send Reply
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- View Sent Message Modals -->
+{% for message in sent_messages %}
+<div class="modal fade" id="viewSentMessageModal{{ message.id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ message.subject }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="avatar-sm bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                            {{ message.recipient.get_full_name|first|upper }}
+                        </div>
+                        <div>
+                            <strong>To: {{ message.recipient.get_full_name|default:message.recipient.username }}</strong>
+                            <small class="text-muted ms-2">{{ message.sent_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-light p-3 rounded">
+                    {{ message.body|linebreaks }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+function markAsRead(messageId) {
+    fetch(`/messages/mark-read/${messageId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+<style>
+.message-subject {
+    max-width: 200px;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.table-warning {
+    background-color: #fff3cd !important;
+}
+
+.stat-card {
+    border: none;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.stat-icon.info { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.stat-icon.success { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+.stat-icon.warning { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+.stat-icon.academic { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+</style>
+{% endblock %}

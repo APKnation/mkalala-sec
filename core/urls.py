@@ -40,6 +40,22 @@ urlpatterns = [
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/faculty/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),  # Legacy
     
+    # Student Navigation URLs
+    path('student/courses/', views.student_courses, name='student_courses'),
+    path('student/results/', views.student_results, name='student_results'),
+    path('student/timetable/', views.student_timetable, name='student_timetable'),
+    path('student/assignments/', views.student_assignments, name='student_assignments'),
+    path('student/exams/', views.student_exams, name='student_exams'),
+    path('student/library/', views.student_library, name='student_library'),
+    path('student/achievements/', views.student_achievements, name='student_achievements'),
+    path('student/fees/', views.student_fees, name='student_fees'),
+    path('student/messages/', views.student_messages, name='student_messages'),
+    path('admin/messages/', views.admin_messages, name='admin_messages'),
+    path('student/announcements/', views.student_announcements, name='student_announcements'),
+    path('student/activities/', views.student_activities, name='student_activities'),
+    path('student/profile/', views.student_profile_view, name='student_profile'),
+    path('student/settings/', views.student_settings, name='student_settings'),
+    
     # Profile URLs
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/update/', views.ProfileUpdateView.as_view(), name='update_profile'),
@@ -52,6 +68,7 @@ urlpatterns = [
     
     # Student Management URLs
     path('students/', views.StudentListView.as_view(), name='admin_student_list'),
+    path('students/add/', views.admin_student_create, name='admin_student_create'),
     path('students/<int:pk>/', views.StudentDetailView.as_view(), name='admin_student_detail'),
     path('students/<int:pk>/edit/', views.StudentUpdateView.as_view(), name='admin_student_edit'),
     path('students/<int:pk>/delete/', views.StudentDeleteView.as_view(), name='admin_student_delete'),

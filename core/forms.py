@@ -15,6 +15,26 @@ from .models import (
 
 User = get_user_model()
 
+class UserUpdateForm(forms.ModelForm):
+    """Form for updating user information (not creating new user)"""
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'First Name'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Last Name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Email Address'
+            }),
+        }
+
 class UserForm(UserCreationForm):
     role = forms.ChoiceField(
         choices=User.ROLE_CHOICES,
@@ -272,7 +292,8 @@ class StudentProfileForm(forms.ModelForm):
         model = StudentProfile
         fields = [
             'roll_number', 'department', 'admission_year', 'current_form', 'current_semester',
-            'profile_picture', 'phone', 'address', 'necta_exam_number', 'birth_certificate_number',
+            'profile_picture', 'phone', 'address', 
+            'necta_exam_number', 'birth_certificate_number',
             'previous_school', 'primary_school_leaving_exam_number'
         ]
         widgets = {
@@ -292,7 +313,7 @@ class StudentProfileForm(forms.ModelForm):
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
             'profile_picture': forms.ClearableFileInput(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                'class': 'w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
@@ -300,7 +321,8 @@ class StudentProfileForm(forms.ModelForm):
             }),
             'address': forms.Textarea(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
-                'rows': 3
+                'rows': 3,
+                'placeholder': 'Enter your residential address'
             }),
             'necta_exam_number': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
@@ -312,7 +334,7 @@ class StudentProfileForm(forms.ModelForm):
             }),
             'previous_school': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
-                'placeholder': 'Previous primary school name'
+                'placeholder': 'Previous school name'
             }),
             'primary_school_leaving_exam_number': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
