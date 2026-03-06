@@ -9,6 +9,7 @@ django-extensions>=3.2.3
 # Database
 psycopg2-binary>=2.9.9
 mysqlclient>=2.2.0
+dj-database-url>=2.1.0
 
 # Authentication & Security
 django-allauth>=0.57.0
