@@ -2254,6 +2254,7 @@ class SubjectEnrollmentListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
 # ======================
 # Subject Management Views
 # ======================
+# Last deployment: Mar 6, 2026 4:53 PM UTC
 class SubjectListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     """List all subjects"""
     model = Subject
