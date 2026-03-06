@@ -21,7 +21,7 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm
+from .forms import UserForm, StudentProfileForm, FeeForm
 
 from .models import (
     User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile,
@@ -548,24 +548,290 @@ def admin_dashboard(request):
     # Pending registrations (users who haven't been approved)
     pending_registrations = User.objects.filter(is_active=False).count()
     
+    # Enhanced student information
+    recent_students = StudentProfile.objects.select_related('user', 'department').order_by('-id')[:10]
+    total_enrollments = Enrollment.objects.count()
+    active_enrollments = Enrollment.objects.filter(is_active=True).count()
+    
+    # Fee information
+    total_fees_collected = Fee.objects.filter(status='paid').aggregate(total=models.Sum('amount'))['total'] or 0
+    pending_fees = Fee.objects.filter(status='pending').count()
+    overdue_fees = Fee.objects.filter(status='overdue').count()
+    
+    # Recent enrollments with course information
+    recent_enrollments = Enrollment.objects.select_related(
+        'student__user', 'course', 'semester'
+    ).order_by('-enrollment_date')[:10]
+    
     # Get recent users for activity feed
     recent_users = User.objects.order_by('-date_joined')[:5]
+    
+    # Student statistics by form level
+    students_by_form = {}
+    for form_num in range(1, 5):
+        students_by_form[f'Form {form_num}'] = StudentProfile.objects.filter(current_form=form_num).count()
     
     context = {
         'user': request.user,
         'role': 'School Administrator',
+        # Basic statistics
         'total_users': total_users,
         'students': students,
         'teachers': teachers,
         'headmasters': headmasters,
         'admins': admins,
         'pending_registrations': pending_registrations,
+        # Student information
+        'recent_students': recent_students,
+        'students_by_form': students_by_form,
+        # Enrollment information
+        'total_enrollments': total_enrollments,
+        'active_enrollments': active_enrollments,
+        'recent_enrollments': recent_enrollments,
+        # Fee information
+        'total_fees_collected': total_fees_collected,
+        'pending_fees': pending_fees,
+        'overdue_fees': overdue_fees,
+        # Activity feed
         'recent_users': recent_users,
     }
     return render(request, 'core/admin_dashboard_full.html', context)
 
+# ======================
+# Student Management Views
+# ======================
+
+class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = StudentProfile
+    template_name = 'core/admin_student_list.html'
+    context_object_name = 'students'
+    paginate_by = 20
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        return StudentProfile.objects.select_related('user', 'department').order_by('-id')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Student Management'
+        context['total_students'] = StudentProfile.objects.count()
+        return context
+
+class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = StudentProfile
+    template_name = 'core/admin_student_detail.html'
+    context_object_name = 'student'
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student = self.get_object()
+        
+        # Get student enrollments with course information
+        enrollments = Enrollment.objects.filter(student=student).select_related('course', 'semester')
+        context['enrollments'] = enrollments
+        
+        # Get student fees
+        fees = Fee.objects.filter(student=student).order_by('-due_date')
+        context['fees'] = fees
+        
+        # Calculate fee statistics
+        total_fees = fees.aggregate(total=models.Sum('amount'))['total'] or 0
+        paid_fees = fees.filter(status='paid').aggregate(total=models.Sum('amount'))['total'] or 0
+        context['total_fees'] = total_fees
+        context['paid_fees'] = paid_fees
+        context['outstanding_fees'] = total_fees - paid_fees
+        
+        # Get NECTA exam results
+        necta_exams = NECTAExam.objects.filter(student=student).order_by('-exam_year', '-exam_month')
+        context['necta_exams'] = necta_exams
+        
+        context['title'] = f'Student Details: {student.user.get_full_name()}'
+        return context
+
+class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = StudentProfile
+    form_class = StudentProfileForm
+    template_name = 'core/admin_student_edit.html'
+    success_url = reverse_lazy('admin_student_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Student'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Student information updated successfully!')
+        return super().form_valid(form)
+
+class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = StudentProfile
+    template_name = 'core/admin_student_delete.html'
+    success_url = reverse_lazy('admin_student_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        student = self.get_object()
+        messages.success(request, f'Student {student.user.get_full_name()} deleted successfully!')
+        return super().delete(request, *args, **kwargs)
+
+# ======================
+# Teacher Management Views  
+# ======================
+
+class TeacherListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = FacultyProfile
+    template_name = 'core/admin_teacher_list.html'
+    context_object_name = 'teachers'
+    paginate_by = 20
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        return FacultyProfile.objects.select_related('user', 'department').order_by('-id')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Teacher Management'
+        context['total_teachers'] = FacultyProfile.objects.count()
+        return context
+
+class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = FacultyProfile
+    template_name = 'core/admin_teacher_detail.html'
+    context_object_name = 'teacher'
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        teacher = self.get_object()
+        
+        # Get courses taught by this teacher
+        courses_taught = Course.objects.filter(department=teacher.department)
+        context['courses_taught'] = courses_taught
+        
+        context['title'] = f'Teacher Details: {teacher.user.get_full_name()}'
+        return context
+
+class TeacherUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = User
+    form_class = UserForm
+    template_name = 'core/admin_teacher_edit.html'
+    success_url = reverse_lazy('admin_teacher_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Teacher'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Teacher information updated successfully!')
+        return super().form_valid(form)
+
+class TeacherDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = User
+    template_name = 'core/admin_teacher_delete.html'
+    success_url = reverse_lazy('admin_teacher_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        teacher = self.get_object()
+        messages.success(request, f'Teacher {teacher.get_full_name()} deleted successfully!')
+        return super().delete(request, *args, **kwargs)
+
+# ======================
+# Fee Management Views
+# ======================
+
+class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Fee
+    template_name = 'core/admin_fee_list.html'
+    context_object_name = 'fees'
+    paginate_by = 25
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        return Fee.objects.select_related('student__user', 'fee_category').order_by('-due_date')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Fee Management'
+        context['total_fees'] = Fee.objects.count()
+        context['paid_fees'] = Fee.objects.filter(status='paid').count()
+        context['pending_fees'] = Fee.objects.filter(status='pending').count()
+        context['overdue_fees'] = Fee.objects.filter(status='overdue').count()
+        return context
+
+class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Fee
+    form_class = FeeForm
+    template_name = 'core/admin_fee_create.html'
+    success_url = reverse_lazy('admin_fee_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Create Fee'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Fee created successfully!')
+        return super().form_valid(form)
+
+class FeeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Fee
+    form_class = FeeForm
+    template_name = 'core/admin_fee_edit.html'
+    success_url = reverse_lazy('admin_fee_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Fee'
+        return context
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Fee updated successfully!')
+        return super().form_valid(form)
+
+class FeeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Fee
+    template_name = 'core/admin_fee_delete.html'
+    success_url = reverse_lazy('admin_fee_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        fee = self.get_object()
+        messages.success(request, f'Fee for {fee.student.user.get_full_name()} deleted successfully!')
+        return super().delete(request, *args, **kwargs)
+
 class BaseRegisterView(CreateView):
-    from .forms import UserForm
+    from .forms import UserForm, StudentProfileForm, FeeForm
     
     model = User
     form_class = UserForm
@@ -718,7 +984,7 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return is_admin(self.request.user)
 
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    from .forms import UserForm
+    from .forms import UserForm, StudentProfileForm, FeeForm
     
     model = User
     form_class = UserForm

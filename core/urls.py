@@ -47,15 +47,28 @@ urlpatterns = [
     path('users/', views.UserListView.as_view(), name='user_list'),
     path('users/add/', views.add_user, name='add_user'),
     path('users/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
+    
+    # Student Management URLs
+    path('students/', views.StudentListView.as_view(), name='admin_student_list'),
+    path('students/<int:pk>/', views.StudentDetailView.as_view(), name='admin_student_detail'),
+    path('students/<int:pk>/edit/', views.StudentUpdateView.as_view(), name='admin_student_edit'),
+    path('students/<int:pk>/delete/', views.StudentDeleteView.as_view(), name='admin_student_delete'),
+    
+    # Teacher Management URLs
+    path('teachers/', views.TeacherListView.as_view(), name='admin_teacher_list'),
+    path('teachers/<int:pk>/', views.TeacherDetailView.as_view(), name='admin_teacher_detail'),
+    path('teachers/<int:pk>/edit/', views.TeacherUpdateView.as_view(), name='admin_teacher_edit'),
+    path('teachers/<int:pk>/delete/', views.TeacherDeleteView.as_view(), name='admin_teacher_delete'),
+    
+    # Fee Management URLs
+    path('fees/', views.FeeListView.as_view(), name='admin_fee_list'),
+    path('fees/add/', views.FeeCreateView.as_view(), name='admin_fee_create'),
+    path('fees/<int:pk>/edit/', views.FeeUpdateView.as_view(), name='admin_fee_edit'),
+    path('fees/<int:pk>/delete/', views.FeeDeleteView.as_view(), name='admin_fee_delete'),
     path('users/<int:pk>/edit/', views.UserUpdateView.as_view(), name='edit_user'),
     path('users/<int:user_id>/deactivate/', views.deactivate_user, name='deactivate_user'),
     path('users/pending/', views.UserApprovalView.as_view(), name='user_approval'),
     path('users/<int:user_id>/approve/', views.user_approve, name='user_approve'),
-    
-    # Student URLs
-    path('students/', views.StudentListView.as_view(), name='student_list'),
-    path('students/<int:pk>/', views.StudentDetailView.as_view(), name='student_detail'),
-    path('students/<int:pk>/edit/', views.StudentUpdateView.as_view(), name='student_edit'),
     
     # Faculty URLs
     path('faculty/', views.FacultyListView.as_view(), name='faculty_list'),
