@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q, Count, Avg
+from django.db.models import Q, Count, Avg, Sum
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (
@@ -555,7 +555,7 @@ def admin_dashboard(request):
     active_enrollments = Enrollment.objects.count()
     
     # Fee information
-    total_fees_collected = Fee.objects.filter(is_paid=True).aggregate(total=models.Sum('amount'))['total'] or 0
+    total_fees_collected = Fee.objects.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
     pending_fees = Fee.objects.filter(is_paid=False).count()
     overdue_fees = Fee.objects.filter(is_paid=False, due_date__lt=timezone.now().date()).count()
     
@@ -641,8 +641,8 @@ class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['fees'] = fees
         
         # Calculate fee statistics
-        total_fees = fees.aggregate(total=models.Sum('amount'))['total'] or 0
-        paid_fees = fees.filter(status='paid').aggregate(total=models.Sum('amount'))['total'] or 0
+        total_fees = fees.aggregate(total=Sum('amount'))['total'] or 0
+        paid_fees = fees.filter(status='paid').aggregate(total=Sum('amount'))['total'] or 0
         context['total_fees'] = total_fees
         context['paid_fees'] = paid_fees
         context['outstanding_fees'] = total_fees - paid_fees
