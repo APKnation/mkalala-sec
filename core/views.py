@@ -555,9 +555,9 @@ def admin_dashboard(request):
     active_enrollments = Enrollment.objects.count()
     
     # Fee information
-    total_fees_collected = Fee.objects.filter(status='paid').aggregate(total=models.Sum('amount'))['total'] or 0
-    pending_fees = Fee.objects.filter(status='pending').count()
-    overdue_fees = Fee.objects.filter(status='overdue').count()
+    total_fees_collected = Fee.objects.filter(is_paid=True).aggregate(total=models.Sum('amount'))['total'] or 0
+    pending_fees = Fee.objects.filter(is_paid=False).count()
+    overdue_fees = Fee.objects.filter(is_paid=False, due_date__lt=timezone.now().date()).count()
     
     # Recent enrollments with course information
     recent_enrollments = Enrollment.objects.select_related(
