@@ -91,17 +91,31 @@ class User(AbstractUser):
         return dict(self.ROLE_CHOICES).get(self.role, 'Unknown')
 
 class StudentProfile(models.Model):
+    FORM_CHOICES = [
+        (1, 'Form 1'),
+        (2, 'Form 2'),
+        (3, 'Form 3'),
+        (4, 'Form 4'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
     roll_number = models.CharField(max_length=MAX_CODE_LENGTH, unique=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     admission_year = models.PositiveIntegerField(validators=[MinValueValidator(2000), MaxValueValidator(2100)])
-    current_semester = models.PositiveIntegerField(choices=[(i, str(i)) for i in range(1, 9)])
+    current_form = models.PositiveIntegerField(choices=FORM_CHOICES, default=1, help_text="Current form level for O-level students")
+    current_semester = models.PositiveIntegerField(choices=[(i, str(i)) for i in range(1, 9)], blank=True, null=True, help_text="For university-level students")
     gpa = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0), MaxValueValidator(4.0)])
     cgpa = models.FloatField(blank=True, null=True, validators=[MinValueValidator(0.0), MaxValueValidator(4.0)])
     batch = models.CharField(max_length=10, blank=True, null=True)
     address = models.TextField(blank=True, null=True)
     phone = models.CharField(max_length=15, blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='student_pics/', blank=True, null=True)  # ← Add this
+    profile_picture = models.ImageField(upload_to='student_pics/', blank=True, null=True)
+    
+    # Tanzania O-level specific fields
+    necta_exam_number = models.CharField(max_length=20, blank=True, null=True, help_text="NECTA examination number")
+    birth_certificate_number = models.CharField(max_length=50, blank=True, null=True)
+    previous_school = models.CharField(max_length=200, blank=True, null=True, help_text="Previous primary school")
+    primary_school_leaving_exam_number = models.CharField(max_length=20, blank=True, null=True, help_text="PSLE number")
 
 
     class Meta:
@@ -109,6 +123,105 @@ class StudentProfile(models.Model):
 
     def __str__(self):
         return f"{self.roll_number} - {self.user.get_full_name()}"
+    
+    def get_current_level_display(self):
+        """Display current form or semester based on education level"""
+        if self.department.education_level == 'olevel':
+            return f"Form {self.current_form}"
+        else:
+            return f"Semester {self.current_semester}" if self.current_semester else "N/A"
+
+class NECTAExam(models.Model):
+    EXAM_TYPES = [
+        ('csee', 'Certificate of Secondary Education Examination (CSEE)'),
+        ('ftna', 'Form Two National Assessment (FTNA)'),
+        ('mock', 'Mock Examination'),
+        ('terminal', 'Terminal Examination'),
+        ('annual', 'Annual Examination'),
+    ]
+    
+    SUBJECT_CHOICES = [
+        ('math', 'Mathematics'),
+        ('eng', 'English Language'),
+        ('kisw', 'Kiswahili'),
+        ('bio', 'Biology'),
+        ('phy', 'Physics'),
+        ('chem', 'Chemistry'),
+        ('hist', 'History'),
+        ('geo', 'Geography'),
+        ('civ', 'Civics'),
+        ('bkee', 'Bookkeeping'),
+        ('comm', 'Commerce'),
+        ('ict', 'Information & Computer Studies'),
+        ('agri', 'Agriculture'),
+        ('arb', 'Arabic Language'),
+        ('fre', 'French Language'),
+        ('home', 'Home Economics'),
+        ('art', 'Art & Design'),
+        ('music', 'Music'),
+        ('p_e', 'Physical Education'),
+    ]
+    
+    GRADE_CHOICES = [
+        ('A', 'A (75-100)'),
+        ('B', 'B (65-74)'),
+        ('C', 'C (45-64)'),
+        ('D', 'D (30-44)'),
+        ('F', 'F (0-29)'),
+    ]
+    
+    student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='necta_exams')
+    exam_type = models.CharField(max_length=10, choices=EXAM_TYPES)
+    subject = models.CharField(max_length=10, choices=SUBJECT_CHOICES)
+    grade = models.CharField(max_length=1, choices=GRADE_CHOICES)
+    marks_obtained = models.PositiveIntegerField(null=True, blank=True, help_text="Marks out of 100")
+    exam_year = models.PositiveIntegerField()
+    exam_month = models.PositiveIntegerField(choices=[(i, i) for i in range(1, 13)])
+    is_mock = models.BooleanField(default=False)
+    remarks = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ['student', 'exam_type', 'subject', 'exam_year', 'exam_month']
+        ordering = ['-exam_year', '-exam_month', 'subject']
+    
+    def __str__(self):
+        return f"{self.student.user.get_full_name()} - {self.get_exam_type_display()} - {self.get_subject_display()}: {self.grade}"
+    
+    def get_grade_points(self):
+        """Convert grade to points for division calculation"""
+        grade_points = {'A': 5, 'B': 4, 'C': 3, 'D': 2, 'F': 1}
+        return grade_points.get(self.grade, 0)
+
+class SchoolCalendar(models.Model):
+    """Academic calendar for Tanzania school system"""
+    ACADEMIC_YEAR_CHOICES = [(i, f"{i}-{i+1}") for i in range(2020, 2035)]
+    TERM_CHOICES = [
+        (1, 'Term I'),
+        (2, 'Term II'), 
+        (3, 'Term III'),
+    ]
+    
+    academic_year = models.PositiveIntegerField(choices=ACADEMIC_YEAR_CHOICES)
+    term = models.PositiveIntegerField(choices=TERM_CHOICES)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    is_current = models.BooleanField(default=False)
+    teaching_weeks = models.PositiveIntegerField(default=12, help_text="Number of teaching weeks")
+    exam_weeks = models.PositiveIntegerField(default=2, help_text="Number of examination weeks")
+    holiday_weeks = models.PositiveIntegerField(default=4, help_text="Number of holiday weeks")
+    
+    class Meta:
+        unique_together = ['academic_year', 'term']
+        ordering = ['-academic_year', 'term']
+    
+    def __str__(self):
+        return f"{self.get_academic_year_display()} - {self.get_term_display()}"
+    
+    def save(self, *args, **kwargs):
+        if self.is_current:
+            SchoolCalendar.objects.filter(is_current=True).exclude(id=self.id).update(is_current=False)
+        super().save(*args, **kwargs)
 
 class FacultyProfile(models.Model):
     DESIGNATION_CHOICES = [

@@ -9,7 +9,7 @@ from .models import (
     Department, AdminProfile, StudentProfile, FacultyProfile,
     Course, CourseOffering, Enrollment, Grade, Attendance,
     Fee, FeeCategory, Semester, LeaveRequest,
-    Message, ForumTopic, ForumPost, Material
+    Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar
 )
 
 User = get_user_model()
@@ -269,7 +269,11 @@ class UserUpdateForm(UserChangeForm):
 class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = StudentProfile
-        fields = ['roll_number', 'department', 'admission_year', 'current_semester', 'profile_picture']
+        fields = [
+            'roll_number', 'department', 'admission_year', 'current_form', 'current_semester',
+            'profile_picture', 'phone', 'address', 'necta_exam_number', 'birth_certificate_number',
+            'previous_school', 'primary_school_leaving_exam_number'
+        ]
         widgets = {
             'roll_number': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
@@ -280,13 +284,58 @@ class StudentProfileForm(forms.ModelForm):
             'admission_year': forms.NumberInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
+            'current_form': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
             'current_semester': forms.Select(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
             'profile_picture': forms.ClearableFileInput(attrs={
-                'class': 'w-full px-3 py-2 text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': '+255 XXX XXX XXX'
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'rows': 3
+            }),
+            'necta_exam_number': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'PS123456789'
+            }),
+            'birth_certificate_number': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'BC123456789'
+            }),
+            'previous_school': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Previous primary school name'
+            }),
+            'primary_school_leaving_exam_number': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'PSLE123456789'
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['roll_number'].widget.attrs.update({'placeholder': 'Enter roll number'})
+        self.fields['phone'].widget.attrs.update({'placeholder': 'Enter phone number'})
+        self.fields['address'].widget.attrs.update({'placeholder': 'Enter address'})
+        
+        # Filter departments to show only O-level departments for O-level students
+        if self.instance and self.instance.pk and self.instance.department.education_level == 'olevel':
+            self.fields['department'].queryset = Department.objects.filter(education_level='olevel')
+        
+        # Make current_semester optional for O-level students
+        if self.instance and self.instance.pk and self.instance.department.education_level == 'olevel':
+            self.fields['current_semester'].required = False
+            self.fields['current_form'].required = True
+        else:
+            self.fields['current_semester'].required = True
+            self.fields['current_form'].required = False
 
 class FacultyProfileForm(forms.ModelForm):
     class Meta:
@@ -527,6 +576,97 @@ class LeaveRequestForm(forms.ModelForm):
             'reason': forms.Textarea(attrs={
                 'rows': 3,
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        if start_date and end_date and start_date > end_date:
+            raise ValidationError("End date must be after start date.")
+        return cleaned_data
+
+class NECTAExamForm(forms.ModelForm):
+    class Meta:
+        model = NECTAExam
+        fields = [
+            'student', 'exam_type', 'subject', 'grade', 'marks_obtained', 
+            'exam_year', 'exam_month', 'is_mock', 'remarks'
+        ]
+        widgets = {
+            'student': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'exam_type': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'subject': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'grade': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'marks_obtained': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'min': '0', 'max': '100'
+            }),
+            'exam_year': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'min': '2020', 'max': '2035'
+            }),
+            'exam_month': forms.Select(choices=[(i, i) for i in range(1, 13)], attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'is_mock': forms.CheckboxInput(attrs={
+                'class': 'w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500'
+            }),
+            'remarks': forms.Textarea(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'rows': 3
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter students to only show O-level students for NECTA exams
+        self.fields['student'].queryset = StudentProfile.objects.filter(
+            department__education_level='olevel'
+        ).select_related('user')
+
+class SchoolCalendarForm(forms.ModelForm):
+    class Meta:
+        model = SchoolCalendar
+        fields = [
+            'academic_year', 'term', 'start_date', 'end_date', 
+            'teaching_weeks', 'exam_weeks', 'holiday_weeks'
+        ]
+        widgets = {
+            'academic_year': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'term': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'start_date': forms.DateInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'type': 'date'
+            }),
+            'end_date': forms.DateInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'type': 'date'
+            }),
+            'teaching_weeks': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'min': '1', 'max': '20'
+            }),
+            'exam_weeks': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'min': '1', 'max': '10'
+            }),
+            'holiday_weeks': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'min': '1', 'max': '20'
             }),
         }
 
