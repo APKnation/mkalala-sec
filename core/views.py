@@ -2127,9 +2127,9 @@ def subject_enrollment_dashboard(request):
     
     # Subject enrollment statistics
     subject_stats = Subject.objects.filter(
-        subjectenrollment__academic_year=academic_year
+        enrollments__academic_year=academic_year
     ).annotate(
-        enrollment_count=Count('subjectenrollment')
+        enrollment_count=Count('enrollments')
     ).order_by('-enrollment_count')
     
     context = {
