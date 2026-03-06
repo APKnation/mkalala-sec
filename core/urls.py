@@ -132,10 +132,7 @@ urlpatterns = [
 
 
 # COURSES
-path('courses-new', views.course_list, name='course_list'),
-path('add/', views.course_create, name='course_create'),
-path('edit/<int:pk>/', views.course_update, name='course_update'),
-path('delete/<int:pk>/', views.course_delete, name='course_delete'),
+path('courses/', CourseListView.as_view(), name='course_list'),
 path('courses/manage/', CourseManagementView.as_view(), name='course_management'),  # ✅ this name matters
 
 

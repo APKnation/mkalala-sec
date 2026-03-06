@@ -21,13 +21,13 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm, StudentProfileForm, FeeForm
+from .forms import UserForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm
 
 from .models import (
-    User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile,
+    User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
     CourseOffering, Semester, ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
-    ReportCard, Material, Schedule, ForumPost
+    ReportCard, Material, Schedule, ForumPost, NECTAExam
 )
 
 User = get_user_model()
@@ -36,25 +36,6 @@ class StudentDetailView(DetailView):
     template_name = 'students/student_detail.html'  # adjust path as needed
     context_object_name = 'student'
 
-class CourseListView(View):
-    def get(self, request):
-        # Get all courses with related data
-        courses = Course.objects.select_related('department').prefetch_related('offerings__enrollments').all()
-        departments = Department.objects.all()
-        
-        # Get statistics
-        total_courses = courses.count()
-        active_courses = courses.filter(is_active=True).count()
-        total_enrollments = Enrollment.objects.filter(course__in=courses).count()
-        
-        context = {
-            'courses': courses,
-            'departments': departments,
-            'total_courses': total_courses,
-            'active_courses': active_courses,
-            'total_enrollments': total_enrollments,
-        }
-        return render(request, 'core/course_list.html', context)  
 class CourseManagementView(View):
     def get(self, request):
         return render(request, 'core/course_management.html') 
@@ -158,10 +139,6 @@ class ActivityLogView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['is_admin'] = is_admin(self.request.user)
         return context
-class StudentListView(ListView):
-    model = StudentProfile
-    template_name = 'core/student_list.html'  # your template here
-    context_object_name = 'students'
 # ======================
 # Permission Helpers
 # ======================
@@ -1308,9 +1285,6 @@ def upload_material(request, course_id):
         'form': form,
         'course': course
     })
-def is_admin(user):
-    return user.is_superuser or (hasattr(user, 'adminprofile') and user.adminprofile is not None)
-
 # ======================
 # Admin Views
 # ======================
@@ -1871,7 +1845,7 @@ class ParentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView)
         
         context.update({
             'child': child,
-            'attendance': AttendanceRecord.objects.filter(student=child).order_by('-date')[:5],
+            'attendance': Attendance.objects.filter(student=child).order_by('-date')[:5],
             'grades': Grade.objects.filter(student=child).order_by('-awarded_on')[:5],
             'unpaid_fees': Fee.objects.filter(student=child, is_paid=False),
             'announcements': Announcement.objects.filter(
@@ -1886,7 +1860,7 @@ def view_child_attendance(request):
         return redirect('dashboard')
     
     child = request.user.parent_profile.child
-    attendance = AttendanceRecord.objects.filter(student=child).order_by('-date')
+    attendance = Attendance.objects.filter(student=child).order_by('-date')
     
     return render(request, 'parent/attendance.html', {
         'attendance': attendance,
@@ -2057,7 +2031,7 @@ def get_context_data(self, **kwargs):
     ).order_by('-enrollment_count')
     
     # Attendance distribution
-    context['attendance_stats'] = AttendanceRecord.objects.values(
+    context['attendance_stats'] = Attendance.objects.values(
         'status'
     ).annotate(
         count=Count('status')
@@ -2132,61 +2106,6 @@ def grade_list(request):
         'recent_grades': recent_grades,
     }
     return render(request, 'core/grade_list.html', context)
-
-def course_list(request):
-    courses = Course.objects.all()
-    return render(request, 'core/course_list.html', {'courses': courses})
-
-def course_create(request):
-    departments = Department.objects.all()
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        code = request.POST.get('code')
-        department_id = request.POST.get('department')
-        credits = request.POST.get('credits')
-        description = request.POST.get('description')
-        syllabus = request.POST.get('syllabus')
-
-        department = get_object_or_404(Department, id=department_id)
-
-        Course.objects.create(
-            name=name,
-            code=code,
-            department=department,
-            credits=credits,
-            description=description,
-            syllabus=syllabus
-        )
-        messages.success(request, "Course created successfully.")
-        return redirect('course_list')
-
-    return render(request, 'core/course_form.html', {'departments': departments, 'title': 'Add Course'})
-
-def course_update(request, pk):
-    course = get_object_or_404(Course, pk=pk)
-    departments = Department.objects.all()
-
-    if request.method == 'POST':
-        course.name = request.POST.get('name')
-        course.code = request.POST.get('code')
-        course.department = get_object_or_404(Department, id=request.POST.get('department'))
-        course.credits = request.POST.get('credits')
-        course.description = request.POST.get('description')
-        course.syllabus = request.POST.get('syllabus')
-        course.save()
-        messages.success(request, "Course updated successfully.")
-        return redirect('course_list')
-
-    return render(request, 'core/course_form.html', {'course': course, 'departments': departments, 'title': 'Edit Course'})
-
-def course_delete(request, pk):
-    course = get_object_or_404(Course, pk=pk)
-    if request.method == 'POST':
-        course.delete()
-        messages.success(request, "Course deleted successfully.")
-        return redirect('course_list')
-
-    return render(request, 'core/course_confirm_delete.html', {'course': course})
 
 
 
