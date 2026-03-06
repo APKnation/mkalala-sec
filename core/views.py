@@ -21,9 +21,10 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
+from .forms import UserForm
 
 from .models import (
-    User, Course, Department, StudentProfile, FacultyProfile, AdminProfile,
+    User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
     CourseOffering, Semester, ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
     ReportCard, Material, Schedule, ForumPost
@@ -632,18 +633,81 @@ def get_context_data(self, **kwargs):
 @login_required
 def add_user(request):
     if not is_admin(request.user):
+        messages.error(request, "You don't have permission to add users.")
         return redirect('dashboard')
     
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save()
-            messages.success(request, f"User {user.username} created successfully")
+            
+            # Create appropriate profile based on role
+            if user.role == 'student':
+                from .models import Department
+                # Get or create a default department for O-level students
+                department, created = Department.objects.get_or_create(
+                    code='GEN',
+                    defaults={'name': 'General Studies', 'education_level': 'olevel'}
+                )
+                StudentProfile.objects.create(
+                    user=user,
+                    roll_number=f"STU{user.id:06d}",
+                    admission_year=timezone.now().year,
+                    current_form=1,
+                    department=department
+                )
+                messages.success(request, f"Student {user.username} created successfully!")
+                
+            elif user.role == 'teacher':
+                # Create faculty profile (admin will complete details)
+                from .models import Department
+                department, created = Department.objects.get_or_create(
+                    code='GEN',
+                    defaults={'name': 'General Studies', 'education_level': 'olevel'}
+                )
+                FacultyProfile.objects.create(
+                    user=user,
+                    department=department,
+                    designation='lecturer'
+                )
+                messages.success(request, f"Teacher {user.username} created successfully!")
+                
+            elif user.role == 'headmaster':
+                # Create headmaster profile
+                HeadmasterProfile.objects.create(
+                    user=user,
+                    appointment_date=timezone.now().date()
+                )
+                messages.success(request, f"Headmaster {user.username} created successfully!")
+                
+            elif user.role == 'admin':
+                # Create admin profile
+                from .models import Department
+                department, created = Department.objects.get_or_create(
+                    code='GEN',
+                    defaults={'name': 'General Studies', 'education_level': 'olevel'}
+                )
+                AdminProfile.objects.create(
+                    user=user,
+                    department=department,
+                    access_level='regular'
+                )
+                messages.success(request, f"Admin {user.username} created successfully!")
+                
+            else:
+                messages.success(request, f"User {user.username} created successfully!")
+            
             return redirect('user_list')
         messages.error(request, "Please correct the errors below.")
     else:
         form = UserForm()
-    return render(request, 'core/admin_add_user.html', {'form': form})
+    
+    context = {
+        'form': form,
+        'title': 'Add New User',
+        'user_roles': User.ROLE_CHOICES
+    }
+    return render(request, 'core/admin_add_user.html', context)
 
 class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = User
