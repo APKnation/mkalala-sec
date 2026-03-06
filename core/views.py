@@ -551,7 +551,8 @@ def admin_dashboard(request):
     # Enhanced student information
     recent_students = StudentProfile.objects.select_related('user', 'department').order_by('-id')[:10]
     total_enrollments = Enrollment.objects.count()
-    active_enrollments = Enrollment.objects.filter(is_active=True).count()
+    # Remove is_active filter since field doesn't exist
+    active_enrollments = Enrollment.objects.count()
     
     # Fee information
     total_fees_collected = Fee.objects.filter(status='paid').aggregate(total=models.Sum('amount'))['total'] or 0
