@@ -527,7 +527,14 @@ def headmaster_dashboard(request):
 # School Admin Dashboard
 @login_required
 def admin_dashboard(request):
+    # Debug information
+    print(f"User: {request.user.username}")
+    print(f"Is authenticated: {request.user.is_authenticated}")
+    print(f"User role: {getattr(request.user, 'role', 'No role')}")
+    print(f"Is admin check: {is_admin(request.user)}")
+    
     if not request.user.role == 'admin':
+        messages.error(request, "You don't have permission to access the admin dashboard.")
         return redirect('public_home')
     
     # Get comprehensive statistics

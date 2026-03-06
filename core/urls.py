@@ -36,7 +36,7 @@ urlpatterns = [
     path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
     path('dashboard/headmaster/', views.headmaster_dashboard, name='headmaster_dashboard'),
-    path('dashboard/admin/', views.AdminDashboardView.as_view(), name='admin_dashboard'),
+    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/faculty/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),  # Legacy
     
     # Profile URLs
