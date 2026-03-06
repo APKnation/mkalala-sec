@@ -143,15 +143,15 @@ path('subjects/enroll/<int:student_id>/', views.enroll_student_subjects, name='e
 path('subjects/bulk-enroll/', views.bulk_subject_enrollment, name='bulk_subject_enrollment'),
 
 # SUBJECT MANAGEMENT
-path('admin/subjects/', SubjectListView.as_view(), name='subject_list'),
-path('admin/subjects/add/', SubjectCreateView.as_view(), name='subject_create'),
-path('admin/subjects/<int:pk>/edit/', SubjectUpdateView.as_view(), name='subject_update'),
-path('admin/subjects/<int:pk>/delete/', SubjectDeleteView.as_view(), name='subject_delete'),
+path('manage/subjects/', SubjectListView.as_view(), name='subject_list'),
+path('manage/subjects/add/', SubjectCreateView.as_view(), name='subject_create'),
+path('manage/subjects/<int:pk>/edit/', SubjectUpdateView.as_view(), name='subject_update'),
+path('manage/subjects/<int:pk>/delete/', SubjectDeleteView.as_view(), name='subject_delete'),
 
 # CLASS MANAGEMENT
-path('admin/classes/', views.class_management, name='class_management'),
-path('admin/classes/assign/<int:student_id>/', views.assign_student_class, name='assign_student_class'),
-path('admin/classes/bulk-assign/', views.bulk_class_assignment, name='bulk_class_assignment'),
+path('manage/classes/', views.class_management, name='class_management'),
+path('manage/classes/assign/<int:student_id>/', views.assign_student_class, name='assign_student_class'),
+path('manage/classes/bulk-assign/', views.bulk_class_assignment, name='bulk_class_assignment'),
 
 
 ]
