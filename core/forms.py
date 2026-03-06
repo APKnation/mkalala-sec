@@ -4,12 +4,12 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.db.models import Q
-from .models import Course, Department
 from .models import (
     Department, AdminProfile, StudentProfile, FacultyProfile,
     Course, CourseOffering, Enrollment, Grade, Attendance,
     Fee, FeeCategory, Semester, LeaveRequest,
-    Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar
+    Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar,
+    Subject, SubjectEnrollment
 )
 
 User = get_user_model()
