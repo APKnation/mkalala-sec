@@ -1,0 +1,223 @@
+# Modern School Management System - Requirements
+# Core Django Framework
+Django>=4.2.11,<5.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.1
+django-filter>=23.5
+django-extensions>=3.2.3
+
+# Database
+psycopg2-binary>=2.9.9
+mysqlclient>=2.2.0
+
+# Authentication & Security
+django-allauth>=0.57.0
+django-oauth-toolkit>=1.7.1
+cryptography>=41.0.8
+python-jose>=3.3.0
+
+# Image & File Processing
+Pillow>=10.1.0
+django-storages>=1.14.2
+boto3>=1.34.0  # AWS S3
+
+# Email & Notifications
+django-anymail>=10.2
+celery>=5.3.4
+redis>=5.0.1
+channels>=4.0.0
+channels-redis>=4.1.0
+
+# API & Documentation
+drf-yasg>=1.21.7
+drf-spectacular>=0.27.0
+
+# Background Tasks & Scheduling
+django-celery-beat>=2.5.0
+django-celery-results>=2.5.0
+
+# Caching
+django-redis>=5.4.0
+hiredis>=2.2.3
+
+# Forms & Validation
+django-crispy-forms>=2.1
+crispy-bootstrap5>=0.7
+
+# Templates & Frontend
+django-widget-tweaks>=1.4.12
+django-ckeditor>=6.7.0
+
+# Utilities
+python-dateutil>=2.8.2
+pytz>=2023.3
+requests>=2.31.0
+urllib3>=2.1.0
+
+# Data Processing & Export
+pandas>=2.1.4
+openpyxl>=3.1.2
+xlsxwriter>=3.1.9
+reportlab>=4.0.7
+weasyprint>=60.2
+
+# Image Processing & QR Codes
+qrcode>=7.4.2
+pyzbar>=0.1.9
+
+# Logging & Monitoring
+sentry-sdk>=1.38.0
+django-debug-toolbar>=4.2.0
+django-silk>=5.0.4
+
+# Testing
+pytest>=7.4.3
+pytest-django>=4.7.0
+pytest-cov>=4.1.0
+factory-boy>=3.3.0
+
+# Code Quality
+black>=23.11.0
+flake8>=6.1.0
+isort>=5.12.0
+django-stubs>=4.2.7
+
+# Development
+django-environ>=0.11.2
+ipython>=8.17.2
+jupyter>=1.0.0
+
+# Production
+gunicorn>=21.2.0
+whitenoise>=6.6.0
+
+# Security
+django-ratelimit>=4.1.0
+django-axes>=6.1.1
+
+# Analytics & Tracking
+django-analytics>=2.5.0
+
+# File Processing
+django-filebrowser>=4.0.1
+django-filer>=3.2.1
+
+# Internationalization
+django-modeltranslation>=0.18.11
+
+# Social Authentication
+python-social-auth>=0.3.1
+
+# WebSocket Support
+daphne>=4.0.0
+
+# Task Queue
+flower>=2.0.1
+
+# Monitoring & Health Checks
+django-health-check>=3.18.1
+
+# API Rate Limiting
+django-throttling>=1.5.0
+
+# PDF Generation
+pdfkit>=1.0.0
+
+# Excel Processing
+xlrd>=2.0.1
+
+# CSV Processing
+csv>=1.0
+
+# JSON Processing
+jsonschema>=4.20.0
+
+# Timezone Support
+pytz>=2023.3
+
+# Email Templates
+django-post-office>=3.8.0
+
+# SMS Integration
+twilio>=8.10.0
+
+# Payment Processing (if needed)
+stripe>=7.8.0
+paypalrestsdk>=1.13.3
+
+# Cloud Storage
+google-cloud-storage>=2.10.0
+azure-storage-blob>=12.19.0
+
+# Machine Learning (optional)
+scikit-learn>=1.3.2
+numpy>=1.25.2
+
+# Data Visualization
+matplotlib>=3.8.2
+seaborn>=0.13.0
+plotly>=5.17.0
+
+# Caching
+django-cacheops>=7.4.1
+
+# Search
+elasticsearch-dsl>=8.11.0
+django-haystack>=3.2.1
+
+# GraphQL
+graphene-django>=3.2.0
+
+# WebSocket
+channels>=4.0.0
+channels-redis>=4.1.0
+
+# Background Processing
+rq>=1.15.0
+django-rq>=2.8.0
+
+# File Compression
+django-compressor>=4.4
+
+# Minification
+django-minify-html>=1.6.0
+
+# Security Headers
+django-security>=1.2.4
+
+# Database Migrations
+django-migration-rollbacker>=0.1.2
+
+# API Documentation
+drf-spectacular>=0.27.0
+
+# Performance Monitoring
+django-silk>=5.0.4
+
+# Error Tracking
+sentry-sdk>=1.38.0
+
+# Configuration Management
+python-decouple>=3.8
+
+# Logging
+structlog>=23.2.0
+
+# Testing Utilities
+mock>=5.1.0
+responses>=0.24.1
+
+# Development Server
+django-runserver-plus>=1.7.0
+
+# Database Utilities
+django-db-connection-pool>=1.2.4
+
+# Session Management
+django-redis-sessions>=1.5.1
+
+# Template Optimization
+django-template-minifier>=1.4.0
+
+# Asset Management
+django-collectfast>=1.4.0
