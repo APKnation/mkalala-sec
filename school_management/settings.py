@@ -195,3 +195,15 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Trusted Origins for Railway.app
+CSRF_TRUSTED_ORIGINS = [
+    "https://mkalala-sec-production.up.railway.app",
+    "https://mkalala-sec.up.railway.app",
+    "https://*.railway.app",
+]
+
+# Additional CSRF Settings
+CSRF_COOKIE_SECURE = not DEBUG  # Secure in production, not in development
+CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+CSRF_COOKIE_SAMESITE = 'Lax'  # Good balance between security and usability
