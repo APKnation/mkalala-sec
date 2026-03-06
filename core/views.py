@@ -506,10 +506,11 @@ def headmaster_dashboard(request):
 @login_required
 def admin_dashboard(request):
     # Debug information
-    print(f"DEBUG: admin_dashboard called")
+    print(f"DEBUG: admin_dashboard called - VERSION 2.0")
     print(f"DEBUG: request.user = {request.user}")
     print(f"DEBUG: request.user type = {type(request.user)}")
     print(f"DEBUG: hasattr(request.user, 'models') = {hasattr(request.user, 'models')}")
+    print(f"DEBUG: Sum import test = {Sum}")
     
     if not request.user.role == 'admin':
         messages.error(request, "You don't have permission to access to admin dashboard.")
