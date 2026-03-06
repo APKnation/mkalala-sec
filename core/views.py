@@ -529,13 +529,13 @@ def headmaster_dashboard(request):
 @login_required
 def admin_dashboard(request):
     # Debug information
-    print(f"User: {request.user.username}")
-    print(f"Is authenticated: {request.user.is_authenticated}")
-    print(f"User role: {getattr(request.user, 'role', 'No role')}")
-    print(f"Is admin check: {is_admin(request.user)}")
+    print(f"DEBUG: admin_dashboard called")
+    print(f"DEBUG: request.user = {request.user}")
+    print(f"DEBUG: request.user type = {type(request.user)}")
+    print(f"DEBUG: hasattr(request.user, 'models') = {hasattr(request.user, 'models')}")
     
     if not request.user.role == 'admin':
-        messages.error(request, "You don't have permission to access the admin dashboard.")
+        messages.error(request, "You don't have permission to access to admin dashboard.")
         return redirect('public_home')
     
     # Get comprehensive statistics
