@@ -135,6 +135,12 @@ urlpatterns = [
 path('courses/', CourseListView.as_view(), name='course_list'),
 path('courses/manage/', CourseManagementView.as_view(), name='course_management'),  # ✅ this name matters
 
+# SUBJECT ENROLLMENT FOR TANZANIAN O-LEVEL
+path('subjects/', SubjectEnrollmentListView.as_view(), name='subject_enrollment_list'),
+path('subjects/dashboard/', views.subject_enrollment_dashboard, name='subject_enrollment_dashboard'),
+path('subjects/enroll/<int:student_id>/', views.enroll_student_subjects, name='enroll_student_subjects'),
+path('subjects/bulk-enroll/', views.bulk_subject_enrollment, name='bulk_subject_enrollment'),
+
 
 ]
 

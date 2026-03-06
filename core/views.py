@@ -22,13 +22,13 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm
+from .forms import UserForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm
 
 from .models import (
     User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
     CourseOffering, Semester, ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
-    ReportCard, Material, Schedule, ForumPost, NECTAExam
+    ReportCard, Material, Schedule, ForumPost, NECTAExam, Subject, SubjectEnrollment
 )
 
 User = get_user_model()
@@ -517,7 +517,6 @@ def admin_dashboard(request):
         messages.error(request, "You don't have permission to access to admin dashboard.")
         return redirect('public_home')
     
-    # Get comprehensive statistics
     total_users = User.objects.all().count()
     students = User.objects.filter(role='student').count()
     teachers = User.objects.filter(role='teacher').count()
@@ -2108,6 +2107,149 @@ def grade_list(request):
         'recent_grades': recent_grades,
     }
     return render(request, 'core/grade_list.html', context)
+
+# ======================
+# Subject Enrollment Views for Tanzanian O-Level
+# ======================
+@login_required
+@user_passes_test(is_admin)
+def subject_enrollment_dashboard(request):
+    """Dashboard for managing subject enrollments"""
+    academic_year = timezone.now().year
+    
+    # Get statistics
+    total_enrollments = SubjectEnrollment.objects.filter(academic_year=academic_year).count()
+    students_by_form = {}
+    for form_num in range(1, 5):
+        students_by_form[f'Form {form_num}'] = StudentProfile.objects.filter(
+            current_form=form_num
+        ).count()
+    
+    # Subject enrollment statistics
+    subject_stats = Subject.objects.filter(
+        subjectenrollment__academic_year=academic_year
+    ).annotate(
+        enrollment_count=Count('subjectenrollment')
+    ).order_by('-enrollment_count')
+    
+    context = {
+        'academic_year': academic_year,
+        'total_enrollments': total_enrollments,
+        'students_by_form': students_by_form,
+        'subject_stats': subject_stats,
+        'available_subjects': Subject.objects.all().order_by('form_level', 'code'),
+    }
+    return render(request, 'core/subject_enrollment_dashboard.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def enroll_student_subjects(request, student_id):
+    """Enroll a specific student in subjects"""
+    student = get_object_or_404(StudentProfile, id=student_id)
+    academic_year = timezone.now().year
+    
+    if request.method == 'POST':
+        form = SubjectEnrollmentForm(request.POST, initial={'student': student})
+        if form.is_valid():
+            # Check if student is already enrolled in this subject
+            subject = form.cleaned_data['subject']
+            existing = SubjectEnrollment.objects.filter(
+                student=student, 
+                subject=subject, 
+                academic_year=academic_year
+            ).first()
+            
+            if existing:
+                messages.warning(request, f"{student} is already enrolled in {subject}")
+            else:
+                form.instance.student = student
+                form.instance.academic_year = academic_year
+                form.save()
+                messages.success(request, f"Successfully enrolled {student} in {subject}")
+            return redirect('subject_enrollment_dashboard')
+    else:
+        form = SubjectEnrollmentForm(initial={'student': student})
+    
+    # Filter subjects based on student's current form
+    available_subjects = Subject.objects.filter(form_level=str(student.current_form))
+    
+    context = {
+        'form': form,
+        'student': student,
+        'available_subjects': available_subjects,
+        'current_enrollments': SubjectEnrollment.objects.filter(
+            student=student, academic_year=academic_year
+        ).select_related('subject'),
+    }
+    return render(request, 'core/enroll_student_subjects.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def bulk_subject_enrollment(request):
+    """Bulk enrollment of students in subjects"""
+    academic_year = timezone.now().year
+    
+    if request.method == 'POST':
+        form = BulkSubjectEnrollmentForm(request.POST)
+        if form.is_valid():
+            academic_year = form.cleaned_data['academic_year']
+            students = StudentProfile.objects.filter(current_form__in=[1, 2])  # Forms 1 & 2
+            
+            # Get core subjects for these forms
+            core_subjects = Subject.objects.filter(
+                form_level__in=['1', '2'], 
+                is_core=True
+            )
+            
+            enrolled_count = 0
+            for student in students:
+                for subject in core_subjects:
+                    # Check if already enrolled
+                    if not SubjectEnrollment.objects.filter(
+                        student=student, 
+                        subject=subject, 
+                        academic_year=academic_year
+                    ).exists():
+                        SubjectEnrollment.objects.create(
+                            student=student,
+                            subject=subject,
+                            academic_year=academic_year
+                        )
+                        enrolled_count += 1
+            
+            messages.success(request, f"Successfully enrolled {enrolled_count} student-subject combinations")
+            return redirect('subject_enrollment_dashboard')
+    else:
+        form = BulkSubjectEnrollmentForm()
+    
+    context = {
+        'form': form,
+        'academic_year': academic_year,
+        'core_subjects_form1': Subject.objects.filter(form_level='1', is_core=True),
+        'core_subjects_form2': Subject.objects.filter(form_level='2', is_core=True),
+    }
+    return render(request, 'core/bulk_subject_enrollment.html', context)
+
+class SubjectEnrollmentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """List all subject enrollments"""
+    model = SubjectEnrollment
+    template_name = 'core/subject_enrollment_list.html'
+    context_object_name = 'enrollments'
+    paginate_by = 25
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        queryset = super().get_queryset().select_related('student__user', 'subject')
+        academic_year = self.request.GET.get('academic_year', timezone.now().year)
+        return queryset.filter(academic_year=academic_year)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['academic_years'] = SubjectEnrollment.objects.values_list('academic_year', flat=True).distinct()
+        context['current_year'] = timezone.now().year
+        return context
 
 
 

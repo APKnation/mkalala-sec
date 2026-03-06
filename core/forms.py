@@ -735,3 +735,43 @@ class ForumPostForm(forms.ModelForm):
                 'rows': 4
             }),
         }
+
+class SubjectEnrollmentForm(forms.ModelForm):
+    """Form for enrolling students in Tanzanian O-Level subjects"""
+    class Meta:
+        model = SubjectEnrollment
+        fields = ['subject', 'academic_year']
+        widgets = {
+            'subject': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'academic_year': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'min': 2020,
+                'max': 2030
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter subjects based on student's current form level
+        if 'student' in self.initial:
+            student = self.initial['student']
+            if hasattr(student, 'current_form'):
+                form_level = str(student.current_form)
+                self.fields['subject'].queryset = Subject.objects.filter(form_level=form_level)
+
+class BulkSubjectEnrollmentForm(forms.Form):
+    """Form for bulk enrollment of students in subjects"""
+    academic_year = forms.IntegerField(
+        min_value=2020,
+        max_value=2030,
+        initial=timezone.now().year,
+        widget=forms.NumberInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+        })
+    )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['academic_year'].initial = timezone.now().year

@@ -38,6 +38,48 @@ class Department(models.Model):
             self.slug = slugify(f"{self.code}-{self.name}")
         super().save(*args, **kwargs)
 
+class Subject(models.Model):
+    """Tanzanian O-Level National Curriculum Subjects"""
+    SUBJECT_CHOICES = [
+        ('MAT', 'Mathematics'),
+        ('ENG', 'English Language'),
+        ('PHY', 'Physics'),
+        ('CHE', 'Chemistry'),
+        ('KIS', 'Kiswahili'),
+        ('BIO', 'Biology'),
+        ('HIS', 'History'),
+        ('GEO', 'Geography'),
+        ('CIV', 'Civics'),
+        ('COM', 'Commerce'),
+        ('BK', 'Book Keeping'),
+        ('ICS', 'Information and Computer Studies'),
+        ('PE', 'Physical Education'),
+    ]
+    
+    FORM_LEVELS = [
+        ('1', 'Form 1'),
+        ('2', 'Form 2'),
+        ('3', 'Form 3'),
+        ('4', 'Form 4'),
+    ]
+    
+    code = models.CharField(max_length=5, choices=SUBJECT_CHOICES, unique=True)
+    name = models.CharField(max_length=100)
+    form_level = models.CharField(max_length=1, choices=FORM_LEVELS)
+    is_core = models.BooleanField(default=True, help_text="Core subjects are compulsory")
+    is_optional = models.BooleanField(default=False, help_text="Optional subjects can be chosen by students")
+    
+    class Meta:
+        ordering = ['form_level', 'code']
+        unique_together = ['code', 'form_level']
+    
+    def __str__(self):
+        return f"{self.get_code_display()} - Form {self.form_level}"
+    
+    @property
+    def full_name(self):
+        return f"{self.get_code_display()} - Form {self.form_level}"
+
 class User(AbstractUser):
     ROLE_CHOICES = [
         ('normal', _('Normal User')),
@@ -116,7 +158,9 @@ class StudentProfile(models.Model):
     birth_certificate_number = models.CharField(max_length=50, blank=True, null=True)
     previous_school = models.CharField(max_length=200, blank=True, null=True, help_text="Previous primary school")
     primary_school_leaving_exam_number = models.CharField(max_length=20, blank=True, null=True, help_text="PSLE number")
-
+    
+    # Subject enrollments for O-Level students
+    enrolled_subjects = models.ManyToManyField(Subject, through='SubjectEnrollment', related_name='students')
 
     class Meta:
         indexes = [models.Index(fields=['roll_number'])]
@@ -192,6 +236,21 @@ class NECTAExam(models.Model):
         """Convert grade to points for division calculation"""
         grade_points = {'A': 5, 'B': 4, 'C': 3, 'D': 2, 'F': 1}
         return grade_points.get(self.grade, 0)
+
+class SubjectEnrollment(models.Model):
+    """Manages student enrollment in specific subjects for each form level"""
+    student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='subject_enrollments')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='enrollments')
+    academic_year = models.PositiveIntegerField(help_text="Academic year for this enrollment")
+    enrollment_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        unique_together = ['student', 'subject', 'academic_year']
+        ordering = ['academic_year', 'subject__code']
+    
+    def __str__(self):
+        return f"{self.student} - {self.subject} ({self.academic_year})"
 
 class SchoolCalendar(models.Model):
     """Academic calendar for Tanzania school system"""
