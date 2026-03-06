@@ -22,7 +22,7 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm
+from .forms import UserForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm
 
 from .models import (
     User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
@@ -2250,6 +2250,140 @@ class SubjectEnrollmentListView(LoginRequiredMixin, UserPassesTestMixin, ListVie
         context['academic_years'] = SubjectEnrollment.objects.values_list('academic_year', flat=True).distinct()
         context['current_year'] = timezone.now().year
         return context
+
+# ======================
+# Subject Management Views
+# ======================
+class SubjectListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    """List all subjects"""
+    model = Subject
+    template_name = 'core/subject_list.html'
+    context_object_name = 'subjects'
+    paginate_by = 20
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form_level = self.request.GET.get('form_level')
+        if form_level:
+            queryset = queryset.filter(form_level=form_level)
+        return queryset.order_by('form_level', 'code')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_levels'] = Subject.FORM_LEVELS
+        context['current_form_level'] = self.request.GET.get('form_level', '')
+        return context
+
+class SubjectCreateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, CreateView):
+    """Create a new subject"""
+    model = Subject
+    form_class = SubjectForm
+    template_name = 'core/subject_form.html'
+    success_message = "Subject '%(name)s' has been created successfully."
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_success_url(self):
+        return reverse('subject_list')
+
+class SubjectUpdateView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
+    """Update an existing subject"""
+    model = Subject
+    form_class = SubjectForm
+    template_name = 'core/subject_form.html'
+    success_message = "Subject '%(name)s' has been updated successfully."
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_success_url(self):
+        return reverse('subject_list')
+
+class SubjectDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Delete a subject"""
+    model = Subject
+    template_name = 'core/subject_confirm_delete.html'
+    success_url = reverse_lazy('subject_list')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def delete(self, request, *args, **kwargs):
+        subject = self.get_object()
+        success_message = f"Subject '{subject.name}' has been deleted successfully."
+        messages.success(request, success_message)
+        return super().delete(request, *args, **kwargs)
+
+# ======================
+# Class Management Views
+# ======================
+@login_required
+@user_passes_test(is_admin)
+def class_management(request):
+    """Manage student classes and form assignments"""
+    form_level = request.GET.get('form_level', '1')
+    
+    students = StudentProfile.objects.filter(current_form=form_level).select_related('user', 'department')
+    
+    # Get statistics
+    class_stats = {}
+    for form_num in range(1, 5):
+        class_stats[f'Form {form_num}'] = StudentProfile.objects.filter(current_form=form_num).count()
+    
+    context = {
+        'students': students,
+        'form_level': form_level,
+        'class_stats': class_stats,
+        'form_levels': StudentProfile.FORM_CHOICES,
+    }
+    return render(request, 'core/class_management.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def assign_student_class(request, student_id):
+    """Assign or update a student's class/form"""
+    student = get_object_or_404(StudentProfile, id=student_id)
+    
+    if request.method == 'POST':
+        form = ClassForm(request.POST, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"{student.user.get_full_name()} has been assigned to Form {form.cleaned_data['current_form']}")
+            return redirect('class_management')
+    else:
+        form = ClassForm(instance=student)
+    
+    context = {
+        'form': form,
+        'student': student,
+    }
+    return render(request, 'core/assign_class.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def bulk_class_assignment(request):
+    """Bulk assignment of students to classes"""
+    if request.method == 'POST':
+        source_form = request.POST.get('source_form')
+        target_form = request.POST.get('target_form')
+        
+        if source_form and target_form and source_form != target_form:
+            students = StudentProfile.objects.filter(current_form=source_form)
+            updated_count = students.update(current_form=target_form)
+            messages.success(request, f"Successfully moved {updated_count} students from Form {source_form} to Form {target_form}")
+        else:
+            messages.error(request, "Please select different source and target forms.")
+        
+        return redirect('class_management')
+    
+    context = {
+        'form_choices': StudentProfile.FORM_CHOICES,
+    }
+    return render(request, 'core/bulk_class_assignment.html', context)
 
 
 

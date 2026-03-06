@@ -775,3 +775,52 @@ class BulkSubjectEnrollmentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['academic_year'].initial = timezone.now().year
+
+class SubjectForm(forms.ModelForm):
+    """Form for creating and editing subjects"""
+    class Meta:
+        model = Subject
+        fields = ['code', 'name', 'form_level', 'is_core', 'is_optional']
+        widgets = {
+            'code': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'name': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'form_level': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'is_core': forms.CheckboxInput(attrs={
+                'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+            }),
+            'is_optional': forms.CheckboxInput(attrs={
+                'class': 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded'
+            }),
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        is_core = cleaned_data.get('is_core')
+        is_optional = cleaned_data.get('is_optional')
+        
+        if is_core and is_optional:
+            raise forms.ValidationError("A subject cannot be both core and optional.")
+        
+        return cleaned_data
+
+class ClassForm(forms.ModelForm):
+    """Form for creating and managing classes"""
+    class Meta:
+        model = StudentProfile
+        fields = ['current_form']
+        widgets = {
+            'current_form': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['current_form'].label = "Form Level"
+        self.fields['current_form'].help_text = "Select the form level for this student"

@@ -8,6 +8,7 @@ from .views import CourseListView
 from .views import CourseDetailView
 from .views import CourseDeleteView
 from .views import CourseManagementView
+from .views import SubjectListView, SubjectCreateView, SubjectUpdateView, SubjectDeleteView
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -140,6 +141,17 @@ path('subjects/', SubjectEnrollmentListView.as_view(), name='subject_enrollment_
 path('subjects/dashboard/', views.subject_enrollment_dashboard, name='subject_enrollment_dashboard'),
 path('subjects/enroll/<int:student_id>/', views.enroll_student_subjects, name='enroll_student_subjects'),
 path('subjects/bulk-enroll/', views.bulk_subject_enrollment, name='bulk_subject_enrollment'),
+
+# SUBJECT MANAGEMENT
+path('admin/subjects/', SubjectListView.as_view(), name='subject_list'),
+path('admin/subjects/add/', SubjectCreateView.as_view(), name='subject_create'),
+path('admin/subjects/<int:pk>/edit/', SubjectUpdateView.as_view(), name='subject_update'),
+path('admin/subjects/<int:pk>/delete/', SubjectDeleteView.as_view(), name='subject_delete'),
+
+# CLASS MANAGEMENT
+path('admin/classes/', views.class_management, name='class_management'),
+path('admin/classes/assign/<int:student_id>/', views.assign_student_class, name='assign_student_class'),
+path('admin/classes/bulk-assign/', views.bulk_class_assignment, name='bulk_class_assignment'),
 
 
 ]

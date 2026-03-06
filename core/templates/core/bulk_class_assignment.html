@@ -1,0 +1,145 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Bulk Class Assignment{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <nav class="flex" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li>
+                    <a href="{% url 'class_management' %}" class="text-gray-500 hover:text-gray-700">Class Management</a>
+                </li>
+                <li>
+                    <div class="flex items-center">
+                        <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414 0L10 10.586l7 7a1 1 0 001.414 1.414l-7-7a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="ml-2 text-gray-500">/</span>
+                    </div>
+                </li>
+                <li>
+                    <span class="ml-2 text-gray-500 font-medium">Bulk Assignment</span>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="mb-4 p-4 rounded-md {% if message.tags %}bg-{{ message.tags }}-100 text-{{ message.tags }}-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-6">Bulk Class Assignment</h3>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="source_form" class="block text-sm font-medium text-gray-700">Source Form *</label>
+                        <select id="source_form" name="source_form" required
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="">-- Select Source Form --</option>
+                            {% for value, label in form_choices %}
+                            <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <p class="mt-2 text-sm text-gray-500">Students currently in this form will be moved</p>
+                    </div>
+
+                    <div>
+                        <label for="target_form" class="block text-sm font-medium text-gray-700">Target Form *</label>
+                        <select id="target_form" name="target_form" required
+                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="">-- Select Target Form --</option>
+                            {% for value, label in form_choices %}
+                            <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                        <p class="mt-2 text-sm text-gray-500">Students will be moved to this form</p>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <h4 class="text-md font-medium text-yellow-900 mb-3">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Important Information
+                    </h4>
+                    <ul class="list-disc list-inside space-y-2 text-sm text-yellow-800">
+                        <li>This action will <strong>move all students</strong> from the source form to the target form</li>
+                        <li>Subject enrollments may need to be updated after form changes</li>
+                        <li>Students will have access to subjects available in their new form level</li>
+                        <li>This action cannot be undone easily</li>
+                        <li>Make sure you have backups before proceeding</li>
+                    </ul>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <h4 class="text-md font-medium text-blue-900 mb-3">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Common Scenarios
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white border border-blue-200 rounded p-3">
+                            <h5 class="font-medium text-sm text-gray-900 mb-2">Promotion</h5>
+                            <p class="text-xs text-gray-600">Move students from Form 1 → Form 2, Form 2 → Form 3, etc.</p>
+                        </div>
+                        <div class="bg-white border border-blue-200 rounded p-3">
+                            <h5 class="font-medium text-sm text-gray-900 mb-2">Reorganization</h5>
+                            <p class="text-xs text-gray-600">Balance class sizes by moving students between forms</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <a href="{% url 'class_management' %}" 
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" onclick="return confirmBulkAssignment()"
+                        class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                        <i class="fas fa-users-cog mr-2"></i>
+                        Move Students
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'class_management' %}" class="text-indigo-600 hover:text-indigo-500 font-medium">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to Class Management
+        </a>
+    </div>
+</div>
+
+<script>
+function confirmBulkAssignment() {
+    var sourceForm = document.getElementById('source_form').value;
+    var targetForm = document.getElementById('target_form').value;
+    
+    if (!sourceForm || !targetForm) {
+        alert('Please select both source and target forms.');
+        return false;
+    }
+    
+    if (sourceForm === targetForm) {
+        alert('Source and target forms must be different.');
+        return false;
+    }
+    
+    var sourceText = document.querySelector('#source_form option[value="' + sourceForm + '"]').text;
+    var targetText = document.querySelector('#target_form option[value="' + targetForm + '"]').text;
+    
+    return confirm('Are you sure you want to move ALL students from ' + sourceText + ' to ' + targetText + '?\n\nThis action will update the form level for all affected students.');
+}
+</script>
+{% endblock %}
