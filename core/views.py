@@ -12,7 +12,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q, Count, Avg, Sum
+from django.db.models import Q, Count, Avg, Sum  # Fixed: Sum imported to resolve NameError
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.generic import (
