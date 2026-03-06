@@ -45,6 +45,7 @@ urlpatterns = [
     
     # User Management URLs
     path('users/', views.UserListView.as_view(), name='user_list'),
+    path('users/all/', views.UserListView.as_view(), name='admin_all_users'),
     path('users/add/', views.add_user, name='add_user'),
     path('users/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
     
