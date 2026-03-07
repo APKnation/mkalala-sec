@@ -1,0 +1,537 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admissions - Mkalala Secondary School</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        /* Enhanced Navbar Styles */
+        .navbar {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2c5282 50%, #3b82f6 100%) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            color: #ff4444 !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-decoration: none !important;
+        }
+        
+        .navbar-brand:hover {
+            color: #ff4444 !important;
+        }
+        
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #ff4444 !important;
+            transform: translateY(-2px);
+        }
+        
+        .navbar-nav .nav-link.active {
+            color: #ff4444 !important;
+        }
+        
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #ff4444;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link.active::after {
+            width: 100%;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+        
+        .page-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Admissions Section */
+        .admissions-section {
+            padding: 80px 0;
+        }
+        
+        .admission-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .admission-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .admission-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .admission-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .admission-text {
+            color: #6c757d;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        /* Requirements Section */
+        .requirements-section {
+            background: #f8f9fa;
+            padding: 80px 0;
+        }
+        
+        .requirement-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ff4444;
+        }
+        
+        .requirement-title {
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .requirement-text {
+            color: #6c757d;
+            margin-bottom: 0;
+        }
+        
+        /* Process Section */
+        .process-section {
+            padding: 80px 0;
+        }
+        
+        .process-step {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff4444 0%, #ff6666 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .step-description {
+            color: #6c757d;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2c5282 50%, #3b82f6 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .btn-cta {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        
+        .btn-cta:hover {
+            background: #ff6666;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+        }
+        
+        .btn-cta-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0.5rem;
+        }
+        
+        .btn-cta-outline:hover {
+            background: white;
+            color: #1e3a8a;
+            transform: translateY(-3px);
+        }
+        
+        /* Footer */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #ff4444;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            color: #ff4444;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'public_home' %}">
+                <i class="fas fa-graduation-cap me-2"></i>Mkalala Secondary School
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public_home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public_about' %}">
+                            <i class="fas fa-info-circle me-1"></i>About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public_courses' %}">
+                            <i class="fas fa-book me-1"></i>Subjects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'public_admissions' %}">
+                            <i class="fas fa-user-plus me-1"></i>Admissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'public_contact' %}">
+                            <i class="fas fa-envelope me-1"></i>Contact
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a href="{% url 'login' %}" class="btn btn-login">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container page-content">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-3">Join Mkalala Secondary School</h1>
+                    <p class="lead mb-0">Start your educational journey with us. We welcome students from all backgrounds to join our learning community.</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex align-items-center justify-content-lg-end">
+                        <i class="fas fa-user-graduate fa-3x me-3"></i>
+                        <div>
+                            <h3 class="mb-0">Open for</h3>
+                            <p class="mb-0">2024 Admissions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admissions Section -->
+    <section class="admissions-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Admission Programs</h2>
+                <p class="lead text-muted">Choose the right educational path for your future</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="admission-card">
+                        <div class="admission-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3 class="admission-title">Form I - IV</h3>
+                        <p class="admission-text">Ordinary Level secondary education for students building their foundation for advanced studies and career development.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="admission-card">
+                        <div class="admission-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3 class="admission-title">Form V - VI</h3>
+                        <p class="admission-text">Advanced Level secondary education preparing students for university education and professional careers.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="admission-card">
+                        <div class="admission-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h3 class="admission-title">Certificate Programs</h3>
+                        <p class="admission-text">Specialized certificate programs for skill development and career enhancement opportunities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section class="requirements-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Admission Requirements</h2>
+                <p class="lead text-muted">What you need to join our school</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="requirement-item">
+                        <h4 class="requirement-title">Academic Requirements</h4>
+                        <p class="requirement-text">Completed primary education with satisfactory grades. For Form I, students must have completed Standard VII with passing marks in national examinations.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="requirement-item">
+                        <h4 class="requirement-title">Age Requirements</h4>
+                        <p class="requirement-text">Students should be between 13-18 years old for Form I admission. Age requirements vary for different levels.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="requirement-item">
+                        <h4 class="requirement-title">Required Documents</h4>
+                        <p class="requirement-text">Birth certificate, previous school reports, national examination results, parent/guardian ID, and passport photos.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="requirement-item">
+                        <h4 class="requirement-title">Medical Requirements</h4>
+                        <p class="requirement-text">Complete medical examination form and proof of required vaccinations for school enrollment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="display-5 fw-bold">Admission Process</h2>
+                <p class="lead text-muted">Simple steps to join our school</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">Application</h4>
+                        <p class="step-description">Fill out the application form with accurate information and submit required documents.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">Review</h4>
+                        <p class="step-description">Our admissions committee reviews your application and documents for eligibility.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">Interview</h4>
+                        <p class="step-description">Shortlisted candidates are invited for an interview and assessment.</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <h4 class="step-title">Enrollment</h4>
+                        <p class="step-description">Successful candidates complete enrollment process and join our school community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="display-5 fw-bold mb-4">Ready to Apply?</h2>
+            <p class="lead mb-4">Take the first step towards quality education and bright future</p>
+            <div class="d-flex justify-content-center flex-wrap">
+                <a href="{% url 'register' %}" class="btn-cta">
+                    <i class="fas fa-user-plus me-2"></i>Apply Now
+                </a>
+                <a href="{% url 'public_contact' %}" class="btn-cta-outline">
+                    <i class="fas fa-phone me-2"></i>Contact Admissions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-3">Mkalala Secondary School</h5>
+                    <p class="text-muted">Providing quality education and comprehensive learning experiences for students to excel in their academic journey.</p>
+                    <div class="social-links mt-3">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6 class="mb-3">Quick Links</h6>
+                    <div class="footer-links">
+                        <p><a href="{% url 'public_home' %}">Home</a></p>
+                        <p><a href="{% url 'public_about' %}">About Us</a></p>
+                        <p><a href="{% url 'public_courses' %}">Subjects</a></p>
+                        <p><a href="{% url 'public_admissions' %}">Admissions</a></p>
+                    </div>
+                </div>
+                <div class="col-lg-2 mb-4">
+                    <h6 class="mb-3">Resources</h6>
+                    <div class="footer-links">
+                        <p><a href="#">Student Portal</a></p>
+                        <p><a href="#">Teacher Portal</a></p>
+                        <p><a href="#">Library</a></p>
+                        <p><a href="#">Support</a></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4">
+                    <h6 class="mb-3">Contact Info</h6>
+                    <p class="text-muted">
+                        <i class="fas fa-map-marker-alt me-2"></i>Dar es Salaam, Tanzania<br>
+                        <i class="fas fa-phone me-2"></i>+255 123 456 789<br>
+                        <i class="fas fa-envelope me-2"></i>info@mkalalaschool.ac.tz
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 Mkalala Secondary School. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
