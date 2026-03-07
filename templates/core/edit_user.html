@@ -25,57 +25,6 @@
             }
         }
     </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Custom animations */
-        @keyframes slideIn {
-            from { transform: translateY(-10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        /* Custom select styling */
-        .custom-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 20px;
-        }
-        
-        /* Role card hover effects */
-        .role-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .role-card:hover {
-            transform: translateY(-4px);
-        }
-        
-        /* Form field focus effects */
-        .form-field {
-            transition: all 0.2s ease;
-        }
-        
-        .form-field:focus {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
-        }
-    </style>
 {% endblock %}
 
 {% block content %}
@@ -108,29 +57,29 @@
                                 U
                             {% endif %}
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ object.get_full_name|default:"Unknown User" }}</h3>
+                        <h3 class="text-2xl font-bold text-text mb-2">{{ object.get_full_name|default:"Unknown User" }}</h3>
                         <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-2
-                            {% if object.role == 'student' %}bg-blue-100 text-blue-800{% endif %}
-                            {% if object.role == 'teacher' %}bg-green-100 text-green-800{% endif %}
+                            {% if object.role == 'student' %}bg-blue-100 text-primary-800{% endif %}
+                            {% if object.role == 'teacher' %}bg-green-100 text-secondary-800{% endif %}
                             {% if object.role == 'admin' %}bg-red-100 text-red-800{% endif %}
                             {% if object.role == 'headmaster' %}bg-yellow-100 text-yellow-800{% endif %}
-                            {% if object.role == 'normal' %}bg-gray-100 text-gray-800{% endif %}
+                            {% if object.role == 'normal' %}bg-background text-text{% endif %}
                         ">
                             <i class="fas fa-user-circle mr-2"></i>{{ object.role|title }}
                         </div>
-                        <p class="text-gray-600">{{ object.email|default:"No email" }}</p>
+                        <p class="text-text/70">{{ object.email|default:"No email" }}</p>
                     </div>
                 </div>
                 
                 <!-- Basic Information Section -->
                 <div class="mb-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <h2 class="text-xl font-bold text-text mb-6 flex items-center">
                         <i class="fas fa-user mr-3 text-primary"></i>
                         Basic Information
                     </h2>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                                 First Name <span class="text-red-500">*</span>
                             </label>
                             {{ form.first_name }}
@@ -145,7 +94,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                                 Last Name <span class="text-red-500">*</span>
                             </label>
                             {{ form.last_name }}
@@ -163,7 +112,7 @@
                     
                     <div class="grid md:grid-cols-2 gap-6 mt-6">
                         <div>
-                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                                 Username <span class="text-red-500">*</span>
                             </label>
                             {{ form.username }}
@@ -178,7 +127,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                                 Email Address <span class="text-red-500">*</span>
                             </label>
                             {{ form.email }}
@@ -197,26 +146,26 @@
                 
                 <!-- Account Settings Section -->
                 <div class="mb-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <h2 class="text-xl font-bold text-text mb-6 flex items-center">
                         <i class="fas fa-cog mr-3 text-primary"></i>
                         Account Settings
                     </h2>
                     
                     <!-- Role Selection -->
                     <div class="mb-6">
-                        <label for="{{ form.role.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="{{ form.role.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                             User Role <span class="text-red-500">*</span>
                         </label>
                         
                         <!-- Debug: Let's see what form.role renders -->
-                        <div class="border-2 border-dashed border-gray-300 p-4 mb-4">
-                            <p class="text-sm text-gray-600 mb-2">Debug - Form field ID: {{ form.role.id_for_label }}</p>
-                            <p class="text-sm text-gray-600 mb-2">Debug - Form field HTML:</p>
+                        <div class="border-2 border-dashed border-neutral-300 p-4 mb-4">
+                            <p class="text-sm text-text/70 mb-2">Debug - Form field ID: {{ form.role.id_for_label }}</p>
+                            <p class="text-sm text-text/70 mb-2">Debug - Form field HTML:</p>
                             {{ form.role }}
                         </div>
                         
                         <!-- Manual fallback if needed -->
-                        <select name="role" id="id_role" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <select name="role" id="id_role" class="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                             <option value="">Select a role...</option>
                             <option value="student" {% if object.role == 'student' %}selected{% endif %}>Student</option>
                             <option value="teacher" {% if object.role == 'teacher' %}selected{% endif %}>Teacher</option>
@@ -235,23 +184,23 @@
                             </div>
                         {% endif %}
                         
-                        <p class="mt-2 text-sm text-gray-500">
+                        <p class="mt-2 text-sm text-text/60">
                             Select the appropriate role for this user from the dropdown menu above.
                         </p>
                     </div>
                     
                     <!-- Account Status -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block text-sm font-medium text-text mb-2">
                             Account Status
                         </label>
                         <div class="flex items-center">
                             {{ form.is_active }}
-                            <label for="{{ form.is_active.id_for_label }}" class="ml-3 text-sm text-gray-700">
+                            <label for="{{ form.is_active.id_for_label }}" class="ml-3 text-sm text-text">
                                 Active Account
                             </label>
                         </div>
-                        <p class="mt-2 text-sm text-gray-500">
+                        <p class="mt-2 text-sm text-text/60">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
                             Inactive users cannot log in to the system
                         </p>
@@ -260,13 +209,13 @@
                 
                 <!-- Password Section -->
                 <div class="mb-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <h2 class="text-xl font-bold text-text mb-6 flex items-center">
                         <i class="fas fa-lock mr-3 text-primary"></i>
                         Password Settings
                     </h2>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                                 New Password
                             </label>
                             {{ form.password }}
@@ -279,13 +228,13 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <p class="mt-2 text-sm text-gray-500">
+                            <p class="mt-2 text-sm text-text/60">
                                 <i class="fas fa-info-circle mr-2"></i>
                                 Leave blank to keep current password
                             </p>
                         </div>
                         <div>
-                            <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-text mb-2">
                                 Confirm Password
                             </label>
                             {{ form.confirm_password }}
@@ -298,7 +247,7 @@
                                     {% endfor %}
                                 </div>
                             {% endif %}
-                            <p class="mt-2 text-sm text-gray-500">
+                            <p class="mt-2 text-sm text-text/60">
                                 <i class="fas fa-info-circle mr-2"></i>
                                 Re-enter the new password to confirm
                             </p>
@@ -307,15 +256,15 @@
                 </div>
                 
                 <!-- Form Actions -->
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-neutral-200">
                     <div>
-                        <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                        <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center px-6 py-3 border border-neutral-300 rounded-lg text-text bg-white hover:bg-background focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                             <i class="fas fa-arrow-left mr-2"></i>
                             Back to Dashboard
                         </a>
                     </div>
                     <div class="flex gap-3">
-                        <button type="reset" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                        <button type="reset" class="inline-flex items-center px-6 py-3 border border-neutral-300 rounded-lg text-text bg-white hover:bg-background focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                             <i class="fas fa-undo mr-2"></i>
                             Reset
                         </button>
@@ -338,13 +287,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Style form fields with Tailwind classes
     const formFields = document.querySelectorAll('input, select');
     formFields.forEach(field => {
-        field.classList.add('w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-primary', 'focus:border-transparent', 'form-field');
+        field.classList.add('w-full', 'px-4', 'py-3', 'border', 'border-neutral-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-primary', 'focus:border-transparent', 'form-field');
     });
     
     // Style checkboxes
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(checkbox => {
-        checkbox.classList.add('w-4', 'h-4', 'text-primary', 'border-gray-300', 'rounded', 'focus:ring-primary');
+        checkbox.classList.add('w-4', 'h-4', 'text-primary', 'border-neutral-300', 'rounded', 'focus:ring-primary');
     });
     
     // Handle form submission with SweetAlert

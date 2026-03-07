@@ -129,7 +129,7 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Course</th>
+                                        <th>Subjects</th>
                                         <th>Semester</th>
                                         <th>Date</th>
                                     </tr>
@@ -137,8 +137,8 @@
                                 <tbody>
                                     {% for enrollment in enrollments %}
                                         <tr>
-                                            <td>{{ enrollment.course_offering.course.name }}</td>
-                                            <td>{{ enrollment.course_offering.semester.name }}</td>
+                                            <td>{{ enrollment.subjects_offering.subjects.name }}</td>
+                                            <td>{{ enrollment.subjects_offering.semester.name }}</td>
                                             <td>{{ enrollment.enrollment_date|date:"M d, Y" }}</td>
                                         </tr>
                                     {% endfor %}
@@ -164,7 +164,7 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Course</th>
+                                        <th>Subjects</th>
                                         <th>Grade</th>
                                         <th>Semester</th>
                                     </tr>
@@ -172,11 +172,11 @@
                                 <tbody>
                                     {% for grade in grades %}
                                         <tr>
-                                            <td>{{ grade.course_offering.course.name }}</td>
+                                            <td>{{ grade.subjects_offering.subjects.name }}</td>
                                             <td>
                                                 <span class="badge bg-{{ grade.grade|lower }}">{{ grade.grade }}</span>
                                             </td>
-                                            <td>{{ grade.course_offering.semester.name }}</td>
+                                            <td>{{ grade.subjects_offering.semester.name }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

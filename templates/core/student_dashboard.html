@@ -1,685 +1,225 @@
+{% extends "core/base_dashboard.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Student Dashboard - {{ school_info.name }}{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <style>
-        /* Professional Sidebar Navigation */
-        .sidebar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            height: 100vh !important;
-            width: 250px !important;
-            background: linear-gradient(180deg, #1e3a8a 0%, #2c5282 50%, #3b82f6 100%) !important;
-            color: white !important;
-            z-index: 9999 !important;
-            overflow-y: auto !important;
-            transition: transform 0.3s ease !important;
-            display: block !important;
-            visibility: visible !important;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3) !important;
-        }
-        
-        /* Reset any conflicting styles */
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-        
-        .dashboard-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem 0;
-            margin-bottom: 0;
-        }
-        
-        .sidebar-header {
-            padding: 1.5rem;
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-        
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #ff4444 !important;
-            text-decoration: none !important;
-        }
-        
-        .sidebar-logo:hover {
-            color: #ff4444 !important;
-        }
-        
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-        
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-        
-        .nav-section-title {
-            padding: 0.5rem 1.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: rgba(255, 255, 255, 0.5) !important;
-            margin-bottom: 0.5rem;
-        }
-        
-        .nav-item {
-            display: block;
-            padding: 0.75rem 1.5rem;
-            color: #ff4444 !important;
-            text-decoration: none !important;
-            transition: all 0.3s ease;
-            position: relative;
-            border-left: 3px solid transparent;
-            font-weight: 600;
-        }
-        
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.15) !important;
-            color: #ff4444 !important;
-            border-left-color: #60a5fa !important;
-        }
-        
-        .nav-item.active {
-            background: rgba(96, 165, 250, 0.25) !important;
-            color: #ff4444 !important;
-            border-left-color: #60a5fa !important;
-        }
-        
-        .nav-item i {
-            width: 20px;
-            margin-right: 0.75rem;
-        }
-        
-        .main-content {
-            margin-left: 250px !important;
-            min-height: 100vh !important;
-            background: #f8f9fa !important;
-            position: relative !important;
-        }
-        
-        .content-wrapper {
-            padding: 2rem;
-        }
-        
-        .content-body {
-            padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            margin-top: 1rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .user-profile {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-            background: rgba(0, 0, 0, 0.2) !important;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #3b82f6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.75rem;
-            color: white;
-        }
-        
-        .user-info {
-            flex: 1;
-        }
-        
-        .user-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.1rem;
-            color: #ff4444 !important;
-        }
-        
-        .user-role {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            color: rgba(255, 68, 68, 0.8) !important;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid transparent;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .stat-card.academic { border-left-color: #667eea; }
-        .stat-card.fee { border-left-color: #f093fb; }
-        .stat-card.library { border-left-color: #4facfe; }
-        .stat-card.achievement { border-left-color: #fa709a; }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-icon.academic { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .stat-icon.fee { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
-        .stat-icon.library { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; }
-        .stat-icon.achievement { background: linear-gradient(135deg, #fa709a, #fee140); color: white; }
-        
-        .progress-ring {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 1rem;
-        }
-        
-        .course-card {
-            border-left: 4px solid #667eea;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .course-card:hover {
-            border-left-width: 6px;
-            background-color: #f8f9fa;
-        }
-        
-        .attendance-badge {
-            font-size: 0.8rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .school-info-card {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .school-info-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem;
-            font-size: 1.25rem;
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .mobile-menu-toggle {
-                display: block;
-            }
-            
-            .content-wrapper {
-                padding: 1rem;
-                padding-top: 4rem;
-            }
-            
-            .content-body {
-                padding: 1rem;
-            }
-            
-            .dashboard-header {
-                padding: 1rem;
-            }
-            
-            .dashboard-header h1 {
-                font-size: 1.5rem;
-            }
-        }
-        
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-        
-        .overlay.show {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Mobile Overlay -->
-    <div class="overlay" onclick="toggleSidebar()"></div>
-    
-    <!-- Left Sidebar Navigation -->
-    <div class="sidebar" id="sidebar">
-        <!-- School Logo/Header -->
-        <div class="sidebar-header">
-            <a href="{% url 'student_dashboard' %}" class="sidebar-logo">
-                <i class="fas fa-graduation-cap"></i>
-                <span>{{ school_info.name }}</span>
-            </a>
+
+{% block title %}Student Dashboard | Mkalala Sec{% endblock %}
+{% block mobile_title %}Student Portal{% endblock %}
+{% block user_role %}Student #{{ student.roll_number|default:"N/A" }}{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'student_dashboard' %}" class="sidebar-item-active">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'student_courses' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>My Subjects</span>
+</a>
+<a href="{% url 'student_timetable' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar"></i>
+    <span>Timetable</span>
+</a>
+<a href="{% url 'student_results' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-line"></i>
+    <span>Exam Results</span>
+</a>
+<a href="{% url 'student_assignments' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-tasks"></i>
+    <span>Assignments</span>
+</a>
+<a href="{% url 'student_fees' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-credit-card"></i>
+    <span>Fee Payments</span>
+</a>
+<a href="{% url 'student_library' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bookmark"></i>
+    <span>Library</span>
+</a>
+<a href="{% url 'student_messages' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+</a>
+<a href="{% url 'student_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-circle"></i>
+    <span>Profile</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Welcome Header -->
+<div class="card-premium p-8 relative overflow-hidden bg-white border-none shadow-soft">
+    <div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-blue-50 to-transparent"></div>
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-2">
+            <h1 class="text-3xl font-display font-bold text-slate-900">Mambo, {{ user.first_name|default:user.username }}! 👋</h1>
+            <p class="text-slate-500 font-medium">You have <span class="text-blue-600 underline underline-offset-4 decoration-2">3 pending assignments</span> and an upcoming Physics lab today.</p>
         </div>
-        
-        <!-- Main Navigation -->
-        <nav class="sidebar-nav">
-            <!-- Main Menu -->
-            <div class="nav-section">
-                <div class="nav-section-title">Main Menu</div>
-                <a href="{% url 'student_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'student_dashboard' %}active{% endif %}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
-                </a>
-                <a href="{% url 'student_courses' %}" class="nav-item {% if request.resolver_match.url_name == 'student_courses' %}active{% endif %}">
-                    <i class="fas fa-book-open"></i>
-                    My Courses
-                </a>
-                <a href="{% url 'student_results' %}" class="nav-item {% if request.resolver_match.url_name == 'student_results' %}active{% endif %}">
-                    <i class="fas fa-chart-line"></i>
-                    Academic Results
-                </a>
-                <a href="{% url 'student_timetable' %}" class="nav-item {% if request.resolver_match.url_name == 'student_timetable' %}active{% endif %}">
-                    <i class="fas fa-calendar-alt"></i>
-                    Timetable
-                </a>
+        <div class="flex items-center space-x-4">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-center min-w-[120px]">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Current Term</p>
+                <p class="text-lg font-bold text-slate-900">Term II, 2026</p>
             </div>
-            
-            <!-- Academic -->
-            <div class="nav-section">
-                <div class="nav-section-title">Academic</div>
-                <a href="{% url 'student_assignments' %}" class="nav-item {% if request.resolver_match.url_name == 'student_assignments' %}active{% endif %}">
-                    <i class="fas fa-clipboard-list"></i>
-                    Assignments
-                </a>
-                <a href="{% url 'student_exams' %}" class="nav-item {% if request.resolver_match.url_name == 'student_exams' %}active{% endif %}">
-                    <i class="fas fa-file-alt"></i>
-                    Exams
-                </a>
-                <a href="{% url 'student_library' %}" class="nav-item {% if request.resolver_match.url_name == 'student_library' %}active{% endif %}">
-                    <i class="fas fa-book"></i>
-                    Library
-                </a>
-                <a href="{% url 'student_achievements' %}" class="nav-item {% if request.resolver_match.url_name == 'student_achievements' %}active{% endif %}">
-                    <i class="fas fa-trophy"></i>
-                    Achievements
-                </a>
-            </div>
-            
-            <!-- Services -->
-            <div class="nav-section">
-                <div class="nav-section-title">Services</div>
-                <a href="{% url 'student_fees' %}" class="nav-item {% if request.resolver_match.url_name == 'student_fees' %}active{% endif %}">
-                    <i class="fas fa-money-bill-wave"></i>
-                    Fee Status
-                </a>
-                <a href="{% url 'student_messages' %}" class="nav-item {% if request.resolver_match.url_name == 'student_messages' %}active{% endif %}">
-                    <i class="fas fa-comments"></i>
-                    Messages
-                    {% if unread_messages > 0 %}
-                        <span class="badge bg-danger ms-auto">{{ unread_messages }}</span>
-                    {% endif %}
-                </a>
-                <a href="{% url 'student_announcements' %}" class="nav-item {% if request.resolver_match.url_name == 'student_announcements' %}active{% endif %}">
-                    <i class="fas fa-bullhorn"></i>
-                    Announcements
-                </a>
-                <a href="{% url 'student_activities' %}" class="nav-item {% if request.resolver_match.url_name == 'student_activities' %}active{% endif %}">
-                    <i class="fas fa-running"></i>
-                    Activities
-                </a>
-            </div>
-            
-            <!-- Account -->
-            <div class="nav-section">
-                <div class="nav-section-title">Account</div>
-                <a href="{% url 'student_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'student_profile' %}active{% endif %}">
-                    <i class="fas fa-user"></i>
-                    Profile
-                </a>
-                <a href="{% url 'student_settings' %}" class="nav-item {% if request.resolver_match.url_name == 'student_settings' %}active{% endif %}">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </a>
-                <a href="{% url 'logout' %}" class="nav-item">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-        </nav>
-        
-        <!-- User Profile -->
-        <div class="user-profile">
-            <div class="d-flex align-items-center">
-                <div class="user-avatar">
-                    {% if student.profile_picture %}
-                        <img src="{{ student.profile_picture.url }}" class="rounded-circle" width="40" height="40" alt="Profile">
-                    {% else %}
-                        <i class="fas fa-user"></i>
-                    {% endif %}
-                </div>
-                <div class="user-info">
-                    <div class="user-name">{{ student.user.get_full_name }}</div>
-                    <div class="user-role">{{ student.get_current_level_display }}</div>
-                </div>
+            <div class="p-4 rounded-2xl bg-blue-600 text-white text-center min-w-[120px] shadow-lg shadow-blue-600/20">
+                <p class="text-[10px] font-bold text-blue-200 uppercase tracking-widest mb-1">Form Level</p>
+                <p class="text-lg font-bold">{{ student.get_current_level_display|default:student.current_form }}</p>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-blue-50 text-blue-600">
+            <i class="fas fa-book-open"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ academic_performance.subjects_taken|default:enriched_enrollments|length|default:"0" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Subjects</p>
+    </div>
+
     
-    <!-- Main Content Area -->
-    <div class="main-content">
-        {% block main_content %}
-        <!-- Dashboard Header -->
-        <div class="dashboard-header">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h1 class="h3 mb-0">Welcome back, {{ student.user.first_name }}!</h1>
-                        <p class="mb-0 opacity-75">{{ school_info.motto }}</p>
-                    </div>
-                    <div class="col-auto">
-                        <div class="d-flex gap-3">
-                            <div class="text-end">
-                                <small class="d-block opacity-75">Current Level</small>
-                                <strong>{{ student.get_current_level_display }}</strong>
-                            </div>
-                            <div class="text-end">
-                                <small class="d-block opacity-75">Roll Number</small>
-                                <strong>{{ student.roll_number }}</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-indigo-50 text-indigo-600">
+            <i class="fas fa-star"></i>
         </div>
-        
-        <!-- Main Content -->
-        <div class="content-wrapper">
-            <!-- Student Overview Cards -->
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="stat-card academic">
-                        <div class="stat-icon academic">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <h4 class="fw-bold mb-1">{{ student.get_current_level_display }}</h4>
-                        <p class="text-muted mb-0">Current Level</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card fee">
-                        <div class="stat-icon fee">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <h4 class="fw-bold mb-1">{{ fee_summary.outstanding_fees|floatformat:0 }}</h4>
-                        <p class="text-muted mb-0">Outstanding Fees (TZS)</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card library">
-                        <div class="stat-icon library">
-                            <i class="fas fa-book-reader"></i>
-                        </div>
-                        <h4 class="fw-bold mb-1">{{ library_info.active_borrowed_books }}</h4>
-                        <p class="text-muted mb-0">Library Books</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card achievement">
-                        <div class="stat-icon achievement">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h4 class="fw-bold mb-1">{{ achievements.count }}</h4>
-                        <p class="text-muted mb-0">Achievements</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Academic Performance and Courses -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <h5 class="fw-bold mb-3"><i class="fas fa-chart-line me-2"></i> Academic Performance</h5>
-                        <div class="row">
-                            <div class="col-6">
-                                <p class="mb-2"><strong>Total Exams:</strong> {{ academic_performance.total_exams }}</p>
-                                <p class="mb-2"><strong>Subjects:</strong> {{ academic_performance.subjects_taken }}</p>
-                                <p class="mb-2"><strong>Best Subject:</strong> {{ academic_performance.best_subject|default:"N/A" }}</p>
-                            </div>
-                            <div class="col-6">
-                                <div class="progress-ring">
-                                    <svg width="100" height="100">
-                                        <circle cx="50" cy="50" r="40" stroke="#e9ecef" stroke-width="8" fill="none"/>
-                                        <circle cx="50" cy="50" r="40" stroke="#667eea" stroke-width="8" fill="none"
-                                                stroke-dasharray="{{ academic_performance.progress_stroke_dasharray|floatformat:1 }} 251.2"
-                                                stroke-linecap="round"/>
-                                    </svg>
-                                    <div class="text-center" style="margin-top: -70px;">
-                                        <strong>{{ academic_performance.average_grade|floatformat:1 }}</strong><br>
-                                        <small>Avg Grade</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if academic_performance.recent_exams %}
-                            <hr>
-                            <h6>Recent Exam Results</h6>
-                            <div class="table-responsive">
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Subject</th>
-                                            <th>Grade</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for exam in academic_performance.recent_exams %}
-                                        <tr>
-                                            <td>{{ exam.get_subject_display }}</td>
-                                            <td><span class="badge bg-primary">{{ exam.grade }}</span></td>
-                                            <td>{{ exam.exam_month }}/{{ exam.exam_year }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <h5 class="fw-bold mb-3"><i class="fas fa-book me-2"></i> Current Courses</h5>
-                        {% for enrollment_data in enriched_enrollments %}
-                            <div class="course-card p-3 mb-2 bg-light rounded">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">{{ enrollment_data.enrollment.course_offering.course.name }}</h6>
-                                        <small class="text-muted">{{ enrollment_data.enrollment.course_offering.course.code }}</small>
-                                    </div>
-                                    <div class="text-end">
-                                        <span class="attendance-badge {% if enrollment_data.attendance_percentage >= 75 %}bg-success{% elif enrollment_data.attendance_percentage >= 50 %}bg-warning{% else %}bg-danger{% endif %} text-white">
-                                            {{ enrollment_data.attendance_percentage|floatformat:0 }}%
-                                        </span>
-                                        <br><small class="text-muted">Attendance</small>
-                                    </div>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <p class="text-muted">No courses enrolled yet.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Upcoming Events and Announcements -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <h5 class="fw-bold mb-3"><i class="fas fa-bell me-2"></i> Upcoming Events</h5>
-                        {% if upcoming_exams %}
-                            {% for exam in upcoming_exams %}
-                                <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
-                                    <div>
-                                        <h6 class="mb-1">{{ exam.course.name }} - {{ exam.exam_type }}</h6>
-                                        <small class="text-muted"><i class="fas fa-calendar me-1"></i>{{ exam.date }}</small>
-                                    </div>
-                                    <div class="text-end">
-                                        <small class="text-muted">{{ exam.start_time }}</small>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <p class="text-muted">No upcoming events scheduled.</p>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="stat-card">
-                        <h5 class="fw-bold mb-3"><i class="fas fa-bullhorn me-2"></i> Recent Announcements</h5>
-                        {% for announcement in recent_announcements %}
-                            <div class="alert alert-info alert-sm">
-                                <strong>{{ announcement.title }}</strong><br>
-                                <small>{{ announcement.message|truncatewords:20 }}</small><br>
-                                <small class="text-muted">{{ announcement.created_at|date:"M d, Y" }}</small>
-                            </div>
-                        {% empty %}
-                            <p class="text-muted">No recent announcements.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- School Information Card -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="school-info-card">
-                        <h5 class="fw-bold mb-3"><i class="fas fa-school me-2"></i> About {{ school_info.name }}</h5>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>Vision:</strong> {{ school_info.vision }}</p>
-                                <p class="mb-2"><strong>Mission:</strong> {{ school_info.mission }}</p>
-                                <p class="mb-2"><strong>Founded:</strong> {{ school_info.founded_year }}</p>
-                                <p class="mb-0"><strong>Type:</strong> {{ school_info.school_type }}</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-2"><strong>Registration:</strong> {{ school_info.registration_number }}</p>
-                                <p class="mb-2"><strong>Exam Center:</strong> {{ school_info.examination_center }}</p>
-                                <p class="mb-2"><strong>Email:</strong> {{ school_info.email }}</p>
-                                <p class="mb-0"><strong>Phone:</strong> {{ school_info.phone }}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endblock %}
+        <p class="text-2xl font-bold">{{ academic_performance.average_grade|default:"0.0" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Avg Grade</p>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.querySelector('.overlay');
-            
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
-        }
-        
-        // Handle navigation clicks
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (!this.getAttribute('href') || this.getAttribute('href') === '#') {
-                    e.preventDefault();
-                    // Remove active class from all items
-                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Close mobile menu after selection
-                    if (window.innerWidth <= 768) {
-                        toggleSidebar();
-                    }
-                }
-            });
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.remove('show');
-                document.querySelector('.overlay').classList.remove('show');
-            }
-        });
-    </script>
-</body>
-</html>
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-emerald-50 text-emerald-600">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ overall_attendance|floatformat:0|default:"0" }}%</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Attendance</p>
+    </div>
+
+    
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-amber-50 text-amber-600">
+            <i class="fas fa-wallet"></i>
+        </div>
+        {% if fee_summary.outstanding_fees > 0 %}
+            <p class="text-2xl font-bold text-red-600">Pending</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Balance: {{ fee_summary.outstanding_fees|floatformat:0 }}</p>
+        {% else %}
+            <p class="text-2xl font-bold text-emerald-700">Cleared</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fee Status</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Content Col -->
+    <div class="lg:col-span-2 space-y-8">
+        <!-- Upcoming Classes/Timetable -->
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 flex items-center">
+                    <i class="fas fa-clock text-blue-600 mr-2"></i> Today's Schedule
+                </h3>
+                <a href="{% url 'student_timetable' %}" class="text-sm font-bold text-blue-600 hover:text-blue-700">Full Timetable</a>
+            </div>
+            <div class="p-0">
+                <div class="divide-y divide-slate-100">
+                    <div class="p-6 flex items-center space-x-6 hover:bg-slate-50 transition-colors">
+                        <div class="text-center min-w-[80px]">
+                            <p class="text-sm font-bold text-slate-900">08:00</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Start</p>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-900">Mathematics</h4>
+                            <p class="text-sm text-slate-500">Room 14 • Mr. Mwita</p>
+                        </div>
+                        <div class="w-2 h-2 rounded-full bg-blue-600 shadow-pulse"></div>
+                    </div>
+                    <div class="p-6 flex items-center space-x-6 hover:bg-slate-50 transition-colors">
+                        <div class="text-center min-w-[80px]">
+                            <p class="text-sm font-bold text-slate-400">10:00</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Break</p>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-400 italic">Short Break</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments -->
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-900 flex items-center">
+                    <i class="fas fa-tasks text-indigo-600 mr-2"></i> Pending Assignments
+                </h3>
+                <a href="{% url 'student_assignments' %}" class="text-sm font-bold text-blue-600 hover:text-blue-700">View All</a>
+            </div>
+            <div class="p-6 space-y-4">
+                {% for assignment in recent_assignments %}
+                    <div class="p-4 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/10 transition-all flex items-center justify-between group">
+                        <div class="space-y-1">
+                            <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">{{ assignment.course_offering.course.name }}</p>
+                            <h4 class="font-bold text-slate-900">{{ assignment.title }}</h4>
+                            <p class="text-xs text-slate-400 font-medium">Deadline: {{ assignment.due_date|date:"D, d M" }}</p>
+                        </div>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                {% empty %}
+                    <div class="text-center py-12">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mx-auto mb-4">
+                            <i class="fas fa-check-double text-2xl"></i>
+                        </div>
+                        <p class="text-slate-500 font-medium">All caught up! No pending assignments.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Col -->
+    <div class="space-y-8">
+        <!-- Announcements -->
+        <div class="card-premium bg-slate-900 text-white border-none">
+            <div class="p-6 border-b border-slate-800 flex justify-between items-center">
+                <h3 class="font-bold flex items-center">
+                    <i class="fas fa-bullhorn text-amber-400 mr-2"></i> Announcements
+                </h3>
+            </div>
+            <div class="p-6 space-y-6">
+                {% for announcement in recent_announcements %}
+                    <div class="space-y-2 border-l-2 border-slate-700 pl-4 py-1">
+                        <h4 class="text-sm font-bold text-slate-100">{{ announcement.title }}</h4>
+                        <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">{{ announcement.content }}</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{{ announcement.created_at|date:"M d, Y" }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-slate-500 text-center py-4">No new updates.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Grade Progress Chart (Simplified list for now) -->
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 flex items-center">
+                    <i class="fas fa-chart-bar text-emerald-600 mr-2"></i> Performance
+                </h3>
+            </div>
+            <div class="p-6 space-y-6">
+                {% for exam in academic_performance.recent_exams|slice:":3" %}
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-bold uppercase tracking-wider">
+                            <span class="text-slate-500">{{ exam.get_subject_display }}</span>
+                            <span class="text-slate-900">{{ exam.grade }}</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-emerald-500 rounded-full" style="width: {% if exam.grade == 'A' %}95%{% elif exam.grade == 'B' %}75%{% elif exam.grade == 'C' %}55%{% else %}40%{% endif %}"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

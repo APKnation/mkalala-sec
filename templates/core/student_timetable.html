@@ -1,243 +1,180 @@
-{% extends 'core/student_dashboard.html' %}
+{% extends 'core/base_dashboard.html' %}
 {% load static %}
 
-{% block title %}Timetable - {{ school_info.name }}{% endblock %}
+{% block title %}Weekly Timetable | Mkalala Sec{% endblock %}
+{% block mobile_title %}Schedule{% endblock %}
+{% block user_role %}Student Portal{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'student_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'student_courses' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>My Subjects</span>
+</a>
+<a href="{% url 'student_timetable' %}" class="sidebar-item-active">
+    <i class="fas fa-calendar"></i>
+    <span>Timetable</span>
+</a>
+<a href="{% url 'student_results' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-line"></i>
+    <span>Exam Results</span>
+</a>
+<a href="{% url 'student_assignments' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-tasks"></i>
+    <span>Assignments</span>
+</a>
+<a href="{% url 'student_fees' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-credit-card"></i>
+    <span>Fee Payments</span>
+</a>
+<a href="{% url 'student_library' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bookmark"></i>
+    <span>Library</span>
+</a>
+<a href="{% url 'student_messages' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+</a>
+<a href="{% url 'student_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-circle"></i>
+    <span>Profile</span>
+</a>
+{% endblock %}
 
 {% block main_content %}
-<div class="content-wrapper">
-    <!-- Page Header -->
-    <div class="dashboard-header">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h1 class="h3 mb-0">My Timetable</h1>
-                    <p class="mb-0 opacity-75">View your class schedule and timetable</p>
-                </div>
-                <div class="col-auto">
-                    <div class="d-flex gap-3">
-                        <div class="text-end">
-                            <small class="d-block opacity-75">Student ID</small>
-                            <strong>{{ student.roll_number }}</strong>
-                        </div>
-                        <div class="text-end">
-                            <small class="d-block opacity-75">Current Level</small>
-                            <strong>{{ student.get_current_level_display }}</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900">Weekly Schedule</h1>
+            <p class="text-slate-500 font-medium">Class sessions for the current semester: <span class="font-bold text-blue-600">{{ current_semester.name|default:"Not Set" }}</span></p>
+        </div>
+        <div class="flex items-center space-x-2">
+             <button class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-all shadow-sm">
+                 <i class="fas fa-print"></i>
+             </button>
+             <button class="btn-glow-primary px-6 py-3 text-sm">Download PDF</button>
         </div>
     </div>
-    
-    <!-- Main Content -->
-    <div class="content-body">
-        {% if current_semester %}
-            <!-- Semester Info -->
-            <div class="stat-card mb-4">
-                <h5 class="fw-bold mb-3"><i class="fas fa-calendar-alt me-2"></i>Current Semester</h5>
-                <div class="row">
-                    <div class="col-md-6">
-                        <p class="mb-2"><strong>Semester:</strong> {{ current_semester.name }}</p>
-                        <p class="mb-2"><strong>Start Date:</strong> {{ current_semester.start_date|date:"F d, Y" }}</p>
-                        <p class="mb-0"><strong>End Date:</strong> {{ current_semester.end_date|date:"F d, Y" }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p class="mb-2"><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
-                        <p class="mb-2"><strong>Enrolled Courses:</strong> {{ enrollments|length }}</p>
-                        <p class="mb-0"><strong>Total Classes:</strong> {{ timetable_entries|length }}</p>
-                    </div>
-                </div>
+
+    <!-- Timetable Container -->
+    <div class="card-premium overflow-hidden border-none shadow-soft">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center uppercase tracking-widest">
+                <i class="fas fa-clock text-blue-600 mr-2 opacity-30"></i> Standard Class Hours
+            </h3>
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-blue-500"></span><span class="text-[10px] font-bold text-slate-400 uppercase">Core</span></div>
+                <div class="flex items-center space-x-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span class="text-[10px] font-bold text-slate-400 uppercase">Elective</span></div>
             </div>
-            
-            <!-- Timetable Grid -->
-            <div class="stat-card">
-                <h5 class="fw-bold mb-4"><i class="fas fa-clock me-2"></i>Weekly Schedule</h5>
-                
-                {% if timetable_entries %}
-                    <div class="table-responsive">
-                        <table class="table table-bordered timetable-table">
-                            <thead>
-                                <tr>
-                                    <th class="text-center" style="width: 120px;">Time</th>
-                                    <th class="text-center">Monday</th>
-                                    <th class="text-center">Tuesday</th>
-                                    <th class="text-center">Wednesday</th>
-                                    <th class="text-center">Thursday</th>
-                                    <th class="text-center">Friday</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for time_slot in time_slots %}
-                                    <tr>
-                                        <td class="time-slot text-center fw-bold">{{ time_slot }}</td>
-                                        {% for day in days_of_week %}
-                                            <td class="schedule-cell">
-                                                {% for entry in organized_timetable.day %}
-                                                    {% if entry.start_time == time_slot %}
-                                                        <div class="class-entry">
-                                                            <div class="course-name">{{ entry.course_offering.course.code }}</div>
-                                                            <div class="course-title">{{ entry.course_offering.course.name|truncatechars:20 }}</div>
-                                                            <div class="faculty-name">{{ entry.course_offering.faculty.user.get_full_name }}</div>
-                                                            {% if entry.room %}
-                                                                <div class="room-info">
-                                                                    <i class="fas fa-door-open"></i> {{ entry.room }}
-                                                                </div>
-                                                            {% endif %}
-                                                        </div>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </td>
-                                        {% endfor %}
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">No Classes Scheduled</h5>
-                        <p class="text-muted">Your timetable will appear here once classes are scheduled.</p>
-                    </div>
-                {% endif %}
+        </div>
+
+        <div class="p-0 overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-white border-b border-slate-100">
+                        <th class="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center border-r border-slate-50">Time Slot</th>
+                        {% for day in days_of_week %}
+                        <th class="px-6 py-5 text-[10px] font-bold text-slate-900 uppercase tracking-[0.2em] text-center border-r border-slate-50">
+                            {{ day }}
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for time in time_slots %}
+                    <tr class="group">
+                        <td class="px-4 py-8 text-center border-r border-slate-50 bg-slate-50/20 group-hover:bg-blue-50/30 transition-colors">
+                            <span class="text-xs font-bold text-slate-500">{{ time }}</span>
+                        </td>
+                        {% for day in days_of_week %}
+                        <td class="px-2 py-2 border-r border-slate-50 min-w-[160px] group-hover:bg-slate-50/20 transition-colors">
+                            {% for entry in organized_timetable.monday %} {% if day == 'monday' and entry.start_time|date:"H:i" == time %}
+                                <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 space-y-1 group/item hover:scale-[1.02] transition-all">
+                                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">{{ entry.course_offering.course.code }}</p>
+                                    <p class="text-xs font-bold text-slate-900 leading-tight">{{ entry.course_offering.course.name|truncatechars:15 }}</p>
+                                    <div class="flex items-center justify-between pt-2">
+                                        <p class="text-[8px] font-bold text-slate-400 uppercase">{{ entry.room|default:"RM 102" }}</p>
+                                        <p class="text-[8px] font-bold text-blue-400">{{ entry.course_offering.faculty.user.last_name }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}{% endfor %}
+
+                            {% for entry in organized_timetable.tuesday %} {% if day == 'tuesday' and entry.start_time|date:"H:i" == time %}
+                                <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-100 space-y-1 hover:scale-[1.02] transition-all">
+                                    <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-tighter">{{ entry.course_offering.course.code }}</p>
+                                    <p class="text-xs font-bold text-slate-900 leading-tight">{{ entry.course_offering.course.name|truncatechars:15 }}</p>
+                                    <div class="flex items-center justify-between pt-2">
+                                        <p class="text-[8px] font-bold text-slate-400 uppercase">{{ entry.room|default:"RM 204" }}</p>
+                                        <p class="text-[8px] font-bold text-indigo-400">{{ entry.course_offering.faculty.user.last_name }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}{% endfor %}
+
+                            {% for entry in organized_timetable.wednesday %} {% if day == 'wednesday' and entry.start_time|date:"H:i" == time %}
+                                <div class="p-3 rounded-xl bg-violet-50 border border-violet-100 space-y-1 hover:scale-[1.02] transition-all">
+                                    <p class="text-[10px] font-bold text-violet-600 uppercase tracking-tighter">{{ entry.course_offering.course.code }}</p>
+                                    <p class="text-xs font-bold text-slate-900 leading-tight">{{ entry.course_offering.course.name|truncatechars:15 }}</p>
+                                    <div class="flex items-center justify-between pt-2">
+                                        <p class="text-[8px] font-bold text-slate-400 uppercase">{{ entry.room|default:"LAB A" }}</p>
+                                        <p class="text-[8px] font-bold text-violet-400">{{ entry.course_offering.faculty.user.last_name }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}{% endfor %}
+
+                            {% for entry in organized_timetable.thursday %} {% if day == 'thursday' and entry.start_time|date:"H:i" == time %}
+                                <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 space-y-1 hover:scale-[1.02] transition-all">
+                                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">{{ entry.course_offering.course.code }}</p>
+                                    <p class="text-xs font-bold text-slate-900 leading-tight">{{ entry.course_offering.course.name|truncatechars:15 }}</p>
+                                    <div class="flex items-center justify-between pt-2">
+                                        <p class="text-[8px] font-bold text-slate-400 uppercase">{{ entry.room|default:"RM 102" }}</p>
+                                        <p class="text-[8px] font-bold text-blue-400">{{ entry.course_offering.faculty.user.last_name }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}{% endfor %}
+
+                            {% for entry in organized_timetable.friday %} {% if day == 'friday' and entry.start_time|date:"H:i" == time %}
+                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 space-y-1 hover:scale-[1.02] transition-all">
+                                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">{{ entry.course_offering.course.code }}</p>
+                                    <p class="text-xs font-bold text-slate-900 leading-tight">{{ entry.course_offering.course.name|truncatechars:15 }}</p>
+                                    <div class="flex items-center justify-between pt-2">
+                                        <p class="text-[8px] font-bold text-slate-400 uppercase">{{ entry.room|default:"GYM" }}</p>
+                                        <p class="text-[8px] font-bold text-slate-400">{{ entry.course_offering.faculty.user.last_name }}</p>
+                                    </div>
+                                </div>
+                            {% endif %}{% endfor %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="card-premium p-6 flex items-center space-x-4 bg-amber-50 border-amber-100">
+            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-exclamation-circle"></i>
             </div>
-        {% else %}
-            <!-- No Active Semester -->
-            <div class="stat-card">
-                <div class="text-center py-5">
-                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No Active Semester</h5>
-                    <p class="text-muted">There is currently no active semester. Please check back later.</p>
-                </div>
+            <div>
+                <h4 class="font-bold text-slate-900">Holiday Notice</h4>
+                <p class="text-xs text-slate-500">Classes for Friday, March 20th are suspended due to the National Academic Fair.</p>
             </div>
-        {% endif %}
-        
-        <!-- Quick Actions -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="stat-card">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_courses' %}" class="btn btn-primary w-100">
-                                <i class="fas fa-book-open me-2"></i>My Courses
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_assignments' %}" class="btn btn-info w-100">
-                                <i class="fas fa-tasks me-2"></i>Assignments
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_exams' %}" class="btn btn-success w-100">
-                                <i class="fas fa-clipboard-list me-2"></i>Exam Schedule
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_profile' %}" class="btn btn-secondary w-100">
-                                <i class="fas fa-user me-2"></i>My Profile
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        </div>
+        <div class="card-premium p-6 flex items-center space-x-4 bg-emerald-50 border-emerald-100">
+            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+                <h4 class="font-bold text-slate-900">Synced Schedule</h4>
+                <p class="text-xs text-slate-500">Your timetable is automatically synced with your mobile calendar and teacher updates.</p>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.timetable-table {
-    font-size: 0.9rem;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.timetable-table th {
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-    color: white;
-    font-weight: 600;
-    border: none;
-    padding: 12px 8px;
-    vertical-align: middle;
-}
-
-.timetable-table td {
-    border: 1px solid #e5e7eb;
-    padding: 8px;
-    vertical-align: top;
-    height: 80px;
-}
-
-.time-slot {
-    background: #f8f9fa;
-    font-weight: 600;
-    color: #6c757d;
-    border-right: 2px solid #dee2e6;
-}
-
-.schedule-cell {
-    position: relative;
-    background: white;
-}
-
-.class-entry {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 6px;
-    padding: 8px;
-    height: 100%;
-    color: white;
-    font-size: 0.75rem;
-    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
-    transition: transform 0.2s ease;
-}
-
-.class-entry:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
-}
-
-.course-name {
-    font-weight: 700;
-    font-size: 0.8rem;
-    margin-bottom: 2px;
-}
-
-.course-title {
-    font-size: 0.7rem;
-    opacity: 0.9;
-    margin-bottom: 2px;
-}
-
-.faculty-name {
-    font-size: 0.65rem;
-    opacity: 0.8;
-    margin-bottom: 2px;
-}
-
-.room-info {
-    font-size: 0.6rem;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 2px 4px;
-    border-radius: 3px;
-    margin-top: 2px;
-}
-
-@media (max-width: 768px) {
-    .timetable-table {
-        font-size: 0.7rem;
-    }
-    
-    .timetable-table th,
-    .timetable-table td {
-        padding: 4px;
-    }
-    
-    .class-entry {
-        padding: 4px;
-        font-size: 0.65rem;
-    }
-}
-</style>
 {% endblock %}

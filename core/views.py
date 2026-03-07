@@ -40,9 +40,8 @@ class StudentDetailView(DetailView):
     template_name = 'students/student_detail.html'  # adjust path as needed
     context_object_name = 'student'
 
-class CourseManagementView(View):
-    def get(self, request):
-        return render(request, 'core/course_management.html') 
+# Consolidated to SubjectManagementView below
+ 
 @login_required
 @user_passes_test(is_admin)
 def faculty_register(request):
@@ -123,6 +122,18 @@ class CourseManagementView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     
     def get_queryset(self):
         return Course.objects.select_related('department').all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from .models import Department, User, StudentProfile
+        context.update({
+            'departments_count': Department.objects.count(),
+            'total_students': User.objects.filter(role='student').count(),
+            'role': 'Administrator',
+            'title': 'Subject Management'
+        })
+        return context
+
 
 class ActivityLogView(LoginRequiredMixin, ListView):
     model = ActivityLog
@@ -410,32 +421,67 @@ class CustomLoginView(View):
         if request.user.is_authenticated:
             return self.redirect_based_on_role(request.user)
         form = AuthenticationForm()
-        return render(request, 'core/login.html', {'form': form})
+        
+        # Check if user just registered and pre-fill the form
+        context = {'form': form}
+        if 'registration_role' in request.session:
+            context['registration_role'] = request.session['registration_role']
+            context['registration_username'] = request.session.get('registration_username', '')
+            # Clear session data after using it
+            del request.session['registration_role']
+            if 'registration_username' in request.session:
+                del request.session['registration_username']
+        
+        return render(request, 'core/login.html', context)
 
     def post(self, request):
         form = AuthenticationForm(request, data=request.POST)
+        
         if form.is_valid():
             user = form.get_user()
+            
             auth_login(request, user)
+            
+            # Show success message with actual role
+            user_role = getattr(user, 'role', 'user').title()
+            messages.success(request, f'Welcome back! You are logged in as {user_role}.')
+            
             return self.redirect_based_on_role(user)
         else:
-            messages.error(request, 'Invalid username or password.')
-            return render(request, 'core/login.html', {'form': form})
+            messages.error(request, 'Invalid username or password. Please try again.')
+            return self.get_context_with_form(request, form)
+    
+    def get_context_with_form(self, request, form):
+
+        """Helper method to render form with proper styling"""
+        # Add Tailwind CSS classes and placeholders to form fields
+        form.fields['username'].widget.attrs.update({
+            'placeholder': 'Enter your username or email',
+            'class': 'form-input w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm'
+        })
+        form.fields['password'].widget.attrs.update({
+            'placeholder': 'Enter your password',
+            'class': 'form-input w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm'
+        })
+        return render(request, 'core/login.html', {'form': form})
     
     def redirect_based_on_role(self, user):
         """Redirect user based on their role"""
-        if user.role == 'normal':
-            return redirect('public_home')
-        elif user.role == 'student':
-            return redirect('student_dashboard')
-        elif user.role == 'teacher':
-            return redirect('teacher_dashboard')
-        elif user.role == 'headmaster':
-            return redirect('headmaster_dashboard')
-        elif user.role == 'admin':
-            return redirect('admin_dashboard')
+        if hasattr(user, 'role'):
+            if user.role == 'student':
+                return redirect('student_dashboard')
+            elif user.role == 'teacher':
+                return redirect('teacher_dashboard')
+            elif user.role == 'headmaster':
+                return redirect('headmaster_dashboard')
+            elif user.role == 'admin':
+                return redirect('admin_dashboard')
+            else:
+                # Default to student dashboard if no role is set
+                return redirect('student_dashboard')
         else:
-            return redirect('public_home')
+            # Default to student dashboard if no role is set
+            return redirect('student_dashboard')
 
 class CustomLogoutView(View):
     def get(self, request):
@@ -443,7 +489,7 @@ class CustomLogoutView(View):
         return redirect('public_home')
 
 # Public Registration Views
-from .forms import PublicUserRegistrationForm, StaffRegistrationForm
+from .forms import PublicUserRegistrationForm
 
 class PublicRegisterView(CreateView):
     """Registration for normal users and students"""
@@ -461,41 +507,36 @@ class PublicRegisterView(CreateView):
         if user.role == 'student':
             user.is_student = True
             user.save()
-            # StudentProfile will be created when student completes admission
-            messages.success(self.request, "Student registration successful! Please complete your admission application.")
-        else:
-            messages.success(self.request, "Account created successfully! You can now login.")
-        
-        return super().form_valid(form)
-
-class StaffRegisterView(CreateView):
-    """Registration for staff roles (teacher, headmaster, admin)"""
-    model = User
-    form_class = StaffRegistrationForm
-    template_name = 'core/staff_register.html'
-    success_url = reverse_lazy('login')
-
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        user.set_password(form.cleaned_data['password1'])
-        user.save()
-        
-        # Set role flags and create appropriate profile
-        if user.role == 'teacher':
+            # Create StudentProfile with additional details
+            StudentProfile.objects.create(
+                user=user,
+                roll_number=f"STU{user.id:06d}",
+                admission_year=timezone.now().year,
+                current_form=1,
+                current_semester=1,
+                phone=form.cleaned_data.get('phone', ''),
+                address=form.cleaned_data.get('address', ''),
+                date_of_birth=form.cleaned_data.get('date_of_birth', None),
+                gender=form.cleaned_data.get('gender', ''),
+                necta_exam_number=form.cleaned_data.get('necta_exam_number', ''),
+                birth_certificate_number=form.cleaned_data.get('birth_certificate_number', ''),
+                previous_school=form.cleaned_data.get('previous_school', ''),
+            )
+            messages.success(self.request, f"Welcome {user.get_full_name() or user.username}! Your student account has been created successfully. Please login to access your dashboard.")
+        elif user.role == 'teacher':
             user.is_faculty = True
             user.save()
-            # FacultyProfile will need to be created by admin
-            messages.success(self.request, "Teacher registration successful! Your profile will be completed by the school administration.")
+            # FacultyProfile will be created by admin
+            messages.success(self.request, f"Welcome {user.get_full_name() or user.username}! Your teacher account has been created successfully. Please login to access your dashboard.")
         elif user.role == 'headmaster':
             user.is_headmaster = True
             user.save()
             # HeadmasterProfile will need to be created by admin
-            messages.success(self.request, "Headmaster registration successful! Your profile will be completed by the school administration.")
-        elif user.role == 'admin':
-            user.is_admin = True
-            user.save()
-            # AdminProfile will need to be created by super admin
-            messages.success(self.request, "Admin registration successful! Your profile will be completed by the super administrator.")
+            messages.success(self.request, f"Welcome {user.get_full_name() or user.username}! Your headmaster account has been created successfully. Please login to access your dashboard.")
+        
+        # Store registration info for login page
+        self.request.session['registration_role'] = user.role
+        self.request.session['registration_username'] = user.username
         
         return super().form_valid(form)
 
@@ -560,15 +601,12 @@ def teacher_dashboard(request):
         'user': request.user,
         'role': 'Teacher',
         'faculty_profile': faculty_profile,
-        'my_courses': my_courses,
+        'my_subjects': my_courses,
         'total_students': total_students,
         'pending_assignments': pending_assignments,
         'classes_today': classes_today,
-        'courses': courses,
-        'school_info': {
-            'name': 'School Management System',
-            'motto': 'Excellence in Education'
-        }
+        'subjects': courses,
+        'school_info': get_school_info(),
     }
     return render(request, 'core/teacher_dashboard.html', context)
 
@@ -578,15 +616,23 @@ def headmaster_dashboard(request):
     if not request.user.role == 'headmaster':
         return redirect('public_home')
     
+    total_students = User.objects.filter(role='student').count()
+    total_teachers = User.objects.filter(role='teacher').count()
+    total_staff = User.objects.filter(role__in=['teacher', 'admin', 'headmaster']).count()
+    total_departments = Department.objects.count()
+    
     context = {
         'user': request.user,
         'role': 'Head of School',
-        'total_students': User.objects.filter(role='student').count(),
-        'total_teachers': User.objects.filter(role='teacher').count(),
-        'total_staff': User.objects.filter(role__in=['teacher', 'admin', 'headmaster']).count(),
+        'total_students': total_students,
+        'total_teachers': total_teachers,
+        'total_staff': total_staff,
+        'departments_count': total_departments,
         'courses': Course.objects.all(),
+        'recent_activities': User.objects.order_by('-date_joined')[:5],
     }
     return render(request, 'core/headmaster_dashboard.html', context)
+
 
 # School Admin Dashboard
 @login_required
@@ -669,6 +715,7 @@ def admin_dashboard(request):
     
     # Additional statistics for enhanced dashboard
     total_courses = Course.objects.count()
+    total_subjects = Subject.objects.count()
     total_departments = Department.objects.count()
     total_course_offerings = CourseOffering.objects.count()
     
@@ -726,6 +773,7 @@ def admin_dashboard(request):
         'pending_registrations': pending_registrations,
         # Enhanced statistics
         'total_courses': total_courses,
+        'total_subjects': total_subjects,
         'pending_fees': pending_fees,
         'overdue_fees': overdue_fees,
         'total_fees_collected': total_fees_collected,
@@ -1519,7 +1567,7 @@ class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Fee
-    template_name = 'core/admin_fee_list.html'
+    template_name = 'core/admin_fees.html'
     context_object_name = 'fees'
     paginate_by = 25
     
@@ -1880,31 +1928,26 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CreateCourseView(View):
-    def get(self, request):
-        from .forms import CourseForm
-        form = CourseForm()
-        return render(request, 'core/create_course.html', {'form': form})
-
-    def post(self, request):
-        from .forms import CourseForm
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('course_list')  # or another route
-        return render(request, 'core/create_course.html', {'form': form})
-
-
-        
-class CourseUpdateView(UpdateView):
+class CreateCourseView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Course
-    fields = ['name', 'description', 'duration']  # Add the fields you want to be editable
-    template_name = 'core/course_update.html'
-    success_url = '/courses/manage/'  # Redirect to the course management page after update
+    from .forms import CourseForm
+    form_class = CourseForm
+    template_name = 'core/course_form.html'
+    success_url = reverse_lazy('subjects_management')
 
-    def get_object(self, queryset=None):
-        # Ensure the course object is fetched based on the provided ID (pk)
-        return get_object_or_404(Course, pk=self.kwargs['pk'])
+    def test_func(self):
+        return is_admin(self.request.user)
+        
+class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Course
+    from .forms import CourseForm
+    form_class = CourseForm
+    template_name = 'core/course_form.html'
+    success_url = reverse_lazy('subjects_management')
+
+    def test_func(self):
+        return is_admin(self.request.user)
+
 
 class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Course
@@ -2147,43 +2190,8 @@ def student_timetable(request):
     
     return render(request, 'core/student_timetable.html', context)
 
-class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    def test_func(self):
-        return is_student(self.request.user)
+# Removed duplicate StudentDashboardView
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            student = self.request.user.student_profile
-        except StudentProfile.DoesNotExist:
-            return redirect('student_dashboard')
-        
-        # Get student's enrollments
-        enrollments = Enrollment.objects.filter(student=student).select_related('course_offering__course')
-        
-        # Get assignments for student's courses
-        course_offerings = enrollments.values_list('course_offering__id', flat=True)
-        assignments = Assignment.objects.filter(
-            course_offering__id__in=course_offerings
-        ).select_related('course_offering__course').order_by('-created_at')
-        
-        # Get student's submissions
-        submissions = {}
-        for assignment in assignments:
-            try:
-                submission = Submission.objects.get(assignment=assignment, student=student)
-                submissions[assignment.id] = submission
-            except Submission.DoesNotExist:
-                submissions[assignment.id] = None
-        
-        context['student'] = student
-        context['assignments'] = assignments
-        context['submissions'] = submissions
-        
-        return context
-
-    def get_template_names(self):
-        return ['core/student_dashboard.html']
 
 @login_required
 @user_passes_test(is_student)
@@ -2990,16 +2998,25 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         
         # Calculate attendance percentages
         enriched_enrollments = []
+        total_present = 0
+        total_sessions = 0
         for enrollment in enrollments:
-            total_classes = enrollment.attendances.count()
-            present_classes = enrollment.attendances.filter(status='P').count()
+            sessions = enrollment.attendances.all()
+            total_classes = sessions.count()
+            present_classes = sessions.filter(status='P').count()
             attendance_percentage = (present_classes / total_classes * 100) if total_classes > 0 else 0
+            
+            total_present += present_classes
+            total_sessions += total_classes
             
             enriched_enrollments.append({
                 'enrollment': enrollment,
                 'attendance_percentage': attendance_percentage,
                 'grade': getattr(enrollment, 'grade', None)
             })
+        
+        overall_attendance = (total_present / total_sessions * 100) if total_sessions > 0 else 0
+
         
         # School Information - Get from database or create default
         try:
@@ -3097,9 +3114,16 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
             # Student Information
             'student': student,
             'enriched_enrollments': enriched_enrollments,
+            'overall_attendance': overall_attendance,
+            
+            # Assignments
+            'recent_assignments': Assignment.objects.filter(
+                course_offering__id__in=[e['enrollment'].course_offering_id for e in enriched_enrollments]
+            ).select_related('course_offering__course').order_by('-created_at')[:5],
             
             # School Information
             'school_info': school_info,
+
             
             # Academic Data
             'upcoming_exams': ExamSchedule.objects.filter(
@@ -3186,9 +3210,8 @@ class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView
             return available_courses
         return CourseOffering.objects.none()
 
-class CreateCourseView(View):
-    def get(self, request):
-        return render(request, 'core/create_course.html')
+# Duplicate CreateCourseView removed
+
 
 @login_required
 def enroll_course(request):
@@ -3561,32 +3584,8 @@ class AttendanceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 # ======================
 # Fee Management Views
 # ======================
-class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    model = Fee
-    template_name = 'core/fee_list.html'
-    context_object_name = 'fees'
-    paginate_by = 20
+# Consolidated FeeListView moved to administrative section
 
-    def test_func(self):
-        return is_admin(self.request.user)
-
-    def get_queryset(self):
-        queryset = super().get_queryset().select_related('student__user', 'semester')
-        
-        student_id = self.request.GET.get('student')
-        if student_id:
-            queryset = queryset.filter(student_id=student_id)
-            
-        status = self.request.GET.get('status')
-        if status:
-            queryset = queryset.filter(status=status)
-            
-        return queryset.order_by('-due_date')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['students'] = StudentProfile.objects.all()
-        return context
 
 class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     from .forms import FeeForm
@@ -4374,6 +4373,82 @@ def bulk_class_assignment(request):
         'form_choices': StudentProfile.FORM_CHOICES,
     }
     return render(request, 'core/bulk_class_assignment.html', context)
+
+
+# Additional Admin Views
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable(request):
+    """Admin timetable management"""
+    context = {
+        'title': 'Timetable Management',
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/admin_timetable.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_exams(request):
+    """Admin exam management"""
+    context = {
+        'title': 'Exam Management',
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/admin_exams.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_library(request):
+    """Admin library management"""
+    context = {
+        'title': 'Library Management',
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/admin_library.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_fees(request):
+    """Admin fee management"""
+    context = {
+        'title': 'Fee Management',
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/admin_fees.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_reports(request):
+    """Admin reports with institutional metrics"""
+    from django.db.models import Sum
+    total_students = User.objects.filter(role='student').count()
+    total_teachers = User.objects.filter(role='teacher').count()
+    revenue_month = Fee.objects.filter(is_paid=True, paid_date__month=timezone.now().month).aggregate(total=Sum('amount'))['total'] or 0
+    
+    context = {
+        'title': 'System Reports',
+        'school_info': get_school_info(),
+        'total_students': total_students,
+        'total_teachers': total_teachers,
+        'revenue_month': revenue_month,
+        'staff_engagement': 92, # Placeholder for now
+    }
+    return render(request, 'core/admin_reports.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_settings(request):
+    """Admin settings"""
+    context = {
+        'title': 'System Settings',
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/admin_settings.html', context)
 
 
 

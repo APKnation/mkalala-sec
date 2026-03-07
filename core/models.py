@@ -82,17 +82,14 @@ class Subject(models.Model):
 
 class User(AbstractUser):
     ROLE_CHOICES = [
-        ('normal', _('Normal User')),
         ('student', _('Student')),
         ('teacher', _('Teacher')),
         ('headmaster', _('Head of School')),
-        ('admin', _('School Admin')),
     ]
     
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='normal')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='student')
     is_student = models.BooleanField(default=False)
     is_faculty = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
     is_parent = models.BooleanField(default=False)
     is_headmaster = models.BooleanField(default=False)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)

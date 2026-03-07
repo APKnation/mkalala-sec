@@ -1,0 +1,164 @@
+{% extends 'core/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Fee Management | Mkalala Sec{% endblock %}
+{% block mobile_title %}Financials{% endblock %}
+{% block user_role %}Finance Admin{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item-active">
+    <i class="fas fa-coins"></i>
+    <span>Finance</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-display font-bold text-slate-900">Financial Oversight</h1>
+        <p class="text-slate-500 font-medium">Tracking tuitions, boarding fees, and specialized payments.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+        <a href="{% url 'admin_fee_create' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+            <i class="fas fa-plus-circle mr-2"></i> Record Payment
+        </a>
+    </div>
+</div>
+
+<!-- Financial Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-blue-50 text-blue-600">
+            <i class="fas fa-money-check-alt text-lg"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ total_collected|default:"0" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Collected (TZS)</p>
+    </div>
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-amber-50 text-amber-600">
+            <i class="fas fa-exclamation-triangle text-lg"></i>
+        </div>
+        <p class="text-2xl font-bold text-amber-700">{{ total_pending|default:"0" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending</p>
+    </div>
+    <div class="stat-card-modern border-red-100 bg-red-50/30">
+        <div class="stat-icon bg-red-50 text-red-600">
+            <i class="fas fa-clock text-lg"></i>
+        </div>
+        <p class="text-2xl font-bold text-red-700">{{ total_overdue|default:"0" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Overdue</p>
+    </div>
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-emerald-50 text-emerald-600">
+            <i class="fas fa-chart-line text-lg"></i>
+        </div>
+        <p class="text-2xl font-bold">84%</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Collection Rate</p>
+    </div>
+</div>
+
+<!-- Search & Filter -->
+<div class="card-premium p-6 shadow-soft">
+    <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="md:col-span-2 relative">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" name="search" value="{{ request.GET.search }}" 
+                   class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all"
+                   placeholder="Student name or roll number...">
+        </div>
+        <div>
+            <select name="status" class="w-full px-4 py-3 rounded-xl border border-slate-100 appearance-none bg-white font-medium text-slate-600">
+                <option value="">All Status</option>
+                <option value="paid" {% if request.GET.status == "paid" %}selected{% endif %}>Paid</option>
+                <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>Pending</option>
+                <option value="overdue" {% if request.GET.status == "overdue" %}selected{% endif %}>Overdue</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all">Filter View</button>
+    </form>
+</div>
+
+<!-- Fee Table -->
+<div class="card-premium overflow-hidden border-none shadow-soft">
+    <div class="p-0 overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                    <th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Student Detail</th>
+                    <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Description</th>
+                    <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Amount</th>
+                    <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Due Date</th>
+                    <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none text-center">Status</th>
+                    <th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for fee in fees %}
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                    <td class="px-8 py-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 font-bold text-xs">
+                                {{ fee.student.user.first_name.0 }}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-900 text-sm leading-tight">{{ fee.student.user.get_full_name }}</p>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{{ fee.student.roll_number }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-6 font-medium text-slate-600 text-sm">
+                        {{ fee.description|truncatechars:30|default:"Term II Tuition" }}
+                    </td>
+                    <td class="px-6 py-6 font-bold text-slate-900 text-sm">
+                        TZS {{ fee.amount }}
+                    </td>
+                    <td class="px-6 py-6 text-xs font-bold text-slate-500 italic">
+                        {{ fee.due_date|date:"d M, Y" }}
+                    </td>
+                    <td class="px-6 py-6 text-center">
+                        {% if fee.is_paid %}
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full uppercase">Collected</span>
+                        {% elif fee.is_overdue %}
+                            <span class="px-2.5 py-1 bg-red-100 text-red-700 text-[10px] font-bold rounded-full uppercase">Overdue</span>
+                        {% else %}
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full uppercase">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-8 py-6 text-right">
+                        <div class="flex items-center justify-end space-x-2">
+                            <a href="{% url 'admin_fee_edit' fee.pk %}" class="w-8 h-8 rounded-lg bg-white border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 flex items-center justify-center shadow-sm">
+                                <i class="fas fa-edit text-xs"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-8 py-20 text-center text-slate-400 font-medium">
+                        No financial records found in this category.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

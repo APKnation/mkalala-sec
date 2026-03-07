@@ -1,9 +1,11 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 from .views import CourseUpdateView
-from .views import faculty_register  # ✅ This matches the function name
-from .views import CreateCourseView  # <-- this is correct now
+from .views import CreateCourseView  # <--this is correct now
 from .views import CourseListView
 from .views import CourseDetailView
 from .views import CourseDeleteView
@@ -19,6 +21,7 @@ urlpatterns = [
     path('home/', views.public_home, name='public_home_alt'),
     path('about/', views.public_about, name='public_about'),
     path('courses/', views.public_courses, name='public_courses'),
+    path('subjects/', views.public_courses, name='public_subjects'),
     path('admissions/', views.public_admissions, name='public_admissions'),
     path('contact/', views.public_contact, name='public_contact'),
     
@@ -26,11 +29,8 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     
-    # Registration URLs
-    path('register/', views.PublicRegisterView.as_view(), name='register'),  # Main registration URL
-    path('register/student/', views.PublicRegisterView.as_view(), name='register_student'),
-    path('register/staff/', views.StaffRegisterView.as_view(), name='staff_register'),
-    path('faculty/register/', faculty_register, name='faculty_register'),
+    # Registration URL - Single unified registration
+    path('register/', views.PublicRegisterView.as_view(), name='register'),
     
     # Dashboard URLs
     path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
@@ -94,6 +94,14 @@ urlpatterns = [
     path('fees/add/', views.FeeCreateView.as_view(), name='admin_fee_create'),
     path('fees/<int:pk>/edit/', views.FeeUpdateView.as_view(), name='admin_fee_edit'),
     path('fees/<int:pk>/delete/', views.FeeDeleteView.as_view(), name='admin_fee_delete'),
+    
+    # Additional Admin URLs
+    path('admin/timetable/', views.admin_timetable, name='admin_timetable'),
+    path('admin/exams/', views.admin_exams, name='admin_exams'),
+    path('admin/library/', views.admin_library, name='admin_library'),
+    path('admin/fees/', views.admin_fees, name='admin_fees'),
+    path('admin/reports/', views.admin_reports, name='admin_reports'),
+    path('admin/settings/', views.admin_settings, name='admin_settings'),
     path('users/<int:pk>/edit/', views.UserUpdateView.as_view(), name='edit_user'),
     path('users/<int:user_id>/deactivate/', views.deactivate_user, name='deactivate_user'),
     path('users/pending/', views.UserApprovalView.as_view(), name='user_approval'),
@@ -159,17 +167,17 @@ urlpatterns = [
 
 
 
-# COURSES
-path('courses/', CourseListView.as_view(), name='course_list'),
-path('courses/manage/', CourseManagementView.as_view(), name='course_management'),  # ✅ this name matters
+# SUBJECTS MANAGEMENT
+path('subjects/', CourseListView.as_view(), name='subjects_list'),
+path('subjects/manage/', CourseManagementView.as_view(), name='subjects_management'),  # ✅ this name matters
 
 # SUBJECT ENROLLMENT FOR TANZANIAN O-LEVEL
-path('subjects/', SubjectEnrollmentListView.as_view(), name='subject_enrollment_list'),
-path('subjects/dashboard/', views.subject_enrollment_dashboard, name='subject_enrollment_dashboard'),
+path('subjects/enrollment/', SubjectEnrollmentListView.as_view(), name='subject_enrollment_list'),
+path('subjects/enrollment/dashboard/', views.subject_enrollment_dashboard, name='subject_enrollment_dashboard'),
 path('subjects/enroll/<int:student_id>/', views.enroll_student_subjects, name='enroll_student_subjects'),
 path('subjects/bulk-enroll/', views.bulk_subject_enrollment, name='bulk_subject_enrollment'),
 
-# SUBJECT MANAGEMENT
+# SUBJECT MANAGEMENT (ADMIN)
 path('manage/subjects/', SubjectListView.as_view(), name='subject_list'),
 path('manage/subjects/add/', SubjectCreateView.as_view(), name='subject_create'),
 path('manage/subjects/<int:pk>/edit/', SubjectUpdateView.as_view(), name='subject_update'),

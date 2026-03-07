@@ -1,151 +1,129 @@
-{% extends 'core/student_dashboard.html' %}
+{% extends 'core/base_dashboard.html' %}
 {% load static %}
 
-{% block title %}My Courses - {{ school_info.name }}{% endblock %}
+{% block title %}My Subjects | Mkalala Sec{% endblock %}
+{% block mobile_title %}My Subjects{% endblock %}
+{% block user_role %}Student Portal{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'student_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'student_courses' %}" class="sidebar-item-active">
+    <i class="fas fa-book"></i>
+    <span>My Subjects</span>
+</a>
+<a href="{% url 'student_timetable' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar"></i>
+    <span>Timetable</span>
+</a>
+<a href="{% url 'student_results' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-line"></i>
+    <span>Exam Results</span>
+</a>
+<a href="{% url 'student_assignments' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-tasks"></i>
+    <span>Assignments</span>
+</a>
+<a href="{% url 'student_fees' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-credit-card"></i>
+    <span>Fee Payments</span>
+</a>
+<a href="{% url 'student_library' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bookmark"></i>
+    <span>Library</span>
+</a>
+<a href="{% url 'student_messages' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+</a>
+<a href="{% url 'student_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-circle"></i>
+    <span>Profile</span>
+</a>
+{% endblock %}
 
 {% block main_content %}
-<div class="content-wrapper">
-    <!-- Page Header -->
-    <div class="dashboard-header">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h1 class="h3 mb-0">My Courses</h1>
-                    <p class="mb-0 opacity-75">Manage your course enrollments and track progress</p>
-                </div>
-                <div class="col-auto">
-                    <div class="d-flex gap-3">
-                        <div class="text-end">
-                            <small class="d-block opacity-75">Current Level</small>
-                            <strong>{{ student.get_current_level_display }}</strong>
-                        </div>
-                        <div class="text-end">
-                            <small class="d-block opacity-75">Total Courses</small>
-                            <strong>{{ enrollments|length }}</strong>
-                        </div>
-                    </div>
-                </div>
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900">Academic Load</h1>
+            <p class="text-slate-500 font-medium">Currently enrolled in <span class="text-blue-600 font-bold">{{ enrollments|length }}</span> core and elective subjects.</p>
+        </div>
+        <div class="flex items-center bg-blue-50 px-6 py-3 rounded-2xl border border-blue-100">
+            <div class="text-right">
+                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest leading-none mb-1">Attendance Weighted</p>
+                <p class="text-xl font-bold text-blue-600">{{ average_attendance|floatformat:1 }}%</p>
+            </div>
+            <div class="w-10 h-10 ml-4 rounded-xl bg-blue-600 flex items-center justify-center text-white">
+                <i class="fas fa-calendar-check"></i>
             </div>
         </div>
     </div>
-    
-    <!-- Main Content -->
-    <div class="content-body">
-        <!-- Enrolled Courses -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="stat-card">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-book-open me-2"></i> Current Enrollments</h5>
-                    {% if enrollments %}
-                        {% for enrollment_data in enrollments %}
-                            <div class="course-card p-3 mb-3 bg-light rounded">
-                                <div class="row align-items-center">
-                                    <div class="col-md-6">
-                                        <h6 class="mb-1">{{ enrollment_data.enrollment.course_offering.course.name }}</h6>
-                                        <p class="mb-1 text-muted">{{ enrollment_data.enrollment.course_offering.course.code }}</p>
-                                        <small class="text-muted">
-                                            Instructor: {{ enrollment_data.enrollment.course_offering.faculty.user.get_full_name }}
-                                        </small>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="text-center">
-                                            <span class="attendance-badge {% if enrollment_data.attendance_percentage >= 75 %}bg-success{% elif enrollment_data.attendance_percentage >= 50 %}bg-warning{% else %}bg-danger{% endif %} text-white">
-                                                {{ enrollment_data.attendance_percentage|floatformat:0 }}%
-                                            </span>
-                                            <br><small class="text-muted">Attendance</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="text-end">
-                                            {% if enrollment_data.grade %}
-                                                <span class="badge bg-info">{{ enrollment_data.grade.grade }}</span>
-                                                <br><small class="text-muted">Current Grade</small>
-                                            {% else %}
-                                                <span class="badge bg-secondary">In Progress</span>
-                                                <br><small class="text-muted">Status</small>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
+
+    <!-- Enrolled Subjects Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for data in enrollments %}
+        <div class="card-premium p-6 hover:border-blue-200 transition-all flex flex-col justify-between group">
+            <div class="space-y-4">
+                <div class="flex justify-between items-start">
+                    <div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center font-bold text-lg group-hover:bg-blue-600 group-hover:text-white transition-all">
+                        {{ data.enrollment.course_offering.course.name|slice:":1" }}
+                    </div>
+                    {% if data.grade %}
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full uppercase">{{ data.grade }}</span>
                     {% else %}
-                        <div class="text-center py-5">
-                            <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No courses enrolled yet</h5>
-                            <p class="text-muted">Check the available courses below to get started.</p>
-                        </div>
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-full uppercase">Active</span>
                     {% endif %}
                 </div>
-            </div>
-        </div>
-        
-        <!-- Available Courses for Enrollment -->
-        {% if available_courses %}
-        <div class="row">
-            <div class="col-12">
-                <div class="stat-card">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-plus-circle me-2"></i> Available Courses for Enrollment</h5>
-                    <div class="row">
-                        {% for course_offering in available_courses %}
-                            <div class="col-md-6 mb-3">
-                                <div class="border rounded p-3">
-                                    <h6 class="mb-1">{{ course_offering.course.name }}</h6>
-                                    <p class="mb-2 text-muted">{{ course_offering.course.code }}</p>
-                                    <p class="mb-2 small">{{ course_offering.course.description|truncatewords:20 }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            Instructor: {{ course_offering.faculty.user.get_full_name }}
-                                        </small>
-                                        <form method="post" action="{% url 'enroll_course' %}">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="course_offering_id" value="{{ course_offering.id }}">
-                                            <button type="submit" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-plus me-1"></i>Enroll
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
+                <div>
+                    <h3 class="font-bold text-slate-900 text-lg">{{ data.enrollment.course_offering.course.name }}</h3>
+                    <p class="text-xs text-slate-400 font-medium tracking-tight">{{ data.enrollment.course_offering.course.code }} • Instructor: {{ data.enrollment.course_offering.faculty.user.get_full_name }}</p>
                 </div>
             </div>
-        </div>
-        {% endif %}
-        
-        <!-- Semester Information -->
-        {% if current_semester %}
-        <div class="row">
-            <div class="col-12">
-                <div class="stat-card">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-calendar-alt me-2"></i> Current Semester</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p class="mb-2"><strong>Semester:</strong> {{ current_semester.name }}</p>
-                            <p class="mb-2"><strong>Start Date:</strong> {{ current_semester.start_date|date:"F d, Y" }}</p>
-                            <p class="mb-0"><strong>End Date:</strong> {{ current_semester.end_date|date:"F d, Y" }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p class="mb-2"><strong>Total Enrolled:</strong> {{ enrollments|length }} courses</p>
-                            <p class="mb-2"><strong>Average Attendance:</strong> 
-                                {% if enrollments %}
-                                    {% if average_attendance %}
-                                        {{ average_attendance|floatformat:1 }}%
-                                    {% else %}
-                                        0%
-                                    {% endif %}
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </p>
-                            <p class="mb-0"><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
-                        </div>
+            <div class="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="h-1.5 w-24 bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-600 rounded-full" style="width: {{ data.attendance_percentage }}%"></div>
                     </div>
+                    <span class="text-[10px] font-bold text-slate-500">{{ data.attendance_percentage|floatformat:0 }}% ATT.</span>
                 </div>
+                <button class="text-xs font-bold text-blue-600 hover:underline">View Details</button>
             </div>
         </div>
-        {% endif %}
+        {% empty %}
+        <div class="col-span-full card-premium p-12 text-center text-slate-400">
+            <i class="fas fa-book-open text-3xl mb-4"></i>
+            <p class="font-medium">You are not enrolled in any subjects for the current term.</p>
+        </div>
+        {% endfor %}
     </div>
+
+    <!-- Available for Enrollment -->
+    {% if available_courses %}
+    <div class="space-y-4">
+        <h2 class="text-xl font-display font-bold text-slate-900 px-2">Electives & Open Enrollments</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {% for offering in available_courses %}
+            <div class="card-premium p-6 flex flex-col justify-between">
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900">{{ offering.course.name }}</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed line-clamp-2">{{ offering.course.description }}</p>
+                </div>
+                <div class="mt-6 flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ offering.faculty.user.get_full_name }}</span>
+                    <form method="post" action="{% url 'enroll_course' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="course_offering_id" value="{{ offering.id }}">
+                        <button type="submit" class="text-xs font-bold px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all">Enroll</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

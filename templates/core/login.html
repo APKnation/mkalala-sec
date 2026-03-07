@@ -1,525 +1,135 @@
+{% extends "core/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Mkalala Secondary School</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    
-    <style>
-        /* Enhanced Navbar Styles */
-        .navbar {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2c5282 50%, #3b82f6 100%) !important;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 1rem 0;
-        }
-        
-        .navbar-brand {
-            color: #ff4444 !important;
-            font-weight: 700;
-            font-size: 1.5rem;
-            text-decoration: none !important;
-        }
-        
-        .navbar-brand:hover {
-            color: #ff4444 !important;
-        }
-        
-        .navbar-nav .nav-link {
-            color: rgba(255, 255, 255, 0.9) !important;
-            font-weight: 500;
-            margin: 0 0.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .navbar-nav .nav-link:hover {
-            color: #ff4444 !important;
-            transform: translateY(-2px);
-        }
-        
-        .navbar-nav .nav-link.active {
-            color: #ff4444 !important;
-        }
-        
-        .navbar-nav .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: #ff4444;
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-        
-        .navbar-nav .nav-link:hover::after,
-        .navbar-nav .nav-link.active::after {
-            width: 100%;
-        }
-        
-        /* Login Section */
-        .login-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .login-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
-            background-size: cover;
-        }
-        
-        .login-container {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 450px;
-        }
-        
-        .login-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-            animation: slideInUp 0.6s ease-out;
-        }
-        
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .login-header {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2c5282 50%, #3b82f6 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-        
-        .login-logo {
-            font-size: 3rem;
-            color: #ff4444;
-            margin-bottom: 1rem;
-        }
-        
-        .login-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        
-        .login-subtitle {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            margin-top: 0.5rem;
-        }
-        
-        .login-body {
-            padding: 2.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: #1e3a8a;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .form-label i {
-            color: #ff4444;
-            margin-right: 0.5rem;
-            width: 20px;
-        }
-        
-        .form-control {
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .form-control:focus {
-            border-color: #ff4444;
-            box-shadow: 0 0 0 0.2rem rgba(255, 68, 68, 0.25);
-            outline: none;
-        }
-        
-        .btn-login {
-            background: linear-gradient(135deg, #ff4444 0%, #ff6666 100%);
-            color: white;
-            border: none;
-            padding: 0.875rem 2rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            width: 100%;
-            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
-        }
-        
-        .btn-login:hover {
-            background: linear-gradient(135deg, #ff6666 0%, #ff8888 100%);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 68, 68, 0.4);
-        }
-        
-        .btn-login:active {
-            transform: translateY(0);
-        }
-        
-        .login-footer {
-            background: #f8f9fa;
-            padding: 1.5rem 2.5rem;
-            text-align: center;
-        }
-        
-        .login-footer a {
-            color: #ff4444;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        
-        .login-footer a:hover {
-            color: #ff6666;
-            text-decoration: underline;
-        }
-        
-        .alert {
-            border-radius: 10px;
-            border: none;
-            margin-bottom: 1.5rem;
-        }
-        
-        .alert-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%);
-            color: white;
-        }
-        
-        .input-group-text {
-            background: transparent;
-            border: 2px solid #e9ecef;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-            color: #ff4444;
-        }
-        
-        .input-group .form-control {
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .input-group:focus-within .input-group-text {
-            border-color: #ff4444;
-        }
-        
-        .input-group:focus-within .form-control {
-            border-color: #ff4444;
-        }
-        
-        /* Features Section */
-        .features-section {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .feature-item {
-            text-align: center;
-            padding: 1rem;
-        }
-        
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.5rem;
-            color: white;
-        }
-        
-        .feature-title {
-            font-weight: 600;
-            color: #1e3a8a;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature-text {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 576px) {
-            .login-container {
-                padding: 0 1rem;
-            }
-            
-            .login-card {
-                border-radius: 15px;
-            }
-            
-            .login-header {
-                padding: 1.5rem;
-            }
-            
-            .login-body {
-                padding: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'public_home' %}">
-                <i class="fas fa-graduation-cap me-2"></i>Mkalala Secondary School
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+
+{% block title %}Login | Mkalala Secondary School{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
+  <!-- Dynamic blurred backgrounds -->
+  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-100 rounded-full blur-[120px] opacity-50 -z-10 animate-pulse"></div>
+  <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-100 rounded-full blur-[120px] opacity-50 -z-10 animate-pulse delay-700"></div>
+
+  <div class="max-w-md w-full animate-in fade-in zoom-in-95 duration-700">
+    <div class="card-premium p-8 lg:p-12 bg-white/70 backdrop-blur-xl border-white shadow-2xl relative overflow-hidden">
+        <!-- Accent line top -->
+        <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+        <div class="text-center space-y-3 mb-12">
+            <div class="inline-flex w-20 h-20 bg-blue-600 rounded-2xl items-center justify-center text-white shadow-xl shadow-blue-600/30 mb-2 transform hover:rotate-6 transition-transform">
+                <i class="fas fa-shield-alt text-3xl"></i>
+            </div>
+            <h2 class="text-3xl font-display font-bold text-slate-900 tracking-tight">Portal Gateway</h2>
+            <p class="text-slate-500 font-medium">Access your academic horizon and resources.</p>
+        </div>
+
+        {% if messages %}
+            <div class="space-y-4 mb-8">
+                {% for message in messages %}
+                    <div class="p-4 rounded-2xl {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-green-50 text-green-700 border border-green-100{% endif %} flex items-center space-x-3 transition-all animate-in slide-in-from-top-4">
+                        <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+                        <p class="text-sm font-bold">{{ message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+
+            <!-- Automated Portal Gateway -->
+            <div class="space-y-3">
+                <div class="px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">Intelligent Portal</p>
+                        <p class="text-xs font-bold text-slate-700">Automatic Role Detection</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label for="id_username" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">Identifier</label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-blue-600 transition-colors">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <input type="text" name="username" id="id_username" required
+                            class="form-input-modern pl-11"
+                            placeholder="Username or school ID">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <label for="id_password" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">Credential</label>
+                        <a href="#" class="text-[10px] font-bold text-blue-600 hover:text-blue-700 uppercase tracking-widest transition-colors">Recover?</a>
+                    </div>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-300 group-focus-within:text-blue-600 transition-colors">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <input type="password" name="password" id="id_password" required
+                            class="form-input-modern pl-11"
+                            placeholder="••••••••••••">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="remember" name="remember" class="w-4 h-4 text-blue-600 border-slate-200 rounded-lg focus:ring-blue-500 checked:bg-blue-600">
+                <label for="remember" class="ml-3 text-sm text-slate-500 font-medium">Keep me signed in for 30 days</label>
+            </div>
+
+            <button type="submit" class="btn-glow-primary w-full py-4 text-lg font-bold group">
+                Enter Portal <i class="fas fa-arrow-right ml-2 text-sm group-hover:translate-x-1 transition-transform"></i>
             </button>
             
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'public_home' %}">
-                            <i class="fas fa-home me-1"></i>Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'public_about' %}">
-                            <i class="fas fa-info-circle me-1"></i>About
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'public_courses' %}">
-                            <i class="fas fa-book me-1"></i>Subjects
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'public_admissions' %}">
-                            <i class="fas fa-user-plus me-1"></i>Admissions
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'public_contact' %}">
-                            <i class="fas fa-envelope me-1"></i>Contact
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'login' %}">
-                            <i class="fas fa-sign-in-alt me-1"></i>Login
-                        </a>
-                    </li>
-                </ul>
+            <div class="text-center pt-2">
+                <p class="text-slate-400 font-medium text-sm">New here? <a href="{% url 'register' %}" class="text-blue-600 font-bold hover:underline">Create an account</a></p>
+            </div>
+        </form>
+    </div>
+
+    <!-- Demo Section (Hidable) -->
+    <div class="mt-12 max-w-sm mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500">
+        <div class="bg-slate-100 rounded-3xl p-6 border border-slate-200 shadow-inner-soft">
+            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] text-center mb-4">Quick Access Demos</h4>
+            <div class="grid grid-cols-4 gap-2">
+                <button onclick="fill('student', 'student001')" class="p-2 py-3 rounded-2xl bg-white hover:bg-blue-50 border border-white shadow-sm transition-all text-[10px] font-bold text-slate-600 flex flex-col items-center justify-center space-y-1">
+                    <i class="fas fa-graduation-cap text-blue-500"></i>
+                    <span>Student</span>
+                </button>
+                <button onclick="fill('teacher', 'teacher001')" class="p-2 py-3 rounded-2xl bg-white hover:bg-indigo-50 border border-white shadow-sm transition-all text-[10px] font-bold text-slate-600 flex flex-col items-center justify-center space-y-1">
+                    <i class="fas fa-chalkboard-teacher text-indigo-500"></i>
+                    <span>Teacher</span>
+                </button>
+                <button onclick="fill('admin', 'admin001')" class="p-2 py-3 rounded-2xl bg-white hover:bg-slate-200 border border-white shadow-sm transition-all text-[10px] font-bold text-slate-600 flex flex-col items-center justify-center space-y-1">
+                    <i class="fas fa-user-shield text-slate-700"></i>
+                    <span>Admin</span>
+                </button>
+                <button onclick="fill('headmaster', 'head001')" class="p-2 py-3 rounded-2xl bg-white hover:bg-amber-50 border border-white shadow-sm transition-all text-[10px] font-bold text-slate-600 flex flex-col items-center justify-center space-y-1">
+                    <i class="fas fa-crown text-amber-500"></i>
+                    <span>Head</span>
+                </button>
             </div>
         </div>
-    </nav>
+    </div>
+  </div>
+</div>
 
-    <!-- Login Section -->
-    <section class="login-section">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6">
-                    <div class="login-container">
-                        <div class="login-card">
-                            <!-- Login Header -->
-                            <div class="login-header">
-                                <div class="login-logo">
-                                    <i class="fas fa-graduation-cap"></i>
-                                </div>
-                                <h2 class="login-title">Welcome Back</h2>
-                                <p class="login-subtitle">Sign in to access your account</p>
-                            </div>
-                            
-                            <!-- Login Form -->
-                            <div class="login-body">
-                                {% if messages %}
-                                    {% for message in messages %}
-                                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                                            {{ message }}
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                        </div>
-                                    {% endfor %}
-                                {% endif %}
-                                
-                                <form method="post">
-                                    {% csrf_token %}
-                                    
-                                    <div class="form-group">
-                                        <label for="username" class="form-label">
-                                            <i class="fas fa-user"></i>
-                                            Username
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="fas fa-user"></i>
-                                            </span>
-                                            <input type="text" 
-                                                   class="form-control" 
-                                                   id="username" 
-                                                   name="username" 
-                                                   placeholder="Enter your username"
-                                                   required>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="password" class="form-label">
-                                            <i class="fas fa-lock"></i>
-                                            Password
-                                        </label>
-                                        <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="fas fa-lock"></i>
-                                            </span>
-                                            <input type="password" 
-                                                   class="form-control" 
-                                                   id="password" 
-                                                   name="password" 
-                                                   placeholder="Enter your password"
-                                                   required>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="form-group mb-4">
-                                        <button type="submit" class="btn btn-login">
-                                            <i class="fas fa-sign-in-alt me-2"></i>
-                                            Sign In
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                            
-                            <!-- Login Footer -->
-                            <div class="login-footer">
-                                <p class="mb-2">
-                                    Don't have an account? 
-                                    <a href="{% url 'register' %}">Register here</a>
-                                </p>
-                                <p class="mb-0">
-                                    <a href="{% url 'public_contact' %}">Forgot your password?</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Features Section -->
-                <div class="col-lg-6">
-                    <div class="features-section">
-                        <h3 class="text-center mb-4" style="color: #1e3a8a; font-weight: 700;">
-                            Why Choose Mkalala Secondary School?
-                        </h3>
-                        
-                        <div class="row">
-                            <div class="col-6 col-lg-12 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-shield-alt"></i>
-                                    </div>
-                                    <h5 class="feature-title">Secure Access</h5>
-                                    <p class="feature-text">Protected login system with advanced security features</p>
-                                </div>
-                            </div>
-                            
-                            <div class="col-6 col-lg-12 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                    <h5 class="feature-title">Role-Based Access</h5>
-                                    <p class="feature-text">Customized dashboard for students, teachers, and staff</p>
-                                </div>
-                            </div>
-                            
-                            <div class="col-6 col-lg-12 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-mobile-alt"></i>
-                                    </div>
-                                    <h5 class="feature-title">Mobile Friendly</h5>
-                                    <p class="feature-text">Access your account from any device, anywhere</p>
-                                </div>
-                            </div>
-                            
-                            <div class="col-6 col-lg-12 mb-3">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <i class="fas fa-headset"></i>
-                                    </div>
-                                    <h5 class="feature-title">24/7 Support</h5>
-                                    <p class="feature-text">Get help whenever you need it</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function fill(role, username) {
+    document.getElementById('id_username').value = username;
+    document.getElementById('id_password').value = 'password123';
     
-    <script>
-        // Auto-focus on username field
-        document.addEventListener('DOMContentLoaded', function() {
-            const usernameField = document.getElementById('username');
-            if (usernameField) {
-                usernameField.focus();
-            }
-        });
-        
-        // Add loading state to form submission
-        const loginForm = document.querySelector('form');
-        const loginButton = document.querySelector('.btn-login');
-        
-        loginForm.addEventListener('submit', function() {
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Signing In...';
-            loginButton.disabled = true;
-        });
-    </script>
-</body>
-</html>
+    const container = document.querySelector('.card-premium');
+    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    container.classList.add('ring-4', 'ring-blue-100');
+    setTimeout(() => container.classList.remove('ring-4', 'ring-blue-100'), 500);
+  }
+</script>
+{% endblock %}

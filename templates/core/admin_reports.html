@@ -1,0 +1,141 @@
+{% extends 'core/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}Academic Reports | Mkalala Sec{% endblock %}
+{% block mobile_title %}Reports{% endblock %}
+{% block user_role %}Systems Architect{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-coins"></i>
+    <span>Finance</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">System</div>
+<a href="{% url 'admin_reports' %}" class="sidebar-item-active">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900">Institutional Analytics</h1>
+            <p class="text-slate-500 font-medium">Generate comprehensive reports for academic and administrative review.</p>
+        </div>
+        <button class="btn-glow-primary px-8 py-3">
+            <i class="fas fa-file-export mr-2"></i> Export Master Report
+        </button>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card-premium p-8 bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-none shadow-xl group">
+             <div class="flex justify-between items-start mb-6">
+                 <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-xl backdrop-blur-md">
+                     <i class="fas fa-graduation-cap"></i>
+                 </div>
+                 <i class="fas fa-arrow-up text-emerald-300"></i>
+             </div>
+             <p class="text-[10px] font-bold text-blue-200 uppercase tracking-[0.2em] mb-2">Academic Index</p>
+             <h3 class="text-3xl font-bold">88.4 / 100</h3>
+             <p class="text-xs text-blue-200/60 mt-4 leading-relaxed line-clamp-2">Aggregated performance across all subjects based on recent mock examinations.</p>
+        </div>
+
+        <div class="card-premium p-8 border-none shadow-soft group hover:shadow-xl transition-all">
+             <div class="flex justify-between items-start mb-6">
+                 <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+                     <i class="fas fa-walking"></i>
+                 </div>
+                 <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">High</span>
+             </div>
+             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Student Engagement</p>
+             <h3 class="text-3xl font-bold text-slate-900">92%</h3>
+             <div class="h-1.5 w-full bg-slate-100 rounded-full mt-6 overflow-hidden">
+                 <div class="h-full bg-emerald-500 rounded-full w-[92%]"></div>
+             </div>
+        </div>
+
+        <div class="card-premium p-8 border-none shadow-soft">
+             <div class="flex justify-between items-start mb-6">
+                 <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                     <i class="fas fa-database"></i>
+                 </div>
+             </div>
+             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Total Managed Data</p>
+             <h3 class="text-3xl font-bold text-slate-900">12.5k <span class="text-lg text-slate-400">Entries</span></h3>
+             <p class="text-xs text-slate-400 mt-4 italic">Includes results, attendance, and transactions.</p>
+        </div>
+    </div>
+
+    <!-- Report Types -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <h3 class="font-bold text-slate-900">Available Report Modules</h3>
+        </div>
+        <div class="p-4 grid md:grid-cols-2 gap-4">
+            <div class="p-6 rounded-2xl border border-slate-100 hover:border-blue-200 hover:bg-blue-50/10 transition-all flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><i class="fas fa-file-contract"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Annual Subject Performance</h4>
+                        <p class="text-xs text-slate-400">Historical grade distribution by department.</p>
+                    </div>
+                </div>
+                <i class="fas fa-download text-slate-300 group-hover:text-blue-600 transition-colors"></i>
+            </div>
+
+            <div class="p-6 rounded-2xl border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/10 transition-all flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Revenue & Arrears Summary</h4>
+                        <p class="text-xs text-slate-400">Financial health and pending fee collections.</p>
+                    </div>
+                </div>
+                <i class="fas fa-download text-slate-300 group-hover:text-emerald-600 transition-colors"></i>
+            </div>
+
+            <div class="p-6 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/10 transition-all flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center"><i class="fas fa-id-badge"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Staff Contribution Audit</h4>
+                        <p class="text-xs text-slate-400">Workload distribution and attendance records.</p>
+                    </div>
+                </div>
+                <i class="fas fa-download text-slate-300 group-hover:text-indigo-600 transition-colors"></i>
+            </div>
+
+            <div class="p-6 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/10 transition-all flex items-center justify-between group cursor-pointer">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i class="fas fa-microscope"></i></div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Inventory & Facilities</h4>
+                        <p class="text-xs text-slate-400">Lab resources and library stock valuation.</p>
+                    </div>
+                </div>
+                <i class="fas fa-download text-slate-300 group-hover:text-amber-600 transition-colors"></i>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

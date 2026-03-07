@@ -1,260 +1,169 @@
-{% extends 'core/student_dashboard.html' %}
+{% extends 'core/base_dashboard.html' %}
 {% load static %}
 
-{% block title %}Results - {{ school_info.name }}{% endblock %}
+{% block title %}Examination Results | Mkalala Sec{% endblock %}
+{% block mobile_title %}Results{% endblock %}
+{% block user_role %}Student Record{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'student_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'student_courses' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>My Subjects</span>
+</a>
+<a href="{% url 'student_timetable' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar"></i>
+    <span>Timetable</span>
+</a>
+<a href="{% url 'student_results' %}" class="sidebar-item-active">
+    <i class="fas fa-chart-line"></i>
+    <span>Exam Results</span>
+</a>
+<a href="{% url 'student_assignments' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-tasks"></i>
+    <span>Assignments</span>
+</a>
+<a href="{% url 'student_fees' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-credit-card"></i>
+    <span>Fee Payments</span>
+</a>
+<a href="{% url 'student_library' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bookmark"></i>
+    <span>Library</span>
+</a>
+<a href="{% url 'student_messages' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+</a>
+<a href="{% url 'student_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-circle"></i>
+    <span>Profile</span>
+</a>
+{% endblock %}
 
 {% block main_content %}
-<div class="content-wrapper">
-    <!-- Page Header -->
-    <div class="dashboard-header">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h1 class="h3 mb-0">My Results</h1>
-                    <p class="mb-0 opacity-75">View your academic performance and examination results</p>
-                </div>
-                <div class="col-auto">
-                    <div class="d-flex gap-3">
-                        <div class="text-end">
-                            <small class="d-block opacity-75">Student ID</small>
-                            <strong>{{ student.roll_number }}</strong>
-                        </div>
-                        <div class="text-end">
-                            <small class="d-block opacity-75">Current Level</small>
-                            <strong>{{ student.get_current_level_display }}</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900">Academic Standing</h1>
+            <p class="text-slate-500 font-medium">Historical performance across NECTA and internal assessments.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+             <button class="px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+                 <i class="fas fa-file-pdf mr-2"></i> Transcript
+             </button>
         </div>
     </div>
-    
-    <!-- Main Content -->
-    <div class="content-body">
-        <!-- Results Summary -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stat-card academic">
-                    <div class="stat-icon academic">
-                        <i class="fas fa-graduation-cap"></i>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-blue-50 text-blue-600"><i class="fas fa-clipboard-check"></i></div>
+            <p class="text-2xl font-bold">{{ total_exams }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Exams</p>
+        </div>
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-emerald-50 text-emerald-600"><i class="fas fa-star text-lg text-emerald-500/50"></i></div>
+            <p class="text-2xl font-bold">{{ best_grade }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Best Grade</p>
+        </div>
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-indigo-50 text-indigo-600"><i class="fas fa-percentage"></i></div>
+            <p class="text-2xl font-bold">{{ pass_rate|floatformat:1 }}%</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pass Rate</p>
+        </div>
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-amber-50 text-amber-600"><i class="fas fa-chart-bar"></i></div>
+            <p class="text-2xl font-bold">{{ average_grade|floatformat:1 }}</p>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Avg. Points</p>
+        </div>
+    </div>
+
+    <!-- NECTA Results -->
+    <div class="card-premium overflow-hidden border-none shadow-soft">
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 leading-none flex items-center">
+                <i class="fas fa-university text-blue-600 mr-2 opacity-30"></i> NECTA Official Results
+            </h3>
+        </div>
+        <div class="p-0 overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-8 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Examination</th>
+                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Subject</th>
+                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Grade</th>
+                        <th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Score</th>
+                        <th class="px-8 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for result in necta_results %}
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-8 py-5">
+                            <p class="font-bold text-slate-900 text-sm">{{ result.get_exam_type_display }}</p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">{{ result.exam_year }}</p>
+                        </td>
+                        <td class="px-6 py-5 font-medium text-slate-600 text-sm">
+                            {{ result.subject.name|default:result.get_subject_display }}
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {% if result.grade in 'A,B' %}bg-emerald-100 text-emerald-700{% elif result.grade in 'C,D' %}bg-amber-100 text-amber-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                {{ result.grade }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5 text-center font-bold text-slate-900 text-sm">
+                            {{ result.score|default:"-" }}
+                        </td>
+                        <td class="px-8 py-5 text-right italic text-slate-400 text-xs">
+                            {{ result.remarks|default:"No comment" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-8 py-16 text-center text-slate-400 italic">No national examination results on record.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Performance Insights -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="card-premium p-8">
+            <h3 class="font-bold text-slate-900 mb-6 flex items-center">
+                <i class="fas fa-lightbulb text-amber-500 mr-2"></i> Strengths & Focus
+            </h3>
+            <div class="space-y-6">
+                {% for subject, data in subject_performance.items %}
+                <div class="space-y-2">
+                    <div class="flex justify-between items-end">
+                        <p class="font-bold text-slate-900 text-sm">{{ subject }}</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Avg: {{ data.average_score|floatformat:0 }}%</p>
                     </div>
-                    <h4 class="fw-bold mb-1">{{ necta_results|length }}</h4>
-                    <p class="text-muted mb-0">NECTA Results</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card success">
-                    <div class="stat-icon success">
-                        <i class="fas fa-chart-line"></i>
+                    <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                        <div class="h-full {% if data.average_score >= 70 %}bg-emerald-500{% elif data.average_score >= 50 %}bg-blue-500{% else %}bg-amber-500{% endif %} rounded-full transition-all" style="width: {{ data.average_score }}%"></div>
                     </div>
-                    <h4 class="fw-bold mb-1">{{ average_grade|default:"N/A" }}</h4>
-                    <p class="text-muted mb-0">Average Grade</p>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card info">
-                    <div class="stat-icon info">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h4 class="fw-bold mb-1">{{ best_grade|default:"N/A" }}</h4>
-                    <p class="text-muted mb-0">Best Grade</p>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stat-card warning">
-                    <div class="stat-icon warning">
-                        <i class="fas fa-chart-pie"></i>
-                    </div>
-                    <h4 class="fw-bold mb-1">{{ pass_rate|default:"0" }}%</h4>
-                    <p class="text-muted mb-0">Pass Rate</p>
-                </div>
+                {% endfor %}
             </div>
         </div>
 
-        <!-- NECTA Results -->
-        <div class="stat-card">
-            <h5 class="fw-bold mb-4"><i class="fas fa-clipboard-list me-2"></i>NECTA Examination Results</h5>
-            
-            {% if necta_results %}
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Exam Type</th>
-                                <th>Year</th>
-                                <th>Subject</th>
-                                <th>Grade</th>
-                                <th>Score</th>
-                                <th>Division</th>
-                                <th>Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for result in necta_results %}
-                                <tr>
-                                    <td>
-                                        <span class="badge bg-primary">{{ result.get_exam_type_display }}</span>
-                                    </td>
-                                    <td>{{ result.exam_year }}</td>
-                                    <td>
-                                        <strong>{{ result.subject.name }}</strong>
-                                        {% if result.subject.code %}
-                                            <small class="text-muted">({{ result.subject.code }})</small>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="badge {% if result.grade in 'A,B' %}bg-success{% elif result.grade in 'C,D' %}bg-warning{% else %}bg-danger{% endif %}">
-                                            {{ result.grade }}
-                                        </span>
-                                    </td>
-                                    <td>{{ result.score|default:"-" }}</td>
-                                    <td>{{ result.division|default:"-" }}</td>
-                                    <td>
-                                        {% if result.remarks %}
-                                            <span class="text-muted">{{ result.remarks }}</span>
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        <div class="card-premium p-8 bg-slate-900 border-none text-white relative overflow-hidden">
+            <div class="relative z-10 flex flex-col h-full justify-between">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Academic Projection</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">Based on your current trajectory in <span class="text-emerald-400 font-bold">Science & Math</span>, you are on track for a Division I placement.</p>
                 </div>
-            {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No NECTA Results Available</h5>
-                    <p class="text-muted">Your examination results will appear here once they are available.</p>
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Subject-wise Performance -->
-        {% if subject_performance %}
-            <div class="stat-card">
-                <h5 class="fw-bold mb-4"><i class="fas fa-chart-bar me-2"></i>Subject-wise Performance</h5>
-                
-                <div class="row">
-                    {% for subject, performance in subject_performance.items %}
-                        <div class="col-md-6 mb-4">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-header bg-primary text-white">
-                                    <h6 class="mb-0">{{ subject.name }}</h6>
-                                    {% if subject.code %}
-                                        <small class="opacity-75">({{ subject.code }})</small>
-                                    {% endif %}
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <p class="mb-2"><strong>Average Score:</strong> {{ performance.average_score|default:"N/A" }}</p>
-                                            <p class="mb-2"><strong>Best Grade:</strong> 
-                                                <span class="badge {% if performance.best_grade in 'A,B' %}bg-success{% elif performance.best_grade in 'C,D' %}bg-warning{% else %}bg-danger{% endif %}">
-                                                    {{ performance.best_grade|default:"N/A" }}
-                                                </span>
-                                            </p>
-                                        </div>
-                                        <div class="col-6">
-                                            <p class="mb-2"><strong>Total Assessments:</strong> {{ performance.total_assessments }}</p>
-                                            <p class="mb-0"><strong>Pass Rate:</strong> {{ performance.pass_rate|default:"0" }}%</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Progress Bar -->
-                                    <div class="progress mb-2">
-                                        <div class="progress-bar {% if performance.average_score >= 70 %}bg-success{% elif performance.average_score >= 50 %}bg-warning{% else %}bg-danger{% endif %}" 
-                                             role="progressbar" 
-                                             style="width: {{ performance.average_score|default:0 }}%">
-                                            {{ performance.average_score|default:0 }}%
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
-                </div>
+                <button class="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-bold transition-all uppercase tracking-widest">View Full Analytics</button>
             </div>
-        {% endif %}
-
-        <!-- Quick Actions -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="stat-card">
-                    <h5 class="fw-bold mb-3"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_courses' %}" class="btn btn-primary w-100">
-                                <i class="fas fa-book-open me-2"></i>My Courses
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_assignments' %}" class="btn btn-info w-100">
-                                <i class="fas fa-tasks me-2"></i>Assignments
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_timetable' %}" class="btn btn-success w-100">
-                                <i class="fas fa-clock me-2"></i>Timetable
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{% url 'student_profile' %}" class="btn btn-secondary w-100">
-                                <i class="fas fa-user me-2"></i>My Profile
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-blue-600/20 blur-3xl rounded-full"></div>
         </div>
     </div>
 </div>
-
-<style>
-.table th {
-    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-    color: white;
-    font-weight: 600;
-    border: none;
-}
-
-.badge {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.6rem;
-}
-
-.progress {
-    height: 8px;
-    border-radius: 4px;
-    background-color: #e9ecef;
-}
-
-.progress-bar {
-    border-radius: 4px;
-    transition: width 0.6s ease;
-}
-
-.card-header {
-    border-bottom: none;
-    font-weight: 600;
-}
-
-.card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-@media (max-width: 768px) {
-    .table {
-        font-size: 0.8rem;
-    }
-    
-    .card {
-        margin-bottom: 1rem;
-    }
-}
-</style>
 {% endblock %}

@@ -1,0 +1,119 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}New{% endif %} Subject | Mkalala Sec{% endblock %}
+{% block mobile_title %}Subject Form{% endblock %}
+{% block user_role %}Curriculum Management{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'admin_students' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'faculty_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Faculty</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item-active">
+    <i class="fas fa-book-open"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-wallet"></i>
+    <span>Fees & Finance</span>
+</a>
+<a href="{% url 'admin_announcements' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+<a href="{% url 'admin_reports' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+<a href="{% url 'admin_settings' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="max-w-2xl mx-auto space-y-8 animate-in fade-in zoom-in-95 duration-700">
+    <!-- Header -->
+    <div class="space-y-2">
+        <a href="{% url 'subjects_management' %}" class="inline-flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-blue-600 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Oversight
+        </a>
+        <h1 class="text-3xl font-display font-bold text-slate-900">{% if form.instance.pk %}Refine{% else %}Register{% endif %} Subject</h1>
+        <p class="text-slate-500 font-medium">Coordinate the institutional curriculum by defining course parameters.</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card-premium p-8 lg:p-10 bg-white shadow-2xl relative overflow-hidden">
+        <!-- Accent line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="p-4 rounded-xl bg-red-50 text-red-700 border border-red-100 flex items-center space-x-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p class="text-xs font-bold">{{ form.non_field_errors.0 }}</p>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for field in form %}
+                <div class="space-y-2 {% if field.name == 'description' %}md:col-span-2{% endif %}">
+                    <label for="{{ field.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                    </label>
+                    <div class="relative group">
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row gap-4">
+                <button type="submit" class="btn-glow-primary px-8 py-4 font-bold text-sm flex-1 group shadow-xl shadow-blue-600/20">
+                    <i class="fas fa-save mr-2 group-hover:scale-110 transition-transform"></i>
+                    {% if form.instance.pk %}Update Specifications{% else %}Confirm Registration{% endif %}
+                </button>
+                <a href="{% url 'subjects_management' %}" class="px-8 py-4 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-2xl transition-all font-bold text-sm text-center">
+                    Discard Changes
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Guidelines Sidebar -->
+    <div class="p-6 rounded-3xl bg-blue-50/50 border border-blue-100/50 flex items-start space-x-4">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shrink-0">
+            <i class="fas fa-info-circle text-lg"></i>
+        </div>
+        <div>
+            <h4 class="text-sm font-bold text-slate-900 mb-1">Registration Guidelines</h4>
+            <p class="text-xs text-slate-500 leading-relaxed font-medium">Ensure the subject code follows the NECTA (National Examinations Council of Tanzania) convention for better reporting. Descriptive field text assists faculty in curriculum planning.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Premium overrides for form inputs */
+    input[type="text"], input[type="number"], select, textarea {
+        @apply w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none !important;
+    }
+    textarea {
+        @apply min-h-[120px] !important;
+    }
+</style>
+{% endblock %}

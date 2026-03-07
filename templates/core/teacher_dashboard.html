@@ -1,545 +1,199 @@
+{% extends "core/base_dashboard.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - {{ school_info.name }}</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f3f4f6;
-        }
-        
-        .sidebar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            height: 100vh !important;
-            width: 280px !important;
-            background: linear-gradient(180deg, #059669 0%, #10b981 50%, #34d399 100%) !important;
-            color: white !important;
-            z-index: 9999 !important;
-            overflow-y: auto !important;
-            transition: transform 0.3s ease !important;
-            display: block !important;
-            visibility: visible !important;
-            box-shadow: 2px 0 20px rgba(0,0,0,0.3) !important;
-        }
-        
-        .sidebar-header {
-            padding: 1.5rem;
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        }
-        
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .sidebar-logo i {
-            font-size: 1.5rem;
-            color: #fbbf24;
-        }
-        
-        .sidebar-logo span {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: white;
-        }
-        
-        .nav-section {
-            padding: 1rem 0;
-        }
-        
-        .nav-section-title {
-            padding: 0.5rem 1.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.05em;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-        
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border-left-color: #fbbf24;
-        }
-        
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: #fbbf24;
-            border-left-color: #fbbf24;
-        }
-        
-        .nav-item i {
-            width: 20px;
-            text-align: center;
-        }
-        
-        .main-content {
-            margin-left: 280px;
-            padding: 2rem;
-            min-height: 100vh;
-        }
-        
-        .dashboard-header {
-            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-            color: white;
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin-bottom: 1rem;
-        }
-        
-        .chart-container {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
-        
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            transition: background 0.3s ease;
-        }
-        
-        .activity-item:hover {
-            background: #f9fafb;
-        }
-        
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.875rem;
-        }
-        
-        .course-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                padding: 1rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <i class="fas fa-graduation-cap"></i>
-                <span>{{ school_info.name|default:"School Management" }}</span>
-            </div>
+
+{% block title %}Teacher Dashboard | Mkalala Sec{% endblock %}
+{% block mobile_title %}Teacher Portal{% endblock %}
+{% block user_role %}Teacher | {{ faculty_profile.department.name|default:"Science" }}{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'teacher_dashboard' %}" class="sidebar-item-active">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-reader"></i>
+    <span>My Classes</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-pen-nib"></i>
+    <span>Grading</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-clipboard-check"></i>
+    <span>Attendance</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar-alt"></i>
+    <span>My Schedule</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+<a href="{% url 'edit_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-cog"></i>
+    <span>Profile Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Header Cards -->
+<div class="card-premium p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white border-none shadow-2xl">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-2">
+            <h1 class="text-3xl font-display font-bold">Good Day, {{ request.user.first_name|default:"Teacher" }}! ☕</h1>
+            <p class="text-slate-400">You have <span class="text-blue-400 font-bold">5 assignments</span> waiting to be graded today.</p>
         </div>
-        
-        <nav class="nav-section">
-            <div class="nav-section-title">Main Menu</div>
-            <a href="{% url 'teacher_dashboard' %}" class="nav-item active">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-book"></i>
-                <span>My Courses</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Schedule</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-clipboard-list"></i>
-                <span>Assignments</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-chart-line"></i>
-                <span>Grades</span>
-            </a>
-        </nav>
-        
-        <nav class="nav-section">
-            <div class="nav-section-title">Communication</div>
-            <a href="#" class="nav-item">
-                <i class="fas fa-envelope"></i>
-                <span>Messages</span>
-            </a>
-            <a href="#" class="nav-item">
-                <i class="fas fa-bullhorn"></i>
-                <span>Announcements</span>
-            </a>
-        </nav>
-        
-        <!-- User Profile -->
-        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold">{{ request.user.first_name.0|default:"T" }}</span>
-                </div>
-                <div class="flex-1">
-                    <div class="text-white font-medium">{{ request.user.get_full_name|default:"Teacher" }}</div>
-                    <div class="text-white/70 text-sm">{{ faculty_profile.department.name|default:"Teacher" }}</div>
-                </div>
-                <a href="{% url 'logout' %}" class="text-white/70 hover:text-white transition-colors">
-                    <i class="fas fa-sign-out-alt"></i>
-                </a>
-            </div>
+        <div class="flex gap-3">
+            <button class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-bold text-sm border border-white/10">
+                <i class="fas fa-calendar-plus mr-2"></i>Schedule Class
+            </button>
+            <button class="btn-glow-primary px-5 py-3 text-sm">
+                <i class="fas fa-plus mr-2"></i>New Assignment
+            </button>
         </div>
-    </aside>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-blue-50 text-blue-600">
+            <i class="fas fa-book"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ my_subjects|default:"4" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">My Subjects</p>
+    </div>
     
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Dashboard Header -->
-        <div class="dashboard-header animate__animated animate__fadeInDown">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold mb-2">Teacher Dashboard</h1>
-                    <p class="text-white/90">Welcome back, {{ request.user.get_full_name|default:"Teacher" }}!</p>
-                </div>
-                <div class="flex gap-3 mt-4 md:mt-0">
-                    <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors">
-                        <i class="fas fa-calendar-plus mr-2"></i>Schedule Class
-                    </button>
-                    <button class="bg-white text-green-600 hover:bg-green-50 px-4 py-2 rounded-lg transition-colors font-medium">
-                        <i class="fas fa-plus mr-2"></i>New Assignment
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-indigo-50 text-indigo-600">
+            <i class="fas fa-users"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ total_students|default:"120" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Students</p>
+    </div>
+    
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-amber-50 text-amber-600">
+            <i class="fas fa-clock"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ pending_assignments|default:"12" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Grading</p>
+    </div>
+    
+    <div class="stat-card-modern">
+        <div class="stat-icon bg-emerald-50 text-emerald-600">
+            <i class="fas fa-chalkboard"></i>
+        </div>
+        <p class="text-2xl font-bold">{{ classes_today|default:"3" }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Classes Today</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- performance Chart -->
+    <div class="card-premium p-6">
+        <h3 class="font-bold text-slate-900 mb-6 flex items-center">
+            <i class="fas fa-chart-line text-blue-600 mr-2"></i> Class Performance Trend
+        </h3>
+        <div class="h-64">
+            <canvas id="performanceChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Active Classes -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="font-bold text-slate-900">Active Subjects</h3>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">{{ subjects.count }} Total</span>
+        </div>
+        <div class="divide-y divide-slate-50">
+            {% for subject in subjects %}
+                <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition-all">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-blue-100/50 rounded-xl flex items-center justify-center text-blue-600 text-lg font-bold">
+                            {{ subject.course.name|slice:":1" }}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">{{ subject.course.name }}</h4>
+                            <p class="text-xs text-slate-500 font-medium">{{ subject.enrollments.count }} Enrolled • {{ subject.course.credits|default:"4.0" }} Credits</p>
+                        </div>
+                    </div>
+                    <button class="p-2 text-slate-400 hover:text-blue-600">
+                        <i class="fas fa-external-link-alt"></i>
                     </button>
                 </div>
+            {% empty %}
+                <div class="p-12 text-center text-slate-400">
+                    <i class="fas fa-folder-open text-4xl mb-4"></i>
+                    <p class="font-medium">No active subjects found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity Timeline -->
+<div class="card-premium p-6">
+    <h3 class="font-bold text-slate-900 mb-8 flex items-center">
+        <i class="fas fa-history text-indigo-600 mr-2"></i> Recent Activity
+    </h3>
+    <div class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:w-0.5 before:bg-slate-100">
+        <div class="relative flex items-center space-x-6">
+            <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white ring-8 ring-white z-10">
+                <i class="fas fa-check-double text-xs"></i>
+            </div>
+            <div class="flex-1 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <p class="text-sm font-bold text-slate-900">Assignment graded for Mathematics Class</p>
+                <p class="text-xs text-slate-500">2 hours ago</p>
             </div>
         </div>
-        
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                <div class="stat-icon bg-gradient-to-br from-green-500 to-green-600">
-                    <i class="fas fa-book"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ my_courses }}</h3>
-                <p class="text-gray-600 text-sm">My Courses</p>
-                <div class="mt-3 flex items-center text-sm">
-                    <span class="text-green-600"><i class="fas fa-arrow-up mr-1"></i>2 new</span>
-                    <span class="text-gray-500 ml-2">this semester</span>
-                </div>
+        <div class="relative flex items-center space-x-6">
+            <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white ring-8 ring-white z-10">
+                <i class="fas fa-user-plus text-xs"></i>
             </div>
-            
-            <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                <div class="stat-icon bg-gradient-to-br from-blue-500 to-blue-600">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ total_students }}</h3>
-                <p class="text-gray-600 text-sm">Total Students</p>
-                <div class="mt-3 flex items-center text-sm">
-                    <span class="text-green-600"><i class="fas fa-arrow-up mr-1"></i>15%</span>
-                    <span class="text-gray-500 ml-2">enrollment rate</span>
-                </div>
-            </div>
-            
-            <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                <div class="stat-icon bg-gradient-to-br from-amber-500 to-amber-600">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ pending_assignments }}</h3>
-                <p class="text-gray-600 text-sm">Pending</p>
-                <div class="mt-3 flex items-center text-sm">
-                    <span class="text-red-600"><i class="fas fa-clock mr-1"></i>5 due today</span>
-                    <span class="text-gray-500 ml-2">need grading</span>
-                </div>
-            </div>
-            
-            <div class="stat-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                <div class="stat-icon bg-gradient-to-br from-purple-500 to-purple-600">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ classes_today }}</h3>
-                <p class="text-gray-600 text-sm">Classes Today</p>
-                <div class="mt-3 flex items-center text-sm">
-                    <span class="text-green-600"><i class="fas fa-check mr-1"></i>2 completed</span>
-                    <span class="text-gray-500 ml-2">1 remaining</span>
-                </div>
+            <div class="flex-1 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                <p class="text-sm font-bold text-slate-900">New student enrolled in Physics subjects</p>
+                <p class="text-xs text-slate-500">5 hours ago</p>
             </div>
         </div>
-        
-        <!-- My Courses Section -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">My Courses</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {% for course in courses %}
-                    <div class="course-card animate__animated animate__fadeInUp" style="animation-delay: 0.{{ forloop.counter }}s">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                                {{ course.students.count }} students
-                            </span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ course.name }}</h3>
-                        <p class="text-gray-600 text-sm mb-4">{{ course.description|default:"No description available" }}</p>
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <span><i class="fas fa-clock mr-1"></i>{{ course.credits }} credits</span>
-                            <span><i class="fas fa-calendar mr-1"></i>{{ course.semester.name }}</span>
-                        </div>
-                        <div class="mt-4 flex gap-2">
-                            <button class="flex-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg text-sm transition-colors">
-                                <i class="fas fa-eye mr-1"></i>View
-                            </button>
-                            <button class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm transition-colors">
-                                <i class="fas fa-cog mr-1"></i>Manage
-                            </button>
-                        </div>
-                    </div>
-                {% empty %}
-                    <div class="col-span-full text-center py-12 text-gray-400">
-                        <i class="fas fa-book text-4xl mb-3"></i>
-                        <p class="text-lg font-medium">No courses assigned</p>
-                        <p class="text-sm">You haven't been assigned any courses yet</p>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
-        
-        <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div class="chart-container animate__animated animate__fadeInUp" style="animation-delay: 0.5s">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Student Performance</h3>
-                <canvas id="performanceChart" width="400" height="200"></canvas>
-            </div>
-            
-            <div class="chart-container animate__animated animate__fadeInUp" style="animation-delay: 0.6s">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Class Schedule</h3>
-                <canvas id="scheduleChart" width="400" height="200"></canvas>
-            </div>
-        </div>
-        
-        <!-- Recent Activity -->
-        <div class="chart-container animate__animated animate__fadeInUp" style="animation-delay: 0.7s">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-            <div class="space-y-3">
-                <div class="activity-item">
-                    <div class="activity-icon bg-blue-500">
-                        <i class="fas fa-clipboard-check"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-900">Assignment graded for Mathematics Class</p>
-                        <p class="text-sm text-gray-500">2 hours ago</p>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon bg-green-500">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-900">New student enrolled in Physics course</p>
-                        <p class="text-sm text-gray-500">5 hours ago</p>
-                    </div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon bg-amber-500">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-medium text-gray-900">Class scheduled for tomorrow at 10:00 AM</p>
-                        <p class="text-sm text-gray-500">1 day ago</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-    
-    <!-- Mobile Menu Toggle -->
-    <button class="md:hidden fixed top-4 left-4 z-50 bg-green-600 text-white p-3 rounded-lg" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <script>
-        // Toggle Sidebar for Mobile
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+            datasets: [{
+                label: 'Average Score',
+                data: [72, 75, 71, 78, 82, 85],
+                borderColor: '#2563eb',
+                tension: 0.4,
+                fill: true,
+                backgroundColor: 'rgba(37, 99, 235, 0.05)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, max: 100, grid: { display: false } },
+                x: { grid: { display: false } }
+            }
         }
-        
-        // Student Performance Chart
-        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
-        new Chart(performanceCtx, {
-            type: 'line',
-            data: {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
-                datasets: [{
-                    label: 'Average Score',
-                    data: [75, 78, 82, 79, 85, 88],
-                    borderColor: '#10b981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
-                    }
-                }
-            }
-        });
-        
-        // Class Schedule Chart
-        const scheduleCtx = document.getElementById('scheduleChart').getContext('2d');
-        new Chart(scheduleCtx, {
-            type: 'bar',
-            data: {
-                labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                datasets: [{
-                    label: 'Classes',
-                    data: [3, 4, 2, 5, 3],
-                    backgroundColor: '#059669'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            stepSize: 1
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const toggleBtn = event.target.closest('button[onclick="toggleSidebar()"]');
-            
-            if (window.innerWidth < 768 && !sidebar.contains(event.target) && !toggleBtn) {
-                sidebar.classList.remove('show');
-            }
-        });
-    </script>
-    
-    <!-- SweetAlert Messages -->
-    {% if messages %}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                {% for message in messages %}
-                    {% if 'success' in message.tags %}
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success!',
-                            text: '{{ message|escapejs }}',
-                            confirmButtonColor: '#10b981',
-                            confirmButtonText: 'Great!',
-                            timer: 3000,
-                            timerProgressBar: true,
-                            showClass: {
-                                popup: 'animate__animated animate__fadeInDown'
-                            },
-                            hideClass: {
-                                popup: 'animate__animated animate__fadeOutUp'
-                            }
-                        });
-                    {% elif 'error' in message.tags %}
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: '{{ message|escapejs }}',
-                            confirmButtonColor: '#EF4444',
-                            confirmButtonText: 'OK',
-                            showClass: {
-                                popup: 'animate__animated animate__shakeX'
-                            },
-                            hideClass: {
-                                popup: 'animate__animated animate__fadeOutUp'
-                            }
-                        });
-                    {% endif %}
-                {% endfor %}
-            });
-        </script>
-    {% endif %}
-</body>
-</html>
+    });
+</script>
+{% endblock %}
