@@ -32,7 +32,7 @@ urlpatterns = [
     path('register/staff/', views.StaffRegisterView.as_view(), name='staff_register'),
     path('faculty/register/', faculty_register, name='faculty_register'),
     
-    # Role-based Dashboard URLs
+    # Dashboard URLs
     path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
     path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
@@ -60,6 +60,15 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/update/', views.ProfileUpdateView.as_view(), name='update_profile'),
     
+    # API URLs
+    path('api/users/', views.api_users, name='api_users'),
+    path('api/users/<int:pk>/', views.api_users, name='api_user_detail'),
+    path('api/test/', views.api_test, name='api_test'),
+    path('api/test-no-auth/', views.api_test_no_auth, name='api_test_no_auth'),
+    path('api/test-plain/', views.api_test_plain, name='api_test_plain'),
+    path('api/create-teacher/', views.api_create_teacher, name='api_create_teacher'),
+    path('debug/permissions/', views.debug_permissions, name='debug_permissions'),
+    
     # User Management URLs
     path('users/', views.UserListView.as_view(), name='user_list'),
     path('users/all/', views.UserListView.as_view(), name='admin_all_users'),
@@ -75,6 +84,7 @@ urlpatterns = [
     
     # Teacher Management URLs
     path('teachers/', views.TeacherListView.as_view(), name='admin_teacher_list'),
+    path('teachers/add/', views.admin_teacher_create, name='admin_teacher_create'),
     path('teachers/<int:pk>/', views.TeacherDetailView.as_view(), name='admin_teacher_detail'),
     path('teachers/<int:pk>/edit/', views.TeacherUpdateView.as_view(), name='admin_teacher_edit'),
     path('teachers/<int:pk>/delete/', views.TeacherDeleteView.as_view(), name='admin_teacher_delete'),

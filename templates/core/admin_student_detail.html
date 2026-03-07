@@ -1,0 +1,246 @@
+{% extends 'core/admin_dashboard.html' %}
+{% load static %}
+
+{% block title %}Student Details - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Student Details</h1>
+        <div>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+            <a href="{% url 'admin_student_edit' student.id %}" class="btn btn-warning">
+                <i class="fas fa-edit me-2"></i>Edit Student
+            </a>
+        </div>
+    </div>
+
+    <!-- Student Information Card -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-user-graduate me-2"></i>Student Information
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    {% if student.profile_picture %}
+                        <img src="{{ student.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                    {% else %}
+                        <div class="avatar-lg bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
+                            <span style="font-size: 3rem;">{{ student.user.get_full_name|first|upper }}</span>
+                        </div>
+                    {% endif %}
+                    <h5>{{ student.user.get_full_name }}</h5>
+                    <p class="text-muted">{{ student.roll_number }}</p>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>First Name:</strong></td>
+                                    <td>{{ student.user.first_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Last Name:</strong></td>
+                                    <td>{{ student.user.last_name }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Email:</strong></td>
+                                    <td>{{ student.user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phone:</strong></td>
+                                    <td>{{ student.phone|default:"Not provided" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Address:</strong></td>
+                                    <td>{{ student.address|default:"Not provided" }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Roll Number:</strong></td>
+                                    <td>{{ student.roll_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Department:</strong></td>
+                                    <td>
+                                        {% if student.department %}
+                                            <span class="badge bg-primary">{{ student.department.name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">No Department</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Current Form:</strong></td>
+                                    <td>
+                                        {% if student.current_form %}
+                                            <span class="badge bg-info">Form {{ student.current_form }}</span>
+                                            {% if student.current_semester %}
+                                                <span class="badge bg-secondary ms-1">Semester {{ student.current_semester }}</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Not assigned</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Admission Year:</strong></td>
+                                    <td>{{ student.admission_year|default:"Not specified" }}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status:</strong></td>
+                                    <td>
+                                        {% if student.user.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Information -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-book me-2"></i>Enrollments
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if enrollments %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Semester</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for enrollment in enrollments %}
+                                        <tr>
+                                            <td>{{ enrollment.course_offering.course.name }}</td>
+                                            <td>{{ enrollment.course_offering.semester.name }}</td>
+                                            <td>{{ enrollment.enrollment_date|date:"M d, Y" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No enrollments found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Grades
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if grades %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Grade</th>
+                                        <th>Semester</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for grade in grades %}
+                                        <tr>
+                                            <td>{{ grade.course_offering.course.name }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ grade.grade|lower }}">{{ grade.grade }}</span>
+                                            </td>
+                                            <td>{{ grade.course_offering.semester.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No grades found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fee Information -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">
+                <i class="fas fa-money-bill-wave me-2"></i>Fee Information
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if fees %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Paid Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for fee in fees %}
+                                <tr>
+                                    <td>{{ fee.description }}</td>
+                                    <td>${{ fee.amount }}</td>
+                                    <td>{{ fee.due_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        {% if fee.is_paid %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% elif fee.due_date < today %}
+                                            <span class="badge bg-danger">Overdue</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if fee.paid_date %}
+                                            {{ fee.paid_date|date:"M d, Y" }}
+                                        {% else %}
+                                            <span class="text-muted">Not paid</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No fee records found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

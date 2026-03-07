@@ -1,879 +1,279 @@
-{% extends 'core/base.html' %}
+{% extends 'core/admin_dashboard.html' %}
 {% load static %}
 
-{% block title %}Student Management - {{ school_info.name }}{% endblock %}
+{% block title %}Student List - {{ school_info.name }}{% endblock %}
 
-{% block extra_css %}
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
-    <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        /* Professional Admin Sidebar Navigation */
-        .sidebar {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            height: 100vh !important;
-            width: 250px !important;
-            background: linear-gradient(180deg, #1e5128 0%, #2d6a4f 50%, #40916c 100%) !important;
-            color: white !important;
-            z-index: 9999 !important;
-            overflow-y: auto !important;
-            display: block !important;
-            visibility: visible !important;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3) !important;
-            transform: translateX(0) !important;
-            opacity: 1 !important;
-            font-family: 'Inter', sans-serif !important;
-        }
-        
-        /* Force sidebar visibility */
-        .sidebar * {
-            visibility: visible !important;
-        }
-        
-        /* Hide mobile menu toggle */
-        .mobile-menu-toggle {
-            display: none !important;
-        }
-        
-        /* Reset any conflicting styles */
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-            background: #f8f9fa;
-        }
-        
-        .sidebar-header {
-            padding: 1.5rem;
-            background: rgba(0, 0, 0, 0.3) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-        }
-        
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #ff0000 !important;
-            text-decoration: none !important;
-            text-transform: none;
-            letter-spacing: 0.5px;
-            font-family: 'Roboto', sans-serif !important;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
-        }
-        
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-        
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-        
-        .nav-section-title {
-            padding: 0.75rem 1.5rem;
-            font-size: 0.85rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #ff0000 !important;
-            margin-bottom: 0.75rem;
-            font-family: 'Inter', sans-serif !important;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.9) !important;
-            background: rgba(0, 0, 0, 0.4) !important;
-            border-radius: 4px;
-        }
-        
-        .nav-item {
-            display: block;
-            padding: 1.2rem 1.5rem;
-            color: #ffff00 !important;
-            text-decoration: none !important;
-            position: relative;
-            border-left: 4px solid transparent;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: none;
-            letter-spacing: 0.5px;
-            font-family: 'Inter', sans-serif !important;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
-            background: rgba(0, 0, 0, 0.2) !important;
-            margin: 0.25rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .nav-item.active {
-            background: rgba(255, 255, 255, 0.4) !important;
-            color: #ff0000 !important;
-            border-left-color: #ff0000 !important;
-            font-weight: 900;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.9) !important;
-            box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3) !important;
-        }
-        
-        .user-profile {
-            padding: 1.5rem;
-            border-top: 2px solid rgba(255, 255, 255, 0.3) !important;
-            background: rgba(0, 0, 0, 0.4) !important;
-            font-family: 'Inter', sans-serif !important;
-        }
-        
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: #40916c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.5) !important;
-        }
-        
-        .user-info .user-name {
-            font-weight: 700;
-            color: #ffff00 !important;
-            font-size: 0.95rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8) !important;
-            font-family: 'Inter', sans-serif !important;
-        }
-        
-        .user-info .user-role {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.8) !important;
-            font-weight: 500;
-            font-family: 'Inter', sans-serif !important;
-        }
-        
-        .content-wrapper {
-            margin-left: 250px;
-            min-height: 100vh;
-            background: #f8f9fa;
-            padding: 2rem;
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e5e7eb;
-            transition: all 0.3s ease;
-            height: 100%;
-            min-height: 180px;
-        }
-        
-        .stat-card h3 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #1a1a1a;
-        }
-        
-        .stat-card p {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #6b7280;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-card .mt-2 small {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-            border-radius: 12px;
-        }
-        
-        .student-table {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-        }
-        
-        .table-responsive {
-            border-radius: 12px;
-        }
-        
-        .btn-action {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        
-        .btn-view {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .btn-view:hover {
-            background: #2563eb;
-            color: white;
-        }
-        
-        .btn-edit {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-edit:hover {
-            background: #059669;
-            color: white;
-        }
-        
-        .search-box {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-        }
-        
-        .search-box:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-    </style>
-{% endblock %}
-
-{% block content %}
+{% block main_content %}
 <div class="container-fluid">
-    <!-- Sidebar Navigation -->
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <a href="{% url 'admin_dashboard' %}" class="sidebar-logo">
-                <i class="fas fa-graduation-cap me-2"></i>
-                {{ school_info.name }}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Student Management</h1>
+        <div>
+            <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+            </a>
+            <a href="{% url 'admin_student_create' %}" class="btn btn-primary">
+                <i class="fas fa-user-plus me-2"></i>Add Student
             </a>
         </div>
-        
-        <nav class="sidebar-nav">
-            <!-- Main Menu -->
-            <div class="nav-section">
-                <div class="nav-section-title">Main Menu</div>
-                <a href="{% url 'admin_dashboard' %}" class="nav-item">
-                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                </a>
-                <a href="{% url 'admin_student_list' %}" class="nav-item active">
-                    <i class="fas fa-users me-2"></i>Student Management
-                </a>
-                <a href="{% url 'admin_teacher_list' %}" class="nav-item">
-                    <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-book me-2"></i>Course Management
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-chart-line me-2"></i>Results & Reports
-                </a>
-            </div>
-            
-            <!-- Academic Management -->
-            <div class="nav-section">
-                <div class="nav-section-title">Academic</div>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-user-plus me-2"></i>Enrollments
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-calendar-check me-2"></i>Attendance
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-clipboard-list me-2"></i>Examinations
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-book-open me-2"></i>Library
-                </a>
-            </div>
-            
-            <!-- Financial Management -->
-            <div class="nav-section">
-                <div class="nav-section-title">Financial</div>
-                <a href="{% url 'admin_fee_list' %}" class="nav-item">
-                    <i class="fas fa-money-bill-wave me-2"></i>Fee Management
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-credit-card me-2"></i>Payments
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-file-invoice-dollar me-2"></i>Financial Reports
-                </a>
-            </div>
-            
-            <!-- Communication -->
-            <div class="nav-section">
-                </a>
-            </div>
-            
-            <!-- System Management -->
-            <div class="mb-6">
-                <div class="section-title-tailwind mb-3">System</div>
-                <a href="#" class="nav-item-tailwind flex items-center gap-3">
-                    <i class="fas fa-cog w-5"></i>
-                    Settings
-                </a>
-                <a href="#" class="nav-item-tailwind flex items-center gap-3">
-                    <i class="fas fa-chart-bar w-5"></i>
-                    Reports
-                </a>
-            </div>
-        </nav>
-        
-        <!-- User Profile -->
-        <div class="user-profile-tailwind absolute bottom-0 left-0 right-0">
-            <div class="flex items-center gap-4">
-                <div class="user-avatar-tailwind">
-                    {{ request.user.first_name.0|default:"A" }}
-                </div>
-                <div class="flex-1">
-                    <div class="user-name-tailwind">{{ request.user.get_full_name|default:"Admin User" }}</div>
-                    <div class="user-role-tailwind">Administrator</div>
-                </div>
-                <a href="{% url 'logout' %}" class="text-white/60 hover:text-white transition-colors">
-                    <i class="fas fa-sign-out-alt"></i>
-                </a>
-            </div>
-        </div>
-    </aside>
-    
-    <!-- Main Content Area -->
-    <main class="flex-1 ml-64 p-8">
-        <!-- Page Header -->
-        <div class="page-header-tailwind mb-8 animate__animated animate__fadeInDown">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h1 class="text-4xl font-black mb-2">Student Management</h1>
-                    <p class="text-white/80">Manage and monitor all student records</p>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <button class="btn-primary-tailwind" data-bs-toggle="modal" data-bs-target="#addStudentModal">
-                        <i class="fas fa-plus mr-2"></i>Add New Student
-                    </button>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ students|length }}</h4>
+                            <p class="card-text">Total Students</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="stat-card-tailwind animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <i class="fas fa-users text-xl"></i>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ active_students }}</h4>
+                            <p class="card-text">Active Students</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user-check fa-2x"></i>
+                        </div>
                     </div>
-                    <span class="text-sm text-gray-500 font-medium">Total Students</span>
                 </div>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ total_students }}</h3>
-                <p class="text-sm text-gray-600">Active enrollments</p>
-            </div>
-            
-            <div class="stat-card-tailwind animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <i class="fas fa-user-check text-xl"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-medium">Active Students</span>
-                </div>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ active_students }}</h3>
-                <p class="text-sm text-gray-600">Currently enrolled</p>
-            </div>
-            
-            <div class="stat-card-tailwind animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <i class="fas fa-user-plus text-xl"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-medium">New Students</span>
-                </div>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ new_students }}</h3>
-                <p class="text-sm text-gray-600">This month</p>
-            </div>
-            
-            <div class="stat-card-tailwind animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                        <i class="fas fa-chart-line text-xl"></i>
-                    </div>
-                    <span class="text-sm text-gray-500 font-medium">Avg Attendance</span>
-                </div>
-                <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ avg_attendance|default:"85" }}%</h3>
-                <p class="text-sm text-gray-600">This semester</p>
             </div>
         </div>
-        
-        <!-- Search and Filters -->
-        <div class="gradient-card p-6 mb-8 animate__animated animate__fadeIn">
-            <form method="get" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Search -->
-                    <div class="search-box-tailwind">
-                        <i class="fas fa-search search-icon-tailwind"></i>
-                        <input type="text" name="search" value="{{ request.GET.search }}" 
-                               class="search-input-tailwind" placeholder="Search students...">
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ inactive_students }}</h4>
+                            <p class="card-text">Inactive Students</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-user-times fa-2x"></i>
+                        </div>
                     </div>
-                    
-                    <!-- Form Filter -->
-                    <select name="form" class="form-select-tailwind">
-                        <option value="">All Forms</option>
-                        <option value="1" {% if request.GET.form == '1' %}selected{% endif %}>Form 1</option>
-                        <option value="2" {% if request.GET.form == '2' %}selected{% endif %}>Form 2</option>
-                        <option value="3" {% if request.GET.form == '3' %}selected{% endif %}>Form 3</option>
-                        <option value="4" {% if request.GET.form == '4' %}selected{% endif %}>Form 4</option>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="card-title">{{ departments_count }}</h4>
+                            <p class="card-text">Departments</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-building fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search Students</label>
+                    <input type="text" class="form-control" id="search" name="search" value="{{ request.GET.search }}" placeholder="Search by name, email, or roll number...">
+                </div>
+                <div class="col-md-3">
+                    <label for="department" class="form-label">Department</label>
+                    <select class="form-select" id="department" name="department">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept.id }}" {% if request.GET.department == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                        {% endfor %}
                     </select>
-                    
-                    <!-- Status Filter -->
-                    <select name="status" class="form-select-tailwind">
+                </div>
+                <div class="col-md-2">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status">
                         <option value="">All Status</option>
-                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
-                        <option value="inactive" {% if request.GET.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="active" {% if request.GET.status == "active" %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if request.GET.status == "inactive" %}selected{% endif %}>Inactive</option>
                     </select>
                 </div>
-                
-                <div class="flex gap-3">
-                    <button type="submit" class="btn-primary-tailwind">
-                        <i class="fas fa-filter mr-2"></i>Apply Filters
-                    </button>
-                    <a href="{% url 'admin_student_list' %}" class="btn-secondary-tailwind">
-                        <i class="fas fa-redo mr-2"></i>Reset
-                    </a>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search me-2"></i>Search
+                        </button>
+                        <a href="{% url 'admin_student_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Clear
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
-        
-        <!-- Students Table -->
-        <div class="glass-card p-6 animate__animated animate__fadeInUp">
-            <div class="overflow-x-auto">
-                <table class="table-tailwind">
-                    <thead>
-                        <tr class="table-header-tailwind">
-                            <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Student</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Roll Number</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Form</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Department</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        {% for student in students %}
-                            <tr class="table-row-tailwind">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                                            {{ student.user.first_name.0 }}{{ student.user.last_name.0 }}
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ student.user.get_full_name }}
-                                            </div>
-                                            <div class="text-sm text-gray-500">
-                                                {{ student.user.email }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="badge-primary-tailwind">{{ student.roll_number }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="badge-secondary-tailwind">Form {{ student.current_form }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="badge-warning-tailwind">{{ student.department }}</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {% if student.user.is_active %}
-                                        <span class="badge-success-tailwind">Active</span>
-                                    {% else %}
-                                        <span class="badge-danger-tailwind">Inactive</span>
-                                    {% endif %}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex gap-2">
-                                        <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors" title="View">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="#" class="text-green-600 hover:text-green-800 transition-colors" title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a href="#" class="text-red-600 hover:text-red-800 transition-colors" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% empty %}
+    </div>
+
+    <!-- Students Table -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-graduation-cap me-2"></i>Student List
+                <span class="badge bg-light text-primary ms-2">{{ students|length }}</span>
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if students %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead class="table-dark">
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center">
-                                    <div class="text-gray-400">
-                                        <i class="fas fa-users text-4xl mb-3"></i>
-                                        <p class="text-lg font-medium">No students found</p>
-                                        <p class="text-sm">Try adjusting your search criteria</p>
-                                    </div>
-                                </td>
+                                <th>Student</th>
+                                <th>Roll Number</th>
+                                <th>Department</th>
+                                <th>Form</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Pagination -->
-            {% if is_paginated %}
-                <nav class="mt-6 flex justify-center">
-                    <ul class="flex gap-2">
-                        {% if page_obj.has_previous %}
-                            <li>
-                                <a href="?page={{ page_obj.previous_page_number }}" 
-                                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <span class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-400">
-                                    <i class="fas fa-chevron-left"></i>
-                                </span>
-                            </li>
-                        {% endif %}
-                        
-                        <!-- Page numbers -->
-                        {% for num in page_obj.paginator.page_range %}
-                            {% if page_obj.number == num %}
-                                <li>
-                                    <span class="px-4 py-2 bg-primary-600 text-white rounded-lg">{{ num }}</span>
-                                </li>
-                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                <li>
-                                    <a href="?page={{ num }}" 
-                                       class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                        {{ num }}
-                                    </a>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                {{ student.user.get_full_name|first|upper }}
+                                            </div>
+                                            <div>
+                                                <strong>{{ student.user.get_full_name|default:student.user.username }}</strong>
+                                                <br>
+                                                <small class="text-muted">Username: {{ student.user.username }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ student.roll_number|default:"N/A" }}</span>
+                                    </td>
+                                    <td>
+                                        {% if student.department %}
+                                            <span class="badge bg-primary">{{ student.department.name }}</span>
+                                        {% else %}
+                                            <span class="text-muted">No Department</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if student.current_form %}
+                                            <span class="badge bg-info">Form {{ student.current_form }}</span>
+                                            {% if student.current_semester %}
+                                                <br><small class="text-muted">Semester {{ student.current_semester }}</small>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Not assigned</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ student.user.email|default:"No email" }}</td>
+                                    <td>{{ student.phone|default:"Not provided" }}</td>
+                                    <td>
+                                        {% if student.user.is_active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'admin_student_detail' student.id %}" class="btn btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'admin_student_edit' student.id %}" class="btn btn-outline-warning" title="Edit Student">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-outline-info" title="View Grades" onclick="viewStudentGrades({{ student.id }})">
+                                                <i class="fas fa-chart-line"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-outline-success" title="View Fees" onclick="viewStudentFees({{ student.id }})">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                            </a>
+                                            <a href="{% url 'admin_student_delete' student.id %}" class="btn btn-outline-danger" title="Delete Student">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <nav aria-label="Student pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">Previous</a>
                                 </li>
                             {% endif %}
-                        {% endfor %}
-                        
-                        {% if page_obj.has_next %}
-                            <li>
-                                <a href="?page={{ page_obj.next_page_number }}" 
-                                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
+                            
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">Next</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-graduation-cap fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Students Found</h4>
+                    <p class="text-muted">
+                        {% if request.GET.search or request.GET.department or request.GET.status %}
+                            No students match your search criteria. 
+                            <a href="{% url 'admin_student_list' %}">Clear filters</a> to see all students.
                         {% else %}
-                            <li>
-                                <span class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-400">
-                                    <i class="fas fa-chevron-right"></i>
-                                </span>
-                            </li>
+                            No students have been registered yet.
                         {% endif %}
-                    </ul>
-                </nav>
+                    </p>
+                    <a href="{% url 'admin_student_create' %}" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Add First Student
+                    </a>
+                </div>
             {% endif %}
         </div>
-    </main>
-</div>
-
-<!-- Add Student Modal -->
-<div id="addStudentModal" class="modal-overlay-tailwind hidden">
-    <div class="modal-content-tailwind animate__animated animate__fadeInUp">
-        <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-6 rounded-t-3xl">
-            <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-bold flex items-center gap-3">
-                    <i class="fas fa-user-plus"></i>
-                    Add New Student
-                </h3>
-                <button type="button" onclick="closeModal()" class="text-white/80 hover:text-white transition-colors">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Modal Body -->
-        <form method="post" action="{% url 'admin_student_create' %}" class="p-6">
-            {% csrf_token %}
-            <div class="space-y-8">
-                <!-- User Information Section -->
-                <div>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-user text-primary-600"></i>
-                        User Information
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="first_name" class="block text-sm font-medium text-gray-700 mb-2">
-                                First Name <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="first_name" name="first_name" required
-                                   class="form-input-tailwind" placeholder="Enter first name">
-                        </div>
-                        
-                        <div>
-                            <label for="last_name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Last Name <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="last_name" name="last_name" required
-                                   class="form-input-tailwind" placeholder="Enter last name">
-                        </div>
-                        
-                        <div>
-                            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                                Username <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="username" name="username" required
-                                   class="form-input-tailwind" placeholder="Choose username">
-                            <p class="text-xs text-gray-500 mt-1">This will be used for login</p>
-                        </div>
-                        
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email Address <span class="text-red-500">*</span>
-                            </label>
-                            <input type="email" id="email" name="email" required
-                                   class="form-input-tailwind" placeholder="student@school.com">
-                        </div>
-                        
-                        <div class="md:col-span-2">
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                                Password <span class="text-red-500">*</span>
-                            </label>
-                            <input type="password" id="password" name="password" required
-                                   class="form-input-tailwind" placeholder="Create secure password">
-                            <p class="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Student Profile Section -->
-                <div>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-graduation-cap text-primary-600"></i>
-                        Student Profile
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="roll_number" class="block text-sm font-medium text-gray-700 mb-2">
-                                Roll Number <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="roll_number" name="roll_number" required
-                                   class="form-input-tailwind" placeholder="e.g., STU001">
-                        </div>
-                        
-                        <div>
-                            <label for="department" class="block text-sm font-medium text-gray-700 mb-2">
-                                Department <span class="text-red-500">*</span>
-                            </label>
-                            <select id="department" name="department" required class="form-select-tailwind">
-                                <option value="">Select Department</option>
-                                <option value="Science">Science</option>
-                                <option value="Arts">Arts</option>
-                                <option value="Commerce">Commerce</option>
-                                <option value="Technical">Technical</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label for="admission_year" class="block text-sm font-medium text-gray-700 mb-2">
-                                Admission Year <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="admission_year" name="admission_year" required
-                                   min="2020" max="2030" value="2024"
-                                   class="form-input-tailwind">
-                        </div>
-                        
-                        <div>
-                            <label for="current_form" class="block text-sm font-medium text-gray-700 mb-2">
-                                Current Form <span class="text-red-500">*</span>
-                            </label>
-                            <select id="current_form" name="current_form" required class="form-select-tailwind">
-                                <option value="">Select Form</option>
-                                <option value="1">Form 1</option>
-                                <option value="2">Form 2</option>
-                                <option value="3">Form 3</option>
-                                <option value="4">Form 4</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label for="current_semester" class="block text-sm font-medium text-gray-700 mb-2">
-                                Current Semester <span class="text-red-500">*</span>
-                            </label>
-                            <select id="current_semester" name="current_semester" required class="form-select-tailwind">
-                                <option value="">Select Semester</option>
-                                <option value="1">Semester 1</option>
-                                <option value="2">Semester 2</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Contact Information Section -->
-                <div>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-phone text-primary-600"></i>
-                        Contact Information
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                Phone Number
-                            </label>
-                            <input type="tel" id="phone" name="phone"
-                                   class="form-input-tailwind" placeholder="+255 123 456 789">
-                        </div>
-                        
-                        <div class="md:col-span-2">
-                            <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
-                                Address
-                            </label>
-                            <textarea id="address" name="address" rows="3"
-                                      class="form-input-tailwind" placeholder="Enter student address"></textarea>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Additional Information Section -->
-                <div>
-                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                        <i class="fas fa-id-card text-primary-600"></i>
-                        Additional Information
-                    </h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="necta_exam_number" class="block text-sm font-medium text-gray-700 mb-2">
-                                NECTA Exam Number
-                            </label>
-                            <input type="text" id="necta_exam_number" name="necta_exam_number"
-                                   class="form-input-tailwind" placeholder="e.g., S1234/001">
-                        </div>
-                        
-                        <div>
-                            <label for="birth_certificate_number" class="block text-sm font-medium text-gray-700 mb-2">
-                                Birth Certificate Number
-                            </label>
-                            <input type="text" id="birth_certificate_number" name="birth_certificate_number"
-                                   class="form-input-tailwind" placeholder="Birth certificate number">
-                        </div>
-                        
-                        <div class="md:col-span-2">
-                            <label for="previous_school" class="block text-sm font-medium text-gray-700 mb-2">
-                                Previous School
-                            </label>
-                            <input type="text" id="previous_school" name="previous_school"
-                                   class="form-input-tailwind" placeholder="Previous school attended">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Modal Footer -->
-            <div class="flex gap-4 justify-end pt-6 border-t border-gray-200 mt-8">
-                <button type="button" onclick="closeModal()" 
-                        class="btn-secondary-tailwind">
-                    <i class="fas fa-times mr-2"></i>Cancel
-                </button>
-                <button type="submit" class="btn-primary-tailwind">
-                    <i class="fas fa-save mr-2"></i>Save Student
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 
-<!-- Modal JavaScript -->
 <script>
-function openModal() {
-    document.getElementById('addStudentModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+function viewStudentGrades(studentId) {
+    // This function would show student grades
+    alert('Grades feature coming soon for student ID: ' + studentId);
 }
 
-function closeModal() {
-    document.getElementById('addStudentModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
+function viewStudentFees(studentId) {
+    // This function would show student fees
+    alert('Fees feature coming soon for student ID: ' + studentId);
 }
-
-// Handle modal trigger
-document.addEventListener('DOMContentLoaded', function() {
-    const modalTrigger = document.querySelector('[data-bs-target="#addStudentModal"]');
-    if (modalTrigger) {
-        modalTrigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            openModal();
-        });
-    }
-    
-    // Close modal on overlay click
-    const modalOverlay = document.getElementById('addStudentModal');
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', function(e) {
-            if (e.target === modalOverlay) {
-                closeModal();
-            }
-        });
-    }
-    
-    // Close modal on Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeModal();
-        }
-    });
-});
 </script>
-
-<!-- SweetAlert Messages -->
-{% if messages %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            {% for message in messages %}
-                {% if 'success' in message.tags %}
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: '{{ message|escapejs }}',
-                        confirmButtonColor: '#28a745',
-                        confirmButtonText: 'Great!',
-                        timer: 3000,
-                        timerProgressBar: true,
-                        showClass: {
-                            popup: 'animate__animated animate__fadeInDown'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp'
-                        }
-                    });
-                {% elif 'error' in message.tags %}
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: '{{ message|escapejs }}',
-                        confirmButtonColor: '#dc3545',
-                        confirmButtonText: 'OK',
-                        showClass: {
-                            popup: 'animate__animated animate__shakeX'
-                        },
-                        hideClass: {
-                            popup: 'animate__animated animate__fadeOutUp'
-                        }
-                    });
-                {% endif %}
-            {% endfor %}
-        });
-    </script>
-{% endif %}
-
 {% endblock %}

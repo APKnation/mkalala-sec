@@ -1,0 +1,483 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Edit User - {{ school_info.name }}{% endblock %}
+
+{% block extra_css %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom animations */
+        @keyframes slideIn {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Custom select styling */
+        .custom-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 20px;
+        }
+        
+        /* Role card hover effects */
+        .role-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .role-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        /* Form field focus effects */
+        .form-field {
+            transition: all 0.2s ease;
+        }
+        
+        .form-field:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 fade-in">
+            <div class="bg-gradient-to-r from-primary to-secondary p-8 text-center">
+                <h1 class="text-3xl font-bold text-white mb-2">Edit User</h1>
+                <p class="text-white/90">Update user information and permissions</p>
+            </div>
+        </div>
+        
+        <!-- Main Form Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden slide-in">
+            <form method="post" novalidate class="p-8">
+                {% csrf_token %}
+                
+                <!-- User Overview Section -->
+                <div class="mb-8">
+                    <div class="text-center">
+                        <div class="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4 shadow-lg">
+                            {% if object.first_name and object.last_name %}
+                                {{ object.first_name.0 }}{{ object.last_name.0 }}
+                            {% elif object.first_name %}
+                                {{ object.first_name.0 }}U
+                            {% elif object.last_name %}
+                                U{{ object.last_name.0 }}
+                            {% else %}
+                                U
+                            {% endif %}
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">{{ object.get_full_name|default:"Unknown User" }}</h3>
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-2
+                            {% if object.role == 'student' %}bg-blue-100 text-blue-800{% endif %}
+                            {% if object.role == 'teacher' %}bg-green-100 text-green-800{% endif %}
+                            {% if object.role == 'admin' %}bg-red-100 text-red-800{% endif %}
+                            {% if object.role == 'headmaster' %}bg-yellow-100 text-yellow-800{% endif %}
+                            {% if object.role == 'normal' %}bg-gray-100 text-gray-800{% endif %}
+                        ">
+                            <i class="fas fa-user-circle mr-2"></i>{{ object.role|title }}
+                        </div>
+                        <p class="text-gray-600">{{ object.email|default:"No email" }}</p>
+                    </div>
+                </div>
+                
+                <!-- Basic Information Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-user mr-3 text-primary"></i>
+                        Basic Information
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                First Name <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.first_name.errors %}
+                                        <p class="flex items-center">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Last Name <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.last_name.errors %}
+                                        <p class="flex items-center">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Username <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.username.errors %}
+                                        <p class="flex items-center">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.email.errors %}
+                                        <p class="flex items-center">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Account Settings Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-cog mr-3 text-primary"></i>
+                        Account Settings
+                    </h2>
+                    
+                    <!-- Role Selection -->
+                    <div class="mb-6">
+                        <label for="{{ form.role.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            User Role <span class="text-red-500">*</span>
+                        </label>
+                        
+                        <!-- Debug: Let's see what form.role renders -->
+                        <div class="border-2 border-dashed border-gray-300 p-4 mb-4">
+                            <p class="text-sm text-gray-600 mb-2">Debug - Form field ID: {{ form.role.id_for_label }}</p>
+                            <p class="text-sm text-gray-600 mb-2">Debug - Form field HTML:</p>
+                            {{ form.role }}
+                        </div>
+                        
+                        <!-- Manual fallback if needed -->
+                        <select name="role" id="id_role" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <option value="">Select a role...</option>
+                            <option value="student" {% if object.role == 'student' %}selected{% endif %}>Student</option>
+                            <option value="teacher" {% if object.role == 'teacher' %}selected{% endif %}>Teacher</option>
+                            <option value="headmaster" {% if object.role == 'headmaster' %}selected{% endif %}>Headmaster</option>
+                            <option value="admin" {% if object.role == 'admin' %}selected{% endif %}>Admin</option>
+                            <option value="normal" {% if object.role == 'normal' %}selected{% endif %}>Normal User</option>
+                        </select>
+                        
+                        {% if form.role.errors %}
+                            <div class="mt-2 text-sm text-red-600">
+                                {% for error in form.role.errors %}
+                                    <p class="flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <p class="mt-2 text-sm text-gray-500">
+                            Select the appropriate role for this user from the dropdown menu above.
+                        </p>
+                    </div>
+                    
+                    <!-- Account Status -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Account Status
+                        </label>
+                        <div class="flex items-center">
+                            {{ form.is_active }}
+                            <label for="{{ form.is_active.id_for_label }}" class="ml-3 text-sm text-gray-700">
+                                Active Account
+                            </label>
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            Inactive users cannot log in to the system
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Password Section -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-lock mr-3 text-primary"></i>
+                        Password Settings
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                New Password
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.password.errors %}
+                                        <p class="flex items-center">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <p class="mt-2 text-sm text-gray-500">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Leave blank to keep current password
+                            </p>
+                        </div>
+                        <div>
+                            <label for="{{ form.confirm_password.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                Confirm Password
+                            </label>
+                            {{ form.confirm_password }}
+                            {% if form.confirm_password.errors %}
+                                <div class="mt-2 text-sm text-red-600">
+                                    {% for error in form.confirm_password.errors %}
+                                        <p class="flex items-center">
+                                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <p class="mt-2 text-sm text-gray-500">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Re-enter the new password to confirm
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-200">
+                    <div>
+                        <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="reset" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                            <i class="fas fa-undo mr-2"></i>
+                            Reset
+                        </button>
+                        <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:from-primary/90 hover:to-secondary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>
+                            Update User
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style form fields with Tailwind classes
+    const formFields = document.querySelectorAll('input, select');
+    formFields.forEach(field => {
+        field.classList.add('w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-primary', 'focus:border-transparent', 'form-field');
+    });
+    
+    // Style checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.classList.add('w-4', 'h-4', 'text-primary', 'border-gray-300', 'rounded', 'focus:ring-primary');
+    });
+    
+    // Handle form submission with SweetAlert
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Basic form validation with null checks
+        const firstName = document.getElementById('{{ form.first_name.id_for_label }}');
+        const lastName = document.getElementById('{{ form.last_name.id_for_label }}');
+        const username = document.getElementById('{{ form.username.id_for_label }}');
+        const email = document.getElementById('{{ form.email.id_for_label }}');
+        const role = document.getElementById('id_role'); // Fixed: Use manual dropdown ID
+        
+        // Debug: Log element values
+        console.log('Debug - Role element:', role);
+        console.log('Debug - Role value:', role ? role.value : 'Element not found');
+        console.log('Debug - Role value type:', typeof (role ? role.value : 'undefined'));
+        
+        // Check if elements exist before accessing their value
+        if (!firstName || !firstName.value || !firstName.value.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'First name is required',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        if (!lastName || !lastName.value || !lastName.value.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Last name is required',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        if (!username || !username.value || !username.value.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Username is required',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        if (!email || !email.value || !email.value.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Email address is required',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        if (!role) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Role dropdown not found. Please refresh the page.',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        if (!role.value || role.value === '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                text: 'Please select a user role from the dropdown',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+        
+        // Show loading
+        Swal.fire({
+            title: 'Updating User...',
+            text: 'Please wait while we update the user information.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Submit the form
+        form.submit();
+    });
+    
+    // Password strength indicator
+    const passwordField = document.getElementById('{{ form.password.id_for_label }}');
+    const confirmPasswordField = document.getElementById('{{ form.confirm_password.id_for_label }}');
+    
+    if (passwordField && confirmPasswordField) {
+        passwordField.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            updatePasswordStrengthIndicator(strength);
+        });
+        
+        confirmPasswordField.addEventListener('input', function() {
+            const password = passwordField ? passwordField.value : '';
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.setCustomValidity('Passwords do not match');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+    
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (password.match(/[a-z]+/)) strength++;
+        if (password.match(/[A-Z]+/)) strength++;
+        if (password.match(/[0-9]+/)) strength++;
+        if (password.match(/[$@#&!]+/)) strength++;
+        
+        return strength;
+    }
+    
+    function updatePasswordStrengthIndicator(strength) {
+        // You can add visual feedback here if needed
+        console.log('Password strength:', strength);
+    }
+});
+</script>
+{% endblock %}

@@ -35,6 +35,80 @@ class UserUpdateForm(forms.ModelForm):
             }),
         }
 
+class UserUpdateForm(forms.ModelForm):
+    """Form for updating user information"""
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Leave blank to keep current password'
+        }),
+        required=False
+    )
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Confirm new password'
+        }),
+        required=False
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'role', 'is_active']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter username'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter email address'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter first name'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter last name'
+            }),
+            'role': forms.Select(attrs={
+                'class': 'form-select'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'placeholder': 'Enter username'})
+        self.fields['email'].widget.attrs.update({'placeholder': 'Enter email address'})
+        self.fields['first_name'].widget.attrs.update({'placeholder': 'Enter first name'})
+        self.fields['last_name'].widget.attrs.update({'placeholder': 'Enter last name'})
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        
+        if password and password != confirm_password:
+            raise forms.ValidationError("Passwords do not match")
+        
+        return cleaned_data
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data.get('password')
+        
+        if password:
+            user.set_password(password)
+        
+        if commit:
+            user.save()
+        
+        return user
+
 class UserForm(UserCreationForm):
     role = forms.ChoiceField(
         choices=User.ROLE_CHOICES,

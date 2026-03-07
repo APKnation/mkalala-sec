@@ -1,0 +1,175 @@
+{% extends 'core/admin_dashboard.html' %}
+{% load static %}
+
+{% block title %}Delete Student - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Delete Student</h1>
+        <div>
+            <a href="{% url 'admin_student_detail' object.id %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Details
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>Confirm Student Deletion
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Warning!
+                </h5>
+                <p class="mb-0">You are about to delete the following student record. This action cannot be undone and will permanently remove all associated data including:</p>
+                <ul class="mb-0 mt-3">
+                    <li>Student profile information</li>
+                    <li>Academic records and grades</li>
+                    <li>Enrollment history</li>
+                    <li>Fee payment records</li>
+                    <li>Attendance records</li>
+                    <li>All related data</li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="text-primary mb-3">Student Information</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="30%">Name:</th>
+                            <td>{{ object.get_full_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Username:</th>
+                            <td>{{ object.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ object.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Roll Number:</th>
+                            <td>
+                                {% if object.studentprofile %}
+                                    {{ object.studentprofile.roll_number }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Department:</th>
+                            <td>
+                                {% if object.studentprofile and object.studentprofile.department %}
+                                    {{ object.studentprofile.department.name }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Current Form:</th>
+                            <td>
+                                {% if object.studentprofile and object.studentprofile.current_form %}
+                                    Form {{ object.studentprofile.current_form }}
+                                    {% if object.studentprofile.current_semester %}
+                                        - Semester {{ object.studentprofile.current_semester }}
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        {% if object.studentprofile and object.studentprofile.profile_picture %}
+                            <img src="{{ object.studentprofile.profile_picture.url }}" alt="Profile Picture" class="img-thumbnail mb-3" style="max-width: 150px;">
+                        {% else %}
+                            <div class="avatar-lg bg-danger text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
+                                <span style="font-size: 3rem;">{{ object.get_full_name|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <h5>{{ object.get_full_name }}</h5>
+                        <p class="text-muted">{{ object.username }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-danger mb-3">Data that will be permanently deleted:</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-danger me-2"></i>User account and login credentials</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Student profile information</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Academic records and grades</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Course enrollments</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Attendance records</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Fee payment history</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Library records</li>
+                        <li><i class="fas fa-check text-danger me-2"></i>Messages and communications</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-info-circle me-2"></i>Alternative Options
+                        </h6>
+                        <p class="mb-2">Instead of deleting, consider:</p>
+                        <ul class="mb-0">
+                            <li><strong>Deactivating</strong> the account if the student is temporarily away</li>
+                            <li><strong>Transferring</strong> the student to another department if needed</li>
+                            <li><strong>Archiving</strong> the records if the student has graduated</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="confirmDelete" name="confirm_delete" required>
+                            <label class="form-check-label" for="confirmDelete">
+                                I understand that this action cannot be undone and I want to permanently delete this student record.
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-end">
+                            <a href="{% url 'admin_student_detail' object.id %}" class="btn btn-secondary me-2">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger" id="deleteBtn" disabled>
+                                <i class="fas fa-trash me-2"></i>Delete Student
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmCheckbox = document.getElementById('confirmDelete');
+    const deleteButton = document.getElementById('deleteBtn');
+    
+    confirmCheckbox.addEventListener('change', function() {
+        deleteButton.disabled = !this.checked;
+    });
+});
+</script>
+{% endblock %}

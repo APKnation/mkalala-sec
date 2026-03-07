@@ -22,11 +22,12 @@ from django.views.generic import (
 )
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
+import json
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
 from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm
 
 from .models import (
-    User, Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
+    Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
     CourseOffering, Semester, ForumTopic, Book, BorrowedBook, Activity, Achievement, FeeStructure,
     ReportCard, Material, Schedule, ForumPost, NECTAExam, Subject, SubjectEnrollment, SchoolCalendar, 
@@ -262,7 +263,53 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     
     def get_queryset(self):
         queryset = User.objects.all().order_by('-date_joined')
+        
+        # Search functionality
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(first_name__icontains=search_query) |
+                Q(last_name__icontains=search_query) |
+                Q(username__icontains=search_query) |
+                Q(email__icontains=search_query)
+            )
+        
+        # Filter by role
+        role_filter = self.request.GET.get('role', '')
+        if role_filter:
+            queryset = queryset.filter(role=role_filter)
+        
+        # Filter by status
+        status_filter = self.request.GET.get('status', '')
+        if status_filter == 'active':
+            queryset = queryset.filter(is_active=True)
+        elif status_filter == 'inactive':
+            queryset = queryset.filter(is_active=False)
+        elif status_filter == 'pending':
+            queryset = queryset.filter(is_active=False)
+            
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Calculate user statistics
+        total_users = User.objects.count()
+        students = User.objects.filter(role='student').count()
+        teachers = User.objects.filter(role='teacher').count()
+        headmasters = User.objects.filter(role='headmaster').count()
+        admins = User.objects.filter(role='admin').count()
+        
+        context.update({
+            'title': 'User Management',
+            'total_users': total_users,
+            'students': students,
+            'teachers': teachers,
+            'headmasters': headmasters,
+            'admins': admins,
+        })
+        
+        return context
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'core/dashboard.html'  # fallback template (optional)
 
@@ -478,11 +525,50 @@ def teacher_dashboard(request):
     if not request.user.role == 'teacher':
         return redirect('public_home')
     
+    try:
+        # Get teacher profile
+        faculty_profile = request.user.facultyprofile
+    except:
+        faculty_profile = None
+    
+    # Get courses assigned to this teacher
+    from .models import CourseOffering
+    my_courses = CourseOffering.objects.filter(
+        instructor=faculty_profile
+    ).select_related('course', 'semester').count()
+    
+    # Get total students in teacher's courses
+    from django.db.models import Count
+    courses_with_students = CourseOffering.objects.filter(
+        instructor=faculty_profile
+    ).annotate(student_count=Count('enrollments'))
+    
+    total_students = sum(course.student_count for course in courses_with_students)
+    
+    # Get pending assignments (mock data for now)
+    pending_assignments = 5
+    
+    # Get classes today (mock data for now)
+    classes_today = 3
+    
+    # Get actual courses for display
+    courses = CourseOffering.objects.filter(
+        instructor=faculty_profile
+    ).select_related('course', 'semester').prefetch_related('enrollments')
+    
     context = {
         'user': request.user,
         'role': 'Teacher',
-        'courses': Course.objects.all(),  # Will be filtered by teacher's assignments
-        'students_count': User.objects.filter(role='student').count(),
+        'faculty_profile': faculty_profile,
+        'my_courses': my_courses,
+        'total_students': total_students,
+        'pending_assignments': pending_assignments,
+        'classes_today': classes_today,
+        'courses': courses,
+        'school_info': {
+            'name': 'School Management System',
+            'motto': 'Excellence in Education'
+        }
     }
     return render(request, 'core/teacher_dashboard.html', context)
 
@@ -505,13 +591,17 @@ def headmaster_dashboard(request):
 # School Admin Dashboard
 @login_required
 def admin_dashboard(request):
+    """Enhanced admin dashboard with comprehensive student and teacher management"""
+    
     # Debug information
-    print(f"DEBUG: admin_dashboard called - ENHANCED VERSION")
+    print(f"DEBUG: admin_dashboard called")
     print(f"DEBUG: request.user = {request.user}")
     
     if not request.user.role == 'admin':
-        messages.error(request, "You don't have permission to access to admin dashboard.")
+        messages.error(request, "You don't have permission to access the admin dashboard.")
         return redirect('public_home')
+    
+    print("DEBUG: Admin role confirmed, proceeding with dashboard data loading")
     
     # Basic user statistics
     total_users = User.objects.all().count()
@@ -527,6 +617,36 @@ def admin_dashboard(request):
     recent_students = StudentProfile.objects.select_related('user', 'department').order_by('-id')[:10]
     total_enrollments = Enrollment.objects.count()
     active_enrollments = Enrollment.objects.count()
+    
+    # Get all registered students for admin dashboard
+    all_students = StudentProfile.objects.select_related('user', 'department').order_by('user__first_name', 'user__last_name')
+    total_students_count = all_students.count()
+    
+    # Get departments list (needed for student statistics and form options)
+    departments_list = Department.objects.all()
+    print(f"DEBUG: departments_list loaded, count: {departments_list.count()}")
+    
+    # Student statistics by form level with percentages
+    students_by_form = {}
+    for form_num in range(1, 5):
+        count = StudentProfile.objects.filter(current_form=form_num).count()
+        percentage = (count / total_students_count * 100) if total_students_count > 0 else 0
+        students_by_form[f'Form_{form_num}'] = {
+            'count': count,
+            'percentage': round(percentage, 1)
+        }
+    
+    # Student statistics by department with percentages
+    students_by_department = {}
+    for department in departments_list:
+        count = StudentProfile.objects.filter(department=department).count()
+        percentage = (count / total_students_count * 100) if total_students_count > 0 else 0
+        students_by_department[department.name] = {
+            'count': count,
+            'percentage': round(percentage, 1)
+        }
+    
+    print("DEBUG: Statistics calculated successfully")
     
     # Fee information with better formatting
     from django.db.models import Sum
@@ -547,22 +667,13 @@ def admin_dashboard(request):
     received_messages = Message.objects.filter(recipient=request.user)
     unread_count = received_messages.filter(is_read=False).count()
     
-    # Student statistics by form level
-    students_by_form = {}
-    for form_num in range(1, 5):
-        students_by_form[f'Form_{form_num}'] = StudentProfile.objects.filter(current_form=form_num).count()
-    
-    # Calculate progress ring offset for Form 1 students
-    form_1_count = students_by_form.get('Form_1', 0)
-    if students > 0:
-        progress_offset = 377 - (form_1_count * 377 / students)
-    else:
-        progress_offset = 377
-    
     # Additional statistics for enhanced dashboard
     total_courses = Course.objects.count()
     total_departments = Department.objects.count()
     total_course_offerings = CourseOffering.objects.count()
+    
+    # Teacher data for dashboard
+    faculty_profiles = FacultyProfile.objects.select_related('user', 'department').order_by('user__first_name', 'user__last_name')
     
     # Recent activities
     recent_activities = []
@@ -615,20 +726,21 @@ def admin_dashboard(request):
         'pending_registrations': pending_registrations,
         # Enhanced statistics
         'total_courses': total_courses,
-        'total_departments': total_departments,
-        'total_course_offerings': total_course_offerings,
-        # Student information
-        'recent_students': recent_students,
-        'students_by_form': students_by_form,
-        'progress_offset': progress_offset,
-        # Enrollment information
-        'total_enrollments': total_enrollments,
-        'active_enrollments': active_enrollments,
-        'recent_enrollments': recent_enrollments,
-        # Fee information
-        'total_fees_collected': total_fees_collected,
         'pending_fees': pending_fees,
         'overdue_fees': overdue_fees,
+        'total_fees_collected': total_fees_collected,
+        # Academic statistics
+        'total_courses': total_courses,
+        'departments': total_departments,
+        # Teacher data for dashboard
+        'faculty_profiles': faculty_profiles,
+        'departments_list': departments_list,
+        # Student data for dashboard
+        'all_students': all_students,
+        'total_students_count': total_students_count,
+        'recent_students': recent_students,
+        'students_by_form': students_by_form,
+        'students_by_department': students_by_department,
         # Message information
         'unread_count': unread_count,
         # Activity feed
@@ -636,12 +748,195 @@ def admin_dashboard(request):
         'recent_activities': recent_activities,
         # School information
         'school_info': school_info,
-    }
-    return render(request, 'core/admin_dashboard_enhanced.html', context)
+    }  
+    return render(request, 'core/admin_dashboard.html', context)
 
-# ======================
-# Student Management Views
-# ======================
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.db.models import Q
+from .utils import is_admin
+
+# API Views
+@login_required
+def debug_permissions(request):
+    """Debug view to check user permissions"""
+    user_info = {
+        'username': request.user.username,
+        'is_authenticated': request.user.is_authenticated,
+        'is_superuser': request.user.is_superuser,
+        'is_staff': request.user.is_staff,
+        'role': getattr(request.user, 'role', 'NO_ROLE'),
+        'has_admin_profile': hasattr(request.user, 'admin_profile'),
+        'is_admin_result': is_admin(request.user),
+        'user_id': request.user.id,
+        'email': request.user.email,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    }
+    
+    return JsonResponse(user_info)
+
+@login_required
+def api_test(request):
+    """Simple test API endpoint"""
+    return JsonResponse({'success': True, 'message': 'API test successful'})
+
+def api_test_no_auth(request):
+    """Simple test API endpoint without authentication"""
+    return JsonResponse({'success': True, 'message': 'API test no auth successful'})
+
+def api_test_plain(request):
+    """Simple test endpoint returning plain text"""
+    from django.http import HttpResponse
+    return HttpResponse('Plain text response', content_type='text/plain')
+
+@login_required
+def api_create_teacher(request):
+    """API endpoint for creating teachers"""
+    if not is_admin(request.user):
+        return JsonResponse({'success': False, 'message': 'Permission denied'})
+    
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
+    
+    try:
+        import json
+        data = json.loads(request.body)
+        
+        # Validate required fields
+        required_fields = ['first_name', 'last_name', 'email', 'username', 'password', 'department', 'designation']
+        for field in required_fields:
+            if not data.get(field):
+                return JsonResponse({'success': False, 'message': f'{field.replace("_", " ").title()} is required'})
+        
+        # Check if username already exists
+        if User.objects.filter(username=data['username']).exists():
+            return JsonResponse({'success': False, 'message': 'Username already exists'})
+        
+        # Check if email already exists
+        if User.objects.filter(email=data['email']).exists():
+            return JsonResponse({'success': False, 'message': 'Email already exists'})
+        
+        # Get department
+        try:
+            department = Department.objects.get(id=data['department'])
+        except Department.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Invalid department'})
+        
+        # Create user
+        user = User.objects.create_user(
+            username=data['username'],
+            email=data['email'],
+            password=data['password'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            role='teacher'
+        )
+        
+        # Create faculty profile
+        faculty_profile = FacultyProfile.objects.create(
+            user=user,
+            department=department,
+            designation=data['designation'],
+            specialization=data.get('specialization', '')
+        )
+        
+        return JsonResponse({
+            'success': True, 
+            'message': 'Teacher created successfully',
+            'teacher_id': faculty_profile.id
+        })
+        
+    except json.JSONDecodeError as e:
+        return JsonResponse({'success': False, 'message': f'Invalid JSON data: {str(e)}'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
+@login_required
+def api_users(request, pk=None):
+    """API endpoint for users CRUD operations"""
+    # Temporarily check permissions inside the function for debugging
+    if not is_admin(request.user):
+        return JsonResponse({'error': 'Permission denied - user is not admin', 'debug': {
+            'username': request.user.username,
+            'role': getattr(request.user, 'role', 'NO_ROLE'),
+            'is_superuser': request.user.is_superuser,
+            'has_admin_profile': hasattr(request.user, 'admin_profile'),
+            'is_admin_result': is_admin(request.user)
+        }}, status=403)
+    
+    if request.method == 'GET':
+        # Get query parameters
+        page = request.GET.get('page', 1)
+        search = request.GET.get('search', '')
+        role = request.GET.get('role', '')
+        status = request.GET.get('status', '')
+        
+        # Build query
+        queryset = User.objects.all().order_by('-date_joined')
+        
+        # Apply filters
+        if search:
+            queryset = queryset.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(username__icontains=search) |
+                Q(email__icontains=search)
+            )
+        
+        if role:
+            queryset = queryset.filter(role=role)
+        
+        if status == 'active':
+            queryset = queryset.filter(is_active=True)
+        elif status == 'inactive':
+            queryset = queryset.filter(is_active=False)
+        
+        # Paginate
+        paginator = Paginator(queryset, 20)
+        users_page = paginator.get_page(page)
+        
+        # Prepare data
+        users_data = []
+        for user in users_page:
+            users_data.append({
+                'id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,
+                'is_active': user.is_active,
+                'date_joined': user.date_joined.isoformat()
+            })
+        
+        # Prepare pagination data
+        pagination_data = {
+            'current_page': users_page.number,
+            'total_pages': users_page.paginator.num_pages,
+            'has_previous': users_page.has_previous(),
+            'has_next': users_page.has_next(),
+            'total_items': users_page.paginator.count
+        }
+        
+        return JsonResponse({
+            'users': users_data,
+            'pagination': pagination_data
+        })
+    
+    elif request.method == 'DELETE':
+        # Delete user
+        if not pk:
+            return JsonResponse({'error': 'User ID is required'}, status=400)
+        
+        try:
+            user = User.objects.get(id=pk)
+            user.delete()
+            return JsonResponse({'success': True, 'message': 'User deleted successfully'})
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = StudentProfile
@@ -653,7 +948,7 @@ class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return is_admin(self.request.user)
     
     def get_queryset(self):
-        queryset = StudentProfile.objects.select_related('user').order_by('user__first_name', 'user__last_name')
+        queryset = StudentProfile.objects.select_related('user', 'department').order_by('user__first_name', 'user__last_name')
         
         # Search functionality
         search_query = self.request.GET.get('search', '')
@@ -665,6 +960,11 @@ class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
                 Q(roll_number__icontains=search_query) |
                 Q(user__email__icontains=search_query)
             )
+        
+        # Filter by department
+        department_filter = self.request.GET.get('department', '')
+        if department_filter:
+            queryset = queryset.filter(department_id=department_filter)
         
         # Filter by form
         form_filter = self.request.GET.get('form', '')
@@ -679,6 +979,34 @@ class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             queryset = queryset.filter(user__is_active=False)
             
         return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Add statistics for the student list page
+        total_students = StudentProfile.objects.count()
+        active_students = StudentProfile.objects.filter(user__is_active=True).count()
+        inactive_students = StudentProfile.objects.filter(user__is_active=False).count()
+        new_students = StudentProfile.objects.filter(
+            user__date_joined__month=timezone.now().month,
+            user__date_joined__year=timezone.now().year
+        ).count()
+        
+        # Get departments for filter dropdown
+        from .models import Department
+        departments = Department.objects.all()
+        departments_count = departments.count()
+        
+        context.update({
+            'total_students': total_students,
+            'active_students': active_students,
+            'inactive_students': inactive_students,
+            'new_students': new_students,
+            'departments': departments,
+            'departments_count': departments_count,
+        })
+        
+        return context
 
 @login_required
 @user_passes_test(is_admin)
@@ -848,13 +1176,135 @@ class TeacherListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return is_admin(self.request.user)
     
     def get_queryset(self):
-        return FacultyProfile.objects.select_related('user', 'department').order_by('-id')
+        queryset = FacultyProfile.objects.select_related('user', 'department').order_by('user__first_name', 'user__last_name')
+        
+        # Search functionality
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(user__first_name__icontains=search_query) |
+                Q(user__last_name__icontains=search_query) |
+                Q(user__username__icontains=search_query) |
+                Q(employee_id__icontains=search_query) |
+                Q(user__email__icontains=search_query) |
+                Q(specialization__icontains=search_query)
+            )
+        
+        # Filter by department
+        department_filter = self.request.GET.get('department', '')
+        if department_filter:
+            queryset = queryset.filter(department__id=department_filter)
+        
+        # Filter by status
+        status_filter = self.request.GET.get('status', '')
+        if status_filter == 'active':
+            queryset = queryset.filter(user__is_active=True)
+        elif status_filter == 'inactive':
+            queryset = queryset.filter(user__is_active=False)
+            
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Teacher Management'
-        context['total_teachers'] = FacultyProfile.objects.count()
+        
+        # Add statistics for the teacher list page
+        total_teachers = FacultyProfile.objects.count()
+        active_teachers = FacultyProfile.objects.filter(user__is_active=True).count()
+        new_teachers = FacultyProfile.objects.filter(
+            user__date_joined__month=timezone.now().month,
+            user__date_joined__year=timezone.now().year
+        ).count()
+        total_departments = Department.objects.count()
+        total_students = StudentProfile.objects.count()
+        
+        # Get departments for filter dropdown
+        departments = Department.objects.all()
+        
+        context.update({
+            'title': 'Teacher Management',
+            'total_teachers': total_teachers,
+            'active_teachers': active_teachers,
+            'new_teachers': new_teachers,
+            'total_departments': total_departments,
+            'departments': departments,
+            'total_students': total_students,
+        })
+        
         return context
+
+@login_required
+@user_passes_test(is_admin)
+def admin_teacher_create(request):
+    """Create a new teacher"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            employee_id = request.POST.get('employee_id')
+            department_id = request.POST.get('department')
+            specialization = request.POST.get('specialization')
+            qualification = request.POST.get('qualification', '')
+            experience_years = request.POST.get('experience_years', 0)
+            phone = request.POST.get('phone', '')
+            
+            # Validate required fields
+            if not all([first_name, last_name, username, email, password, employee_id, 
+                       department_id, specialization]):
+                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if employee ID already exists
+            if FacultyProfile.objects.filter(employee_id=employee_id).exists():
+                messages.error(request, 'Employee ID already exists. Please use a different employee ID.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Get department
+            department = get_object_or_404(Department, id=department_id)
+            
+            # Create user
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                role='teacher',
+                is_active=True
+            )
+            
+            # Create teacher profile
+            teacher = FacultyProfile.objects.create(
+                user=user,
+                employee_id=employee_id,
+                department=department,
+                specialization=specialization,
+                qualification=qualification,
+                experience_years=experience_years,
+                phone=phone
+            )
+            
+            messages.success(request, f'Teacher {teacher.user.get_full_name()} has been successfully created!', extra_tags='success')
+            return redirect('admin_dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating teacher: {str(e)}', extra_tags='error')
+            return redirect('admin_dashboard')
+    
+    return redirect('admin_dashboard')
 
 class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = FacultyProfile
@@ -907,6 +1357,163 @@ class TeacherDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 # ======================
+# Student CRUD Views
+# ======================
+
+@login_required
+@user_passes_test(is_admin)
+def admin_student_create(request):
+    """Create a new student"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            roll_number = request.POST.get('roll_number')
+            department_id = request.POST.get('department')
+            admission_year = request.POST.get('admission_year')
+            current_form = request.POST.get('current_form')
+            current_semester = request.POST.get('current_semester')
+            phone = request.POST.get('phone')
+            address = request.POST.get('address')
+            
+            # Validate required fields
+            if not all([first_name, last_name, username, email, password, roll_number, department_id]):
+                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if roll number already exists
+            if StudentProfile.objects.filter(roll_number=roll_number).exists():
+                messages.error(request, 'Roll number already exists. Please use a different roll number.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Get department
+            try:
+                department = Department.objects.get(id=department_id)
+            except Department.DoesNotExist:
+                messages.error(request, 'Invalid department selected.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Create user
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                role='student',
+                is_active=True
+            )
+            
+            # Create student profile
+            student = StudentProfile.objects.create(
+                user=user,
+                roll_number=roll_number,
+                department=department,
+                admission_year=admission_year,
+                current_form=current_form,
+                current_semester=current_semester,
+                phone=phone,
+                address=address
+            )
+            
+            messages.success(request, f'Student {user.get_full_name()} has been successfully created!', extra_tags='success')
+            return redirect('admin_dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating student: {str(e)}', extra_tags='error')
+            return redirect('admin_dashboard')
+    
+    return redirect('admin_dashboard')
+
+class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = StudentProfile
+    template_name = 'core/admin_student_detail.html'
+    context_object_name = 'student'
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student = self.get_object()
+        
+        # Get student enrollments
+        enrollments = Enrollment.objects.filter(student=student).select_related('course_offering__course')
+        context['enrollments'] = enrollments
+        
+        # Get student grades
+        grades = Grade.objects.filter(student=student).select_related('course_offering__course')
+        context['grades'] = grades
+        
+        # Get student fees
+        fees = Fee.objects.filter(student=student).order_by('-due_date')
+        context['fees'] = fees
+        
+        context['title'] = f'Student Details: {student.user.get_full_name()}'
+        return context
+
+class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = StudentProfile
+    form_class = StudentProfileForm
+    template_name = 'core/admin_student_edit.html'
+    success_url = reverse_lazy('admin_dashboard')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit Student'
+        context['user_form'] = UserUpdateForm(instance=self.get_object().user)
+        return context
+    
+    def form_valid(self, form):
+        # Also update user information
+        user_form = UserUpdateForm(self.request.POST, instance=self.get_object().user)
+        if user_form.is_valid():
+            user_form.save()
+        
+        messages.success(self.request, 'Student information updated successfully!')
+        return super().form_valid(form)
+
+class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = User
+    template_name = 'core/admin_student_delete.html'
+    success_url = reverse_lazy('admin_dashboard')
+    
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_object(self):
+        # Get the user associated with the student profile
+        student_id = self.kwargs['pk']
+        try:
+            student = StudentProfile.objects.get(id=student_id)
+            return student.user
+        except StudentProfile.DoesNotExist:
+            return None
+    
+    def delete(self, request, *args, **kwargs):
+        student_user = self.get_object()
+        if student_user:
+            messages.success(request, f'Student {student_user.get_full_name()} deleted successfully!')
+        return super().delete(request, *args, **kwargs)
+
+# ======================
 # Fee Management Views
 # ======================
 
@@ -920,15 +1527,64 @@ class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return is_admin(self.request.user)
     
     def get_queryset(self):
-        return Fee.objects.select_related('student__user', 'fee_category').order_by('-due_date')
+        queryset = Fee.objects.select_related('student__user').order_by('-due_date')
+        
+        # Search functionality
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(student__user__first_name__icontains=search_query) |
+                Q(student__user__last_name__icontains=search_query) |
+                Q(student__roll_number__icontains=search_query) |
+                Q(description__icontains=search_query)
+            )
+        
+        # Filter by status
+        status_filter = self.request.GET.get('status', '')
+        if status_filter == 'paid':
+            queryset = queryset.filter(is_paid=True)
+        elif status_filter == 'pending':
+            queryset = queryset.filter(is_paid=False, due_date__gte=timezone.now().date())
+        elif status_filter == 'overdue':
+            queryset = queryset.filter(is_paid=False, due_date__lt=timezone.now().date())
+        
+        # Filter by student
+        student_filter = self.request.GET.get('student', '')
+        if student_filter:
+            queryset = queryset.filter(student__id=student_filter)
+            
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Fee Management'
-        context['total_fees'] = Fee.objects.count()
-        context['paid_fees'] = Fee.objects.filter(status='paid').count()
-        context['pending_fees'] = Fee.objects.filter(status='pending').count()
-        context['overdue_fees'] = Fee.objects.filter(status='overdue').count()
+        
+        # Calculate fee statistics
+        total_fees = Fee.objects.count()
+        paid_fees = Fee.objects.filter(is_paid=True).count()
+        pending_fees = Fee.objects.filter(is_paid=False, due_date__gte=timezone.now().date()).count()
+        overdue_fees = Fee.objects.filter(is_paid=False, due_date__lt=timezone.now().date()).count()
+        
+        # Calculate total amounts
+        from django.db.models import Sum
+        total_collected = Fee.objects.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
+        total_pending = Fee.objects.filter(is_paid=False).aggregate(total=Sum('amount'))['total'] or 0
+        total_overdue = Fee.objects.filter(is_paid=False, due_date__lt=timezone.now().date()).aggregate(total=Sum('amount'))['total'] or 0
+        
+        # Get students for filter dropdown
+        students = StudentProfile.objects.select_related('user').all()
+        
+        context.update({
+            'title': 'Fee Management',
+            'total_fees': total_fees,
+            'paid_fees': paid_fees,
+            'pending_fees': pending_fees,
+            'overdue_fees': overdue_fees,
+            'total_collected': total_collected,
+            'total_pending': total_pending,
+            'total_overdue': total_overdue,
+            'students': students,
+        })
+        
         return context
 
 class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -1134,15 +1790,23 @@ class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return is_admin(self.request.user)
 
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    from .forms import UserForm, StudentProfileForm, FeeForm
+    from .forms import UserUpdateForm
     
     model = User
-    form_class = UserForm
+    form_class = UserUpdateForm
     template_name = 'core/edit_user.html'
-    success_url = reverse_lazy('user_management')
+    success_url = reverse_lazy('admin_dashboard')
 
     def test_func(self):
         return is_admin(self.request.user)
+    
+    def form_valid(self, form):
+        messages.success(self.request, f'User "{form.instance.get_full_name()}" has been updated successfully!')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Failed to update user. Please check the form for errors.')
+        return super().form_invalid(form)
 
 @login_required
 def deactivate_user(request, user_id):
@@ -2057,16 +2721,26 @@ def admin_messages(request):
         Q(is_staff=True) | Q(is_superuser=True) | Q(role__in=['student', 'teacher', 'headmaster'])
     ).exclude(id=request.user.id).order_by('first_name', 'last_name')
     
+    # Get students and teachers for compose modal
+    students = StudentProfile.objects.select_related('user').all()
+    teachers = FacultyProfile.objects.select_related('user').all()
+    
+    # Get all messages for the list
+    all_messages = received_messages.union(sent_messages).order_by('-sent_at')
+    
     # Get current date for template comparisons
     today = timezone.now().date()
     yesterday = today - timezone.timedelta(days=1)
     
     context = {
         'admin': admin_profile,
+        'messages': all_messages,
         'received_messages': received_messages,
         'sent_messages': sent_messages,
         'unread_count': unread_count,
         'total_messages': total_messages,
+        'students': students,
+        'teachers': teachers,
         'potential_recipients': potential_recipients,
         'today': today,
         'yesterday': yesterday,
@@ -2074,7 +2748,7 @@ def admin_messages(request):
         'role': 'School Administrator',
     }
     
-    return render(request, 'core/admin_messages.html', context)
+    return render(request, 'core/admin_messages_enhanced.html', context)
 
 @login_required
 @user_passes_test(is_student)

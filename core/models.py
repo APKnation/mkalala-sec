@@ -291,11 +291,18 @@ class FacultyProfile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='faculty_profile')
+    employee_id = models.CharField(max_length=20, unique=True, blank=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     designation = models.CharField(max_length=MAX_NAME_LENGTH, choices=DESIGNATION_CHOICES)
     specialization = models.CharField(max_length=200, blank=True)
     joining_date = models.DateField(auto_now_add=True)
-    profile_picture = models.ImageField(upload_to='faculty_pics/', blank=True, null=True)  # ← Add this
+    profile_picture = models.ImageField(upload_to='faculty_pics/', blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # Auto-generate employee_id if not provided
+        if not self.employee_id:
+            self.employee_id = f"EMP{self.user.id:04d}"
+        super().save(*args, **kwargs)
 
 
     def __str__(self):
