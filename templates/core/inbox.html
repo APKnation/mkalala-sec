@@ -1,0 +1,112 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Secretariat Inbox | Mkalala Sec{% endblock %}
+{% block mobile_title %}Messages{% endblock %}
+{% block user_role %}{{ request.user.role|capfirst }}{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 animate-in fade-in duration-700">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl shadow-sm border border-slate-100 relative overflow-hidden text-slate-900">
+        <!-- Abstract gradient accent -->
+        <div class="absolute top-0 right-0 w-48 h-48 bg-blue-100/50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        
+        <div class="relative space-y-2">
+            <h1 class="text-3xl font-display font-bold leading-tight">Institutional Inbox</h1>
+            <p class="text-slate-500 font-medium">Coordinate internal communications between students, faculty, and administration.</p>
+        </div>
+        
+        <div class="relative flex gap-3">
+             <a href="{% url 'send_message' %}" class="btn-glow-primary px-8 py-3 text-sm flex items-center shadow-xl shadow-blue-600/20">
+                <i class="fas fa-paper-plane mr-2"></i> Draft New Dispatch
+            </a>
+        </div>
+    </div>
+
+    <!-- Inbox Layout -->
+    <div class="card-premium overflow-hidden bg-white/70 backdrop-blur-xl border-white shadow-2xl">
+        <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+            <h3 class="text-xl font-bold text-slate-900 flex items-center">
+                <i class="fas fa-inbox text-blue-600 mr-3"></i>
+                Received Communications
+            </h3>
+            <div class="flex items-center space-x-3 text-xs font-bold text-slate-400 uppercase tracking-widest">
+                <span>Filter:</span>
+                <button class="px-3 py-1 bg-white border border-slate-100 rounded-lg text-blue-600">All Dispatch</button>
+                <button class="px-3 py-1 hover:text-blue-600 transition-colors">Unread</button>
+            </div>
+        </div>
+        
+        <div class="divide-y divide-slate-100">
+            {% for message in messages %}
+            <div data-message-id="{{ message.pk }}" class="group relative p-8 hover:bg-slate-50/80 transition-all duration-300 cursor-pointer flex flex-col md:flex-row gap-6 md:items-center {% if not message.is_read %}bg-blue-50/30{% endif %}">
+                <!-- Status Indicator -->
+                <div class="shrink-0 flex items-center justify-center">
+                     {% if not message.is_read %}
+                        <div class="w-3 h-3 bg-blue-600 rounded-full shadow-[0_0_15px_rgba(37,99,235,0.5)]"></div>
+                     {% else %}
+                        <div class="w-3 h-3 bg-slate-200 rounded-full"></div>
+                     {% endif %}
+                </div>
+
+                <!-- Sender Profile -->
+                <div class="shrink-0 w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 font-bold group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300 shadow-sm">
+                    {{ message.sender.first_name|slice:":1"|default:message.sender.username|slice:":1"|upper }}
+                </div>
+
+                <!-- Message Content -->
+                <div class="flex-1 min-w-0 space-y-1">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <h4 class="text-sm font-display font-bold text-slate-900 truncate">{{ message.subject }}</h4>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ message.sent_at|date:"M d, H:i" }}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <p class="text-[11px] font-bold text-blue-600 uppercase tracking-tight">{{ message.sender.get_full_name|default:message.sender.username }}</p>
+                        <span class="text-slate-300">•</span>
+                        <p class="text-xs text-slate-500 font-medium truncate max-w-lg">{{ message.body|truncatewords:20 }}</p>
+                    </div>
+                </div>
+
+                <!-- Grouped Actions -->
+                <div class="shrink-0 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm">
+                        <i class="fas fa-eye text-xs"></i>
+                    </button>
+                    <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm">
+                        <i class="fas fa-trash-alt text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-24 text-center space-y-6 flex flex-col items-center">
+                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 text-3xl">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="text-lg font-bold text-slate-400 uppercase tracking-widest">Digital Void</h4>
+                    <p class="text-slate-400 text-sm max-w-sm mx-auto">Your institutional dispatch log is currently empty. Direct reports and faculty communications will appear here.</p>
+                </div>
+                <a href="{% url 'send_message' %}" class="btn-glow-primary px-8 py-3 text-xs">Initiate First Dispatch</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Message read transition animation */
+    [data-message-id] {
+        position: relative;
+    }
+    [data-message-id]::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 2rem;
+        right: 2rem;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(226, 232, 240, 0.5), transparent);
+    }
+</style>
+{% endblock %}

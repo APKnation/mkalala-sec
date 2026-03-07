@@ -1,0 +1,78 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Decommission Subject | {{ course.name }} | Mkalala Sec{% endblock %}
+{% block mobile_title %}Confirm Deletion{% endblock %}
+{% block user_role %}Curriculum Governance{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'faculty_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Faculty</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item-active">
+    <i class="fas fa-book-open"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-wallet"></i>
+    <span>Fees & Finance</span>
+</a>
+<a href="{% url 'announcement_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+<a href="{% url 'admin_reports' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+<a href="{% url 'admin_settings' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="max-w-xl mx-auto py-12 animate-in fade-in zoom-in-95 duration-700">
+    <div class="card-premium p-10 lg:p-14 bg-white shadow-2xl relative overflow-hidden text-center space-y-8">
+        <!-- Danger pattern background -->
+        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-600 to-rose-600"></div>
+        <div class="absolute -top-10 -right-10 w-40 h-40 bg-red-50 rounded-full blur-3xl opacity-50"></div>
+
+        <div class="w-24 h-24 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-xl shadow-red-100 mb-4 animate-bounce">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+
+        <div class="space-y-4">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-tight">Decommission Subject?</h1>
+            <p class="text-slate-500 font-medium">You are about to remove <span class="text-slate-900 font-bold">[{{ course.code }}] {{ course.name }}</span> from the institutional curriculum. This action is significant and permanent.</p>
+        </div>
+
+        <div class="p-6 bg-amber-50 rounded-2xl border border-amber-100 text-left flex items-start space-x-4">
+            <i class="fas fa-info-circle text-amber-500 mt-1"></i>
+            <div>
+                <h4 class="text-[10px] font-bold text-amber-900 uppercase tracking-widest leading-none mb-1">Impact Analysis</h4>
+                <p class="text-xs text-amber-700 font-medium leading-relaxed">Deleting this subject will not remove past results but will prevent future enrollments and section offerings. All associated course materials may also be affected.</p>
+            </div>
+        </div>
+
+        <form method="post" class="flex flex-col sm:flex-row gap-4 pt-4">
+            {% csrf_token %}
+            <button type="submit" class="px-8 py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl transition-all font-bold text-sm flex-1 shadow-xl shadow-red-600/20">
+                Proceed with Deletion
+            </button>
+            <a href="{% url 'subjects_management' %}" class="px-8 py-4 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-2xl transition-all font-bold text-sm flex-1">
+                Cancel & Return
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

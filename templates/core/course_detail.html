@@ -1,0 +1,147 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Subject Detail | {{ course.name }} | Mkalala Sec{% endblock %}
+{% block mobile_title %}Subject Details{% endblock %}
+{% block user_role %}Curriculum Hub{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'faculty_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Faculty</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item-active">
+    <i class="fas fa-book-open"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-wallet"></i>
+    <span>Fees & Finance</span>
+</a>
+<a href="{% url 'announcement_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+<a href="{% url 'admin_reports' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+<a href="{% url 'admin_settings' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 font-sans animate-in fade-in duration-700">
+    <!-- Breadcrumbs -->
+    <nav class="flex px-2 space-x-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        <a href="{% url 'subjects_management' %}" class="hover:text-blue-600">Subjects</a>
+        <span>/</span>
+        <span class="text-slate-900">{{ course.code }}</span>
+    </nav>
+
+    <!-- Header Card -->
+    <div class="card-premium p-8 lg:p-12 relative overflow-hidden bg-white border-none shadow-2xl">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-50/50 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        
+        <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div class="flex items-center space-x-8">
+                <div class="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-2xl shadow-xl shadow-slate-900/20">
+                    <i class="fas fa-atom"></i>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold font-mono">{{ course.code }}</span>
+                        <h1 class="text-4xl font-display font-bold text-slate-900">{{ course.name }}</h1>
+                    </div>
+                    <p class="text-slate-500 font-medium">Department of {{ course.department.name|default:"General Studies" }} • {{ course.credits|default:"4.0" }} Performance Units</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 w-full md:w-auto">
+                <a href="{% url 'course_update' course.pk %}" class="btn-glow-primary px-8 py-4 text-xs flex-1 text-center font-bold">
+                    Edit Subject Structure
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="card-premium p-8 space-y-6">
+                <h3 class="text-xl font-bold text-slate-900 border-b border-slate-50 pb-4">Pedagogical Description</h3>
+                <div class="prose prose-slate max-w-none">
+                    <p class="text-slate-600 leading-relaxed font-medium">
+                        {{ course.description|default:"This subject encompasses a core component of the institutional curriculum, focusing on comprehensive academic development and NECTA standards." }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Syllabus / Objectives -->
+            <div class="card-premium p-8 space-y-6">
+                <h3 class="text-xl font-bold text-slate-900 border-b border-slate-50 pb-4">Syllabus & Learning Scope</h3>
+                <div class="space-y-4">
+                    {% if course.syllabus %}
+                        <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 text-slate-600 font-medium whitespace-pre-wrap text-sm leading-relaxed">{{ course.syllabus }}</div>
+                    {% else %}
+                        <div class="p-12 text-center text-slate-400">
+                            <i class="fas fa-clipboard-list text-3xl mb-4"></i>
+                            <p class="font-bold uppercase text-[10px] tracking-widest">No detailed syllabus defined</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Stats -->
+        <div class="space-y-8">
+            <div class="card-premium p-8 bg-slate-900 text-white border-none shadow-xl shadow-slate-900/10">
+                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Subject Statistics</h4>
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                        <span class="text-slate-400 text-xs font-medium">Enrolled Students</span>
+                        <span class="text-2xl font-bold">{{ student_count|default:"0" }}</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                        <span class="text-slate-400 text-xs font-medium">Average Performance</span>
+                        <span class="text-2xl font-bold text-blue-400">84%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 text-xs font-medium">Status</span>
+                        <span class="px-3 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg text-[10px] font-bold uppercase tracking-widest">Active</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-premium p-8 space-y-6">
+                <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Registered Instructors</h4>
+                <div class="space-y-4">
+                    {% for offering in course.courseoffering_set.all %}
+                        <div class="flex items-center space-x-4 p-3 hover:bg-slate-50 rounded-2xl transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                                {{ offering.faculty.user.first_name|slice:":1" }}
+                            </div>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-900">{{ offering.faculty.user.get_full_name }}</h5>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Section {{ offering.section|default:"A" }} • {{ offering.semester }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-xs font-bold text-slate-400 text-center py-4">No active section offerings</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2783,7 +2783,7 @@ def student_announcements(request):
         'yesterday': yesterday,
     }
     
-    return render(request, 'core/student_announcements.html', context)
+    return render(request, 'core/announcement_list.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -3708,14 +3708,16 @@ def announcement_list(request):
         Q(target_audience='Students' if is_student(request.user) else 'Faculty')
     ).order_by('-created_at')
     
-    return render(request, 'communication/announcements.html', {
-        'announcements': announcements
+    return render(request, 'core/announcement_list.html', {
+        'announcements': announcements,
+        'today': timezone.now().date(),
+        'yesterday': (timezone.now() - timezone.timedelta(days=1)).date(),
     })
 
 @login_required
 def inbox(request):
     messages = Message.objects.filter(recipient=request.user).order_by('-sent_at')
-    return render(request, 'communication/inbox.html', {'messages': messages})
+    return render(request, 'core/inbox.html', {'messages': messages})
 
 @login_required
 def send_message(request):
@@ -3733,7 +3735,7 @@ def send_message(request):
     # All users can message any other user in the system
     recipients = User.objects.all().select_related('student_profile', 'faculty_profile').exclude(id=request.user.id)
 
-    return render(request, 'communication/send_message.html', {
+    return render(request, 'core/send_message.html', {
         'form': form,
         'recipients': recipients.order_by('first_name', 'last_name')
     })

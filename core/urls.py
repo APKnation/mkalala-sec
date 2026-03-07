@@ -169,7 +169,11 @@ urlpatterns = [
 
 # SUBJECTS MANAGEMENT
 path('subjects/', CourseListView.as_view(), name='subjects_list'),
-path('subjects/manage/', CourseManagementView.as_view(), name='subjects_management'),  # ✅ this name matters
+path('subjects/manage/', CourseManagementView.as_view(), name='subjects_management'),
+path('subjects/add/', CreateCourseView.as_view(), name='course_create'),
+path('subjects/<int:pk>/', CourseDetailView.as_view(), name='course_detail'),
+path('subjects/<int:pk>/edit/', CourseUpdateView.as_view(), name='course_update'),
+path('subjects/<int:pk>/delete/', CourseDeleteView.as_view(), name='course_delete'),
 
 # SUBJECT ENROLLMENT FOR TANZANIAN O-LEVEL
 path('subjects/enrollment/', SubjectEnrollmentListView.as_view(), name='subject_enrollment_list'),
