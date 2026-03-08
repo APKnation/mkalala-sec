@@ -335,7 +335,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         elif is_faculty(request.user):
             return redirect('faculty_dashboard')
         elif is_admin(request.user):
-            return redirect('admin_dashboard')
+            return redirect('admin_student_list')
         elif is_parent(request.user):
             return redirect('parent_dashboard')
         return super().dispatch(request, *args, **kwargs)
@@ -648,10 +648,7 @@ def admin_dashboard(request):
     # Get comprehensive statistics
     total_students = StudentProfile.objects.count()
     active_students = StudentProfile.objects.filter(user__is_active=True).count()
-    new_students_this_month = StudentProfile.objects.filter(
-        date_enrolled__month=timezone.now().month,
-        date_enrolled__year=timezone.now().year
-    ).count()
+    new_students_this_month = 0  # TODO: Calculate from Enrollment model if needed
     
     total_teachers = FacultyProfile.objects.count()
     active_teachers = FacultyProfile.objects.filter(user__is_active=True).count()
@@ -982,7 +979,7 @@ def admin_student_list(request):
     ).prefetch_related(
         'enrollments__course_offering__course',
         'enrollments__attendances'
-    ).order_by('-date_enrolled')
+    ).order_by('-user__date_joined')
     
     # Get departments for filter
     departments = Department.objects.all()
@@ -1013,10 +1010,7 @@ def admin_student_list(request):
     # Calculate statistics
     total_students = students.count()
     active_students = students.filter(user__is_active=True).count()
-    new_students_this_month = students.filter(
-        date_enrolled__month=timezone.now().month,
-        date_enrolled__year=timezone.now().year
-    ).count()
+    new_students_this_month = 0  # TODO: Calculate from Enrollment model if needed
     
     context = {
         'students': students,
@@ -1172,7 +1166,7 @@ def admin_student_create(request):
             
             # Validate required fields
             if not all([first_name, last_name, username, email, password, roll_number, 
-                       department, admission_year, current_form, current_semester]):
+                       department_id, admission_year, current_form, current_semester]):
                 messages.error(request, 'Please fill in all required fields.', extra_tags='error')
                 return redirect('admin_student_list')
             
@@ -1560,22 +1554,22 @@ def admin_teacher_create(request):
             if not all([first_name, last_name, username, email, password, employee_id, 
                        department_id, specialization]):
                 messages.error(request, 'Please fill in all required fields.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Check if username already exists
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Check if email already exists
             if User.objects.filter(email=email).exists():
                 messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Check if employee ID already exists
             if FacultyProfile.objects.filter(employee_id=employee_id).exists():
                 messages.error(request, 'Employee ID already exists. Please use a different employee ID.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Get department
             department = get_object_or_404(Department, id=department_id)
@@ -1603,14 +1597,14 @@ def admin_teacher_create(request):
             )
             
             messages.success(request, f'Teacher {teacher.user.get_full_name()} has been successfully created!', extra_tags='success')
-            return redirect('admin_dashboard')
+            return redirect('admin_student_list')
             
         except Exception as e:
             messages.error(request, f'Error creating teacher: {str(e)}', extra_tags='error')
-            return redirect('admin_dashboard')
+            return redirect('admin_student_list')
     
     # If GET request, redirect to admin dashboard
-    return redirect('admin_dashboard')
+    return redirect('admin_student_list')
 
 class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = FacultyProfile
@@ -1689,29 +1683,29 @@ def admin_student_create(request):
             # Validate required fields
             if not all([first_name, last_name, username, email, password, roll_number, department_id]):
                 messages.error(request, 'Please fill in all required fields.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Check if username already exists
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Check if email already exists
             if User.objects.filter(email=email).exists():
                 messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Check if roll number already exists
             if StudentProfile.objects.filter(roll_number=roll_number).exists():
                 messages.error(request, 'Roll number already exists. Please use a different roll number.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Get department
             try:
                 department = Department.objects.get(id=department_id)
             except Department.DoesNotExist:
                 messages.error(request, 'Invalid department selected.', extra_tags='error')
-                return redirect('admin_dashboard')
+                return redirect('admin_student_list')
             
             # Create user
             user = User.objects.create_user(
@@ -1737,13 +1731,13 @@ def admin_student_create(request):
             )
             
             messages.success(request, f'Student {user.get_full_name()} has been successfully created!', extra_tags='success')
-            return redirect('admin_dashboard')
+            return redirect('admin_student_list')
             
         except Exception as e:
             messages.error(request, f'Error creating student: {str(e)}', extra_tags='error')
-            return redirect('admin_dashboard')
+            return redirect('admin_student_list')
     
-    return redirect('admin_dashboard')
+    return redirect('admin_student_list')
 
 class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = StudentProfile

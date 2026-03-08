@@ -93,7 +93,7 @@ def admin_unified_dashboard(request, page='overview'):
     elif page == 'users':
         context.update(get_admin_users_context(user, admin_profile))
     elif page == 'students':
-        context.update(get_admin_students_context(user, admin_profile))
+        context.update(get_admin_students_context(request, user, admin_profile))
     elif page == 'teachers':
         context.update(get_admin_teachers_context(user, admin_profile))
     elif page == 'courses':
@@ -624,7 +624,7 @@ def get_admin_users_context(user, admin_profile):
         'admins_count': User.objects.filter(role='admin').count(),
     }
 
-def get_admin_students_context(user, admin_profile):
+def get_admin_students_context(request, user, admin_profile):
     """Get admin students page context"""
     from .models import Department
     from django.db.models import Q
@@ -635,15 +635,15 @@ def get_admin_students_context(user, admin_profile):
     ).prefetch_related(
         'enrollments__course_offering__course',
         'enrollments__attendances'
-    ).order_by('-date_enrolled')
+    ).order_by('-user__date_joined')
     
     # Get departments for filter
     departments = Department.objects.all()
     
     # Apply filters from request
-    search_query = user.request.GET.get('search', '')
-    department_filter = user.request.GET.get('department', '')
-    status_filter = user.request.GET.get('status', '')
+    search_query = request.GET.get('search', '')
+    department_filter = request.GET.get('department', '')
+    status_filter = request.GET.get('status', '')
     
     if search_query:
         students = students.filter(
@@ -668,12 +668,10 @@ def get_admin_students_context(user, admin_profile):
         'departments': departments,
         'total_students': students.count(),
         'active_students': students.filter(user__is_active=True).count(),
+        'inactive_students': students.filter(user__is_active=False).count(),
         'active_students_percentage': (students.filter(user__is_active=True).count() * 100) // students.count() if students.count() > 0 else 0,
         'inactive_students_percentage': (students.filter(user__is_active=False).count() * 100) // students.count() if students.count() > 0 else 0,
-        'new_students_this_month': students.filter(
-            date_enrolled__month=timezone.now().month,
-            date_enrolled__year=timezone.now().year
-        ).count(),
+        'new_students_this_month': 0,  # TODO: Calculate from Enrollment model if needed
         'search_query': search_query,
         'department_filter': department_filter,
         'status_filter': status_filter,
@@ -690,10 +688,18 @@ def get_admin_teachers_context(user, admin_profile):
 
 def get_admin_courses_context(user, admin_profile):
     """Get admin courses page context"""
+    from .models import CourseOffering, Subject, Department
+    
     courses = CourseOffering.objects.all().select_related('course', 'faculty').order_by('course__name')
+    subjects = Subject.objects.all().order_by('name')
+    departments = Department.objects.all().order_by('name')
+    
     return {
         'courses': courses,
         'total_courses': courses.count(),
+        'active_offerings': courses.filter(is_active=True).count(),
+        'total_subjects': subjects.count(),
+        'total_departments': departments.count(),
     }
 
 def get_admin_classes_context(user, admin_profile):

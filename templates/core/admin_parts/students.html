@@ -66,7 +66,7 @@
             <div class="px-6 py-4">
                 <div class="flex items-center">
                     <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div class="bg-emerald-500 h-2 rounded-full" style="width: {% if total_students > 0 %}{{ active_students|multiply:100|divide:total_students }}{% else %}0{% endif %}%"></div>
+                        <div class="bg-emerald-500 h-2 rounded-full" style="width: {{ active_students_percentage }}%"></div>
                     </div>
                 </div>
             </div>
@@ -76,14 +76,14 @@
             <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-slate-900">Inactive Students</h3>
-                    <span class="text-3xl font-bold text-slate-400">{{ total_students|sub:active_students }}</span>
+                    <span class="text-3xl font-bold text-slate-400">{{ inactive_students }}</span>
                 </div>
             </div>
             <div class="px-6 py-4">
                 <div class="flex items-center">
                     <div class="w-full bg-slate-200 rounded-full h-2">
-                        <div class="bg-emerald-500 h-2 rounded-full transition-all duration-300" data-width="{{ active_students_percentage }}"></div>
-                        <div class="bg-slate-400 h-2 rounded-full transition-all duration-300" data-width="{{ inactive_students_percentage }}"></div>
+                        <div class="bg-emerald-500 h-2 rounded-full transition-all duration-300" id="active-students-bar"></div>
+                        <div class="bg-slate-400 h-2 rounded-full transition-all duration-300" id="inactive-students-bar"></div>
                     </div>
                 </div>
             </div>
@@ -183,3 +183,18 @@
         </div>
     </div>
 </div>
+
+<script>
+// Set progress bar widths dynamically
+document.addEventListener('DOMContentLoaded', function() {
+    const activeBar = document.getElementById('active-students-bar');
+    const inactiveBar = document.getElementById('inactive-students-bar');
+    
+    if (activeBar) {
+        activeBar.style.width = '{{ active_students_percentage }}%';
+    }
+    if (inactiveBar) {
+        inactiveBar.style.width = '{{ inactive_students_percentage }}%';
+    }
+});
+</script>

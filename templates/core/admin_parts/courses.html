@@ -1,20 +1,117 @@
 <!-- Admin Courses Dashboard Content -->
 <div class="space-y-8">
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
-                Courses Management
-            </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage courses system</p>
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Courses Management</h1>
+            <p class="text-slate-500 font-medium">Manage all academic courses and offerings.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'admin_unified_dashboard' page='subjects' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add Subject
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='classes' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-chalkboard mr-2"></i> Add Class
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Courses</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Courses management interface coming soon</p>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Subjects</h3>
+                    <span class="text-3xl font-bold text-blue-600">{{ total_subjects|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Courses</h3>
+                    <span class="text-3xl font-bold text-green-600">{{ total_courses|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Active Offerings</h3>
+                    <span class="text-3xl font-bold text-purple-600">{{ active_offerings|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Departments</h3>
+                    <span class="text-3xl font-bold text-orange-600">{{ total_departments|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900">Quick Actions</h3>
+                <i class="fas fa-bolt text-2xl text-blue-600"></i>
+            </div>
+        </div>
+        <div class="px-6 py-4 space-y-3">
+            <a href="{% url 'admin_unified_dashboard' page='subjects' %}" class="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
+                <i class="fas fa-book-open mr-2"></i> Manage Subjects
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='classes' %}" class="w-full flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">
+                <i class="fas fa-school mr-2"></i> Manage Classes
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='teachers' %}" class="w-full flex items-center justify-center bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition-all">
+                <i class="fas fa-chalkboard-teacher mr-2"></i> Assign Teachers
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card-premium">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-slate-900 mb-4">Recent Course Activity</h2>
+            <div class="text-center py-8">
+                <i class="fas fa-chart-line text-4xl text-slate-300 mb-3"></i>
+                <p class="text-slate-500">Course activity tracking coming soon</p>
+            </div>
         </div>
     </div>
 </div>
