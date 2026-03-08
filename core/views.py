@@ -24,7 +24,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 import json
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm
+from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm, TimeTableForm
 
 from .models import (
     Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
@@ -2143,63 +2143,38 @@ def student_results(request):
 @login_required
 @user_passes_test(is_student)
 def student_timetable(request):
-    """Student timetable page"""
+    """Student timetable page with robust filtering"""
     try:
         student = request.user.student_profile
     except StudentProfile.DoesNotExist:
+        messages.error(request, "Student profile not found.")
         return redirect('student_dashboard')
     
     # Get current semester
     current_semester = Semester.objects.filter(is_current=True).first()
+    if not current_semester:
+        current_semester = Semester.objects.all().order_by('-id').first()
     
-    # Get student's course enrollments for current semester
+    # Get student's enrolled courses
     enrollments = Enrollment.objects.filter(
         student=student
     ).select_related('course_offering__course')
     
-    if current_semester:
-        # Get timetable entries for student's courses
-        course_ids = enrollments.values_list('course_offering__course__id', flat=True)
-        timetable_entries = TimeTable.objects.filter(
-            course_offering__course__id__in=course_ids,
-            semester=current_semester
-        ).select_related('course_offering__course', 'course_offering__faculty').order_by('day', 'start_time')
-    else:
-        timetable_entries = TimeTable.objects.none()
+    course_ids = enrollments.values_list('course_offering__course__id', flat=True)
     
-    # Organize timetable by day
-    days_of_week = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-    organized_timetable = {}
-    
-    for day in days_of_week:
-        organized_timetable[day] = []
-    
-    # Add entries to organized structure
-    for entry in timetable_entries:
-        day_key = entry.day
-        if day_key in organized_timetable:
-            organized_timetable[day_key].append(entry)
-    
-    # Generate unique time slots
-    time_slots = set()
-    for entry in timetable_entries:
-        time_slots.add(entry.start_time.strftime('%H:%M'))
-    
-    # Sort time slots
-    time_slots = sorted(list(time_slots))
-    
-    # Add empty time slots if no entries exist
-    if not time_slots:
-        time_slots = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00']
+    # Get timetable entries for student's courses in current semester
+    # We filter by course_id to catch all offerings of that course the student might be in
+    timetable_entries = TimeTable.objects.filter(
+        course_offering__course__id__in=course_ids,
+        semester=current_semester
+    ).select_related('course_offering__course', 'course_offering__faculty').order_by('day', 'start_time')
     
     context = {
-        'student': student,
+        'title': 'My Weekly Timetable',
         'current_semester': current_semester,
-        'timetable_entries': timetable_entries,
-        'organized_timetable': organized_timetable,
-        'days_of_week': days_of_week,
-        'time_slots': time_slots,
-        'enrollments': enrollments,
+        'schedules': timetable_entries,
+        'days': [day[0] for day in TimeTable.DAY_CHOICES],
+        'school_info': get_school_info(),
     }
     
     return render(request, 'core/student_timetable.html', context)
@@ -2220,9 +2195,9 @@ def student_assignments(request):
     enrollments = Enrollment.objects.filter(student=student).select_related('course_offering__course')
     
     # Get assignments for student's courses
-    course_offerings = enrollments.values_list('course_offering__id', flat=True)
+    course_offering_ids = enrollments.values_list('course_offering__id', flat=True)
     assignments = Assignment.objects.filter(
-        course_offering__id__in=course_offerings
+        course_offering__id__in=course_offering_ids
     ).select_related('course_offering__course').order_by('-created_at')
     
     # Get student's submissions
@@ -2256,9 +2231,9 @@ def student_assignments(request):
         # Add grade display method to submissions
         if assignment.id in submissions and submissions[assignment.id]:
             submission = submissions[assignment.id]
-            if submission.score is not None:
+            if submission.marks_obtained is not None:
                 # Calculate percentage
-                submission.score_percentage = (submission.score / assignment.max_score) * 100 if assignment.max_score > 0 else 0
+                submission.score_percentage = (submission.marks_obtained / assignment.max_marks) * 100 if assignment.max_marks > 0 else 0
                 
                 if submission.score_percentage >= 80:
                     grade_display = 'Excellent'
@@ -2268,9 +2243,9 @@ def student_assignments(request):
                     grade_display = 'Satisfactory'
                 else:
                     grade_display = 'Needs Improvement'
-                submission.get_grade_display = lambda: grade_display
+                submission.get_grade_display = grade_display
             else:
-                submission.get_grade_display = lambda: 'Not Graded'
+                submission.get_grade_display = 'Not Graded'
     
     context = {
         'student': student,
@@ -2279,6 +2254,7 @@ def student_assignments(request):
         'submitted_count': submitted_count,
         'pending_count': pending_count,
         'overdue_count': overdue_count,
+        'school_info': get_school_info(),
     }
     
     return render(request, 'core/student_assignments.html', context)
@@ -4420,12 +4396,39 @@ def bulk_class_assignment(request):
 @login_required
 @user_passes_test(is_admin)
 def admin_timetable(request):
-    """Admin timetable management"""
+    """Admin timetable management with CRUD"""
+    if request.method == 'POST':
+        form = TimeTableForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Timetable entry added successfully.")
+            return redirect('admin_timetable')
+        else:
+            messages.error(request, "Error adding timetable entry.")
+    else:
+        form = TimeTableForm()
+    
+    # Group by form/department to make it manageable
+    schedules = TimeTable.objects.select_related('course_offering__course', 'semester', 'course_offering__course__department').all()
+    departments = Department.objects.all()
+    
     context = {
         'title': 'Timetable Management',
         'school_info': get_school_info(),
+        'form': form,
+        'schedules': schedules,
+        'departments': departments,
+        'days': [day[0] for day in TimeTable.DAY_CHOICES],
     }
     return render(request, 'core/admin_timetable.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_delete(request, pk):
+    schedule = get_object_or_404(TimeTable, pk=pk)
+    schedule.delete()
+    messages.success(request, "Timetable entry removed.")
+    return redirect('admin_timetable')
 
 
 @login_required
@@ -4493,3 +4496,66 @@ def admin_settings(request):
 
 
 
+
+@login_required
+def teacher_timetable(request):
+    """View sessions specifically assigned to the logged-in teacher"""
+    try:
+        faculty = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, "Teacher profile not found.")
+        return redirect('teacher_dashboard')
+        
+    current_semester = Semester.objects.filter(is_current=True).first()
+    if not current_semester:
+        current_semester = Semester.objects.all().order_by('-id').first()
+    
+    # Filter timetable by sessions where this faculty is the instructor
+    timetable_entries = TimeTable.objects.filter(
+        course_offering__faculty=faculty,
+        semester=current_semester
+    ).select_related('course_offering__course', 'semester', 'course_offering__course__department').order_by('day', 'start_time')
+    
+    context = {
+        'title': 'My Teaching Schedule',
+        'schedules': timetable_entries,
+        'days': [day[0] for day in TimeTable.DAY_CHOICES],
+        'is_teacher': True,
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/teacher_timetable.html', context)
+
+@login_required
+@user_passes_test(is_student)
+def submit_assignment(request, assignment_id):
+    """Handle assignment submission"""
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    student = request.user.student_profile
+    
+    if request.method == 'POST':
+        submission_text = request.POST.get('submission_text')
+        submitted_file = request.FILES.get('submitted_file')
+        
+        if not submitted_file:
+            messages.error(request, "Please upload a file to submit.")
+            return redirect('student_assignments')
+        
+        # Check if already submitted
+        submission, created = Submission.objects.get_or_create(
+            assignment=assignment,
+            student=student,
+            defaults={'file': submitted_file}
+        )
+        
+        if not created:
+            # Update existing submission
+            submission.file = submitted_file
+            submission.submitted_at = timezone.now()
+            
+        submission.feedback = submission_text or ""
+        submission.save()
+        
+        messages.success(request, f"Assignment '{assignment.title}' submitted successfully!")
+        return redirect('student_assignments')
+    
+    return redirect('student_assignments')

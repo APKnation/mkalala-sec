@@ -10,7 +10,7 @@ from .models import (
     Course, CourseOffering, Enrollment, Grade, Attendance,
     Fee, FeeCategory, Semester, LeaveRequest,
     Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar,
-    Subject, SubjectEnrollment, Announcement
+    Subject, SubjectEnrollment, Announcement, TimeTable
 )
 
 User = get_user_model()
@@ -1046,3 +1046,16 @@ class AnnouncementForm(forms.ModelForm):
             }),
         }
 
+
+class TimeTableForm(forms.ModelForm):
+    class Meta:
+        model = TimeTable
+        fields = ['course_offering', 'day', 'start_time', 'end_time', 'room', 'semester']
+        widgets = {
+            'course_offering': forms.Select(attrs={'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none appearance-none'}),
+            'day': forms.Select(attrs={'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none appearance-none'}),
+            'start_time': forms.TimeInput(attrs={'type': 'time', 'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none'}),
+            'end_time': forms.TimeInput(attrs={'type': 'time', 'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none'}),
+            'room': forms.TextInput(attrs={'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none'}),
+            'semester': forms.Select(attrs={'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 outline-none appearance-none'}),
+        }

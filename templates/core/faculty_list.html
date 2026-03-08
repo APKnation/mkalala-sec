@@ -1,0 +1,90 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Our Faculty | Mkalala Sec{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative py-24 bg-slate-900 overflow-hidden font-sans">
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-blue-600 rounded-full blur-[128px] animate-pulse"></div>
+        <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-600 rounded-full blur-[128px] animate-pulse delay-700"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 relative z-10 text-center">
+        <h1 class="text-5xl md:text-7xl font-display font-bold text-white mb-6 leading-tight">Our <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Faculty</span></h1>
+        <p class="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">Meet the dedicated educators and professionals committed to academic excellence and nurturing the next generation of leaders.</p>
+    </div>
+</div>
+
+<!-- Faculty Grid -->
+<div class="max-w-7xl mx-auto px-4 py-24">
+    <div class="text-center mb-16">
+        <h2 class="text-3xl font-display font-bold text-slate-900 mb-4">Academic Staff</h2>
+        <div class="w-20 h-1.5 bg-blue-600 mx-auto rounded-full"></div>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {% for faculty in faculties %}
+        <div class="card-premium p-6 hover:bg-white transition-all group flex flex-col items-center text-center">
+            
+            <div class="w-24 h-24 mb-6 rounded-full overflow-hidden border-4 border-slate-50 bg-slate-100 flex items-center justify-center group-hover:border-blue-100 transition-all">
+                {% if faculty.profile_picture %}
+                    <img src="{{ faculty.profile_picture.url }}" alt="{{ faculty.user.get_full_name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-600 flex items-center justify-center text-3xl font-bold">
+                        {{ faculty.user.first_name.0 }}{{ faculty.user.last_name.0 }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <h3 class="text-xl font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">{{ faculty.user.get_full_name|default:faculty.user.username }}</h3>
+            
+            <p class="text-blue-600 text-sm font-bold tracking-wide uppercase mb-3">
+                {{ faculty.get_designation_display|default:faculty.designation|title }}
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-2 mb-6">
+                <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                    {{ faculty.department.name|default:"General Dept" }}
+                </span>
+                {% if faculty.specialization %}
+                <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                    {{ faculty.specialization|truncatechars:20 }}
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="mt-auto w-full pt-4 border-t border-slate-100 flex justify-center space-x-4">
+                <a href="mailto:{{ faculty.user.email }}" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white transition-all" title="Email {{ faculty.user.get_full_name }}">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-full py-20 text-center">
+            <div class="w-20 h-20 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fas fa-users-slash"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">No Faculty Found</h3>
+            <p class="text-slate-500 mt-2">Check back later as our academic staff directory is updated.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Join Our Team CTA -->
+<div class="bg-slate-50 py-24">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="rounded-[3rem] bg-gradient-to-br from-indigo-900 to-slate-900 p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
+            <div class="absolute inset-0 opacity-20 bg-grid-slate pointer-events-none"></div>
+            <div class="relative z-10 space-y-8">
+                <h2 class="text-4xl md:text-5xl font-display font-bold text-white tracking-tight">Join Our Faculty Team</h2>
+                <p class="text-xl text-slate-300 max-w-2xl mx-auto">We are always looking for passionate educators to join Mkalala Secondary School. If you are dedicated to student success, we'd love to hear from you.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="{% url 'public_contact' %}" class="btn-glow-primary bg-blue-600 text-white hover:bg-blue-500 border-none px-10 py-5">Contact Us for Opportunities</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

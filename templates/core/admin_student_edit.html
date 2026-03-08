@@ -1,307 +1,249 @@
-{% extends 'core/admin_dashboard.html' %}
+{% extends 'core/base_dashboard.html' %}
 {% load static %}
 
 {% block title %}Edit Student - {{ school_info.name }}{% endblock %}
+{% block mobile_title %}Edit Student{% endblock %}
+{% block user_role %}System Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item-active">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fees' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-coins"></i>
+    <span>Finance</span>
+</a>
+{% endblock %}
 
 {% block main_content %}
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">Edit Student</h1>
-        <div>
-            <a href="{% url 'admin_student_detail' object.id %}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Details
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <div class="space-y-2">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-tight">Edit Student Record</h1>
+            <p class="text-slate-500 font-medium">Update profile, academic history, and system access.</p>
+        </div>
+        <div class="flex gap-4">
+            <a href="{% url 'admin_student_detail' object.id %}" class="px-6 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-all flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Details
             </a>
         </div>
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-            <h5 class="mb-0">
-                <i class="fas fa-user-edit me-2"></i>Edit Student Information
-            </h5>
-        </div>
-        <div class="card-body">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                
+    <!-- Edit Form Container -->
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Column -->
+            <div class="lg:col-span-2 space-y-6">
                 <!-- User Information -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-user me-2"></i>User Information
-                        </h6>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                <div class="card-premium p-8 bg-white border-none shadow-soft">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center mb-6">
+                        <i class="fas fa-user-circle text-blue-500 mr-3"></i> Core Account Info
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">First Name</label>
                             {{ user_form.first_name }}
                             {% if user_form.first_name.errors %}
-                                <div class="text-danger small">
-                                    {{ user_form.first_name.errors }}
-                                </div>
+                                <p class="text-xs text-red-500 mt-1">{{ user_form.first_name.errors.0 }}</p>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Last Name</label>
                             {{ user_form.last_name }}
                             {% if user_form.last_name.errors %}
-                                <div class="text-danger small">
-                                    {{ user_form.last_name.errors }}
-                                </div>
+                                <p class="text-xs text-red-500 mt-1">{{ user_form.last_name.errors.0 }}</p>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ user_form.email.id_for_label }}" class="form-label">Email</label>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Email Address</label>
                             {{ user_form.email }}
                             {% if user_form.email.errors %}
-                                <div class="text-danger small">
-                                    {{ user_form.email.errors }}
-                                </div>
+                                <p class="text-xs text-red-500 mt-1">{{ user_form.email.errors.0 }}</p>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" value="{{ object.user.username }}" readonly>
-                            <small class="text-muted">Username cannot be changed</small>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Username</label>
+                            <input type="text" value="{{ object.user.username }}" class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-sm font-medium text-slate-500 outline-none select-none cursor-not-allowed" readonly>
+                            <p class="text-[10px] text-slate-400 mt-2"><i class="fas fa-lock mr-1 text-slate-300"></i> Username is locked and cannot be changed.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Student Profile Information -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-graduation-cap me-2"></i>Student Profile Information
-                        </h6>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.roll_number.id_for_label }}" class="form-label">Roll Number</label>
+                <!-- Academic Info -->
+                <div class="card-premium p-8 bg-white border-none shadow-soft">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center mb-6">
+                        <i class="fas fa-graduation-cap text-indigo-500 mr-3"></i> Academic Placement
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Department / Stream</label>
+                            <div class="relative">
+                                {{ form.department }}
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Roll Number</label>
                             {{ form.roll_number }}
-                            {% if form.roll_number.errors %}
-                                <div class="text-danger small">
-                                    {{ form.roll_number.errors }}
-                                </div>
-                            {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.department.id_for_label }}" class="form-label">Department</label>
-                            {{ form.department }}
-                            {% if form.department.errors %}
-                                <div class="text-danger small">
-                                    {{ form.department.errors }}
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Current Form</label>
+                            <div class="relative">
+                                {{ form.current_form }}
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-xs"></i>
                                 </div>
-                            {% endif %}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="{{ form.admission_year.id_for_label }}" class="form-label">Admission Year</label>
-                            {{ form.admission_year }}
-                            {% if form.admission_year.errors %}
-                                <div class="text-danger small">
-                                    {{ form.admission_year.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="{{ form.current_form.id_for_label }}" class="form-label">Current Form</label>
-                            {{ form.current_form }}
-                            {% if form.current_form.errors %}
-                                <div class="text-danger small">
-                                    {{ form.current_form.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label for="{{ form.current_semester.id_for_label }}" class="form-label">Current Semester</label>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Current Sem</label>
                             {{ form.current_semester }}
-                            {% if form.current_semester.errors %}
-                                <div class="text-danger small">
-                                    {{ form.current_semester.errors }}
-                                </div>
-                            {% endif %}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Year admitted</label>
+                            {{ form.admission_year }}
                         </div>
                     </div>
                 </div>
 
-                <!-- Contact Information -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-phone me-2"></i>Contact Information
-                        </h6>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number</label>
-                            {{ form.phone }}
-                            {% if form.phone.errors %}
-                                <div class="text-danger small">
-                                    {{ form.phone.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
-                            {{ form.address }}
-                            {% if form.address.errors %}
-                                <div class="text-danger small">
-                                    {{ form.address.errors }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Profile Picture -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-camera me-2"></i>Profile Picture
-                        </h6>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
-                            {{ form.profile_picture }}
-                            {% if form.profile_picture.errors %}
-                                <div class="text-danger small">
-                                    {{ form.profile_picture.errors }}
-                                </div>
-                            {% endif %}
-                            <small class="text-muted">Leave blank to keep current picture</small>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        {% if object.profile_picture %}
-                            <div class="text-center">
-                                <img src="{{ object.profile_picture.url }}" alt="Current Profile Picture" class="img-thumbnail" style="max-width: 200px;">
-                                <p class="text-muted mt-2">Current Profile Picture</p>
-                            </div>
-                        {% else %}
-                            <div class="text-center">
-                                <div class="avatar-lg bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 200px; height: 200px;">
-                                    <span style="font-size: 4rem;">{{ object.user.get_full_name|first|upper }}</span>
-                                </div>
-                                <p class="text-muted mt-2">No Profile Picture</p>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Academic Information -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-book me-2"></i>Academic Information
-                        </h6>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.necta_exam_number.id_for_label }}" class="form-label">NECTA Exam Number</label>
+                <!-- Registration Documents -->
+                <div class="card-premium p-8 bg-white border-none shadow-soft">
+                    <h3 class="text-lg font-bold text-slate-900 flex items-center mb-6">
+                        <i class="fas fa-copy text-emerald-500 mr-3"></i> Credentials & Registrations
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">NECTA Number</label>
                             {{ form.necta_exam_number }}
-                            {% if form.necta_exam_number.errors %}
-                                <div class="text-danger small">
-                                    {{ form.necta_exam_number.errors }}
-                                </div>
-                            {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.birth_certificate_number.id_for_label }}" class="form-label">Birth Certificate Number</label>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Birth Cert No.</label>
                             {{ form.birth_certificate_number }}
-                            {% if form.birth_certificate_number.errors %}
-                                <div class="text-danger small">
-                                    {{ form.birth_certificate_number.errors }}
-                                </div>
-                            {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.previous_school.id_for_label }}" class="form-label">Previous School</label>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Previous Schooling</label>
                             {{ form.previous_school }}
-                            {% if form.previous_school.errors %}
-                                <div class="text-danger small">
-                                    {{ form.previous_school.errors }}
-                                </div>
-                            {% endif %}
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label for="{{ form.primary_school_leaving_exam_number.id_for_label }}" class="form-label">Primary School Leaving Exam Number</label>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">PSLE Number (Leaving Exam)</label>
                             {{ form.primary_school_leaving_exam_number }}
-                            {% if form.primary_school_leaving_exam_number.errors %}
-                                <div class="text-danger small">
-                                    {{ form.primary_school_leaving_exam_number.errors }}
-                                </div>
-                            {% endif %}
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Account Status -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h6 class="text-primary mb-3">
-                            <i class="fas fa-toggle-on me-2"></i>Account Status
-                        </h6>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" {% if object.user.is_active %}checked{% endif %}>
-                            <label class="form-check-label" for="isActive">
-                                Account Active
-                            </label>
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <!-- ID Photo -->
+                <div class="card-premium p-8 bg-white border-none shadow-soft flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-slate-900 w-full mb-6">Portrait</h3>
+                    
+                    <div class="w-40 h-40 rounded-3xl bg-slate-50 shadow-inner overflow-hidden mb-6 flex items-center justify-center relative group">
+                        {% if object.profile_picture %}
+                            <img src="{{ object.profile_picture.url }}" alt="Student Portrait" class="w-full h-full object-cover">
+                        {% else %}
+                            <span class="text-6xl font-bold text-slate-300">{{ object.user.get_full_name|first|upper }}</span>
+                        {% endif %}
+                        
+                        <!-- Hover Overlay -->
+                        <div class="absolute inset-0 bg-slate-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                            <i class="fas fa-camera text-white text-3xl"></i>
                         </div>
-                        <small class="text-muted">Uncheck this to deactivate the student account</small>
+                    </div>
+                    
+                    <div class="w-full">
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Upload Replacement</label>
+                        {{ form.profile_picture }}
+                        <p class="text-[10px] text-slate-400 mt-2 text-center">Accepts PNG, JPG. Max size 2MB.</p>
                     </div>
                 </div>
 
-                <!-- Form Actions -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-between">
-                            <a href="{% url 'admin_student_detail' object.id %}" class="btn btn-secondary">
-                                <i class="fas fa-times me-2"></i>Cancel
-                            </a>
+                <!-- Contact & Account -->
+                <div class="card-premium p-8 bg-white border-none shadow-soft space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 flex items-center mb-4">
+                            <i class="fas fa-phone-alt text-amber-500 mr-3"></i> Contact Info
+                        </h3>
+                        <div class="space-y-4">
                             <div>
-                                <button type="submit" class="btn btn-warning">
-                                    <i class="fas fa-save me-2"></i>Save Changes
-                                </button>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Phone</label>
+                                {{ form.phone }}
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Physical Address</label>
+                                {{ form.address }}
                             </div>
                         </div>
                     </div>
+
+                    <div class="pt-6 border-t border-slate-100">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Account Access</h3>
+                        <label class="flex items-center p-4 bg-slate-50 rounded-xl border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors">
+                            <input type="checkbox" name="is_active" {% if object.user.is_active %}checked{% endif %} class="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-600 bg-white mr-3 transition-all cursor-pointer">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-slate-900">System Active</span>
+                                <span class="text-xs text-slate-500">Enable/disable portal access</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
-            </form>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xl shadow-blue-600/20 transition-all flex items-center justify-center space-x-2">
+                    <i class="fas fa-save"></i>
+                    <span>Save Final Changes</span>
+                </button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add form classes to all form fields
-    document.querySelectorAll('input, select, textarea').forEach(function(element) {
-        if (!element.classList.contains('form-control')) {
-            element.classList.add('form-control');
-        }
+    // Standard Tailwind input styling applied to Django form elements
+    const styleClasses = "w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none text-slate-700".split(' ');
+    
+    // Select styling
+    const selectClasses = [...styleClasses, "appearance-none", "cursor-pointer"];
+
+    document.querySelectorAll('input:not([type="checkbox"]):not([type="file"]):not([readonly]), textarea').forEach(function(el) {
+        el.classList.add(...styleClasses);
+    });
+
+    document.querySelectorAll('select').forEach(function(el) {
+        el.classList.add(...selectClasses);
+    });
+
+    // File input styling
+    document.querySelectorAll('input[type="file"]').forEach(function(el) {
+        el.classList.add('block', 'w-full', 'text-sm', 'text-slate-500', 
+            'file:mr-4', 'file:py-2.5', 'file:px-4', 
+            'file:rounded-lg', 'file:border-0', 
+            'file:text-xs', 'file:font-bold', 'file:uppercase', 'file:tracking-widest',
+            'file:bg-blue-50', 'file:text-blue-600', 
+            'hover:file:bg-blue-100', 'transition-all', 'cursor-pointer');
     });
 });
 </script>

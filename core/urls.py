@@ -36,6 +36,7 @@ urlpatterns = [
     path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
     path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
+    path('teacher/timetable/', views.teacher_timetable, name='teacher_timetable'),
     path('dashboard/headmaster/', views.headmaster_dashboard, name='headmaster_dashboard'),
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     path('dashboard/faculty/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),  # Legacy
@@ -45,6 +46,7 @@ urlpatterns = [
     path('student/results/', views.student_results, name='student_results'),
     path('student/timetable/', views.student_timetable, name='student_timetable'),
     path('student/assignments/', views.student_assignments, name='student_assignments'),
+    path('student/assignments/<int:assignment_id>/submit/', views.submit_assignment, name='submit_assignment'),
     path('student/exams/', views.student_exams, name='student_exams'),
     path('student/library/', views.student_library, name='student_library'),
     path('student/achievements/', views.student_achievements, name='student_achievements'),
@@ -97,6 +99,7 @@ urlpatterns = [
     
     # Additional Admin URLs
     path('admin/timetable/', views.admin_timetable, name='admin_timetable'),
+    path('admin/timetable/<int:pk>/delete/', views.admin_timetable_delete, name='admin_timetable_delete'),
     path('admin/exams/', views.admin_exams, name='admin_exams'),
     path('admin/library/', views.admin_library, name='admin_library'),
     path('admin/fees/', views.admin_fees, name='admin_fees'),
@@ -135,6 +138,7 @@ urlpatterns = [
     path('attendance/summary/', views.attendance_summary, name='attendance_summary'),
     path('exam-schedule/', views.exam_schedule_view, name='exam_schedule'),
     path('payment-history/', views.payment_history, name='payment_history'),
+    path('admin/announcements/', views.admin_announcements, name='admin_announcements'),
     path('announcements/', views.announcement_list, name='announcement_list'),
     path('inbox/', views.inbox, name='inbox'),
     

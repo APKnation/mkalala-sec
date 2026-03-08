@@ -1,0 +1,84 @@
+{% extends 'core/base_dashboard.html' %}
+{% load static %}
+{% load timetable_tags %}
+
+{% block title %}My Schedule | Mkalala Sec{% endblock %}
+{% block mobile_title %}Schedule{% endblock %}
+{% block user_role %}Teacher | {{ request.user.facultyprofile.department.name|default:"Faculty" }}{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'teacher_dashboard' %}" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-book-reader"></i>
+    <span>My Classes</span>
+</a>
+<a href="{% url 'teacher_timetable' %}" class="sidebar-item-active font-sans">
+    <i class="fas fa-calendar-alt"></i>
+    <span>My Schedule</span>
+</a>
+<a href="{% url 'inbox' %}" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+</a>
+<a href="{% url 'announcement_list' %}" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 font-sans">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+        <div class="space-y-2">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-tight">My Teaching Schedule</h1>
+            <p class="text-slate-500 font-medium">Your assigned lecture hours and classroom locations.</p>
+        </div>
+        <div class="bg-blue-50 px-6 py-3 rounded-2xl border border-blue-100">
+            <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Active Week</span>
+        </div>
+    </div>
+
+    <!-- Timetable Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-7 gap-6 overflow-x-auto pb-8">
+        {% for day_name in days %}
+        <div class="min-w-[200px] flex flex-col gap-4">
+            <div class="bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg">
+                <span class="text-xs font-bold uppercase tracking-widest">{{ day_name }}</span>
+            </div>
+            
+            <div class="flex flex-col gap-4">
+                {% with day_schedules=schedules|filter_by_day:day_name %}
+                    {% for schedule in day_schedules %}
+                    <div class="schedule-card bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">{{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}</span>
+                            <h4 class="text-sm font-bold text-slate-900 truncate">{{ schedule.course_offering.course.name }}</h4>
+                            <div class="flex items-center text-[11px] text-slate-500 mt-1">
+                                <i class="fas fa-map-marker-alt mr-2 opacity-50"></i>
+                                <span>Room: {{ schedule.room }}</span>
+                            </div>
+                            <div class="flex items-center text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">
+                                <i class="fas fa-users mr-2 opacity-50"></i>
+                                <span>{{ schedule.course_offering.course.department.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-8 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-200">
+                        <i class="fas fa-calendar-day mb-2"></i>
+                        <span class="text-[10px] font-bold uppercase tracking-widest">No Class</span>
+                    </div>
+                    {% endfor %}
+                {% endwith %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
