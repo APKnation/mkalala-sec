@@ -668,6 +668,8 @@ def get_admin_students_context(user, admin_profile):
         'departments': departments,
         'total_students': students.count(),
         'active_students': students.filter(user__is_active=True).count(),
+        'active_students_percentage': (students.filter(user__is_active=True).count() * 100) // students.count() if students.count() > 0 else 0,
+        'inactive_students_percentage': (students.filter(user__is_active=False).count() * 100) // students.count() if students.count() > 0 else 0,
         'new_students_this_month': students.filter(
             date_enrolled__month=timezone.now().month,
             date_enrolled__year=timezone.now().year
