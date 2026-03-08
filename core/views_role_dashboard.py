@@ -714,10 +714,21 @@ def get_admin_classes_context(user, admin_profile):
 
 def get_admin_subjects_context(user, admin_profile):
     """Get admin subjects page context"""
-    subjects = CourseOffering.objects.values('course__name', 'course__code').distinct().order_by('course__name')
+    from .models import Subject, Department
+    
+    subjects = Subject.objects.all().select_related('department').order_by('name')
+    departments = Department.objects.all().order_by('name')
+    
+    # Calculate core vs elective subjects
+    core_subjects = subjects.filter(is_core=True)
+    elective_subjects = subjects.filter(is_core=False)
+    
     return {
         'subjects': subjects,
         'total_subjects': subjects.count(),
+        'core_subjects': core_subjects.count(),
+        'elective_subjects': elective_subjects.count(),
+        'total_departments': departments.count(),
     }
 
 def get_admin_attendance_context(user, admin_profile):

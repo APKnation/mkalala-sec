@@ -1139,7 +1139,7 @@ def admin_student_delete(request, pk):
         'student': student,
     }
     
-    return render(request, 'core/admin_management/admin_student_delete.html', context)
+    return render(request, 'core/admin_student_delete.html', context)
 
 @login_required
 @user_passes_test(is_admin)
@@ -4870,22 +4870,27 @@ def admin_fees(request):
     
     if status_filter:
         if status_filter == 'paid':
-            fees = fees.filter(payments__status='completed')
+            fees = fees.filter(is_paid=True)
         elif status_filter == 'pending':
-            fees = fees.filter(payments__status='pending')
+            fees = fees.filter(is_paid=False)
         elif status_filter == 'overdue':
-            fees = fees.filter(due_date__lt=timezone.now().date(), payments__status__in=['pending', 'partial'])
+            fees = fees.filter(due_date__lt=timezone.now().date(), is_paid=False)
     
     if fee_structure_filter:
         fees = fees.filter(fee_structure_id=fee_structure_filter)
     
     # Calculate statistics
     total_fees = fees.count()
-    paid_fees = fees.filter(payments__status='completed').count()
-    pending_fees = fees.filter(payments__status='pending').count()
-    overdue_fees = fees.filter(due_date__lt=timezone.now().date(), payments__status__in=['pending', 'partial']).count()
+    paid_fees = fees.filter(is_paid=True).count()
+    pending_fees = fees.filter(is_paid=False).count()
+    overdue_fees = fees.filter(due_date__lt=timezone.now().date(), is_paid=False).count()
     total_revenue = fees.aggregate(total=Sum('amount'))['total'] or 0
-    collected_revenue = fees.filter(payments__status='completed').aggregate(total=Sum('amount'))['total'] or 0
+    collected_revenue = fees.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Calculate percentages
+    paid_percentage = (paid_fees / total_fees * 100) if total_fees > 0 else 0
+    pending_percentage = (pending_fees / total_fees * 100) if total_fees > 0 else 0
+    overdue_percentage = (overdue_fees / total_fees * 100) if total_fees > 0 else 0
     
     context = {
         'fees': fees,
@@ -4899,6 +4904,10 @@ def admin_fees(request):
         'search_query': search_query,
         'status_filter': status_filter,
         'fee_structure_filter': fee_structure_filter,
+        'today': timezone.now().date(),
+        'paid_percentage': paid_percentage,
+        'pending_percentage': pending_percentage,
+        'overdue_percentage': overdue_percentage,
     }
     
     return render(request, 'core/admin_management/admin_fees.html', context)

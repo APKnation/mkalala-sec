@@ -1,20 +1,182 @@
 <!-- Admin Subjects Dashboard Content -->
 <div class="space-y-8">
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
-                Subjects Management
-            </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage subjects system</p>
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Subjects Management</h1>
+            <p class="text-slate-500 font-medium">Manage all academic subjects and curriculum.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'admin_unified_dashboard' page='courses' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add Subject
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='classes' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-chalkboard mr-2"></i> Add Class
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Subjects</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Subjects management interface coming soon</p>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Subjects</h3>
+                    <span class="text-3xl font-bold text-blue-600">{{ total_subjects|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Core Subjects</h3>
+                    <span class="text-3xl font-bold text-green-600">{{ core_subjects|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Elective Subjects</h3>
+                    <span class="text-3xl font-bold text-purple-600">{{ elective_subjects|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-purple-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Departments</h3>
+                    <span class="text-3xl font-bold text-orange-600">{{ total_departments|default:"0" }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-orange-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900">Quick Actions</h3>
+                <i class="fas fa-bolt text-2xl text-blue-600"></i>
+            </div>
+        </div>
+        <div class="px-6 py-4 space-y-3">
+            <a href="{% url 'admin_unified_dashboard' page='courses' %}" class="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
+                <i class="fas fa-book mr-2"></i> Manage Courses
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='classes' %}" class="w-full flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">
+                <i class="fas fa-school mr-2"></i> Manage Classes
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='teachers' %}" class="w-full flex items-center justify-center bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition-all">
+                <i class="fas fa-chalkboard-teacher mr-2"></i> Assign Teachers
+            </a>
+        </div>
+    </div>
+
+    <!-- Subjects Table -->
+    <div class="card-premium overflow-hidden border-none shadow-soft">
+        <div class="p-0 overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Subject Code</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Subject Name</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Type</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Department</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Status</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for subject in subjects %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-full uppercase tracking-tighter">
+                                {{ subject.code|default:"N/A" }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <strong>{{ subject.name }}</strong>
+                                {% if subject.is_core %}
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">Core</span>
+                                {% else %}
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">Elective</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 {% if subject.is_core %}bg-green-100 text-green-700{% else %}bg-orange-100 text-orange-700{% endif %} text-xs font-bold rounded-full">
+                                {% if subject.is_core %}Core{% else %}Elective{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full">
+                                {{ subject.department.name|default:"N/A" }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 {% if subject.is_active %}bg-emerald-100 text-emerald-700{% else %}bg-red-100 text-red-700{% endif %} text-xs font-bold rounded-full">
+                                {% if subject.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="text-red-600 hover:text-red-800 transition-colors">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-8 py-20 text-center">
+                            <div class="flex flex-col items-center space-y-4">
+                                <i class="fas fa-book text-4xl text-slate-300 mb-3"></i>
+                                <p class="text-slate-500">No subjects found</p>
+                                <a href="{% url 'admin_unified_dashboard' page='subjects' %}" class="mt-4 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                    <i class="fas fa-plus mr-2"></i> Add First Subject
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

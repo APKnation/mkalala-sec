@@ -1,0 +1,292 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Fees Management | {{ school_info.name }}{% endblock %}
+{% block mobile_title %}Fees{% endblock %}
+{% block user_role %}Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Faculty</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-open"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fees' %}" class="sidebar-item-active">
+    <i class="fas fa-wallet"></i>
+    <span>Fees & Finance</span>
+</a>
+<a href="{% url 'admin_announcements' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+<a href="{% url 'admin_reports' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+<a href="{% url 'admin_settings' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 font-sans">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Fees Management</h1>
+            <p class="text-slate-500 font-medium">Manage student fees, payments, and financial records.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'admin_fee_create' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add Fee
+            </a>
+            <a href="{% url 'admin_reports' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-download mr-2"></i> Export Report
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Fees</h3>
+                    <span class="text-3xl font-bold text-blue-600">{{ total_fees }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Paid Fees</h3>
+                    <span class="text-3xl font-bold text-green-600">{{ paid_fees }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: {{ paid_percentage|floatformat:0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Pending Fees</h3>
+                    <span class="text-3xl font-bold text-yellow-600">{{ pending_fees }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" style="width: {{ pending_percentage|floatformat:0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Overdue Fees</h3>
+                    <span class="text-3xl font-bold text-red-600">{{ overdue_fees }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-red-500 h-2 rounded-full transition-all duration-300" style="width: {{ overdue_percentage|floatformat:0 }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Revenue</h3>
+                    <span class="text-2xl font-bold text-blue-600">TZS {{ total_revenue|floatformat:0|intcomma }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <p class="text-sm text-slate-600">Expected total from all fees</p>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Collected Revenue</h3>
+                    <span class="text-2xl font-bold text-green-600">TZS {{ collected_revenue|floatformat:0|intcomma }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <p class="text-sm text-slate-600">Amount actually collected</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900">Filter Fees</h3>
+                <i class="fas fa-filter text-2xl text-blue-600"></i>
+            </div>
+        </div>
+        <div class="px-6 py-4">
+            <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Search</label>
+                    <input type="text" name="search" value="{{ search_query }}" placeholder="Search by student name or amount..." class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                    <select name="status" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Status</option>
+                        <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="overdue" {% if status_filter == 'overdue' %}selected{% endif %}>Overdue</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Fee Structure</label>
+                    <select name="fee_structure" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">All Structures</option>
+                        {% for structure in fee_structures %}
+                            <option value="{{ structure.id }}" {% if fee_structure_filter == structure.id|stringformat:"s" %}selected{% endif %}>{{ structure.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="md:col-span-3 flex gap-2">
+                    <button type="submit" class="btn-glow-primary px-6 py-2">
+                        <i class="fas fa-search mr-2"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'admin_fees' %}" class="btn-glow-secondary px-6 py-2">
+                        <i class="fas fa-times mr-2"></i> Clear
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Fees Table -->
+    <div class="card-premium overflow-hidden border-none shadow-soft">
+        <div class="p-0 overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Student</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Fee Structure</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Amount</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Due Date</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Status</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Paid Date</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for fee in fees %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                                    {{ fee.student.user.get_full_name|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-900">{{ fee.student.user.get_full_name }}</p>
+                                    <p class="text-xs text-slate-400 font-medium tracking-tight">{{ fee.student.roll_number|default:"N/A" }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div>
+                                <p class="font-semibold text-slate-600">{{ fee.fee_structure.name|default:fee.category }}</p>
+                                <p class="text-xs text-slate-400">{{ fee.fee_structure.academic_year|default:"-" }}</p>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-slate-900">TZS {{ fee.amount|floatformat:0|intcomma }}</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-calendar text-slate-400 text-sm"></i>
+                                <span class="text-sm text-slate-600">{{ fee.due_date|date:"M d, Y" }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 {% if fee.is_paid %}bg-emerald-100 text-emerald-700{% elif fee.due_date < today %}bg-red-100 text-red-700{% else %}bg-yellow-100 text-yellow-700{% endif %} text-xs font-bold rounded-full">
+                                {% if fee.is_paid %}Paid{% elif fee.due_date < today %}Overdue{% else %}Pending{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if fee.paid_date %}
+                                <span class="text-sm text-slate-600">{{ fee.paid_date|date:"M d, Y" }}</span>
+                            {% else %}
+                                <span class="text-sm text-slate-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="#" class="text-green-600 hover:text-green-800 transition-colors" title="Mark as Paid">
+                                    <i class="fas fa-check-circle"></i>
+                                </a>
+                                <a href="#" class="text-purple-600 hover:text-purple-800 transition-colors" title="Edit Fee">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {% if not fee.is_paid %}
+                                <a href="#" class="text-red-600 hover:text-red-800 transition-colors" title="Delete Fee">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-8 py-20 text-center">
+                            <div class="flex flex-col items-center space-y-4">
+                                <i class="fas fa-wallet text-4xl text-slate-300 mb-3"></i>
+                                <p class="text-slate-500">No fees found</p>
+                                <a href="{% url 'admin_fee_create' %}" class="mt-4 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                    <i class="fas fa-plus mr-2"></i> Add First Fee
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
