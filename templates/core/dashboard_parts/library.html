@@ -1,0 +1,133 @@
+<!-- Library Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-book mr-3 text-blue-600"></i>
+                Library
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Browse and manage library resources</p>
+        </div>
+        <div>
+            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                <i class="fas fa-search mr-2"></i>
+                Search Books
+            </button>
+        </div>
+    </div>
+
+    <!-- Library Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-book text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Books</p>
+                    <p class="text-2xl font-bold text-gray-900">1,250</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-book-reader text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Borrowed</p>
+                    <p class="text-2xl font-bold text-gray-900">45</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-clock text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Overdue</p>
+                    <p class="text-2xl font-bold text-gray-900">3</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-lg">
+                    <i class="fas fa-plus text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">New Books</p>
+                    <p class="text-2xl font-bold text-gray-900">12</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Books -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Popular Books</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-20 bg-blue-100 rounded flex items-center justify-center">
+                            <i class="fas fa-book text-blue-600 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-gray-900">Mathematics Textbook</h3>
+                            <p class="text-sm text-gray-600">Form 1 • Author Name</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-gray-500">Available: 5</span>
+                                <button class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded">
+                                    Borrow
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-20 bg-green-100 rounded flex items-center justify-center">
+                            <i class="fas fa-book text-green-600 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-gray-900">Physics Lab Manual</h3>
+                            <p class="text-sm text-gray-600">Form 2 • Author Name</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-gray-500">Available: 3</span>
+                                <button class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded">
+                                    Borrow
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-20 bg-purple-100 rounded flex items-center justify-center">
+                            <i class="fas fa-book text-purple-600 text-2xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-medium text-gray-900">Chemistry Guide</h3>
+                            <p class="text-sm text-gray-600">Form 3 • Author Name</p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs text-red-500">All borrowed</span>
+                                <button class="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded" disabled>
+                                    Unavailable
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

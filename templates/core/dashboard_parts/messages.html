@@ -1,0 +1,94 @@
+<!-- Messages Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-envelope mr-3 text-blue-600"></i>
+                Messages
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Communicate with students and faculty</p>
+        </div>
+        <div>
+            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                <i class="fas fa-plus mr-2"></i>
+                Compose Message
+            </button>
+        </div>
+    </div>
+
+    <!-- Message Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-inbox text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Inbox</p>
+                    <p class="text-2xl font-bold text-gray-900">12</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-paper-plane text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Sent</p>
+                    <p class="text-2xl font-bold text-gray-900">28</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-star text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Important</p>
+                    <p class="text-2xl font-bold text-gray-900">3</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Messages</h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-900 truncate">John Teacher</p>
+                            <p class="text-xs text-gray-500">2 hours ago</p>
+                        </div>
+                        <p class="text-sm text-gray-600 truncate">Please review the latest exam results...</p>
+                    </div>
+                    <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                </div>
+                
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-gray-900 truncate">Admin</p>
+                            <p class="text-xs text-gray-500">Yesterday</p>
+                        </div>
+                        <p class="text-sm text-gray-600 truncate">Meeting scheduled for tomorrow at 10 AM...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

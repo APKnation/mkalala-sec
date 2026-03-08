@@ -7,5 +7,8 @@ def is_faculty(user):
 def is_admin(user):
     return hasattr(user, 'admin_profile') or (hasattr(user, 'role') and user.role == 'admin') or user.is_superuser
 
+def is_headmaster(user):
+    return hasattr(user, 'headmaster_profile') or (hasattr(user, 'role') and user.role == 'headmaster')
+
 def is_parent(user):
     return hasattr(user, 'parent_profile')  # or however your model is named

@@ -4,25 +4,43 @@
 {% block title %}Attendance Management - {{ school_info.name }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="fas fa-calendar-check me-2"></i>Attendance Management</h2>
+<div class="min-h-screen bg-gray-50">
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
                 <div>
-                    <a href="{% url 'attendance_create' %}" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Mark Attendance
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-calendar-check mr-3 text-blue-600"></i>
+                        Attendance Management
+                    </h1>
+                    {% if user_role == 'admin' %}
+                        <p class="mt-2 text-sm text-gray-600">Viewing all attendance records for students and teachers</p>
+                    {% elif user_role == 'teacher' %}
+                        <p class="mt-2 text-sm text-gray-600">Viewing attendance for your courses</p>
+                    {% endif %}
+                </div>
+                {% if user_role == 'admin' or user_role == 'teacher' %}
+                <div>
+                    <a href="{% url 'attendance_create' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm">
+                        <i class="fas fa-plus mr-2"></i>
+                        Mark Attendance
                     </a>
                 </div>
+                {% endif %}
             </div>
+        </div>
+    </div>
 
-            <!-- Filters -->
-            <div class="card mb-4">
-                <div class="card-body">
-                    <form method="get" class="row g-3">
-                        <div class="col-md-4">
-                            <label for="course" class="form-label">Course</label>
-                            <select name="course" id="course" class="form-select">
+    <!-- Filters Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-6">
+                <form method="get" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label for="course" class="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                            <select name="course" id="course" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
                                 <option value="">All Courses</option>
                                 {% for course in courses %}
                                     <option value="{{ course.id }}" {% if request.GET.course == course.id|stringformat:"s" %}selected{% endif %}>
@@ -31,133 +49,179 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-4">
-                            <label for="date" class="form-label">Date</label>
-                            <input type="date" name="date" id="date" class="form-control" value="{{ request.GET.date }}">
+                        <div>
+                            <label for="date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                            <input type="date" name="date" id="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" value="{{ request.GET.date }}">
                         </div>
-                        <div class="col-md-4">
-                            <label for="status" class="form-label">Status</label>
-                            <select name="status" id="status" class="form-select">
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
                                 <option value="">All Status</option>
                                 <option value="P" {% if request.GET.status == 'P' %}selected{% endif %}>Present</option>
                                 <option value="A" {% if request.GET.status == 'A' %}selected{% endif %}>Absent</option>
                                 <option value="L" {% if request.GET.status == 'L' %}selected{% endif %}>Late</option>
                             </select>
                         </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-outline-primary">
-                                <i class="fas fa-filter me-2"></i>Filter
-                            </button>
-                            <a href="{% url 'attendance_list' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i>Clear
-                            </a>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm">
+                            <i class="fas fa-filter mr-2"></i>
+                            Filter
+                        </button>
+                        <a href="{% url 'attendance_list' %}" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors duration-200">
+                            <i class="fas fa-times mr-2"></i>
+                            Clear
+                        </a>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
 
-            <!-- Attendance Records -->
-            <div class="card">
-                <div class="card-body">
-                    {% if attendance_records %}
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Student</th>
-                                        <th>Course</th>
-                                        <th>Status</th>
-                                        <th>Faculty</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for record in attendance_records %}
-                                        <tr>
-                                            <td>{{ record.date|date:"M d, Y" }}</td>
-                                            <td>
-                                                <a href="{% url 'admin_student_detail' record.enrollment.student.pk %}">
-                                                    {{ record.enrollment.student.user.get_full_name|default:record.enrollment.student.user.username }}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                {{ record.enrollment.course_offering.course.code }}
-                                                - {{ record.enrollment.course_offering.course.name }}
-                                            </td>
-                                            <td>
-                                                {% if record.status == 'P' %}
-                                                    <span class="badge bg-success">Present</span>
-                                                {% elif record.status == 'A' %}
-                                                    <span class="badge bg-danger">Absent</span>
-                                                {% elif record.status == 'L' %}
-                                                    <span class="badge bg-warning">Late</span>
-                                                {% else %}
-                                                    <span class="badge bg-secondary">{{ record.status }}</span>
-                                                {% endif %}
-                                            </td>
-                                            <td>
-                                                {{ record.enrollment.course_offering.faculty.user.get_full_name|default:record.enrollment.course_offering.faculty.user.username }}
-                                            </td>
-                                            <td>
-                                                <a href="{% url 'attendance_edit' record.pk %}" class="btn btn-sm btn-outline-primary">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Pagination -->
-                        {% if is_paginated %}
-                            <nav aria-label="Attendance pagination">
-                                <ul class="pagination justify-content-center">
-                                    {% if page_obj.has_previous %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=1{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">First</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Previous</a>
-                                        </li>
-                                    {% endif %}
-
-                                    {% for num in page_obj.paginator.page_range %}
-                                        {% if page_obj.number == num %}
-                                            <li class="page-item active">
-                                                <span class="page-link">{{ num }}</span>
-                                            </li>
-                                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                                            <li class="page-item">
-                                                <a class="page-link" href="?page={{ num }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">{{ num }}</a>
-                                            </li>
+    <!-- Attendance Records Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+            {% if attendance_records %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Faculty</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for record in attendance_records %}
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ record.date|date:"M d, Y" }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <a href="{% url 'admin_student_detail' record.enrollment.student.pk %}" class="text-sm font-medium text-blue-600 hover:text-blue-900">
+                                            {{ record.enrollment.student.user.get_full_name|default:record.enrollment.student.user.username }}
+                                        </a>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ record.enrollment.course_offering.course.code }}</div>
+                                        <div class="text-sm text-gray-500">{{ record.enrollment.course_offering.course.name|truncatechars:30 }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {% if record.status == 'P' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Present
+                                            </span>
+                                        {% elif record.status == 'A' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                Absent
+                                            </span>
+                                        {% elif record.status == 'L' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                Late
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                {{ record.status }}
+                                            </span>
                                         {% endif %}
-                                    {% endfor %}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ record.enrollment.course_offering.faculty.user.get_full_name|default:record.enrollment.course_offering.faculty.user.username }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="{% url 'attendance_edit' record.pk %}" class="text-blue-600 hover:text-blue-900 inline-flex items-center">
+                                            <i class="fas fa-edit mr-1"></i>
+                                            Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
 
-                                    {% if page_obj.has_next %}
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Next</a>
-                                        </li>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Last</a>
-                                        </li>
-                                    {% endif %}
-                                </ul>
-                            </nav>
-                        {% endif %}
-                    {% else %}
-                        <div class="text-center py-5">
-                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No Attendance Records Found</h5>
-                            <p class="text-muted">There are no attendance records matching your criteria.</p>
-                            <a href="{% url 'attendance_create' %}" class="btn btn-primary">
-                                <i class="fas fa-plus me-2"></i>Mark Attendance
-                            </a>
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1 flex justify-between sm:hidden">
+                                <!-- Mobile pagination -->
+                                <a href="?page=1{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    First
+                                </a>
+                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                    Next
+                                </a>
+                            </div>
+                            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-700">
+                                        Showing
+                                        <span class="font-medium">{{ page_obj.start_index }}</span>
+                                        to
+                                        <span class="font-medium">{{ page_obj.end_index }}</span>
+                                        of
+                                        <span class="font-medium">{{ page_obj.paginator.count }}</span>
+                                        results
+                                    </p>
+                                </div>
+                                <div>
+                                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                        {% if page_obj.has_previous %}
+                                            <a href="?page=1{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                First
+                                            </a>
+                                            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                Previous
+                                            </a>
+                                        {% endif %}
+
+                                        {% for num in page_obj.paginator.page_range %}
+                                            {% if page_obj.number == num %}
+                                                <span aria-current="page" class="relative inline-flex items-center px-4 py-2 border border-blue-500 bg-blue-50 text-sm font-medium text-blue-600">
+                                                    {{ num }}
+                                                </span>
+                                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                                <a href="?page={{ num }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                                    {{ num }}
+                                                </a>
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if page_obj.has_next %}
+                                            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                Next
+                                            </a>
+                                            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                                Last
+                                            </a>
+                                        {% endif %}
+                                    </nav>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Attendance Records Found</h3>
+                    {% if user_role == 'teacher' %}
+                        <p class="text-gray-500 mb-6">There are no attendance records for your courses yet. Start marking attendance for your students.</p>
+                    {% elif user_role == 'admin' %}
+                        <p class="text-gray-500 mb-6">There are no attendance records in the system yet.</p>
+                    {% endif %}
+                    {% if user_role == 'admin' or user_role == 'teacher' %}
+                    <a href="{% url 'attendance_create' %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm">
+                        <i class="fas fa-plus mr-2"></i>
+                        Mark Attendance
+                    </a>
                     {% endif %}
                 </div>
-            </div>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -10,7 +10,7 @@ from .models import (
     Course, CourseOffering, Enrollment, Grade, Attendance,
     Fee, FeeCategory, Semester, LeaveRequest,
     Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar,
-    Subject, SubjectEnrollment, Announcement, TimeTable
+    Subject, SubjectEnrollment, Announcement, TimeTable, StudentClass
 )
 
 User = get_user_model()
@@ -1029,22 +1029,73 @@ class ClassForm(forms.ModelForm):
         self.fields['current_form'].label = "Form Level"
         self.fields['current_form'].help_text = "Select the form level for this student"
 class AnnouncementForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        
+        # Filter target audience options based on user role
+        if user and hasattr(user, 'role'):
+            if user.role == 'teacher':
+                # Teachers can only create announcements for students and specific classes
+                self.fields['target_audience'].choices = [
+                    ('Students', 'All Students'),
+                    ('Class', 'Specific Class'),
+                ]
+            elif user.role == 'admin':
+                # Admins can create announcements for all audiences
+                self.fields['target_audience'].choices = [
+                    ('All', 'Everyone'),
+                    ('Students', 'All Students'),
+                    ('Faculty', 'All Faculty'),
+                    ('Parents', 'All Parents'),
+                    ('Class', 'Specific Class'),
+                ]
+        
+        # Initialize target_class field
+        self.fields['target_class'] = forms.ModelChoiceField(
+            queryset=StudentClass.objects.all(),
+            required=False,
+            empty_label="Select a class",
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none appearance-none'
+            })
+        )
+    
     class Meta:
         model = Announcement
-        fields = ['title', 'message', 'target_audience']
+        fields = ['title', 'message', 'target_audience', 'target_class', 'expires_at']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none',
-                'placeholder': 'Subject of Announcement'
+                'placeholder': 'Enter announcement title'
             }),
             'message': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none min-h-[150px]',
-                'placeholder': 'Institutional Dispatch Message...'
+                'placeholder': 'Write your announcement message...'
             }),
             'target_audience': forms.Select(attrs={
                 'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none appearance-none'
             }),
+            'expires_at': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none'
+            }),
         }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        target_audience = cleaned_data.get('target_audience')
+        target_class = cleaned_data.get('target_class')
+        
+        # If target audience is 'Class', then target_class is required
+        if target_audience == 'Class' and not target_class:
+            raise forms.ValidationError("Please select a class when targeting a specific class.")
+        
+        # If target audience is not 'Class', clear target_class
+        if target_audience != 'Class':
+            cleaned_data['target_class'] = None
+        
+        return cleaned_data
 
 
 class TimeTableForm(forms.ModelForm):

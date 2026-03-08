@@ -34,9 +34,9 @@
     <i class="fas fa-envelope"></i>
     <span>Messages</span>
 </a>
-<a href="{% url 'announcement_list' %}" class="sidebar-item text-slate-400">
+<a href="{% url 'teacher_announcements' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-bullhorn"></i>
-    <span>Announcements</span>
+    <span>Create Announcements</span>
 </a>
 <a href="{% url 'update_profile' %}" class="sidebar-item text-slate-400 mt-auto">
     <i class="fas fa-user-cog"></i>
@@ -59,6 +59,9 @@
             <button class="btn-glow-primary px-5 py-3 text-sm">
                 <i class="fas fa-plus mr-2"></i>New Assignment
             </button>
+            <a href="{% url 'teacher_announcements' %}" class="btn-glow-secondary px-5 py-3 text-sm inline-flex items-center">
+                <i class="fas fa-bullhorn mr-2"></i>Create Announcement
+            </a>
         </div>
     </div>
 </div>

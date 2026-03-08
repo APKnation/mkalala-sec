@@ -551,17 +551,17 @@ class RoleBasedDashboardView(LoginRequiredMixin, View):
         return self.redirect_based_on_role(request.user)
     
     def redirect_based_on_role(self, user):
-        """Redirect user based on their role"""
+        """Redirect user based on their role to role-specific unified dashboard"""
         if user.role == 'normal':
             return redirect('public_home')
         elif user.role == 'student':
-            return redirect('student_dashboard')
+            return redirect('student_unified_dashboard', page='overview')
         elif user.role == 'teacher':
-            return redirect('teacher_dashboard')
+            return redirect('unified_dashboard', page='overview')
         elif user.role == 'headmaster':
-            return redirect('headmaster_dashboard')
+            return redirect('headmaster_unified_dashboard', page='overview')
         elif user.role == 'admin':
-            return redirect('admin_dashboard')
+            return redirect('admin_unified_dashboard', page='overview')
         else:
             return redirect('public_home')
 
@@ -3498,33 +3498,94 @@ def debug_permissions(request):
         'session_data': dict(request.session),
     })
 
+def attendance_test(request):
+    """Temporary test view that bypasses authentication for testing attendance functionality"""
+    from .utils import is_admin, is_faculty
+    
+    # Simulate different user types based on URL parameter
+    user_type = request.GET.get('user_type', 'teacher')
+    
+    if user_type == 'admin':
+        # Simulate admin user
+        context = {
+            'user_role': 'admin',
+            'courses': Course.objects.all(),
+            'attendance_records': Attendance.objects.all().select_related(
+                'enrollment__student__user',
+                'enrollment__course_offering__course',
+                'enrollment__course_offering__faculty'
+            ).order_by('-date')[:10],
+            'is_paginated': False,
+            'user_type': 'Admin User'
+        }
+    elif user_type == 'teacher':
+        # Simulate teacher user (john_teacher)
+        try:
+            teacher_faculty = FacultyProfile.objects.get(user__username='john_teacher')
+            context = {
+                'user_role': 'teacher',
+                'courses': Course.objects.filter(offerings__faculty=teacher_faculty).distinct(),
+                'attendance_records': Attendance.objects.filter(
+                    enrollment__course_offering__faculty=teacher_faculty
+                ).select_related(
+                    'enrollment__student__user',
+                    'enrollment__course_offering__course',
+                    'enrollment__course_offering__faculty'
+                ).order_by('-date')[:10],
+                'is_paginated': False,
+                'user_type': 'Teacher (john_teacher)'
+            }
+        except FacultyProfile.DoesNotExist:
+            context = {
+                'user_role': 'teacher',
+                'courses': Course.objects.none(),
+                'attendance_records': Attendance.objects.none(),
+                'is_paginated': False,
+                'user_type': 'Teacher (no faculty found)'
+            }
+    else:
+        context = {
+            'user_role': 'unknown',
+            'courses': Course.objects.none(),
+            'attendance_records': Attendance.objects.none(),
+            'is_paginated': False,
+            'user_type': 'Unknown User'
+        }
+    
+    return render(request, 'core/attendance_list.html', context)
+
 # ======================
 # Attendance Views
 # ======================
-class AttendanceListView(ListView):  # Temporarily removed LoginRequiredMixin and UserPassesTestMixin for testing
+class AttendanceListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Attendance
     template_name = 'core/attendance_list.html'
     context_object_name = 'attendance_records'
     paginate_by = 20
 
-    def test_func(self):  # Keep this for reference
-        return is_admin(self.request.user) or is_faculty(self.request.user) or self.request.user.is_superuser
+    def test_func(self):
+        # Admins and superusers can see all attendance
+        if is_admin(self.request.user) or self.request.user.is_superuser:
+            return True
+        # Teachers can see attendance for their courses
+        elif is_faculty(self.request.user):
+            return True
+        return False
 
     def get_queryset(self):
         queryset = super().get_queryset().select_related(
             'enrollment__student__user',
-            'enrollment__course_offering__course'
+            'enrollment__course_offering__course',
+            'enrollment__course_offering__faculty'
         )
         
-        # Handle unauthenticated users
-        if not self.request.user.is_authenticated:
-            return queryset.none()
-        
+        # Teachers can only see attendance for their courses
         if is_faculty(self.request.user):
             queryset = queryset.filter(
                 enrollment__course_offering__faculty=self.request.user.faculty_profile
             )
-            
+        # Admins and superusers can see all attendance (no filtering needed)
+        
         course_id = self.request.GET.get('course')
         if course_id:
             queryset = queryset.filter(
@@ -3540,15 +3601,20 @@ class AttendanceListView(ListView):  # Temporarily removed LoginRequiredMixin an
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        # Handle unauthenticated users
-        if not self.request.user.is_authenticated:
-            context['courses'] = Course.objects.none()
-        elif is_admin(self.request.user) or self.request.user.is_superuser:
+        # Admins and superusers can see all courses
+        if is_admin(self.request.user) or self.request.user.is_superuser:
             context['courses'] = Course.objects.all()
-        else:
+            context['user_role'] = 'admin'
+        # Teachers can only see their courses
+        elif is_faculty(self.request.user):
             context['courses'] = Course.objects.filter(
-                courseoffering__faculty=self.request.user.faculty_profile
+                offerings__faculty=self.request.user.faculty_profile
             ).distinct()
+            context['user_role'] = 'teacher'
+        else:
+            context['courses'] = Course.objects.none()
+            context['user_role'] = 'unknown'
+            
         return context
 
 class AttendanceCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -3714,10 +3780,49 @@ def update_leave_status(request, leave_id, status):
 # ======================
 @login_required
 def announcement_list(request):
-    announcements = Announcement.objects.filter(
-        Q(target_audience='All') | 
-        Q(target_audience='Students' if is_student(request.user) else 'Faculty')
-    ).order_by('-created_at')
+    """View announcements based on user role and permissions"""
+    from .models import StudentClass
+    
+    user = request.user
+    
+    # Base queryset - active and non-expired announcements
+    announcements = Announcement.objects.filter(is_active=True)
+    
+    # Filter out expired announcements
+    announcements = announcements.filter(
+        Q(expires_at__isnull=True) | Q(expires_at__gt=timezone.now())
+    )
+    
+    # Filter based on user role and target audience
+    if hasattr(user, 'role'):
+        if user.role == 'student':
+            # Students see announcements targeted at them
+            try:
+                student_class = user.student_profile.current_class
+                announcements = announcements.filter(
+                    Q(target_audience='All') |
+                    Q(target_audience='Students') |
+                    Q(target_audience='Class', target_class=student_class)
+                )
+            except:
+                announcements = announcements.filter(
+                    Q(target_audience='All') | Q(target_audience='Students')
+                )
+        elif user.role == 'teacher':
+            # Teachers see announcements targeted at faculty
+            announcements = announcements.filter(
+                Q(target_audience='All') | Q(target_audience='Faculty')
+            )
+        elif user.role == 'admin':
+            # Admins see all announcements
+            pass
+    else:
+        # Default to faculty if no role
+        announcements = announcements.filter(
+            Q(target_audience='All') | Q(target_audience='Faculty')
+        )
+    
+    announcements = announcements.order_by('-created_at')
     
     return render(request, 'core/announcement_list.html', {
         'announcements': announcements,
@@ -3731,7 +3836,7 @@ def admin_announcements(request):
     """Administrative dashboard for institutional broadcasting"""
     from .forms import AnnouncementForm
     if request.method == 'POST':
-        form = AnnouncementForm(request.POST)
+        form = AnnouncementForm(request.POST, user=request.user)
         if form.is_valid():
             announcement = form.save(commit=False)
             announcement.created_by = request.user
@@ -3739,7 +3844,7 @@ def admin_announcements(request):
             messages.success(request, "Institutional announcement broadcasted successfully.")
             return redirect('admin_announcements')
     else:
-        form = AnnouncementForm()
+        form = AnnouncementForm(user=request.user)
 
     announcements = Announcement.objects.all().order_by('-created_at')
     
@@ -3748,6 +3853,33 @@ def admin_announcements(request):
         'announcements': announcements,
         'role': 'Administrator',
         'title': 'Institutional Oversight'
+    })
+
+@login_required
+@user_passes_test(is_faculty)
+def teacher_announcements(request):
+    """Teacher dashboard for class-specific announcements"""
+    from .forms import AnnouncementForm
+    
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, user=request.user)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.created_by = request.user
+            announcement.save()
+            messages.success(request, "Announcement created successfully!")
+            return redirect('teacher_announcements')
+    else:
+        form = AnnouncementForm(user=request.user)
+
+    # Get announcements created by this teacher
+    announcements = Announcement.objects.filter(created_by=request.user).order_by('-created_at')
+    
+    return render(request, 'core/teacher_announcements.html', {
+        'form': form,
+        'announcements': announcements,
+        'role': 'Teacher',
+        'title': 'Class Announcements'
     })
 
 @login_required

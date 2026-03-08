@@ -1,0 +1,653 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}{{ page_title|default:"Admin Dashboard" }} | Mkalala Sec{% endblock %}
+{% block mobile_title %}{{ page_title|default:"Admin Dashboard" }}{% endblock %}
+
+{% block user_role %}Administrator • {% if admin_profile %}{{ admin_profile.get_access_level_display }}{% else %}Admin{% endif %}{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Loading animation */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+.loading-spinner.active {
+    display: block;
+}
+
+/* Page transitions */
+.page-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Active navigation styling */
+.sidebar-item-active {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border-left: 4px solid #ef4444;
+}
+
+/* Content area styling */
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* Notification badge */
+.notification-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+/* Admin-specific colors */
+.admin-gradient {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.admin-card {
+    border-left: 4px solid #dc2626;
+}
+</style>
+{% endblock %}
+
+{% block sidebar_nav %}
+<!-- Admin Dashboard Navigation -->
+<a href="#" data-page="overview" class="sidebar-item {% if current_page == 'overview' %}sidebar-item-active{% endif %} text-slate-400 font-sans">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+
+<!-- Management Section -->
+<div class="px-4 py-2">
+    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Management</h3>
+</div>
+
+<a href="#" data-page="users" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-users"></i>
+    <span>User Management</span>
+</a>
+<a href="#" data-page="students" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-graduation-cap"></i>
+    <span>Students</span>
+</a>
+<a href="#" data-page="teachers" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="#" data-page="courses" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-book"></i>
+    <span>Courses</span>
+</a>
+<a href="#" data-page="classes" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-school"></i>
+    <span>Classes</span>
+</a>
+<a href="#" data-page="subjects" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-book-open"></i>
+    <span>Subjects</span>
+</a>
+
+<!-- Academic Section -->
+<div class="px-4 py-2">
+    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Academic</h3>
+</div>
+
+<a href="#" data-page="attendance" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-calendar-check"></i>
+    <span>Attendance</span>
+</a>
+<a href="#" data-page="grading" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-chart-line"></i>
+    <span>Grading</span>
+</a>
+<a href="#" data-page="exams" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-file-alt"></i>
+    <span>Exams</span>
+</a>
+<a href="#" data-page="timetable" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-calendar-alt"></i>
+    <span>Timetable</span>
+</a>
+
+<!-- Operations Section -->
+<div class="px-4 py-2">
+    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Operations</h3>
+</div>
+
+<a href="#" data-page="announcements" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+    {% if pending_announcements > 0 %}
+    <span class="notification-badge">{{ pending_announcements }}</span>
+    {% endif %}
+</a>
+<a href="#" data-page="fees" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-dollar-sign"></i>
+    <span>Fees</span>
+</a>
+<a href="#" data-page="library" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-book"></i>
+    <span>Library</span>
+</a>
+<a href="#" data-page="reports" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+
+<!-- System Section -->
+<div class="px-4 py-2">
+    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">System</h3>
+</div>
+
+<a href="#" data-page="settings" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-cog"></i>
+    <span>System Settings</span>
+</a>
+<a href="#" data-page="logs" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-list"></i>
+    <span>Activity Logs</span>
+</a>
+
+<!-- Account Section -->
+<div class="px-4 py-2">
+    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Account</h3>
+</div>
+
+<a href="#" data-page="profile" class="sidebar-item text-slate-400 font-sans mt-auto">
+    <i class="fas fa-user-cog"></i>
+    <span>Profile Settings</span>
+</a>
+<a href="{% url 'logout' %}" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-sign-out-alt"></i>
+    <span>Sign Out</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Loading Spinner -->
+<div class="loading-spinner">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+</div>
+
+<!-- Overview Section -->
+<div id="overview-section" class="content-section {% if current_page == 'overview' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/overview.html' %}
+</div>
+
+<!-- Users Section -->
+<div id="users-section" class="content-section {% if current_page == 'users' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/users.html' %}
+</div>
+
+<!-- Students Section -->
+<div id="students-section" class="content-section {% if current_page == 'students' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/students.html' %}
+</div>
+
+<!-- Teachers Section -->
+<div id="teachers-section" class="content-section {% if current_page == 'teachers' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/teachers.html' %}
+</div>
+
+<!-- Courses Section -->
+<div id="courses-section" class="content-section {% if current_page == 'courses' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/courses.html' %}
+</div>
+
+<!-- Classes Section -->
+<div id="classes-section" class="content-section {% if current_page == 'classes' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/classes.html' %}
+</div>
+
+<!-- Subjects Section -->
+<div id="subjects-section" class="content-section {% if current_page == 'subjects' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/subjects.html' %}
+</div>
+
+<!-- Attendance Section -->
+<div id="attendance-section" class="content-section {% if current_page == 'attendance' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/attendance.html' %}
+</div>
+
+<!-- Grading Section -->
+<div id="grading-section" class="content-section {% if current_page == 'grading' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/grading.html' %}
+</div>
+
+<!-- Exams Section -->
+<div id="exams-section" class="content-section {% if current_page == 'exams' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/exams.html' %}
+</div>
+
+<!-- Timetable Section -->
+<div id="timetable-section" class="content-section {% if current_page == 'timetable' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/timetable.html' %}
+</div>
+
+<!-- Announcements Section -->
+<div id="announcements-section" class="content-section {% if current_page == 'announcements' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/announcements.html' %}
+</div>
+
+<!-- Fees Section -->
+<div id="fees-section" class="content-section {% if current_page == 'fees' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/fees.html' %}
+</div>
+
+<!-- Library Section -->
+<div id="library-section" class="content-section {% if current_page == 'library' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/library.html' %}
+</div>
+
+<!-- Reports Section -->
+<div id="reports-section" class="content-section {% if current_page == 'reports' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/reports.html' %}
+</div>
+
+<!-- Settings Section -->
+<div id="settings-section" class="content-section {% if current_page == 'settings' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/settings.html' %}
+</div>
+
+<!-- Logs Section -->
+<div id="logs-section" class="content-section {% if current_page == 'logs' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/logs.html' %}
+</div>
+
+<!-- Profile Section -->
+<div id="profile-section" class="content-section {% if current_page == 'profile' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/profile.html' %}
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+// Admin Unified Dashboard Navigation System
+class AdminUnifiedDashboard {
+    constructor() {
+        this.currentPage = '{{ current_page|default:"overview" }}';
+        this.loadingSpinner = document.querySelector('.loading-spinner');
+        this.init();
+    }
+
+    init() {
+        this.setupNavigation();
+        this.showPage(this.currentPage);
+        this.setupAjaxForms();
+        this.setupRealTimeUpdates();
+    }
+
+    setupNavigation() {
+        // Handle sidebar navigation clicks
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                this.navigateToPage(page);
+            });
+        });
+
+        // Handle mobile sidebar
+        const mobileToggle = document.getElementById('mobile-sidebar-toggle');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', () => this.toggleMobileSidebar());
+        }
+        
+        if (backdrop) {
+            backdrop.addEventListener('click', () => this.toggleMobileSidebar());
+        }
+    }
+
+    navigateToPage(page) {
+        if (page === this.currentPage) return;
+        
+        this.showLoading();
+        
+        // Update active state
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.classList.remove('sidebar-item-active');
+        });
+        
+        document.querySelector(`[data-page="${page}"]`).classList.add('sidebar-item-active');
+        
+        // Load page content
+        this.loadPageContent(page)
+            .then(() => {
+                this.hideLoading();
+                this.currentPage = page;
+                this.updatePageTitle(page);
+            })
+            .catch(error => {
+                console.error('Error loading page:', error);
+                this.hideLoading();
+                this.showError('Failed to load page');
+            });
+    }
+
+    async loadPageContent(page) {
+        try {
+            const response = await fetch(`/admin/dashboard/load/${page}/`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.success) {
+                // Update page content
+                const section = document.getElementById(`${page}-section`);
+                if (section && data.content) {
+                    section.innerHTML = data.content;
+                    this.initializePageScripts(page);
+                }
+                
+                // Update notifications if provided
+                if (data.notifications) {
+                    this.updateNotifications(data.notifications);
+                }
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Load page error:', error);
+            // Fallback to showing existing content
+            this.showPage(page);
+        }
+    }
+
+    showPage(page) {
+        // Hide all pages
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        
+        // Show target page
+        const targetSection = document.getElementById(`${page}-section`);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+        
+        // Update active navigation
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.classList.remove('sidebar-item-active');
+        });
+        
+        const activeLink = document.querySelector(`[data-page="${page}"]`);
+        if (activeLink) {
+            activeLink.classList.add('sidebar-item-active');
+        }
+        
+        this.updatePageTitle(page);
+    }
+
+    updatePageTitle(page) {
+        const titles = {
+            overview: 'Admin Dashboard',
+            users: 'User Management',
+            students: 'Students',
+            teachers: 'Teachers',
+            courses: 'Courses',
+            classes: 'Classes',
+            subjects: 'Subjects',
+            attendance: 'Attendance',
+            grading: 'Grading',
+            exams: 'Exams',
+            timetable: 'Timetable',
+            announcements: 'Announcements',
+            fees: 'Fees',
+            library: 'Library',
+            reports: 'Reports',
+            settings: 'System Settings',
+            logs: 'Activity Logs',
+            profile: 'Profile Settings'
+        };
+        
+        const title = titles[page] || 'Admin Dashboard';
+        document.title = `${title} | Mkalala Sec`;
+        
+        // Update mobile title
+        const mobileTitle = document.querySelector('[data-mobile-title]');
+        if (mobileTitle) {
+            mobileTitle.textContent = title;
+        }
+    }
+
+    setupAjaxForms() {
+        // Handle AJAX form submissions
+        document.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (form.classList.contains('ajax-form')) {
+                e.preventDefault();
+                this.submitAjaxForm(form);
+            }
+        });
+    }
+
+    async submitAjaxForm(form) {
+        this.showLoading();
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showSuccess(data.message);
+                if (data.redirect) {
+                    this.navigateToPage(data.redirect);
+                } else if (data.reload) {
+                    this.navigateToPage(this.currentPage);
+                }
+            } else {
+                this.showError(data.message || 'Form submission failed');
+                if (data.errors) {
+                    this.showFormErrors(form, data.errors);
+                }
+            }
+        } catch (error) {
+            console.error('Form submission error:', error);
+            this.showError('Network error. Please try again.');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    setupRealTimeUpdates() {
+        // Check for notifications periodically
+        setInterval(() => {
+            this.checkNotifications();
+        }, 30000); // Check every 30 seconds
+    }
+
+    async checkNotifications() {
+        try {
+            const response = await fetch('/admin/dashboard/notifications/', {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.updateNotifications(data);
+            }
+        } catch (error) {
+            console.error('Notification check error:', error);
+        }
+    }
+
+    updateNotifications(notifications) {
+        // Update notification badges
+        if (notifications.announcements !== undefined) {
+            this.updateBadge('announcements', notifications.announcements);
+        }
+    }
+
+    updateBadge(type, count) {
+        const badge = document.querySelector(`[data-page="${type}"] .notification-badge`);
+        if (badge) {
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    initializePageScripts(page) {
+        // Initialize page-specific scripts
+        switch(page) {
+            case 'users':
+                this.initUsersPage();
+                break;
+            case 'students':
+                this.initStudentsPage();
+                break;
+            case 'teachers':
+                this.initTeachersPage();
+                break;
+            case 'announcements':
+                this.initAnnouncementsPage();
+                break;
+            // Add other page initializers as needed
+        }
+    }
+
+    initUsersPage() {
+        console.log('Admin users page initialized');
+    }
+
+    initStudentsPage() {
+        console.log('Admin students page initialized');
+    }
+
+    initTeachersPage() {
+        console.log('Admin teachers page initialized');
+    }
+
+    initAnnouncementsPage() {
+        console.log('Admin announcements page initialized');
+    }
+
+    showLoading() {
+        if (this.loadingSpinner) {
+            this.loadingSpinner.classList.add('active');
+        }
+    }
+
+    hideLoading() {
+        if (this.loadingSpinner) {
+            this.loadingSpinner.classList.remove('active');
+        }
+    }
+
+    showSuccess(message) {
+        this.showNotification(message, 'success');
+    }
+
+    showError(message) {
+        this.showNotification(message, 'error');
+    }
+
+    showNotification(message, type = 'info') {
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+            type === 'success' ? 'bg-green-500 text-white' :
+            type === 'error' ? 'bg-red-500 text-white' :
+            'bg-blue-500 text-white'
+        }`;
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas ${
+                    type === 'success' ? 'fa-check-circle' :
+                    type === 'error' ? 'fa-exclamation-circle' :
+                    'fa-info-circle'
+                } mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    showFormErrors(form, errors) {
+        // Clear previous errors
+        form.querySelectorAll('.error-message').forEach(el => el.remove());
+        
+        // Show new errors
+        Object.keys(errors).forEach(field => {
+            const fieldElement = form.querySelector(`[name="${field}"]`);
+            if (fieldElement) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message text-red-500 text-sm mt-1';
+                errorDiv.textContent = errors[field][0];
+                fieldElement.parentNode.appendChild(errorDiv);
+            }
+        });
+    }
+
+    toggleMobileSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('sidebar-backdrop');
+        
+        sidebar.classList.toggle('-translate-x-full');
+        backdrop.classList.toggle('hidden');
+    }
+}
+
+// Initialize dashboard when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.adminUnifiedDashboard = new AdminUnifiedDashboard();
+});
+</script>
+{% endblock %}

@@ -557,12 +557,43 @@ class ReportCard(models.Model):
     def __str__(self):
         return f"ReportCard {self.student} - Semester {self.semester.name}"
 
+class StudentClass(models.Model):
+    """Model for managing school classes/forms"""
+    name = models.CharField(max_length=50, unique=True, help_text="Class name (e.g., Form 1A, Form 2B)")
+    form_level = models.PositiveIntegerField(choices=StudentProfile.FORM_CHOICES, help_text="Form level (1-4)")
+    class_teacher = models.ForeignKey(FacultyProfile, on_delete=models.SET_NULL, null=True, blank=True, 
+                                     help_text="Class teacher assigned to this class")
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, help_text="Department this class belongs to")
+    max_students = models.PositiveIntegerField(default=40, help_text="Maximum number of students in this class")
+    current_students = models.PositiveIntegerField(default=0, help_text="Current number of students")
+    academic_year = models.PositiveIntegerField(help_text="Academic year for this class")
+    is_active = models.BooleanField(default=True, help_text="Whether this class is currently active")
+    
+    class Meta:
+        ordering = ['form_level', 'name']
+        unique_together = ['name', 'academic_year']
+        indexes = [models.Index(fields=['form_level', 'academic_year'])]
+    
+    def __str__(self):
+        return f"{self.name} - {self.academic_year}"
+    
+    @property
+    def available_spaces(self):
+        """Calculate available spaces in the class"""
+        return max(0, self.max_students - self.current_students)
+    
+    @property
+    def is_full(self):
+        """Check if the class is full"""
+        return self.current_students >= self.max_students
+
 class Announcement(models.Model):
     TARGET_AUDIENCE_CHOICES = [
         ('All', _('All')),
         ('Students', _('Students')),
         ('Faculty', _('Faculty')),
         ('Parents', _('Parents')),
+        ('Class', _('Specific Class')),
     ]
 
     title = models.CharField(max_length=MAX_TITLE_LENGTH)
@@ -570,9 +601,27 @@ class Announcement(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     target_audience = models.CharField(max_length=50, choices=TARGET_AUDIENCE_CHOICES, default='All')
+    
+    # For class-specific announcements
+    target_class = models.ForeignKey('StudentClass', on_delete=models.SET_NULL, null=True, blank=True, 
+                                   help_text="Select class when target audience is 'Specific Class'")
+    is_active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField(null=True, blank=True, help_text="When should this announcement expire?")
 
     def __str__(self):
         return self.title
+    
+    def is_expired(self):
+        """Check if announcement has expired"""
+        if self.expires_at is None:
+            return False
+        return timezone.now() > self.expires_at
+    
+    def get_target_display(self):
+        """Get human-readable target description"""
+        if self.target_audience == 'Class' and self.target_class:
+            return f"Class {self.target_class.name}"
+        return self.get_target_audience_display()
     
 
 class Schedule(models.Model):

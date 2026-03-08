@@ -1,0 +1,225 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{% if object %}Edit Attendance{% else %}Mark Attendance{% endif %} - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center">
+                <a href="{% url 'attendance_list' %}" class="text-gray-600 hover:text-gray-900 mr-4">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Attendance
+                </a>
+                <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                    <i class="fas fa-calendar-edit mr-3 text-blue-600"></i>
+                    {% if object %}Edit Attendance{% else %}Mark Attendance{% endif %}
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Section -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-6">
+                <form method="post" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-circle text-red-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">Error</h3>
+                                    <div class="mt-2 text-sm text-red-700">
+                                        {% for error in form.non_field_errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Student Information -->
+                    {% if object %}
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-3">Student Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Student Name</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ object.enrollment.student.user.get_full_name|default:object.enrollment.student.user.username }}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Course</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ object.enrollment.course_offering.course.code }} - {{ object.enrollment.course_offering.course.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Form Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Enrollment Field -->
+                        <div class="{% if object %}hidden{% endif %}">
+                            {{ form.enrollment.label_tag }}
+                            {% if form.enrollment.errors %}
+                                {{ form.enrollment }}
+                                {% for error in form.enrollment.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% else %}
+                                {{ form.enrollment }}
+                            {% endif %}
+                            {% if form.enrollment.help_text %}
+                                <p class="mt-1 text-sm text-gray-500">{{ form.enrollment.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Date Field -->
+                        <div>
+                            <label for="{{ form.date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                {{ form.date.label }}
+                            </label>
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                                {% for error in form.date.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                            {% if form.date.help_text %}
+                                <p class="mt-1 text-sm text-gray-500">{{ form.date.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Status Field -->
+                        <div>
+                            <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                {{ form.status.label }} <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                {% for error in form.status.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                            {% if form.status.help_text %}
+                                <p class="mt-1 text-sm text-gray-500">{{ form.status.help_text }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Remarks Field -->
+                        <div class="md:col-span-2">
+                            <label for="{{ form.remarks.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                {{ form.remarks.label }}
+                            </label>
+                            {{ form.remarks }}
+                            {% if form.remarks.errors %}
+                                {% for error in form.remarks.errors %}
+                                    <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                                {% endfor %}
+                            {% endif %}
+                            {% if form.remarks.help_text %}
+                                <p class="mt-1 text-sm text-gray-500">{{ form.remarks.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Status Preview -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Status Preview</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <div id="status-preview" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                <i class="fas fa-question-circle mr-2"></i>
+                                Select a status to preview
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="border-t border-gray-200 pt-6">
+                        <div class="flex justify-end gap-3">
+                            <a href="{% url 'attendance_list' %}" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-colors duration-200">
+                                <i class="fas fa-times mr-2"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm">
+                                <i class="fas fa-save mr-2"></i>
+                                {% if object %}Update Attendance{% else %}Mark Attendance{% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add Tailwind classes to form fields
+    const enrollmentFieldId = '{{ form.enrollment.id_for_label }}';
+    const dateFieldId = '{{ form.date.id_for_label }}';
+    const statusFieldId = '{{ form.status.id_for_label }}';
+    const remarksFieldId = '{{ form.remarks.id_for_label }}';
+    
+    const fields = [enrollmentFieldId, dateFieldId, statusFieldId, remarksFieldId];
+    
+    fields.forEach(function(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            if (field.tagName === 'SELECT') {
+                field.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors';
+            } else if (field.tagName === 'INPUT' && field.type === 'date') {
+                field.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors';
+            } else if (field.tagName === 'TEXTAREA') {
+                field.className = 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors';
+                field.rows = 4;
+            }
+        }
+    });
+
+    // Status preview functionality
+    const statusField = document.getElementById(statusFieldId);
+    const statusPreview = document.getElementById('status-preview');
+    
+    if (statusField && statusPreview) {
+        function updateStatusPreview() {
+            const selectedStatus = statusField.value;
+            let html = '';
+            
+            switch(selectedStatus) {
+                case 'P':
+                    html = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-2"></i>Present</span>';
+                    break;
+                case 'A':
+                    html = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800"><i class="fas fa-times-circle mr-2"></i>Absent</span>';
+                    break;
+                case 'L':
+                    html = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-clock mr-2"></i>Late</span>';
+                    break;
+                default:
+                    html = '<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800"><i class="fas fa-question-circle mr-2"></i>Select a status</span>';
+            }
+            
+            statusPreview.innerHTML = html;
+        }
+        
+        statusField.addEventListener('change', updateStatusPreview);
+        updateStatusPreview(); // Initialize on page load
+    }
+
+    // Auto-hide enrollment field if editing
+    {% if object %}
+    const enrollmentField = document.getElementById(enrollmentFieldId);
+    if (enrollmentField) {
+        enrollmentField.closest('div').style.display = 'none';
+    }
+    {% endif %}
+});
+</script>
+{% endblock %}

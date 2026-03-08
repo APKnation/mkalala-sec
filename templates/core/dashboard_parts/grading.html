@@ -1,0 +1,109 @@
+<!-- Grading Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-pen-nib mr-3 text-blue-600"></i>
+                Grading
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Manage student grades and assessments</p>
+        </div>
+        <div>
+            <button class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+                <i class="fas fa-plus mr-2"></i>
+                Create Assignment
+            </button>
+        </div>
+    </div>
+
+    <!-- Grading Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-tasks text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Pending</p>
+                    <p class="text-2xl font-bold text-gray-900">8</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Graded</p>
+                    <p class="text-2xl font-bold text-gray-900">45</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Avg Grade</p>
+                    <p class="text-2xl font-bold text-gray-900">B+</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-lg">
+                    <i class="fas fa-calendar text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">This Week</p>
+                    <p class="text-2xl font-bold text-gray-900">12</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Grading -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Pending Grading</h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Mathematics Quiz</p>
+                            <p class="text-sm text-gray-600">Form 1A • 20 submissions</p>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        Grade Now
+                    </button>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Physics Lab Report</p>
+                            <p class="text-sm text-gray-600">Form 2B • 18 submissions</p>
+                        </div>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        Grade Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

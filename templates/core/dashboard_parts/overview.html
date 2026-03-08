@@ -1,0 +1,171 @@
+<!-- Overview Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header Cards -->
+    <div class="card-premium p-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white border-none shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+                <h1 class="text-3xl font-display font-bold">Good Day, {{ request.user.first_name|default:"Teacher" }}! ☕</h1>
+                <p class="text-slate-400">You have <span class="text-blue-400 font-bold">{{ pending_tasks|default:"5" }} assignments</span> waiting to be graded today.</p>
+            </div>
+            <div class="flex gap-3">
+                <button class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-bold text-sm border border-white/10" onclick="unifiedDashboard.navigateToPage('announcements')">
+                    <i class="fas fa-bullhorn mr-2"></i>Create Announcement
+                </button>
+                <button class="btn-glow-primary px-5 py-3 text-sm" onclick="unifiedDashboard.navigateToPage('attendance')">
+                    <i class="fas fa-clipboard-check mr-2"></i>Mark Attendance
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-blue-50 text-blue-600">
+                <i class="fas fa-book"></i>
+            </div>
+            <p class="text-2xl font-bold">{{ my_subjects|default:"4" }}</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">My Subjects</p>
+        </div>
+        
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-green-50 text-green-600">
+                <i class="fas fa-users"></i>
+            </div>
+            <p class="text-2xl font-bold">{{ total_students|default:"120" }}</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Students</p>
+        </div>
+        
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-purple-50 text-purple-600">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <p class="text-2xl font-bold">{{ classes_today|default:"6" }}</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Classes Today</p>
+        </div>
+        
+        <div class="stat-card-modern">
+            <div class="stat-icon bg-orange-50 text-orange-600">
+                <i class="fas fa-tasks"></i>
+            </div>
+            <p class="text-2xl font-bold">{{ pending_tasks|default:"5" }}</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending Tasks</p>
+        </div>
+    </div>
+
+    <!-- Recent Activity & Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Recent Activity -->
+        <div class="card-modern p-6">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                <i class="fas fa-history mr-3 text-blue-600"></i>
+                Recent Activity
+            </h2>
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Marked attendance for Form 1A</p>
+                        <p class="text-xs text-slate-500">2 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Created announcement "Welcome Back"</p>
+                        <p class="text-xs text-slate-500">5 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Submitted grades for Mathematics</p>
+                        <p class="text-xs text-slate-500">Yesterday</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card-modern p-6">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+                <i class="fas fa-bolt mr-3 text-yellow-600"></i>
+                Quick Actions
+            </h2>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="unifiedDashboard.navigateToPage('attendance')" class="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all">
+                    <i class="fas fa-clipboard-check text-2xl mb-2"></i>
+                    <p class="text-sm font-medium">Mark Attendance</p>
+                </button>
+                <button onclick="unifiedDashboard.navigateToPage('grading')" class="p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all">
+                    <i class="fas fa-pen-nib text-2xl mb-2"></i>
+                    <p class="text-sm font-medium">Grade Assignments</p>
+                </button>
+                <button onclick="unifiedDashboard.navigateToPage('announcements')" class="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all">
+                    <i class="fas fa-bullhorn text-2xl mb-2"></i>
+                    <p class="text-sm font-medium">Create Announcement</p>
+                </button>
+                <button onclick="unifiedDashboard.navigateToPage('messages')" class="p-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:shadow-lg transition-all">
+                    <i class="fas fa-envelope text-2xl mb-2"></i>
+                    <p class="text-sm font-medium">Send Message</p>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's Schedule -->
+    <div class="card-modern p-6">
+        <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center">
+            <i class="fas fa-calendar-alt mr-3 text-indigo-600"></i>
+            Today's Schedule
+        </h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-slate-200">
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Time</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Class</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Subject</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Room</th>
+                        <th class="text-left py-3 px-4 text-sm font-semibold text-slate-700">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="py-3 px-4 text-sm text-slate-900">08:00 - 09:00</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Form 1A</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Mathematics</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Room 101</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check mr-1"></i>Completed
+                            </span>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="py-3 px-4 text-sm text-slate-900">09:00 - 10:00</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Form 2B</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Physics</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Lab 201</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <i class="fas fa-clock mr-1"></i>In Progress
+                            </span>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-slate-100 hover:bg-slate-50">
+                        <td class="py-3 px-4 text-sm text-slate-900">10:30 - 11:30</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Form 3A</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Chemistry</td>
+                        <td class="py-3 px-4 text-sm text-slate-900">Lab 202</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <i class="fas fa-hourglass-half mr-1"></i>Upcoming
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

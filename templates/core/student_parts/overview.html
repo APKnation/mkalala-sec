@@ -1,0 +1,101 @@
+<!-- Student Overview Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-graduation-cap mr-3 text-green-600"></i>
+                Student Dashboard
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Welcome back, {{ user.first_name|default:"Student" }}!</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="unifiedDashboard.navigateToPage('announcements')" class="inline-flex items-center px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 font-medium rounded-lg transition-colors duration-200">
+                <i class="fas fa-bullhorn mr-2"></i>
+                View Announcements
+            </button>
+        </div>
+    </div>
+
+    <!-- Student Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-book text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">My Courses</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ my_courses|default:"6" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-percentage text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Attendance</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ attendance_rate|default:"92" }}%</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Average Grade</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ average_grade|default:"B+" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-lg">
+                    <i class="fas fa-tasks text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Pending</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ pending_assignments|default:"3" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Submitted Mathematics Assignment</p>
+                        <p class="text-xs text-gray-500">2 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Viewed Physics Lab Results</p>
+                        <p class="text-xs text-gray-500">Yesterday</p>
+                    </div>
+                </div>
+                <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div class="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-gray-900">Borrowed Chemistry Textbook</p>
+                        <p class="text-xs text-gray-500">2 days ago</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,7 +3,10 @@ from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
+from django.shortcuts import redirect
 from . import views
+from . import views_dashboard
+from . import views_role_dashboard
 from .views import CourseUpdateView
 from .views import CreateCourseView  # <--this is correct now
 from .views import CourseListView
@@ -36,9 +39,32 @@ urlpatterns = [
     path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
     path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
-    path('teacher/timetable/', views.teacher_timetable, name='teacher_timetable'),
     path('dashboard/headmaster/', views.headmaster_dashboard, name='headmaster_dashboard'),
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
+    
+    # Unified Dashboard URLs
+    path('dashboard/<str:page>/', views_dashboard.unified_dashboard, name='unified_dashboard'),
+    path('dashboard/load/<str:page>/', views_dashboard.load_dashboard_page, name='load_dashboard_page'),
+    path('dashboard/notifications/', views_dashboard.get_notifications, name='dashboard_notifications'),
+    
+    # Role-Specific Dashboard URLs
+    path('student/dashboard/<str:page>/', views_role_dashboard.student_unified_dashboard, name='student_unified_dashboard'),
+    path('student/dashboard/load/<str:page>/', views_role_dashboard.load_student_dashboard_page, name='load_student_dashboard_page'),
+    path('student/dashboard/notifications/', views_role_dashboard.get_student_notifications, name='student_dashboard_notifications'),
+    
+    path('admin/dashboard/<str:page>/', views_role_dashboard.admin_unified_dashboard, name='admin_unified_dashboard'),
+    path('admin/dashboard/load/<str:page>/', views_role_dashboard.load_admin_dashboard_page, name='load_admin_dashboard_page'),
+    path('admin/dashboard/notifications/', views_role_dashboard.get_admin_notifications, name='admin_dashboard_notifications'),
+    
+    path('headmaster/dashboard/<str:page>/', views_role_dashboard.headmaster_unified_dashboard, name='headmaster_unified_dashboard'),
+    path('headmaster/dashboard/load/<str:page>/', views_role_dashboard.load_headmaster_dashboard_page, name='load_headmaster_dashboard_page'),
+    path('headmaster/dashboard/notifications/', views_role_dashboard.get_headmaster_notifications, name='headmaster_dashboard_notifications'),
+    
+    # Dashboard AJAX URLs
+    path('dashboard/announcements/create/', views_dashboard.CreateAnnouncementAjaxView.as_view(), name='dashboard_create_announcement'),
+    path('dashboard/attendance/mark/', views_dashboard.MarkAttendanceAjaxView.as_view(), name='dashboard_mark_attendance'),
+    
+    path('teacher/timetable/', views.teacher_timetable, name='teacher_timetable'),
     path('dashboard/faculty/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),  # Legacy
     
     # Student Navigation URLs
@@ -120,11 +146,15 @@ urlpatterns = [
     
     # Debug URLs
     path('debug/permissions/', views.debug_permissions, name='debug_permissions'),
+    path('attendance/test/', views.attendance_test, name='attendance_test'),
     
-    # Attendance URLs
-    path('attendance/', views.AttendanceListView.as_view(), name='attendance_list'),
-    path('attendance/add/', views.AttendanceCreateView.as_view(), name='attendance_create'),
-    path('attendance/<int:pk>/edit/', views.AttendanceUpdateView.as_view(), name='attendance_edit'),
+    # Attendance URLs - Redirect to Role-Specific Dashboards
+    path('attendance/', lambda request: redirect('unified_dashboard', page='attendance') if request.user.role == 'teacher' else 
+                                              redirect('student_unified_dashboard', page='attendance') if request.user.role == 'student' else
+                                              redirect('admin_unified_dashboard', page='attendance') if request.user.role == 'admin' else
+                                              redirect('headmaster_unified_dashboard', page='attendance'), name='attendance_list'),
+    path('attendance/add/', lambda request: redirect('unified_dashboard', page='attendance'), name='attendance_create'),
+    path('attendance/<int:pk>/edit/', lambda request: redirect('unified_dashboard', page='attendance'), name='attendance_edit'),
     
     # Fee URLs
     path('fees/', views.FeeListView.as_view(), name='fee_list'),
@@ -143,15 +173,25 @@ urlpatterns = [
     path('exam-schedule/', views.exam_schedule_view, name='exam_schedule'),
     path('payment-history/', views.payment_history, name='payment_history'),
     path('admin/announcements/', views.admin_announcements, name='admin_announcements'),
-    path('announcements/', views.announcement_list, name='announcement_list'),
-    path('inbox/', views.inbox, name='inbox'),
+    path('teacher/announcements/', lambda request: redirect('unified_dashboard', page='announcements'), name='teacher_announcements'),
+    path('announcements/', lambda request: redirect('unified_dashboard', page='announcements') if request.user.role == 'teacher' else 
+                                          redirect('student_unified_dashboard', page='announcements') if request.user.role == 'student' else
+                                          redirect('admin_unified_dashboard', page='announcements') if request.user.role == 'admin' else
+                                          redirect('headmaster_unified_dashboard', page='announcements'), name='announcement_list'),
+    path('inbox/', lambda request: redirect('unified_dashboard', page='messages') if request.user.role == 'teacher' else 
+                              redirect('student_unified_dashboard', page='messages') if request.user.role == 'student' else
+                              redirect('admin_unified_dashboard', page='messages') if request.user.role == 'admin' else
+                              redirect('headmaster_unified_dashboard', page='messages'), name='inbox'),
     
     # Student enrollment URLs
     path('enroll/', views.enroll_course, name='enroll_course'),
     path('send-message/', views.send_message, name='send_message'),
     path('forum/', views.forum_topics, name='forum_topics'),
     path('forum/<int:topic_id>/', views.topic_detail, name='topic_detail'),
-    path('library/', views.search_books, name='book_search'),
+    path('library/', lambda request: redirect('unified_dashboard', page='library') if request.user.role == 'teacher' else 
+                           redirect('student_unified_dashboard', page='library') if request.user.role == 'student' else
+                           redirect('admin_unified_dashboard', page='library') if request.user.role == 'admin' else
+                           redirect('headmaster_unified_dashboard', page='library'), name='book_search'),
     path('borrowed-books/', views.borrowed_books, name='borrowed_books'),
     path('elibrary/', views.elibrary, name='elibrary'),
     path('activities/', views.activity_list, name='activity_list'),
