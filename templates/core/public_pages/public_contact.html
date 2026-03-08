@@ -1,0 +1,333 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Contact - Mkalala Secondary School{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0">
+        <div class="absolute top-20 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+        <div class="absolute top-40 right-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+        <div class="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
+        <div class="absolute bottom-40 right-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-6000"></div>
+    </div>
+    
+    <!-- Floating Shapes -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -left-40 w-80 h-80 border border-blue-500/20 rounded-full animate-spin-slow"></div>
+        <div class="absolute -bottom-40 -right-40 w-60 h-60 border border-blue-500/20 rounded-full animate-bounce-slow"></div>
+        <div class="absolute top-1/3 right-1/4 w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full opacity-30 animate-float"></div>
+        <div class="absolute bottom-1/3 left-1/4 w-24 h-24 bg-gradient-to-tr from-blue-300 to-blue-500 rounded-full opacity-30 animate-float animation-delay-2000"></div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        <div class="backdrop-blur-sm bg-white/10 rounded-2xl p-12 shadow-2xl border border-white/20">
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl mb-8 shadow-lg transform hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-envelope text-white text-3xl"></i>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
+                    Contact Mkalala Secondary School
+                </h1>
+                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                    Have questions about admissions, academics or visiting our campus? Our team is ready to help you.
+                </p>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                <a href="{% url 'register' %}" class="px-8 py-4 text-lg font-bold text-white bg-blue-500 rounded-xl shadow-lg hover:bg-blue-600 transform hover:scale-105 transition-all duration-300">
+                    Apply Now
+                </a>
+                <a href="{% url 'public_about' %}" class="px-8 py-4 text-lg font-bold text-blue-800 bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT INFO & FORM SECTION -->
+<section class="py-24 bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-3 gap-16">
+            <!-- Contact Information -->
+            <div class="lg:col-span-1 space-y-8">
+                <div class="relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl opacity-10 blur-xl"></div>
+                    <div class="relative bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-map-marker-alt text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">Location</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <p class="text-gray-600">
+                                <strong>Mkalala Secondary School</strong><br>
+                                P.O. Box 1234<br>
+                                Arusha, Tanzania
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl opacity-10 blur-xl"></div>
+                    <div class="relative bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-phone text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">Phone</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <p class="text-gray-600">
+                                <strong>Main Office:</strong><br>
+                                +255 27 254 1234<br>
+                                +255 27 254 1235
+                            </p>
+                            <p class="text-gray-600">
+                                <strong>Admissions:</strong><br>
+                                +255 27 254 1236
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-10 blur-xl"></div>
+                    <div class="relative bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-envelope text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800">Email</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <p class="text-gray-600">
+                                <strong>General Info:</strong><br>
+                                info@mkalala.sc.tz
+                            </p>
+                            <p class="text-gray-600">
+                                <strong>Admissions:</strong><br>
+                                admissions@mkalala.sc.tz
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="lg:col-span-2">
+                <div class="relative">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-10 blur-xl"></div>
+                    <div class="relative bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                        <div class="text-center mb-8">
+                            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl mb-6 shadow-lg">
+                                <i class="fas fa-paper-plane text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold text-gray-800">Send Us a Message</h3>
+                            <p class="text-gray-600">We'll get back to you as soon as possible</p>
+                        </div>
+                        
+                        <form method="post" class="space-y-6">
+                            {% csrf_token %}
+                            
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">First Name</label>
+                                    <input type="text" name="first_name" placeholder="Your first name"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">Last Name</label>
+                                    <input type="text" name="last_name" placeholder="Your last name"
+                                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">Email Address</label>
+                                <input type="email" name="email" placeholder="your.email@example.com"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">Phone Number</label>
+                                <input type="tel" name="phone" placeholder="+255 27 254 1234"
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">Subject</label>
+                                <select name="subject" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
+                                    <option value="">Select Subject</option>
+                                    <option value="admissions">Admissions</option>
+                                    <option value="academic">Academic Information</option>
+                                    <option value="fees">Fees & Payments</option>
+                                    <option value="general">General Inquiry</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 uppercase tracking-wider mb-2">Your Message</label>
+                                <textarea name="message" rows="5" placeholder="Tell us how we can help you..."
+                                          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="group relative w-full inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+                                <span class="relative z-10">Send Message</span>
+                                <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <svg class="w-5 h-5 ml-2 relative z-10" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- OFFICE HOURS SECTION -->
+<section class="py-24 bg-gradient-to-r from-blue-600 to-purple-600 relative overflow-hidden">
+    <div class="absolute inset-0 bg-black/20"></div>
+    <div class="relative z-10 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Office Hours</h2>
+            <p class="text-xl text-blue-100 max-w-3xl mx-auto">When you can reach us</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105 text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
+                    <i class="fas fa-building text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Main Office</h3>
+                <p class="text-blue-100 leading-relaxed">
+                    Monday – Friday<br>
+                    7:30 AM – 4:30 PM<br>
+                    Saturday: 8:00 AM – 12:00 PM
+                </p>
+            </div>
+            
+            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105 text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-bounce">
+                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Academic Office</h3>
+                <p class="text-blue-100 leading-relaxed">
+                    Monday – Friday<br>
+                    8:00 AM – 3:30 PM
+                </p>
+            </div>
+            
+            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105 text-center">
+                <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-spin">
+                    <i class="fas fa-user-plus text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-4">Admissions</h3>
+                <p class="text-blue-100 leading-relaxed">
+                    Monday – Friday<br>
+                    8:00 AM – 4:00 PM
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUICK LINKS SECTION -->
+<section class="py-24 bg-gradient-to-b from-white to-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Quick Links</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Access important information</p>
+        </div>
+        
+        <div class="grid md:grid-cols-4 gap-6">
+            <a href="{% url 'public_admissions' %}" class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center block">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-bounce">
+                    <i class="fas fa-clipboard-list text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Admissions</h3>
+                <p class="text-gray-600 text-sm">Application requirements</p>
+            </a>
+            
+            <a href="{% url 'public_courses' %}" class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center block">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-pulse">
+                    <i class="fas fa-book text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Courses</h3>
+                <p class="text-gray-600 text-sm">Academic programs</p>
+            </a>
+            
+            <a href="{% url 'register' %}" class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center block">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-spin">
+                    <i class="fas fa-user-plus text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Registration</h3>
+                <p class="text-gray-600 text-sm">Online enrollment</p>
+            </a>
+            
+            <a href="{% url 'public_about' %}" class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center block">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-float">
+                    <i class="fas fa-school text-white text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">About School</h3>
+                <p class="text-gray-600 text-sm">Our story & mission</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+}
+
+.animate-pulse {
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+.animation-delay-6000 {
+    animation-delay: 6s;
+}
+</style>
+
+{% endblock %}

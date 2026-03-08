@@ -1,0 +1,499 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Admissions - Mkalala Secondary School{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white">
+  <div class="absolute inset-0 bg-black opacity-20"></div>
+  <div class="absolute top-0 right-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-0 left-0 w-96 h-96 bg-green-400/10 rounded-full blur-3xl"></div>
+  
+  <div class="relative container mx-auto px-6 py-24 text-center">
+    <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-yellow-400/20 text-yellow-300 text-sm font-bold border border-yellow-400/30 mb-8">
+      <span class="relative flex h-3 w-3 mr-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-400"></span>
+      </span>
+      2026/27 Academic Year Admissions Open
+    </div>
+    
+    <h1 class="text-5xl lg:text-7xl font-bold leading-tight mb-6">
+      Join Our<br/>
+      <span class="text-yellow-400">Mkalala Family</span>
+    </h1>
+    
+    <p class="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-8">
+      Begin your journey to academic excellence. Join over 5000+ successful graduates who have walked through our halls since 1985.
+    </p>
+    
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{% url 'register' %}" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-8 py-4 rounded-lg font-bold transition-all transform hover:scale-105 shadow-xl">
+        Apply Now 2026/27
+      </a>
+      <a href="{% url 'public_contact' %}" class="px-8 py-4 rounded-lg border-2 border-white/30 text-white font-bold hover:bg-white/10 transition-all">
+        Admissions Office
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Admission Requirements -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-blue-900 mb-4">Admission Requirements</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Everything you need to know about joining our O-level program</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-user-graduate text-blue-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-blue-900 mb-3 text-center">Age Requirement</h3>
+        <p class="text-gray-600 text-center">13-15 years old for Form 1 entry</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-certificate text-green-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-green-900 mb-3 text-center">Primary Education</h3>
+        <p class="text-gray-600 text-center">Completed Standard 7 with pass marks</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-file-alt text-yellow-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-yellow-900 mb-3 text-center">Required Documents</h3>
+        <p class="text-gray-600 text-center">Birth certificate, academic records</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-clipboard-check text-purple-600 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-purple-900 mb-3 text-center">Entrance Exam</h3>
+        <p class="text-gray-600 text-center">Basic assessment in English and Math</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Admission Process -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-blue-900 mb-4">Simple Admission Process</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Follow these easy steps to join our school</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="text-center">
+        <div class="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+          1
+        </div>
+        <h3 class="text-xl font-bold text-blue-900 mb-3">Application Form</h3>
+        <p class="text-gray-600">Fill out the online application form with accurate information</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+          2
+        </div>
+        <h3 class="text-xl font-bold text-green-900 mb-3">Submit Documents</h3>
+        <p class="text-gray-600">Upload required documents and pay application fee</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="w-20 h-20 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+          3
+        </div>
+        <h3 class="text-xl font-bold text-yellow-900 mb-3">Entrance Assessment</h3>
+        <p class="text-gray-600">Attend the entrance exam and interview session</p>
+      </div>
+      
+      <div class="text-center">
+        <div class="w-20 h-20 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-3xl font-bold">
+          4
+        </div>
+        <h3 class="text-xl font-bold text-purple-900 mb-3">Admission Offer</h3>
+        <p class="text-gray-600">Receive admission letter and complete enrollment</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fee Structure -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-blue-900 mb-4">Fee Structure 2026/27</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Competitive fees with flexible payment options</p>
+    </div>
+    
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white p-8 rounded-xl shadow-lg">
+        <h3 class="text-2xl font-bold text-blue-900 mb-6">Day Scholars</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Tuition Fee (Annual)</span>
+            <span class="font-bold text-blue-900">TZS 800,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Registration Fee</span>
+            <span class="font-bold text-blue-900">TZS 50,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Books & Materials</span>
+            <span class="font-bold text-blue-900">TZS 120,000</span>
+          </div>
+          <div class="flex justify-between items-center pt-3">
+            <span class="font-bold text-gray-900">Total Annual</span>
+            <span class="font-bold text-xl text-blue-900">TZS 970,000</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-8 rounded-xl shadow-lg border-2 border-green-500">
+        <div class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold inline-block mb-4">
+          POPULAR
+        </div>
+        <h3 class="text-2xl font-bold text-green-900 mb-6">Boarding Students</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Tuition Fee (Annual)</span>
+            <span class="font-bold text-green-900">TZS 800,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Boarding & Meals</span>
+            <span class="font-bold text-green-900">TZS 600,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Registration Fee</span>
+            <span class="font-bold text-green-900">TZS 50,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Books & Materials</span>
+            <span class="font-bold text-green-900">TZS 120,000</span>
+          </div>
+          <div class="flex justify-between items-center pt-3">
+            <span class="font-bold text-gray-900">Total Annual</span>
+            <span class="font-bold text-xl text-green-900">TZS 1,570,000</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-8 rounded-xl shadow-lg">
+        <h3 class="text-2xl font-bold text-yellow-900 mb-6">Special Programs</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Computer Studies</span>
+            <span class="font-bold text-yellow-900">TZS 80,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Science Lab</span>
+            <span class="font-bold text-yellow-900">TZS 60,000</span>
+          </div>
+          <div class="flex justify-between items-center pb-3 border-b">
+            <span class="text-gray-600">Sports Activities</span>
+            <span class="font-bold text-yellow-900">TZS 40,000</span>
+          </div>
+          <div class="flex justify-between items-center pt-3">
+            <span class="font-bold text-gray-900">Total Additional</span>
+            <span class="font-bold text-xl text-yellow-900">TZS 180,000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-12 bg-blue-50 p-6 rounded-lg">
+      <p class="text-gray-700 text-center">
+        <strong>Payment Options:</strong> Annual, Semester, or Monthly installments available. 
+        <span class="text-blue-600 font-bold">Scholarships available for outstanding students.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Important Dates -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-blue-900 mb-4">Important Admission Dates</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Mark your calendar for key admission deadlines</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-xl border border-blue-100">
+        <h3 class="text-2xl font-bold text-blue-900 mb-6">First Intake (January)</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Application Opens:</span>
+            <span class="font-bold text-blue-900">September 1, 2025</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Application Deadline:</span>
+            <span class="font-bold text-blue-900">November 30, 2025</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Entrance Exam:</span>
+            <span class="font-bold text-blue-900">December 15, 2025</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Results Announcement:</span>
+            <span class="font-bold text-blue-900">December 22, 2025</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">School Begins:</span>
+            <span class="font-bold text-blue-900">January 13, 2026</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-xl border border-green-100">
+        <h3 class="text-2xl font-bold text-green-900 mb-6">Second Intake (May)</h3>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Application Opens:</span>
+            <span class="font-bold text-green-900">February 1, 2026</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Application Deadline:</span>
+            <span class="font-bold text-green-900">April 15, 2026</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Entrance Exam:</span>
+            <span class="font-bold text-green-900">April 25, 2026</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">Results Announcement:</span>
+            <span class="font-bold text-green-900">May 2, 2026</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-gray-600">School Begins:</span>
+            <span class="font-bold text-green-900">May 11, 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Required Documents -->
+<section class="py-20 bg-gray-50">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl font-bold text-blue-900 mb-4">Required Documents</h2>
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto">Prepare these documents for smooth admission process</p>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-baby text-blue-600"></i>
+          </div>
+          <h3 class="font-bold text-blue-900">Birth Certificate</h3>
+        </div>
+        <p class="text-gray-600 text-sm">Original and copy of birth certificate</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-passport text-green-600"></i>
+          </div>
+          <h3 class="font-bold text-green-900">Passport Photos</h3>
+        </div>
+        <p class="text-gray-600 text-sm">4 recent passport size photographs</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-file-invoice text-yellow-600"></i>
+          </div>
+          <h3 class="font-bold text-yellow-900">Academic Records</h3>
+        </div>
+        <p class="text-gray-600 text-sm">Standard 7 leaving certificate and results</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-users text-purple-600"></i>
+          </div>
+          <h3 class="font-bold text-purple-900">Parent/Guardian ID</h3>
+        </div>
+        <p class="text-gray-600 text-sm">National ID or passport of parent/guardian</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-file-medical text-red-600"></i>
+          </div>
+          <h3 class="font-bold text-red-900">Medical Report</h3>
+        </div>
+        <p class="text-gray-600 text-sm">Recent medical examination report</p>
+      </div>
+      
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex items-center mb-4">
+          <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
+            <i class="fas fa-home text-indigo-600"></i>
+          </div>
+          <h3 class="font-bold text-indigo-900">Proof of Residence</h3>
+        </div>
+        <p class="text-gray-600 text-sm">Utility bill or tenancy agreement</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
+  <div class="container mx-auto px-6 text-center">
+    <h2 class="text-4xl font-bold mb-4">Ready to Join Mkalala Secondary School?</h2>
+    <p class="text-xl text-blue-100 max-w-2xl mx-auto mb-8">
+      Take the first step towards academic excellence and bright future
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="{% url 'register' %}" class="bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-8 py-4 rounded-lg font-bold transition-all transform hover:scale-105 shadow-xl">
+        Apply for Admission 2026/27
+      </a>
+      <a href="{% url 'public_contact' %}" class="px-8 py-4 rounded-lg border-2 border-white/30 text-white font-bold hover:bg-white/10 transition-all">
+        Admissions Office
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+        <div class="text-center group">
+            <div class="w-16 h-16 bg-white border-4 border-blue-600 rounded-2xl flex items-center justify-center text-blue-600 font-bold text-xl mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform">01</div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Apply Online</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">Submit your application through our digital portal.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="text-center group">
+            <div class="w-16 h-16 bg-white border-4 border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-bold text-xl mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform">02</div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Entrance Test</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">Attend our standardized academic assessment.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-center group">
+            <div class="w-16 h-16 bg-white border-4 border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-bold text-xl mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform">03</div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Interview</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">A personal interaction with our academic board.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="text-center group">
+            <div class="w-16 h-16 bg-white border-4 border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 font-bold text-xl mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform">04</div>
+            <h4 class="text-lg font-bold text-slate-900 mb-2">Enrollment</h4>
+            <p class="text-sm text-slate-500 leading-relaxed">Welcome to the Mkalala Secondary family.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Entry Requirements -->
+<div class="bg-slate-50 py-24">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid lg:grid-cols-2 gap-16 items-start">
+            <div class="card-premium p-10 bg-white">
+                <i class="fas fa-graduation-cap text-3xl text-blue-600 mb-8"></i>
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">Ordinary Level (Form 1)</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Completed Standard 7 with NECTA PSLE results.</span>
+                    </li>
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Certified copy of Birth Certificate.</span>
+                    </li>
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>School Leaving Certificate from previous school.</span>
+                    </li>
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Passport-size photographs (4 copies).</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-premium p-10 bg-white">
+                <i class="fas fa-university text-3xl text-indigo-600 mb-8"></i>
+                <h3 class="text-2xl font-bold text-slate-900 mb-6">Advanced Level (Form 5)</h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Form 4 CSEE certificates or Equivalent with required credits.</span>
+                    </li>
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Selected combination must meet minimum credit requirements.</span>
+                    </li>
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Character reference from the previous Head of School.</span>
+                    </li>
+                    <li class="flex items-start space-x-3 text-slate-600">
+                        <i class="fas fa-check-circle text-emerald-500 mt-1"></i>
+                        <span>Valid Tanzanian ID or Passport for international students.</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Fee Structure Preview -->
+<div class="py-24 max-w-7xl mx-auto px-4">
+    <div class="card-premium overflow-hidden">
+        <div class="bg-slate-900 p-8 md:p-12 text-white">
+            <h3 class="text-3xl font-bold mb-4">Investment in Excellence</h3>
+            <p class="text-slate-400 max-w-xl">We maintain competitive fee structures while providing premium facilities and world‑class instruction.</p>
+        </div>
+        <div class="grid md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+            <div class="p-8 lg:p-12">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Day Scholar</h4>
+                <p class="text-4xl font-bold text-slate-900 mb-2">TZS 500k</p>
+                <p class="text-xs text-slate-400 mb-8">Per Term</p>
+                <p class="text-sm text-slate-500">Includes tuition, extracurricular access, and standardized learning materials.</p>
+            </div>
+            <div class="p-8 lg:p-12 bg-blue-50/50">
+                <h4 class="text-sm font-bold text-blue-600 uppercase tracking-widest mb-4">Full Boarding</h4>
+                <p class="text-4xl font-bold text-slate-900 mb-2">TZS 850k</p>
+                <p class="text-xs text-slate-400 mb-8">Per Term</p>
+                <p class="text-sm text-slate-500">Comprehensive boarding, 24/7 supervision, nutritive catering, and laundary services.</p>
+            </div>
+            <div class="p-8 lg:p-12">
+                <h4 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">A-Level Addon</h4>
+                <p class="text-4xl font-bold text-slate-900 mb-2">+TZS 150k</p>
+                <p class="text-xs text-slate-400 mb-8">Per Term</p>
+                <p class="text-sm text-slate-500">Additional lab fees and specialized advanced-level seminar materials.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="max-w-7xl mx-auto px-4 pb-24 text-center">
+    <div class="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <h2 class="text-3xl md:text-5xl font-display font-bold text-slate-900">Start Your Application Today</h2>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center font-sans">
+            <a href="{% url 'register' %}" class="btn-glow-primary px-12 py-5 text-lg">Online Application Portal</a>
+            <a href="{% url 'public_contact' %}" class="px-12 py-5 border border-slate-200 rounded-2xl font-bold text-slate-600 hover:bg-slate-50 transition-all">Download Prospectus</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

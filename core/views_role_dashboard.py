@@ -478,82 +478,288 @@ def get_headmaster_overview_context(user, headmaster_profile):
     
     return context
 
-# Placeholder context functions for other pages
+def get_student_overview_context(user, student_profile):
+    """Get student overview page context"""
+    enrollments = Enrollment.objects.filter(student=student_profile).select_related('course_offering', 'course_offering__course', 'course_offering__faculty')
+    attendance_count = Attendance.objects.filter(enrollment__student=student_profile).count()
+    
+    return {
+        'my_courses': enrollments.count(),
+        'pending_tasks': Enrollment.objects.filter(student=student_profile, grade__isnull=True).count(),
+        'attendance_rate': 85,  # Calculate actual attendance rate
+        'recent_grades': Grade.objects.filter(enrollment__student=student_profile).order_by('-awarded_on')[:5],
+        'enrollments': enrollments,
+        'attendance_count': attendance_count,
+    }
+
 def get_student_attendance_context(user, student_profile):
-    return {'attendance_records': []}
+    """Get student attendance page context"""
+    attendance_records = Attendance.objects.filter(enrollment__student=student_profile).select_related('enrollment', 'enrollment__course_offering').order_by('-date')
+    
+    return {
+        'attendance_records': attendance_records[:50],
+        'total_records': attendance_records.count(),
+        'present_count': attendance_records.filter(status='P').count(),
+        'absent_count': attendance_records.filter(status='A').count(),
+        'late_count': attendance_records.filter(status='L').count(),
+    }
 
 def get_student_announcements_context(user, student_profile):
-    return {'announcements': []}
+    """Get student announcements page context"""
+    # Get announcements for student's courses
+    student_courses = CourseOffering.objects.filter(enrollments__student=student_profile)
+    announcements = Announcement.objects.filter(
+        Q(target_class__in=student_courses.values_list('id', flat=True)) | Q(target_class__isnull=True)
+    ).filter(is_active=True).order_by('-created_at')[:20]
+    
+    return {
+        'announcements': announcements,
+        'total_announcements': announcements.count(),
+        'unread_announcements': announcements.count(),  # You may need to add read status tracking
+    }
 
 def get_student_courses_context(user, student_profile):
-    return {'courses': []}
+    """Get student courses page context"""
+    enrollments = Enrollment.objects.filter(student=student_profile).select_related(
+        'course_offering', 'course_offering__course', 'course_offering__faculty'
+    ).order_by('course_offering__course__name')
+    
+    return {
+        'enrollments': enrollments,
+        'my_courses': enrollments.count(),
+    }
 
 def get_student_results_context(user, student_profile):
-    return {'results': []}
+    """Get student results page context"""
+    grades = Grade.objects.filter(enrollment__student=student_profile).select_related(
+        'enrollment', 'enrollment__course_offering', 'enrollment__course_offering__course'
+    ).order_by('-awarded_on')
+    
+    return {
+        'grades': grades,
+        'total_grades': grades.count(),
+        'average_grade': grades.aggregate(avg=Avg('points'))['avg'] or 0,
+        'latest_grades': grades[:10],
+    }
 
 def get_student_timetable_context(user, student_profile):
-    return {'schedule': []}
+    """Get student timetable page context"""
+    # Get student's enrolled courses
+    enrollments = Enrollment.objects.filter(student=student_profile).select_related('course_offering')
+    
+    return {
+        'enrollments': enrollments,
+        'courses': enrollments.values_list('course_offering__course__name', 'course_offering__course__code'),
+    }
 
 def get_student_assignments_context(user, student_profile):
-    return {'assignments': []}
+    """Get student assignments page context"""
+    # Placeholder for assignment data - you may need to add Assignment model
+    return {
+        'assignments': [],
+        'pending_assignments': 3,  # Calculate from actual data
+        'completed_assignments': 5,  # Calculate from actual data
+    }
 
 def get_student_exams_context(user, student_profile):
-    return {'exams': []}
+    """Get student exams page context"""
+    # Placeholder for exam data
+    return {
+        'exams': [],
+        'upcoming_exams': 0,
+        'completed_exams': 0,
+    }
 
 def get_student_fees_context(user, student_profile):
-    return {'fee_records': []}
+    """Get student fees page context"""
+    # Placeholder for fee data
+    return {
+        'fee_records': [],
+        'total_fees': 0,
+        'paid_fees': 0,
+        'pending_fees': 0,
+    }
 
 def get_student_library_context(user, student_profile):
-    return {'borrowed_books': []}
+    """Get student library page context"""
+    # Placeholder for library data
+    return {
+        'library_items': [],
+        'borrowed_books': 0,
+        'reserved_books': 0,
+    }
 
 def get_student_messages_context(user, student_profile):
-    return {'messages': []}
+    """Get student messages page context"""
+    # Placeholder for message data - you may need to add Message model
+    return {
+        'messages': [],
+        'unread_messages': 1,  # Calculate from actual data
+        'sent_messages': 0,
+    }
 
 def get_student_profile_context(user, student_profile):
     return {'user_profile': user}
 
-# Admin context functions
+def get_admin_overview_context(user, admin_profile):
+    """Get admin overview page context"""
+    context = {
+        'total_users': User.objects.count(),
+        'total_students': User.objects.filter(role='student').count(),
+        'total_teachers': User.objects.filter(role='teacher').count(),
+        'total_courses': CourseOffering.objects.count(),
+        'pending_announcements': 3,  # Placeholder
+    }
+    
+    return context
+
 def get_admin_users_context(user, admin_profile):
-    return {'users': []}
+    """Get admin users page context"""
+    users = User.objects.all().order_by('-date_joined')[:20]
+    return {
+        'users': users,
+        'total_users': users.count(),
+        'students_count': User.objects.filter(role='student').count(),
+        'teachers_count': User.objects.filter(role='teacher').count(),
+        'admins_count': User.objects.filter(role='admin').count(),
+    }
 
 def get_admin_students_context(user, admin_profile):
-    return {'students': []}
+    """Get admin students page context"""
+    students = User.objects.filter(role='student').select_related('student_profile').order_by('first_name', 'last_name')
+    return {
+        'students': students,
+        'total_students': students.count(),
+        'active_students': students.filter(is_active=True).count(),
+    }
 
 def get_admin_teachers_context(user, admin_profile):
-    return {'teachers': []}
+    """Get admin teachers page context"""
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    return {
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+    }
 
 def get_admin_courses_context(user, admin_profile):
-    return {'courses': []}
+    """Get admin courses page context"""
+    courses = CourseOffering.objects.all().select_related('course', 'faculty').order_by('course__name')
+    return {
+        'courses': courses,
+        'total_courses': courses.count(),
+    }
 
 def get_admin_classes_context(user, admin_profile):
-    return {'classes': []}
+    """Get admin classes page context"""
+    classes = StudentClass.objects.all().order_by('form_level', 'name')
+    return {
+        'classes': classes,
+        'total_classes': classes.count(),
+        'active_classes': classes.filter(is_active=True).count(),
+        'total_students': classes.aggregate(total=Sum('current_students'))['total'] or 0,
+    }
 
 def get_admin_subjects_context(user, admin_profile):
-    return {'subjects': []}
+    """Get admin subjects page context"""
+    subjects = CourseOffering.objects.values('course__name', 'course__code').distinct().order_by('course__name')
+    return {
+        'subjects': subjects,
+        'total_subjects': subjects.count(),
+    }
 
 def get_admin_attendance_context(user, admin_profile):
-    return {'attendance_data': []}
+    """Get admin attendance page context"""
+    attendance_records = Attendance.objects.all().select_related('enrollment', 'enrollment__student', 'enrollment__course_offering').order_by('-date')[:50]
+    
+    return {
+        'attendance_records': attendance_records,
+        'total_records': attendance_records.count(),
+        'today_records': Attendance.objects.filter(date=timezone.now().date()).count(),
+        'present_count': Attendance.objects.filter(status='P').count(),
+        'absent_count': Attendance.objects.filter(status='A').count(),
+        'late_count': Attendance.objects.filter(status='L').count(),
+    }
 
 def get_admin_grading_context(user, admin_profile):
-    return {'grading_data': []}
+    """Get admin grading page context"""
+    grades = Grade.objects.all().select_related('enrollment', 'enrollment__student', 'enrollment__course_offering').order_by('-awarded_on')[:50]
+    
+    return {
+        'grades': grades,
+        'total_grades': grades.count(),
+        'average_grade': grades.aggregate(avg=Avg('points'))['avg'] or 0,
+    }
 
 def get_admin_exams_context(user, admin_profile):
-    return {'exam_data': []}
+    """Get admin exams page context"""
+    # Placeholder for exam data - you may need to add Exam model
+    return {
+        'exams': [],
+        'total_exams': 0,
+        'upcoming_exams': 0,
+    }
+
+def get_admin_timetable_context(user, admin_profile):
+    """Get admin timetable page context"""
+    # Placeholder for timetable data
+    return {
+        'timetable_entries': [],
+        'total_entries': 0,
+    }
 
 def get_admin_announcements_context(user, admin_profile):
-    return {'announcements': []}
+    """Get admin announcements page context"""
+    announcements = Announcement.objects.all().order_by('-created_at')
+    
+    return {
+        'announcements': announcements[:20],
+        'total_announcements': announcements.count(),
+        'active_announcements': announcements.filter(is_active=True).count(),
+        'pending_announcements': announcements.filter(is_active=False).count(),
+    }
 
 def get_admin_fees_context(user, admin_profile):
-    return {'fee_data': []}
+    """Get admin fees page context"""
+    # Placeholder for fees data - you may need to add Fee model
+    return {
+        'fee_records': [],
+        'total_collected': 0,
+        'pending_fees': 0,
+    }
+
+def get_admin_library_context(user, admin_profile):
+    """Get admin library page context"""
+    # Placeholder for library data - you may need to add Library models
+    return {
+        'library_items': [],
+        'total_books': 0,
+        'borrowed_books': 0,
+    }
 
 def get_admin_reports_context(user, admin_profile):
-    return {'reports': []}
+    """Get admin reports page context"""
+    # Placeholder for reports data
+    return {
+        'reports': [],
+        'generated_reports': 0,
+    }
 
 def get_admin_settings_context(user, admin_profile):
-    return {'settings': {}}
+    """Get admin settings page context"""
+    # Placeholder for settings data
+    return {
+        'settings': {},
+        'system_settings': {},
+    }
 
 def get_admin_logs_context(user, admin_profile):
-    return {'logs': []}
+    """Get admin logs page context"""
+    # Placeholder for logs data - you may need to add ActivityLog model
+    return {
+        'logs': [],
+        'total_logs': 0,
+    }
 
 def get_admin_profile_context(user, admin_profile):
     return {'user_profile': user}

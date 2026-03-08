@@ -129,7 +129,7 @@ class FacultyUpdateView(UpdateView):
 
 class CourseManagementView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Course
-    template_name = 'core/course_management.html'
+    template_name = 'core/course_management/course_management.html'
     context_object_name = 'courses'
     
     def test_func(self):
@@ -222,7 +222,7 @@ def attendance_summary(request):
     else:
         context = {'error': 'Unauthorized access'}
 
-    return render(request, 'core/attendance_summary.html', context)
+    return render(request, 'core/attendance/attendance_list.html', context)
 @login_required
 def view_fee_structure(request):
     # Get all fee structures
@@ -270,7 +270,7 @@ class UserApprovalView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return self.request.user.is_staff
 class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
-    template_name = 'core/admin_user_list.html'
+    template_name = 'core/admin_management/admin_user_list.html'
     context_object_name = 'users'
     paginate_by = 20
     
@@ -500,7 +500,7 @@ class PublicRegisterView(CreateView):
     """Registration for normal users and students"""
     model = User
     form_class = PublicUserRegistrationForm
-    template_name = 'core/public_register.html'
+    template_name = 'core/public_pages/public_register.html'
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
@@ -613,7 +613,7 @@ def teacher_dashboard(request):
         'subjects': courses,
         'school_info': get_school_info(),
     }
-    return render(request, 'core/teacher_dashboard.html', context)
+    return render(request, 'core/teacher_parts/dashboard_old.html', context)
 
 # Headmaster Dashboard
 @login_required
@@ -636,7 +636,7 @@ def headmaster_dashboard(request):
         'courses': Course.objects.all(),
         'recent_activities': User.objects.order_by('-date_joined')[:5],
     }
-    return render(request, 'core/headmaster_dashboard.html', context)
+    return render(request, 'core/headmaster_management/headmaster_dashboard.html', context)
 
 
 # School Admin Dashboard
@@ -802,7 +802,7 @@ def admin_dashboard(request):
         # School information
         'school_info': school_info,
     }  
-    return render(request, 'core/admin_dashboard.html', context)
+    return render(request, 'core/admin_management/admin_dashboard.html', context)
 
 from django.http import JsonResponse
 from django.core.paginator import Paginator
@@ -993,7 +993,7 @@ def api_users(request, pk=None):
 
 class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = StudentProfile
-    template_name = 'core/admin_student_list.html'
+    template_name = 'core/admin_management/admin_student_list.html'
     context_object_name = 'students'
     paginate_by = 20
     
@@ -1152,7 +1152,7 @@ def admin_student_create(request):
 
 class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = StudentProfile
-    template_name = 'core/admin_student_detail.html'
+    template_name = 'core/admin_management/admin_student_detail.html'
     context_object_name = 'student'
     
     def test_func(self):
@@ -1187,7 +1187,7 @@ class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = StudentProfile
     form_class = StudentProfileForm
-    template_name = 'core/admin_student_edit.html'
+    template_name = 'core/admin_management/admin_student_edit.html'
     success_url = reverse_lazy('admin_student_list')
     
     def test_func(self):
@@ -1204,7 +1204,7 @@ class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = StudentProfile
-    template_name = 'core/admin_student_delete.html'
+    template_name = 'core/admin_management/admin_student_delete.html'
     success_url = reverse_lazy('admin_student_list')
     
     def test_func(self):
@@ -1221,7 +1221,7 @@ class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class TeacherListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = FacultyProfile
-    template_name = 'core/admin_teacher_list.html'
+    template_name = 'core/admin_management/admin_teacher_list.html'
     context_object_name = 'teachers'
     paginate_by = 20
     
@@ -1361,7 +1361,7 @@ def admin_teacher_create(request):
 
 class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = FacultyProfile
-    template_name = 'core/admin_teacher_detail.html'
+    template_name = 'core/admin_management/admin_teacher_detail.html'
     context_object_name = 'teacher'
     
     def test_func(self):
@@ -1381,7 +1381,7 @@ class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class TeacherUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     form_class = UserForm
-    template_name = 'core/admin_teacher_edit.html'
+    template_name = 'core/admin_management/admin_teacher_edit.html'
     success_url = reverse_lazy('admin_teacher_list')
     
     def test_func(self):
@@ -1398,7 +1398,7 @@ class TeacherUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class TeacherDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
-    template_name = 'core/admin_teacher_delete.html'
+    template_name = 'core/admin_management/admin_teacher_delete.html'
     success_url = reverse_lazy('admin_teacher_list')
     
     def test_func(self):
@@ -1494,7 +1494,7 @@ def admin_student_create(request):
 
 class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = StudentProfile
-    template_name = 'core/admin_student_detail.html'
+    template_name = 'core/admin_management/admin_student_detail.html'
     context_object_name = 'student'
     
     def test_func(self):
@@ -1522,7 +1522,7 @@ class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = StudentProfile
     form_class = StudentProfileForm
-    template_name = 'core/admin_student_edit.html'
+    template_name = 'core/admin_management/admin_student_edit.html'
     success_url = reverse_lazy('admin_dashboard')
     
     def test_func(self):
@@ -1545,7 +1545,7 @@ class StudentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
-    template_name = 'core/admin_student_delete.html'
+    template_name = 'core/admin_management/admin_student_delete.html'
     success_url = reverse_lazy('admin_dashboard')
     
     def test_func(self):
@@ -1572,7 +1572,7 @@ class StudentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Fee
-    template_name = 'core/admin_fees.html'
+    template_name = 'core/admin_management/admin_fees.html'
     context_object_name = 'fees'
     paginate_by = 25
     
@@ -1643,7 +1643,7 @@ class FeeListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Fee
     form_class = FeeForm
-    template_name = 'core/admin_fee_create.html'
+    template_name = 'core/admin_management/admin_fee_create.html'
     success_url = reverse_lazy('admin_fee_list')
     
     def test_func(self):
@@ -1661,7 +1661,7 @@ class FeeCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class FeeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Fee
     form_class = FeeForm
-    template_name = 'core/admin_fee_edit.html'
+    template_name = 'core/admin_management/admin_fee_edit.html'
     success_url = reverse_lazy('admin_fee_list')
     
     def test_func(self):
@@ -1678,7 +1678,7 @@ class FeeUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class FeeDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Fee
-    template_name = 'core/admin_fee_delete.html'
+    template_name = 'core/admin_management/admin_fee_delete.html'
     success_url = reverse_lazy('admin_fee_list')
     
     def test_func(self):
@@ -1832,7 +1832,7 @@ def add_user(request):
         'title': 'Add New User',
         'user_roles': User.ROLE_CHOICES
     }
-    return render(request, 'core/admin_add_user.html', context)
+    return render(request, 'core/admin_management/admin_add_user.html', context)
 
 class UserDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = User
@@ -1847,7 +1847,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     
     model = User
     form_class = UserUpdateForm
-    template_name = 'core/edit_user.html'
+    template_name = 'core/user_management/edit_user.html'
     success_url = reverse_lazy('admin_dashboard')
 
     def test_func(self):
@@ -1890,7 +1890,7 @@ def activate_user(request, user_id):
 # ======================
 class CourseListView(LoginRequiredMixin, ListView):
     model = Course
-    template_name = 'core/course_list.html'
+    template_name = 'core/course_management/course_list.html'
     context_object_name = 'courses'
     paginate_by = 10
 
@@ -1912,7 +1912,7 @@ class CourseListView(LoginRequiredMixin, ListView):
 
 class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
-    template_name = 'core/course_detail.html'
+    template_name = 'core/course_management/course_detail.html'
     context_object_name = 'course'
 
     def get_context_data(self, **kwargs):
@@ -1937,7 +1937,7 @@ class CreateCourseView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Course
     from .forms import CourseForm
     form_class = CourseForm
-    template_name = 'core/course_form.html'
+    template_name = 'core/course_management/course_form.html'
     success_url = reverse_lazy('subjects_management')
 
     def test_func(self):
@@ -1947,7 +1947,7 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Course
     from .forms import CourseForm
     form_class = CourseForm
-    template_name = 'core/course_form.html'
+    template_name = 'core/course_management/course_form.html'
     success_url = reverse_lazy('subjects_management')
 
     def test_func(self):
@@ -1956,7 +1956,7 @@ class CourseUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class CourseDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Course
-    template_name = 'core/course_confirm_delete.html'
+    template_name = 'core/course_management/course_confirm_delete.html'
     success_url = reverse_lazy('course_list')
 
     def test_func(self):
@@ -2022,7 +2022,7 @@ def student_courses(request):
         'current_semester': current_semester,
     }
     
-    return render(request, 'core/student_courses.html', context)
+    return render(request, 'core/student_parts/courses.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2129,7 +2129,7 @@ def student_results(request):
         'subject_performance': subject_performance,
     }
     
-    return render(request, 'core/student_results.html', context)
+    return render(request, 'core/student_parts/results.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2168,7 +2168,7 @@ def student_timetable(request):
         'school_info': get_school_info(),
     }
     
-    return render(request, 'core/student_timetable.html', context)
+    return render(request, 'core/student_parts/timetable.html', context)
 
 # Removed duplicate StudentDashboardView
 
@@ -2248,7 +2248,7 @@ def student_assignments(request):
         'school_info': get_school_info(),
     }
     
-    return render(request, 'core/student_assignments.html', context)
+    return render(request, 'core/student_parts/assignments.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2327,7 +2327,7 @@ def student_exams(request):
         'tomorrow': tomorrow,
     }
     
-    return render(request, 'core/student_exams.html', context)
+    return render(request, 'core/student_parts/exams.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2412,7 +2412,7 @@ def student_library(request):
         'currently_borrowed': currently_borrowed,
     }
     
-    return render(request, 'core/student_library.html', context)
+    return render(request, 'core/student_parts/library.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2493,7 +2493,7 @@ def student_achievements(request):
         'attendance_rate': attendance_rate,
     }
     
-    return render(request, 'core/student_achievements.html', context)
+    return render(request, 'core/student_parts/achievements.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2601,7 +2601,7 @@ def student_fees(request):
         'payment_count': payment_count,
     }
     
-    return render(request, 'core/student_fees.html', context)
+    return render(request, 'core/student_parts/fees.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2662,7 +2662,7 @@ def student_messages(request):
         'yesterday': yesterday,
     }
     
-    return render(request, 'core/student_messages.html', context)
+    return render(request, 'core/student_parts/messages.html', context)
 
 @login_required
 @user_passes_test(is_admin)
@@ -2737,7 +2737,7 @@ def admin_messages(request):
         'role': 'School Administrator',
     }
     
-    return render(request, 'core/admin_messages_enhanced.html', context)
+    return render(request, 'core/admin_management/admin_messages_enhanced.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2801,7 +2801,7 @@ def student_activities(request):
         'past_activities': past_activities,
     }
     
-    return render(request, 'core/student_activities.html', context)
+    return render(request, 'core/student_parts/activities.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2824,7 +2824,7 @@ def student_profile_view(request):
         'achievements_count': achievements_count,
     }
     
-    return render(request, 'core/student_profile.html', context)
+    return render(request, 'core/student_parts/profile.html', context)
 
 @login_required
 @user_passes_test(is_student)
@@ -2938,10 +2938,10 @@ def student_settings(request):
         'profile_form': profile_form,
     }
     
-    return render(request, 'core/student_settings_clean.html', context)
+    return render(request, 'core/student_management/settings_clean.html', context)
 
 class StudentDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    template_name = 'core/student_dashboard.html'
+    template_name = 'core/student_management/student_dashboard.html'
     
     def test_func(self):
         return is_student(self.request.user)
@@ -3552,14 +3552,14 @@ def attendance_test(request):
             'user_type': 'Unknown User'
         }
     
-    return render(request, 'core/attendance_list.html', context)
+    return render(request, 'core/attendance/attendance_list.html', context)
 
 # ======================
 # Attendance Views
 # ======================
 class AttendanceListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Attendance
-    template_name = 'core/attendance_list.html'
+    template_name = 'core/attendance/attendance_list.html'
     context_object_name = 'attendance_records'
     paginate_by = 20
 
@@ -3622,7 +3622,7 @@ class AttendanceCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     
     model = Attendance
     form_class = AttendanceForm
-    template_name = 'core/attendance_form.html'
+    template_name = 'core/attendance/attendance_form.html'
     success_url = reverse_lazy('attendance_list')
 
     def test_func(self):
@@ -3645,7 +3645,7 @@ class AttendanceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     
     model = Attendance
     form_class = AttendanceForm
-    template_name = 'core/attendance_form.html'
+    template_name = 'core/attendance/attendance_form.html'
 
     def test_func(self):
         if is_admin(self.request.user) or self.request.user.is_superuser:
@@ -3848,7 +3848,7 @@ def admin_announcements(request):
 
     announcements = Announcement.objects.all().order_by('-created_at')
     
-    return render(request, 'core/admin_announcements.html', {
+    return render(request, 'core/admin_management/admin_announcements.html', {
         'form': form,
         'announcements': announcements,
         'role': 'Administrator',
@@ -3903,7 +3903,7 @@ def send_message(request):
     # All users can message any other user in the system
     recipients = User.objects.all().select_related('student_profile', 'faculty_profile').exclude(id=request.user.id)
 
-    return render(request, 'core/send_message.html', {
+    return render(request, 'core/communication/send_message.html', {
         'form': form,
         'recipients': recipients.order_by('first_name', 'last_name')
     })
@@ -4209,23 +4209,23 @@ def get_context_data(self, **kwargs):
 # Public-facing views
 def public_home(request):
     """Public home page for visitors"""
-    return render(request, 'core/public_home.html')
+    return render(request, 'core/public_pages/public_home.html')
 
 def public_about(request):
     """Public about page"""
-    return render(request, 'core/public_about.html')
+    return render(request, 'core/public_pages/public_about.html')
 
 def public_courses(request):
     """Public courses catalog page"""
-    return render(request, 'core/public_courses.html')
+    return render(request, 'core/public_pages/public_courses.html')
 
 def public_admissions(request):
     """Public admissions page"""
-    return render(request, 'core/public_admissions.html')
+    return render(request, 'core/public_pages/public_admissions.html')
 
 def public_contact(request):
     """Public contact page"""
-    return render(request, 'core/public_contact.html')
+    return render(request, 'core/public_pages/public_contact.html')
 
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -4573,7 +4573,7 @@ def admin_timetable(request):
         'departments': departments,
         'days': [day[0] for day in TimeTable.DAY_CHOICES],
     }
-    return render(request, 'core/admin_timetable.html', context)
+    return render(request, 'core/admin_management/admin_timetable.html', context)
 
 @login_required
 @user_passes_test(is_admin)
@@ -4592,7 +4592,7 @@ def admin_exams(request):
         'title': 'Exam Management',
         'school_info': get_school_info(),
     }
-    return render(request, 'core/admin_exams.html', context)
+    return render(request, 'core/admin_management/admin_exams.html', context)
 
 
 @login_required
@@ -4603,7 +4603,7 @@ def admin_library(request):
         'title': 'Library Management',
         'school_info': get_school_info(),
     }
-    return render(request, 'core/admin_library.html', context)
+    return render(request, 'core/admin_management/admin_library.html', context)
 
 
 @login_required
@@ -4614,7 +4614,7 @@ def admin_fees(request):
         'title': 'Fee Management',
         'school_info': get_school_info(),
     }
-    return render(request, 'core/admin_fees.html', context)
+    return render(request, 'core/admin_management/admin_fees.html', context)
 
 
 @login_required
@@ -4634,7 +4634,7 @@ def admin_reports(request):
         'revenue_month': revenue_month,
         'staff_engagement': 92, # Placeholder for now
     }
-    return render(request, 'core/admin_reports.html', context)
+    return render(request, 'core/admin_management/admin_reports.html', context)
 
 
 @login_required
@@ -4645,7 +4645,7 @@ def admin_settings(request):
         'title': 'System Settings',
         'school_info': get_school_info(),
     }
-    return render(request, 'core/admin_settings.html', context)
+    return render(request, 'core/admin_management/admin_settings.html', context)
 
 
 
