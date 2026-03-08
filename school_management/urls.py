@@ -17,8 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 urlpatterns = [
-    path('admin/', admin.site.urls),          # Built-in Django Admin
     path('', include('core.urls')),           # Your custom app routes
+    path('admin/', admin.site.urls),          # Built-in Django Admin
     # path('accounts/', include('django.contrib.auth.urls')),  # Optional
 ]
 

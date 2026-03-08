@@ -41,6 +41,20 @@ class StudentDetailView(DetailView):
     context_object_name = 'student'
 
 # Consolidated to SubjectManagementView below
+def get_school_info():
+    school_info = SystemSetting.objects.first()
+    if not school_info:
+        school_info = type('SchoolInfo', (), {
+            'name': 'Default School Name',
+            'email': 'contact@school.edu',
+            'phone': '+1234567890',
+            'address': '123 School Street, City',
+            'logo': None,
+            'established_year': 2000,
+            'motto': 'Education is Key'
+        })
+    return school_info
+
  
 @login_required
 @user_passes_test(is_admin)
@@ -3712,6 +3726,31 @@ def announcement_list(request):
         'announcements': announcements,
         'today': timezone.now().date(),
         'yesterday': (timezone.now() - timezone.timedelta(days=1)).date(),
+    })
+
+@login_required
+@user_passes_test(is_admin)
+def admin_announcements(request):
+    """Administrative dashboard for institutional broadcasting"""
+    from .forms import AnnouncementForm
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.created_by = request.user
+            announcement.save()
+            messages.success(request, "Institutional announcement broadcasted successfully.")
+            return redirect('admin_announcements')
+    else:
+        form = AnnouncementForm()
+
+    announcements = Announcement.objects.all().order_by('-created_at')
+    
+    return render(request, 'core/admin_announcements.html', {
+        'form': form,
+        'announcements': announcements,
+        'role': 'Administrator',
+        'title': 'Institutional Oversight'
     })
 
 @login_required

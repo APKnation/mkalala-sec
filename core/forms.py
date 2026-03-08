@@ -10,7 +10,7 @@ from .models import (
     Course, CourseOffering, Enrollment, Grade, Attendance,
     Fee, FeeCategory, Semester, LeaveRequest,
     Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar,
-    Subject, SubjectEnrollment
+    Subject, SubjectEnrollment, Announcement
 )
 
 User = get_user_model()
@@ -1028,3 +1028,21 @@ class ClassForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['current_form'].label = "Form Level"
         self.fields['current_form'].help_text = "Select the form level for this student"
+class AnnouncementForm(forms.ModelForm):
+    class Meta:
+        model = Announcement
+        fields = ['title', 'message', 'target_audience']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none',
+                'placeholder': 'Subject of Announcement'
+            }),
+            'message': forms.Textarea(attrs={
+                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none min-h-[150px]',
+                'placeholder': 'Institutional Dispatch Message...'
+            }),
+            'target_audience': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none appearance-none'
+            }),
+        }
+

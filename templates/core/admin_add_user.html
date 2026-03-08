@@ -1,0 +1,129 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Add New User - {{ school_info.name|default:"School Management" }}{% endblock %}
+
+{% block extra_css %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#667eea',
+                        secondary: '#764ba2',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#3b82f6'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 fade-in">
+            <div class="bg-gradient-to-r from-primary to-secondary p-8 text-center">
+                <h1 class="text-3xl font-bold text-white mb-2">Add New User</h1>
+                <p class="text-white/90">Create a new user and set permissions</p>
+            </div>
+        </div>
+        
+        <!-- Main Form Card -->
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden slide-in">
+            <form method="post" novalidate class="p-8">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="mb-6 p-4 bg-red-50 text-red-600 rounded-lg border border-red-200">
+                    {% for error in form.non_field_errors %}
+                        <p class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-user-plus mr-3 text-primary"></i>
+                        User Information
+                    </h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        {% for field in form %}
+                            <div class="{% if field.name == 'role' or field.name == 'is_active' %}col-span-full{% endif %}">
+                                <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                    {{ field.label }} {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                                </label>
+                                
+                                {{ field }}
+                                
+                                {% if field.help_text %}
+                                <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                                {% endif %}
+                                
+                                {% if field.errors %}
+                                    <div class="mt-2 text-sm text-red-600">
+                                        {% for error in field.errors %}
+                                            <p class="flex items-center">
+                                                <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-8 border-t border-gray-200">
+                    <div>
+                        <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="reset" class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                            <i class="fas fa-undo mr-2"></i>
+                            Reset
+                        </button>
+                        <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg hover:from-primary/90 hover:to-secondary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-all transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>
+                            Create User
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Style form fields with Tailwind classes dynamically
+    const formFields = document.querySelectorAll('input:not([type="checkbox"]):not([type="radio"]), select, textarea');
+    formFields.forEach(field => {
+        field.classList.add('w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-primary', 'focus:border-transparent', 'bg-white');
+    });
+    
+    // Checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.classList.add('w-4', 'h-4', 'text-primary', 'border-gray-300', 'rounded', 'focus:ring-primary');
+    });
+});
+</script>
+{% endblock %}
