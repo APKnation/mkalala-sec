@@ -288,366 +288,56 @@
 
 {% block extra_script %}
 <script>
-// Admin Unified Dashboard Navigation System
-class AdminUnifiedDashboard {
-    constructor() {
-        this.currentPage = '{{ current_page|default:"overview" }}';
-        this.loadingSpinner = document.querySelector('.loading-spinner');
-        this.init();
-    }
-
-    init() {
-        this.setupNavigation();
-        this.showPage(this.currentPage);
-        this.setupAjaxForms();
-        this.setupRealTimeUpdates();
-    }
-
-    setupNavigation() {
-        // Handle sidebar navigation clicks
-        document.querySelectorAll('[data-page]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const page = link.getAttribute('data-page');
-                this.navigateToPage(page);
-            });
+// Simple Admin Dashboard Navigation - No JavaScript Prevention
+document.addEventListener('DOMContentLoaded', function() {
+    // Simple navigation without preventDefault
+    console.log('Admin dashboard loaded');
+    
+    // Optional: Add simple hover effects
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    sidebarItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
         });
-
-        // Handle mobile sidebar
-        const mobileToggle = document.getElementById('mobile-sidebar-toggle');
-        const backdrop = document.getElementById('sidebar-backdrop');
-        
-        if (mobileToggle) {
-            mobileToggle.addEventListener('click', () => this.toggleMobileSidebar());
-        }
-        
-        if (backdrop) {
-            backdrop.addEventListener('click', () => this.toggleMobileSidebar());
-        }
-    }
-
-    navigateToPage(page) {
-        if (page === this.currentPage) return;
-        
-        this.showLoading();
-        
-        // Update active state
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.remove('sidebar-item-active');
-        });
-        
-        document.querySelector(`[data-page="${page}"]`).classList.add('sidebar-item-active');
-        
-        // Load page content
-        this.loadPageContent(page)
-            .then(() => {
-                this.hideLoading();
-                this.currentPage = page;
-                this.updatePageTitle(page);
-            })
-            .catch(error => {
-                console.error('Error loading page:', error);
-                this.hideLoading();
-                this.showError('Failed to load page');
-            });
-    }
-
-    async loadPageContent(page) {
-        try {
-            const response = await fetch(`/admin/dashboard/load/${page}/`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            
-            if (data.success) {
-                // Update page content
-                const section = document.getElementById(`${page}-section`);
-                if (section && data.content) {
-                    section.innerHTML = data.content;
-                    this.initializePageScripts(page);
-                }
-                
-                // Update notifications if provided
-                if (data.notifications) {
-                    this.updateNotifications(data.notifications);
-                }
-            } else {
-                throw new Error(data.error || 'Unknown error');
-            }
-        } catch (error) {
-            console.error('Load page error:', error);
-            // Fallback to showing existing content
-            this.showPage(page);
-        }
-    }
-
-    showPage(page) {
-        // Hide all pages
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        
-        // Show target page
-        const targetSection = document.getElementById(`${page}-section`);
-        if (targetSection) {
-            targetSection.classList.add('active');
-        }
-        
-        // Update active navigation
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.classList.remove('sidebar-item-active');
-        });
-        
-        const activeLink = document.querySelector(`[data-page="${page}"]`);
-        if (activeLink) {
-            activeLink.classList.add('sidebar-item-active');
-        }
-        
-        this.updatePageTitle(page);
-    }
-
-    updatePageTitle(page) {
-        const titles = {
-            overview: 'Admin Dashboard',
-            users: 'User Management',
-            students: 'Students',
-            teachers: 'Teachers',
-            courses: 'Courses',
-            classes: 'Classes',
-            subjects: 'Subjects',
-            attendance: 'Attendance',
-            grading: 'Grading',
-            exams: 'Exams',
-            timetable: 'Timetable',
-            announcements: 'Announcements',
-            fees: 'Fees',
-            library: 'Library',
-            reports: 'Reports',
-            settings: 'System Settings',
-            logs: 'Activity Logs',
-            profile: 'Profile Settings'
-        };
-        
-        const title = titles[page] || 'Admin Dashboard';
-        document.title = `${title} | Mkalala Sec`;
-        
-        // Update mobile title
-        const mobileTitle = document.querySelector('[data-mobile-title]');
-        if (mobileTitle) {
-            mobileTitle.textContent = title;
-        }
-    }
-
-    setupAjaxForms() {
-        // Handle AJAX form submissions
-        document.addEventListener('submit', (e) => {
-            const form = e.target;
-            if (form.classList.contains('ajax-form')) {
-                e.preventDefault();
-                this.submitAjaxForm(form);
+        item.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('sidebar-item-active')) {
+                this.style.backgroundColor = '';
             }
         });
-    }
-
-    async submitAjaxForm(form) {
-        this.showLoading();
-        
-        try {
-            const formData = new FormData(form);
-            const response = await fetch(form.action, {
-                method: form.method,
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-            });
-
-            const data = await response.json();
-            
-            if (data.success) {
-                this.showSuccess(data.message);
-                if (data.redirect) {
-                    this.navigateToPage(data.redirect);
-                } else if (data.reload) {
-                    this.navigateToPage(this.currentPage);
-                }
-            } else {
-                this.showError(data.message || 'Form submission failed');
-                if (data.errors) {
-                    this.showFormErrors(form, data.errors);
-                }
+    });
+    
+    // Simple notification check (optional)
+    function checkNotifications() {
+        fetch('/admin/dashboard/notifications', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.notifications) {
+                // Update notification badges if they exist
+                Object.keys(data.notifications).forEach(key => {
+                    const badge = document.querySelector(`[data-page="${key}"] .notification-badge`);
+                    if (badge && data.notifications[key] > 0) {
+                        badge.textContent = data.notifications[key];
+                        badge.style.display = 'flex';
+                    }
+                });
             }
-        } catch (error) {
-            console.error('Form submission error:', error);
-            this.showError('Network error. Please try again.');
-        } finally {
-            this.hideLoading();
-        }
-    }
-
-    setupRealTimeUpdates() {
-        // Check for notifications periodically
-        setInterval(() => {
-            this.checkNotifications();
-        }, 30000); // Check every 30 seconds
-    }
-
-    async checkNotifications() {
-        try {
-            const response = await fetch('/admin/dashboard/notifications/', {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                this.updateNotifications(data);
-            }
-        } catch (error) {
-            console.error('Notification check error:', error);
-        }
-    }
-
-    updateNotifications(notifications) {
-        // Update notification badges
-        if (notifications.announcements !== undefined) {
-            this.updateBadge('announcements', notifications.announcements);
-        }
-    }
-
-    updateBadge(type, count) {
-        const badge = document.querySelector(`[data-page="${type}"] .notification-badge`);
-        if (badge) {
-            if (count > 0) {
-                badge.textContent = count;
-                badge.style.display = 'flex';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    }
-
-    initializePageScripts(page) {
-        // Initialize page-specific scripts
-        switch(page) {
-            case 'users':
-                this.initUsersPage();
-                break;
-            case 'students':
-                this.initStudentsPage();
-                break;
-            case 'teachers':
-                this.initTeachersPage();
-                break;
-            case 'announcements':
-                this.initAnnouncementsPage();
-                break;
-            // Add other page initializers as needed
-        }
-    }
-
-    initUsersPage() {
-        console.log('Admin users page initialized');
-    }
-
-    initStudentsPage() {
-        console.log('Admin students page initialized');
-    }
-
-    initTeachersPage() {
-        console.log('Admin teachers page initialized');
-    }
-
-    initAnnouncementsPage() {
-        console.log('Admin announcements page initialized');
-    }
-
-    showLoading() {
-        if (this.loadingSpinner) {
-            this.loadingSpinner.classList.add('active');
-        }
-    }
-
-    hideLoading() {
-        if (this.loadingSpinner) {
-            this.loadingSpinner.classList.remove('active');
-        }
-    }
-
-    showSuccess(message) {
-        this.showNotification(message, 'success');
-    }
-
-    showError(message) {
-        this.showNotification(message, 'error');
-    }
-
-    showNotification(message, type = 'info') {
-        // Create notification element
-        const notification = document.createElement('div');
-        notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-            type === 'success' ? 'bg-green-500 text-white' :
-            type === 'error' ? 'bg-red-500 text-white' :
-            'bg-blue-500 text-white'
-        }`;
-        notification.innerHTML = `
-            <div class="flex items-center">
-                <i class="fas ${
-                    type === 'success' ? 'fa-check-circle' :
-                    type === 'error' ? 'fa-exclamation-circle' :
-                    'fa-info-circle'
-                } mr-2"></i>
-                <span>${message}</span>
-            </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        // Auto-remove after 3 seconds
-        setTimeout(() => {
-            notification.remove();
-        }, 3000);
-    }
-
-    showFormErrors(form, errors) {
-        // Clear previous errors
-        form.querySelectorAll('.error-message').forEach(el => el.remove());
-        
-        // Show new errors
-        Object.keys(errors).forEach(field => {
-            const fieldElement = form.querySelector(`[name="${field}"]`);
-            if (fieldElement) {
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message text-red-500 text-sm mt-1';
-                errorDiv.textContent = errors[field][0];
-                fieldElement.parentNode.appendChild(errorDiv);
-            }
+        })
+        .catch(error => {
+            // Silent error handling
+            console.log('Notification check failed:', error.message);
         });
     }
-
-    toggleMobileSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-        
-        sidebar.classList.toggle('-translate-x-full');
-        backdrop.classList.toggle('hidden');
-    }
-}
-
-// Initialize dashboard when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    window.adminUnifiedDashboard = new AdminUnifiedDashboard();
+    
+    // Check notifications every 30 seconds (optional)
+    setInterval(checkNotifications, 30000);
+    
+    // Initial notification check
+    setTimeout(checkNotifications, 1000);
 });
 </script>
 {% endblock %}

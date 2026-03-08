@@ -37,28 +37,30 @@ urlpatterns = [
     
     # Dashboard URLs
     path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
-    path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
-    path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
-    path('dashboard/headmaster/', views.headmaster_dashboard, name='headmaster_dashboard'),
-    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     
-    # Unified Dashboard URLs
+    # Role-Specific Dashboard URLs (put first to be more specific)
+    path('student/dashboard/<str:page>/', views_role_dashboard.student_unified_dashboard, name='student_unified_dashboard'),
+    path('student/dashboard/load/<str:page>/', views_role_dashboard.load_student_dashboard_page, name='load_student_dashboard_page'),
+    path('student/dashboard/notifications', views_role_dashboard.get_student_notifications, name='student_dashboard_notifications'),
+    
+    path('admin/dashboard/<str:page>/', views_role_dashboard.admin_unified_dashboard, name='admin_unified_dashboard'),
+    path('admin/dashboard/load/<str:page>/', views_role_dashboard.load_admin_dashboard_page, name='load_admin_dashboard_page'),
+    path('admin/dashboard/notifications', views_role_dashboard.get_admin_notifications, name='admin_dashboard_notifications'),
+    
+    path('headmaster/dashboard/<str:page>/', views_role_dashboard.headmaster_unified_dashboard, name='headmaster_unified_dashboard'),
+    path('headmaster/dashboard/load/<str:page>/', views_role_dashboard.load_headmaster_dashboard_page, name='load_headmaster_dashboard_page'),
+    path('headmaster/dashboard/notifications', views_role_dashboard.get_headmaster_notifications, name='headmaster_dashboard_notifications'),
+    
+    # Unified Dashboard URLs (more generic, put after specific ones)
     path('dashboard/<str:page>/', views_dashboard.unified_dashboard, name='unified_dashboard'),
     path('dashboard/load/<str:page>/', views_dashboard.load_dashboard_page, name='load_dashboard_page'),
     path('dashboard/notifications/', views_dashboard.get_notifications, name='dashboard_notifications'),
     
-    # Role-Specific Dashboard URLs
-    path('student/dashboard/<str:page>/', views_role_dashboard.student_unified_dashboard, name='student_unified_dashboard'),
-    path('student/dashboard/load/<str:page>/', views_role_dashboard.load_student_dashboard_page, name='load_student_dashboard_page'),
-    path('student/dashboard/notifications/', views_role_dashboard.get_student_notifications, name='student_dashboard_notifications'),
-    
-    path('admin/dashboard/<str:page>/', views_role_dashboard.admin_unified_dashboard, name='admin_unified_dashboard'),
-    path('admin/dashboard/load/<str:page>/', views_role_dashboard.load_admin_dashboard_page, name='load_admin_dashboard_page'),
-    path('admin/dashboard/notifications/', views_role_dashboard.get_admin_notifications, name='admin_dashboard_notifications'),
-    
-    path('headmaster/dashboard/<str:page>/', views_role_dashboard.headmaster_unified_dashboard, name='headmaster_unified_dashboard'),
-    path('headmaster/dashboard/load/<str:page>/', views_role_dashboard.load_headmaster_dashboard_page, name='load_headmaster_dashboard_page'),
-    path('headmaster/dashboard/notifications/', views_role_dashboard.get_headmaster_notifications, name='headmaster_dashboard_notifications'),
+    # Legacy Dashboard URLs (keep for compatibility)
+    path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
+    path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
+    path('dashboard/headmaster/', views.headmaster_dashboard, name='headmaster_dashboard'),
+    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     
     # Dashboard AJAX URLs
     path('dashboard/announcements/create/', views_dashboard.CreateAnnouncementAjaxView.as_view(), name='dashboard_create_announcement'),
