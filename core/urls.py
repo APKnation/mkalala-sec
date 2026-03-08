@@ -51,6 +51,7 @@ urlpatterns = [
     path('student/library/', views.student_library, name='student_library'),
     path('student/achievements/', views.student_achievements, name='student_achievements'),
     path('student/fees/', views.student_fees, name='student_fees'),
+    path('student/fees/pay/', views.process_payment, name='process_payment'),
     path('student/messages/', views.student_messages, name='student_messages'),
     path('admin/messages/', views.admin_messages, name='admin_messages'),
     path('student/announcements/', views.student_announcements, name='student_announcements'),

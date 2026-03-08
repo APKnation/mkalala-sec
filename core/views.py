@@ -23,6 +23,7 @@ from django.views.generic import (
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model
 import json
+import uuid
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
 from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm, TimeTableForm
 
@@ -168,17 +169,7 @@ class ActivityLogView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['is_admin'] = is_admin(self.request.user)
         return context
-def is_student(user):
-    return user.is_authenticated and hasattr(user, 'role') and user.role == 'student'
-
-def is_faculty(user):
-    return user.is_authenticated and hasattr(user, 'role') and user.role in ['teacher', 'headmaster']
-
-def is_parent(user):
-    return user.is_authenticated and hasattr(user, 'role') and user.role == 'parent'
-
-def is_admin(user):
-    return user.is_authenticated and hasattr(user, 'role') and user.role == 'admin'
+# Permission check functions are imported from .utils
 
 def is_headmaster(user):
     return user.is_authenticated and hasattr(user, 'role') and user.role == 'headmaster'
@@ -582,20 +573,20 @@ def teacher_dashboard(request):
     
     try:
         # Get teacher profile
-        faculty_profile = request.user.facultyprofile
-    except:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
         faculty_profile = None
     
     # Get courses assigned to this teacher
     from .models import CourseOffering
     my_courses = CourseOffering.objects.filter(
-        instructor=faculty_profile
+        faculty=faculty_profile
     ).select_related('course', 'semester').count()
     
     # Get total students in teacher's courses
     from django.db.models import Count
     courses_with_students = CourseOffering.objects.filter(
-        instructor=faculty_profile
+        faculty=faculty_profile
     ).annotate(student_count=Count('enrollments'))
     
     total_students = sum(course.student_count for course in courses_with_students)
@@ -608,7 +599,7 @@ def teacher_dashboard(request):
     
     # Get actual courses for display
     courses = CourseOffering.objects.filter(
-        instructor=faculty_profile
+        faculty=faculty_profile
     ).select_related('course', 'semester').prefetch_related('enrollments')
     
     context = {
@@ -4559,3 +4550,52 @@ def submit_assignment(request, assignment_id):
         return redirect('student_assignments')
     
     return redirect('student_assignments')
+
+@login_required
+@user_passes_test(is_student)
+def process_payment(request):
+    """Handle student fee payments (Demo)"""
+    if request.method == 'POST':
+        fee_id = request.POST.get('fee_id')
+        amount = request.POST.get('amount')
+        payment_method = request.POST.get('payment_method')
+        
+        try:
+            student = request.user.student_profile
+            fee = Fee.objects.get(id=fee_id, student=student)
+            
+            # Simulated Transaction ID based on method
+            prefix = {
+                'mobile_money': 'MM',
+                'bank_transfer': 'BT',
+                'credit_card': 'CC'
+            }.get(payment_method, 'PY')
+            
+            txn_id = f"{prefix}-{uuid.uuid4().hex[:8].upper()}"
+            
+            # Create payment record
+            payment = Payment.objects.create(
+                student=student,
+                fee=fee,
+                amount=amount,
+                payment_method=payment_method,
+                transaction_id=txn_id
+            )
+            
+            # Update fee status (Simplified for demo)
+            fee.is_paid = True
+            fee.paid_date = timezone.now().date()
+            # Generate receipt number
+            fee.receipt_number = f"RCP-{payment.id}"
+            fee.save()
+            
+            # Add school info to context if needed? No, just messages.
+            method_name = dict(Payment.PAYMENT_METHOD_CHOICES).get(payment_method, "Selected Method")
+            messages.success(request, f"Successfully paid {amount} TZS for {fee.category} via {method_name}. Transaction ID: {txn_id}")
+            
+        except Fee.DoesNotExist:
+            messages.error(request, "Fee record not found or access denied.")
+        except Exception as e:
+            messages.error(request, f"Payment error: {str(e)}")
+            
+    return redirect('student_fees')

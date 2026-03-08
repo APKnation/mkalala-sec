@@ -437,10 +437,16 @@ class Fee(models.Model):
         return f"{self.student} - {self.category} - {self.amount}"
 
 class Payment(models.Model):
+    PAYMENT_METHOD_CHOICES = [
+        ('mobile_money', 'Mobile Money'),
+        ('bank_transfer', 'Bank Transfer'),
+        ('credit_card', 'Credit/Debit Card'),
+    ]
     student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='payments')
     fee = models.ForeignKey(Fee, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_METHOD_CHOICES, default='bank_transfer')
     transaction_id = models.CharField(max_length=MAX_NAME_LENGTH, blank=True, null=True)
     receipt_file = models.FileField(upload_to='fee_receipts/', blank=True, null=True)
 

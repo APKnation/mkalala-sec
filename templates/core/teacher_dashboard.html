@@ -18,11 +18,11 @@
     <i class="fas fa-book-reader"></i>
     <span>My Classes</span>
 </a>
-<a href="#" class="sidebar-item text-slate-400">
+<a href="{% url 'gradebook' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-pen-nib"></i>
     <span>Grading</span>
 </a>
-<a href="#" class="sidebar-item text-slate-400">
+<a href="{% url 'attendance_list' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-clipboard-check"></i>
     <span>Attendance</span>
 </a>
@@ -30,15 +30,15 @@
     <i class="fas fa-calendar-alt"></i>
     <span>My Schedule</span>
 </a>
-<a href="#" class="sidebar-item text-slate-400">
+<a href="{% url 'inbox' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-envelope"></i>
     <span>Messages</span>
 </a>
-<a href="#" class="sidebar-item text-slate-400">
+<a href="{% url 'announcement_list' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-bullhorn"></i>
     <span>Announcements</span>
 </a>
-<a href="{% url 'edit_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+<a href="{% url 'update_profile' %}" class="sidebar-item text-slate-400 mt-auto">
     <i class="fas fa-user-cog"></i>
     <span>Profile Settings</span>
 </a>
