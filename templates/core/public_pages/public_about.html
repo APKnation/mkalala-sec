@@ -2,7 +2,7 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800">
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 px-4 sm:px-6 lg:px-8">
     <!-- Animated Background Elements -->
     <div class="absolute inset-0">
         <div class="absolute top-20 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
@@ -20,26 +20,24 @@
     </div>
 
     <!-- Hero Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
-        <div class="backdrop-blur-sm bg-white/10 rounded-2xl p-12 shadow-2xl border border-white/20">
-            <div class="mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl mb-8 shadow-lg transform hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-school text-white text-3xl"></i>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="backdrop-blur-sm bg-white/10 rounded-2xl p-4 sm:p-6 md:p-8 lg:p-12 shadow-2xl border border-white/20">
+            <div class="mb-4 sm:mb-6 md:mb-8">
+                <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl mb-4 sm:mb-6 shadow-lg transform hover:scale-110 transition-transform duration-300">
+                    <i class="fas fa-school text-white text-xl sm:text-2xl"></i>
                 </div>
-                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
-                    About Mkalala Secondary School
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                    Excellence in education, nurturing young minds for a brighter future since 2005.
+                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-4">About Mkalala Secondary School</h1>
+                <p class="text-sm sm:text-base md:text-lg lg:text-xl text-blue-100 mb-4 sm:mb-6 max-w-3xl mx-auto">
+                    A premier educational institution dedicated to academic excellence and holistic student development.
                 </p>
             </div>
             
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="{% url 'public_courses' %}" class="px-8 py-4 text-lg font-bold text-white bg-blue-500 rounded-xl shadow-lg hover:bg-blue-600 transform hover:scale-105 transition-all duration-300">
-                    View Courses
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center">
+                <a href="{% url 'public_about' %}" class="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold text-blue-800 bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    <i class="fas fa-info-circle mr-2"></i>Learn More
                 </a>
-                <a href="{% url 'register' %}" class="px-8 py-4 text-lg font-bold text-blue-800 bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                    Apply Now
+                <a href="{% url 'public_courses' %}" class="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold text-white bg-blue-500 rounded-xl shadow-lg hover:bg-blue-600 transform hover:scale-105 transition-all duration-300">
+                    <i class="fas fa-book mr-2"></i>View Courses
                 </a>
             </div>
         </div>
@@ -47,31 +45,52 @@
 </section>
 
 <!-- SCHOOL STORY SECTION -->
-<section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="relative">
-                <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-700 rounded-2xl opacity-10 blur-xl"></div>
-                <div class="relative bg-white rounded-2xl p-8 shadow-xl border border-blue-100">
-                    <div class="flex items-center mb-6">
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                            <i class="fas fa-history text-white text-2xl"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold text-blue-800 ml-4">Our Story</h2>
-                    </div>
-                    <p class="text-lg text-blue-600 leading-relaxed mb-6">
-                        Founded in 2005, Mkalala Secondary School has been a beacon of academic excellence in Arusha for nearly two decades. We started with just 50 students and a vision to provide quality education that would transform lives and communities.
-                    </p>
-                    <div class="flex items-center text-blue-600 font-semibold">
-                        <span>Learn More About Our Journey</span>
+<section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 items-center">
+            <div class="order-2 md:order-1">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="School Building" class="rounded-2xl shadow-2xl w-full h-auto">
+                    <div class="absolute -bottom-4 sm:-bottom-6 -right-4 sm:-right-6 bg-blue-500 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-lg font-bold shadow-lg transform rotate-3">
+                        Since 2005
                     </div>
                 </div>
             </div>
-            
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="School Building" class="rounded-2xl shadow-2xl w-full h-auto">
-                <div class="absolute -bottom-6 -right-6 bg-blue-500 text-white px-4 py-2 rounded-lg font-bold shadow-lg transform rotate-3">
-                    Since 2005
+            <div class="order-1 md:order-2">
+                <div class="text-center md:text-left px-4 sm:px-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-800 mb-3 sm:mb-4">Welcome to Mkalala Secondary School</h2>
+                    <p class="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-4 sm:mb-6">
+                        A premier educational institution committed to nurturing academic excellence, character development, and preparing students for successful futures. Our dedicated faculty and comprehensive curriculum provide the foundation for lifelong learning and achievement.
+                    </p>
+                    <div class="space-y-2 sm:space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
+                                <i class="fas fa-graduation-cap text-white text-sm sm:text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Academic Excellence</h3>
+                                <p class="text-sm sm:text-base text-gray-600">Comprehensive curriculum with qualified teachers</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
+                                <i class="fas fa-users text-white text-sm sm:text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Character Development</h3>
+                                <p class="text-sm sm:text-base text-gray-600">Building responsible citizens and leaders</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
+                                <i class="fas fa-shield-alt text-white text-sm sm:text-base"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg sm:text-xl font-bold text-gray-800">Modern Facilities</h3>
+                                <p class="text-sm sm:text-base text-gray-600">State-of-the-art learning environment</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,32 +98,32 @@
 </section>
 
 <!-- MISSION & VISION SECTION -->
-<section class="py-24 bg-gradient-to-r from-blue-600 to-blue-800 relative overflow-hidden">
+<section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-r from-blue-600 to-blue-800 relative overflow-hidden">
     <div class="absolute inset-0 bg-black/20"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Mission & Vision</h2>
-            <p class="text-xl text-blue-100 max-w-3xl mx-auto">Our guiding principles and aspirations</p>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3">Mission & Vision</h2>
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100 max-w-3xl mx-auto">Our guiding principles and aspirations</p>
         </div>
         
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
-                    <i class="fas fa-bullseye text-white text-3xl"></i>
+        <div class="grid md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg group-hover:animate-pulse">
+                    <i class="fas fa-bullseye text-white text-xl sm:text-2xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Our Mission</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    To provide quality education that develops knowledgeable, responsible, and confident individuals ready to contribute positively to society.
+                <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-4">Our Mission</h3>
+                <p class="text-sm sm:text-base md:text-lg text-blue-100 leading-relaxed">
+                    To provide quality education that fosters academic excellence, creativity, and moral development in a safe, supportive environment.
                 </p>
             </div>
             
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
-                    <i class="fas fa-eye text-white text-3xl"></i>
+            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg group-hover:animate-bounce">
+                    <i class="fas fa-eye text-white text-xl sm:text-2xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Our Vision</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    To be a leading institution recognized for academic excellence, innovation, and character development.
+                <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-4">Our Vision</h3>
+                <p class="text-sm sm:text-base md:text-lg text-blue-100 leading-relaxed">
+                    To be a leading institution that prepares students for successful futures through innovative teaching and comprehensive development.
                 </p>
             </div>
         </div>
@@ -112,42 +131,44 @@
 </section>
 
 <!-- CORE VALUES SECTION -->
-<section class="py-24 bg-gradient-to-b from-white to-gray-50">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Our Core Values</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Principles that guide everything we do</p>
+<section class="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-blue-800 mb-2 sm:mb-3">Our Core Values</h2>
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-blue-600 max-w-3xl mx-auto">Principles that guide our educational approach</p>
         </div>
         
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-8">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-bounce">
-                    <i class="fas fa-handshake text-white text-3xl"></i>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-3 sm:p-4">
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:animate-spin">
+                    <i class="fas fa-graduation-cap text-white text-lg sm:text-xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Integrity</h3>
-                <p class="text-gray-600 text-center leading-relaxed">
-                    We promote honesty and responsibility in everything we do, building trust through transparent actions and ethical behavior.
-                </p>
+                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-blue-800 mb-2 sm:mb-3">Excellence</h3>
+                <p class="text-xs sm:text-sm text-blue-600">We pursue the highest standards in teaching and learning outcomes.</p>
             </div>
             
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-8">
-                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
-                    <i class="fas fa-trophy text-white text-3xl"></i>
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-3 sm:p-4">
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:animate-pulse">
+                    <i class="fas fa-heart text-white text-lg sm:text-xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Excellence</h3>
-                <p class="text-gray-600 text-center leading-relaxed">
-                    We strive for the highest academic standards and continuous improvement in all aspects of education.
-                </p>
+                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-blue-800 mb-2 sm:mb-3">Integrity</h3>
+                <p class="text-xs sm:text-sm text-blue-600">We maintain honesty and ethical behavior in all our actions.</p>
             </div>
             
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-8">
-                <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-spin">
-                    <i class="fas fa-heart text-white text-3xl"></i>
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-3 sm:p-4">
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:animate-bounce">
+                    <i class="fas fa-shield-alt text-white text-lg sm:text-xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Respect</h3>
-                <p class="text-gray-600 text-center leading-relaxed">
-                    We value diversity and treat everyone with dignity, creating an inclusive environment for all students.
-                </p>
+                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-blue-800 mb-2 sm:mb-3">Respect</h3>
+                <p class="text-xs sm:text-sm text-blue-600">We value diversity and treat everyone with dignity and respect.</p>
+            </div>
+            
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-3 sm:p-4">
+                <div class="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg group-hover:animate-pulse">
+                    <i class="fas fa-users text-white text-lg sm:text-xl"></i>
+                </div>
+                <h3 class="text-base sm:text-lg lg:text-xl font-bold text-blue-800 mb-2 sm:mb-3">Collaboration</h3>
+                <p class="text-xs sm:text-sm text-blue-600">We work together as a community to achieve our goals.</p>
             </div>
         </div>
     </div>
@@ -191,50 +212,5 @@
         </div>
     </div>
 </section>
-
-<style>
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-}
-
-@keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-@keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-    animation: spin-slow 20s linear infinite;
-}
-
-.animate-bounce-slow {
-    animation: bounce-slow 3s ease-in-out infinite;
-}
-
-.animate-pulse {
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-
-.animation-delay-6000 {
-    animation-delay: 6s;
-}
-</style>
 
 {% endblock %}
