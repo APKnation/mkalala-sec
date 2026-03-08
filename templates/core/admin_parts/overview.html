@@ -1,0 +1,75 @@
+<!-- Admin Overview Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-tachometer-alt mr-3 text-red-600"></i>
+                Admin Dashboard
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">System administration and management</p>
+        </div>
+    </div>
+
+    <!-- Admin Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_users|default:"7" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-graduation-cap text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Students</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_students|default:"1" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Teachers</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_teachers|default:"3" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-lg">
+                    <i class="fas fa-book text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Courses</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_courses|default:"5" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">System Activity</h2>
+            <div class="text-center py-8">
+                <i class="fas fa-chart-line text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500">System activity monitoring coming soon</p>
+            </div>
+        </div>
+    </div>
+</div>

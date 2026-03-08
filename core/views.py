@@ -471,22 +471,22 @@ class CustomLoginView(View):
         return render(request, 'core/login.html', {'form': form})
     
     def redirect_based_on_role(self, user):
-        """Redirect user based on their role"""
+        """Redirect user based on their role to role-specific unified dashboard"""
         if hasattr(user, 'role'):
             if user.role == 'student':
-                return redirect('student_dashboard')
+                return redirect('student_unified_dashboard', page='overview')
             elif user.role == 'teacher':
-                return redirect('teacher_dashboard')
+                return redirect('unified_dashboard', page='overview')
             elif user.role == 'headmaster':
-                return redirect('headmaster_dashboard')
+                return redirect('headmaster_unified_dashboard', page='overview')
             elif user.role == 'admin':
-                return redirect('admin_dashboard')
+                return redirect('admin_unified_dashboard', page='overview')
             else:
                 # Default to student dashboard if no role is set
-                return redirect('student_dashboard')
+                return redirect('student_unified_dashboard', page='overview')
         else:
             # Default to student dashboard if no role is set
-            return redirect('student_dashboard')
+            return redirect('student_unified_dashboard', page='overview')
 
 class CustomLogoutView(View):
     def get(self, request):

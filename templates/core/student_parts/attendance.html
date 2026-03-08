@@ -1,0 +1,105 @@
+<!-- Student Attendance Dashboard Content -->
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-calendar-check mr-3 text-green-600"></i>
+                My Attendance
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">View your attendance record and statistics</p>
+        </div>
+    </div>
+
+    <!-- Attendance Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Present</p>
+                    <p class="text-2xl font-bold text-gray-900">142</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-red-100 rounded-lg">
+                    <i class="fas fa-times text-red-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Absent</p>
+                    <p class="text-2xl font-bold text-gray-900">8</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-yellow-100 rounded-lg">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Late</p>
+                    <p class="text-2xl font-bold text-gray-900">3</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-percentage text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Rate</p>
+                    <p class="text-2xl font-bold text-gray-900">92%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Records -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Attendance</h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 border-l-4 border-green-500 bg-green-50 rounded">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <p class="text-sm font-medium text-gray-900">Mar 8</p>
+                            <p class="text-xs text-gray-500">2026</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Mathematics</p>
+                            <p class="text-sm text-gray-600">Form 1A • 08:00 - 09:00</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-check mr-1"></i>Present
+                    </span>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 border-l-4 border-green-500 bg-green-50 rounded">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <p class="text-sm font-medium text-gray-900">Mar 7</p>
+                            <p class="text-xs text-gray-500">2026</p>
+                        </div>
+                        <div>
+                            <p class="font-medium text-gray-900">Physics</p>
+                            <p class="text-sm text-gray-600">Form 1A • 09:00 - 10:00</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-check mr-1"></i>Present
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

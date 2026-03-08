@@ -61,7 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 LOGIN_URL = 'login'  # the name of your login view
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'role_based_dashboard'  # redirect to role-based dashboard view
 
 
 ROOT_URLCONF = 'school_management.urls'
