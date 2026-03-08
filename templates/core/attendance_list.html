@@ -1,0 +1,164 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Attendance Management - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-calendar-check me-2"></i>Attendance Management</h2>
+                <div>
+                    <a href="{% url 'attendance_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Mark Attendance
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="course" class="form-label">Course</label>
+                            <select name="course" id="course" class="form-select">
+                                <option value="">All Courses</option>
+                                {% for course in courses %}
+                                    <option value="{{ course.id }}" {% if request.GET.course == course.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ course.code }} - {{ course.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" name="date" id="date" class="form-control" value="{{ request.GET.date }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="status" class="form-label">Status</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="P" {% if request.GET.status == 'P' %}selected{% endif %}>Present</option>
+                                <option value="A" {% if request.GET.status == 'A' %}selected{% endif %}>Absent</option>
+                                <option value="L" {% if request.GET.status == 'L' %}selected{% endif %}>Late</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="fas fa-filter me-2"></i>Filter
+                            </button>
+                            <a href="{% url 'attendance_list' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Clear
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Attendance Records -->
+            <div class="card">
+                <div class="card-body">
+                    {% if attendance_records %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Student</th>
+                                        <th>Course</th>
+                                        <th>Status</th>
+                                        <th>Faculty</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in attendance_records %}
+                                        <tr>
+                                            <td>{{ record.date|date:"M d, Y" }}</td>
+                                            <td>
+                                                <a href="{% url 'admin_student_detail' record.enrollment.student.pk %}">
+                                                    {{ record.enrollment.student.user.get_full_name|default:record.enrollment.student.user.username }}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                {{ record.enrollment.course_offering.course.code }}
+                                                - {{ record.enrollment.course_offering.course.name }}
+                                            </td>
+                                            <td>
+                                                {% if record.status == 'P' %}
+                                                    <span class="badge bg-success">Present</span>
+                                                {% elif record.status == 'A' %}
+                                                    <span class="badge bg-danger">Absent</span>
+                                                {% elif record.status == 'L' %}
+                                                    <span class="badge bg-warning">Late</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ record.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ record.enrollment.course_offering.faculty.user.get_full_name|default:record.enrollment.course_offering.faculty.user.username }}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'attendance_edit' record.pk %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        {% if is_paginated %}
+                            <nav aria-label="Attendance pagination">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=1{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">First</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Previous</a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ num }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Next</a>
+                                        </li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.urlencode %}&{{ request.GET.urlencode }}{% endif %}">Last</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Attendance Records Found</h5>
+                            <p class="text-muted">There are no attendance records matching your criteria.</p>
+                            <a href="{% url 'attendance_create' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Mark Attendance
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

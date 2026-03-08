@@ -118,6 +118,9 @@ urlpatterns = [
     path('grades/add/', views.GradeCreateView.as_view(), name='grade_create'),
     path('grades/<int:pk>/edit/', views.GradeUpdateView.as_view(), name='grade_edit'),
     
+    # Debug URLs
+    path('debug/permissions/', views.debug_permissions, name='debug_permissions'),
+    
     # Attendance URLs
     path('attendance/', views.AttendanceListView.as_view(), name='attendance_list'),
     path('attendance/add/', views.AttendanceCreateView.as_view(), name='attendance_create'),
