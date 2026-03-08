@@ -7,7 +7,7 @@
             <p class="text-slate-500 font-medium">Manage all enrolled students and their academic profiles.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{% url 'admin_student_create' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+            <a href="{% url 'admin_create_student' %}" class="btn-glow-primary px-6 py-3 flex items-center">
                 <i class="fas fa-user-plus mr-2"></i> Register Student
             </a>
         </div>
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div class="px-6 py-4 space-y-3">
-                <a href="{% url 'admin_student_create' %}" class="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
+                <a href="{% url 'admin_create_student' %}" class="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
                     <i class="fas fa-user-plus mr-2"></i> Add New Student
                 </a>
                 <a href="{% url 'admin_unified_dashboard' page='users' %}" class="w-full flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">

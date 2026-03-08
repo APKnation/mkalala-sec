@@ -25,8 +25,8 @@ from django.contrib.auth import get_user_model
 import json
 import uuid
 from .utils import is_student, is_faculty, is_admin, is_parent  # Ensure all these functions exist
-from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm, TimeTableForm
-
+from .forms import UserForm, UserUpdateForm, StudentProfileForm, FeeForm, MaterialUploadForm, MessageForm, ForumPostForm, ForumTopicForm, SubjectEnrollmentForm, BulkSubjectEnrollmentForm, SubjectForm, ClassForm, TimeTableForm, AssignmentForm, BookBorrowForm
+# At the top of core/forms.py
 from .models import (
     Course, Department, StudentProfile, FacultyProfile, AdminProfile, HeadmasterProfile, ParentProfile,
     Enrollment, Attendance, Grade, ActivityLog, Fee, LeaveRequest,ExamSchedule, Payment, Announcement, Message,
@@ -335,7 +335,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         elif is_faculty(request.user):
             return redirect('faculty_dashboard')
         elif is_admin(request.user):
-            return redirect('admin_student_list')
+            return redirect('admin_unified_dashboard', page='students')
         elif is_parent(request.user):
             return redirect('parent_dashboard')
         return super().dispatch(request, *args, **kwargs)
@@ -614,6 +614,173 @@ def teacher_dashboard(request):
         'school_info': get_school_info(),
     }
     return render(request, 'core/teacher_parts/dashboard_old.html', context)
+
+
+# Teacher Assignment Creation
+@login_required
+@user_passes_test(is_faculty)
+def teacher_assignment_create(request):
+    """Create new assignment for teacher's courses"""
+    try:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    
+    if request.method == 'POST':
+        form = AssignmentForm(request.POST, teacher=faculty_profile)
+        if form.is_valid():
+            assignment = form.save(commit=False)
+            assignment.created_by = faculty_profile
+            assignment.save()
+            messages.success(request, f'Assignment "{assignment.title}" created successfully!')
+            return redirect('teacher_dashboard')
+    else:
+        form = AssignmentForm(teacher=faculty_profile)
+    
+    context = {
+        'form': form,
+        'title': 'Create Assignment',
+        'user': request.user,
+        'role': 'Teacher',
+    }
+    return render(request, 'core/teacher_parts/assignment_create.html', context)
+
+
+# Teacher Course Creation
+@login_required
+@user_passes_test(is_faculty)
+def teacher_course_create(request):
+    """Create new course offering for teacher"""
+    try:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    
+    if request.method == 'POST':
+        form = CourseOfferingForm(request.POST)
+        if form.is_valid():
+            # Set the faculty to current teacher
+            course_offering = form.save(commit=False)
+            course_offering.faculty = faculty_profile
+            course_offering.save()
+            messages.success(request, f'Course offering "{course_offering.course.name}" created successfully!')
+            return redirect('teacher_dashboard')
+    else:
+        form = CourseOfferingForm()
+    
+    context = {
+        'form': form,
+        'title': 'Create Course Offering',
+        'user': request.user,
+        'role': 'Teacher',
+    }
+    return render(request, 'core/teacher_parts/course_create.html', context)
+
+
+# Teacher Message Compose
+@login_required
+@user_passes_test(is_faculty)
+def teacher_message_compose(request):
+    """Compose message for teacher"""
+    try:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = faculty_profile.user
+            message.save()
+            messages.success(request, 'Message sent successfully!')
+            return redirect('teacher_dashboard')
+    else:
+        form = MessageForm()
+    
+    context = {
+        'form': form,
+        'title': 'Compose Message',
+        'user': request.user,
+        'role': 'Teacher',
+    }
+    return render(request, 'core/teacher_parts/message_compose.html', context)
+
+
+# Teacher Book Borrow
+@login_required
+@user_passes_test(is_faculty)
+def teacher_book_borrow(request):
+    """Borrow book for teacher"""
+    try:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    
+    if request.method == 'POST':
+        form = BookBorrowForm(request.POST)
+        if form.is_valid():
+            borrowed_book = form.save(commit=False)
+            borrowed_book.borrower = faculty_profile
+            borrowed_book.borrow_date = timezone.now().date()
+            borrowed_book.due_date = timezone.now().date() + timezone.timedelta(days=14)
+            borrowed_book.save()
+            messages.success(request, f'Book "{borrowed_book.title}" borrowed successfully!')
+            return redirect('teacher_dashboard')
+    else:
+        form = BookBorrowForm()
+    
+    # Get available books
+    available_books = Book.objects.filter(
+        is_available=True
+    ).order_by('title')
+    
+    context = {
+        'form': form,
+        'available_books': available_books,
+        'title': 'Borrow Book',
+        'user': request.user,
+        'role': 'Teacher',
+    }
+    return render(request, 'core/teacher_parts/book_borrow.html', context)
+
+
+# Teacher Book Return
+@login_required
+@user_passes_test(is_faculty)
+def teacher_book_return(request, book_id):
+    """Return borrowed book"""
+    try:
+        faculty_profile = request.user.faculty_profile
+        borrowed_book = get_object_or_404(BorrowedBook, id=book_id, borrower=faculty_profile)
+        
+        if request.method == 'POST':
+            borrowed_book.return_date = timezone.now().date()
+            borrowed_book.book.is_available = True
+            borrowed_book.book.save()
+            borrowed_book.save()
+            messages.success(request, f'Book "{borrowed_book.book.title}" returned successfully!')
+            return redirect('teacher_dashboard')
+        
+        context = {
+            'borrowed_book': borrowed_book,
+            'title': 'Return Book',
+            'user': request.user,
+            'role': 'Teacher',
+        }
+        return render(request, 'core/teacher_parts/book_return.html', context)
+        
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    except BorrowedBook.DoesNotExist:
+        messages.error(request, 'Borrowed book not found.')
+        return redirect('teacher_dashboard')
+
 
 # Headmaster Dashboard
 @login_required
@@ -1365,8 +1532,8 @@ def admin_teacher_list(request):
     teachers = FacultyProfile.objects.select_related(
         'user', 'department'
     ).prefetch_related(
-        'courseofferings__course',
-        'courseofferings__semester'
+        'courseoffering_set__course',
+        'courseoffering_set__semester'
     ).order_by('-user__date_joined')
     
     # Get departments for filter
@@ -1426,15 +1593,15 @@ def admin_teacher_detail(request, pk):
         FacultyProfile.objects.select_related(
             'user', 'department'
         ).prefetch_related(
-            'courseofferings__course',
-            'courseofferings__semester',
-            'courseofferings__enrollments'
+            'courseoffering_set__course',
+            'courseoffering_set__semester',
+            'courseoffering_set__enrollments'
         ),
         pk=pk
     )
     
     # Get teacher statistics
-    course_offerings = teacher.courseofferings.all()
+    course_offerings = teacher.courseoffering_set.all()
     total_students = 0
     active_courses = 0
     

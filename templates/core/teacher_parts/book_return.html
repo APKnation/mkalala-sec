@@ -1,0 +1,170 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Return Book | {{ school_info.name }}{% endblock %}
+{% block mobile_title %}Return Book{% endblock %}
+{% block user_role %}Teacher | {{ faculty_profile.department.name|default:"General" }}{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'teacher_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'teacher_assignment_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-reader"></i>
+    <span>Create Assignment</span>
+</a>
+<a href="{% url 'teacher_course_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-plus-circle"></i>
+    <span>Add Course</span>
+</a>
+<a href="{% url 'gradebook' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-pen-nib"></i>
+    <span>Grading</span>
+</a>
+<a href="{% url 'attendance_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-clipboard-check"></i>
+    <span>Attendance</span>
+</a>
+<a href="{% url 'teacher_timetable' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar-alt"></i>
+    <span>My Schedule</span>
+</a>
+<a href="{% url 'teacher_message_compose' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Compose Message</span>
+</a>
+<a href="{% url 'teacher_book_borrow' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Borrow Book</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-open"></i>
+    <span>My Borrowed Books</span>
+</a>
+<a href="{% url 'inbox' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-inbox"></i>
+    <span>Inbox</span>
+</a>
+<a href="{% url 'update_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-cog"></i>
+    <span>Profile Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 font-sans">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Return Book</h1>
+            <p class="text-slate-500 font-medium">Complete the return process for "{{ borrowed_book.book.title }}".</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'teacher_book_borrow' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Borrow Books
+            </a>
+        </div>
+    </div>
+
+    <!-- Book Details -->
+    <div class="card-premium p-8 bg-white shadow-2xl relative overflow-hidden">
+        <!-- Accent line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+        <div class="space-y-6">
+            <!-- Book Information -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Book Information</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Title:</span>
+                            <span class="text-sm font-bold text-slate-900">{{ borrowed_book.book.title }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Author:</span>
+                            <span class="text-sm font-bold text-slate-900">{{ borrowed_book.book.author|default:"Unknown Author" }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">ISBN:</span>
+                            <span class="text-sm font-bold text-slate-900">{{ borrowed_book.book.isbn|default:"No ISBN" }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Category:</span>
+                            <span class="text-sm font-bold text-slate-900">{{ borrowed_book.book.category|default:"General" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4">Borrow Information</h3>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Borrow Date:</span>
+                            <span class="text-sm font-bold text-slate-900">{{ borrowed_book.borrow_date|date:"M d, Y" }}</span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Due Date:</span>
+                            <span class="text-sm font-bold text-slate-900 {% if borrowed_book.is_overdue %}text-red-600{% else %}text-slate-900{% endif %}">
+                                {{ borrowed_book.due_date|date:"M d, Y" }}
+                                {% if borrowed_book.is_overdue %}
+                                    <span class="ml-2 text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">OVERDUE</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-slate-600">Days Borrowed:</span>
+                            <span class="text-sm font-bold text-slate-900">{{ borrowed_book.days_borrowed }} days</span>
+                        </div>
+                        
+                        {% if borrowed_book.is_overdue %}
+                        <div class="flex justify-between">
+                            <span class="text-sm font-medium text-red-600">Days Overdue:</span>
+                            <span class="text-sm font-bold text-red-600">{{ borrowed_book.days_overdue }} days</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Return Form -->
+            <div class="border-t border-slate-100 pt-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-4">Confirm Return</h3>
+                
+                <form method="post" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-exclamation-triangle text-amber-600 text-xl"></i>
+                            <div>
+                                <p class="text-sm font-bold text-amber-800">Please confirm that you have returned this book in good condition.</p>
+                                <p class="text-xs text-amber-600 mt-1">Any damage will be recorded and may result in replacement charges.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="btn-glow-primary px-8 py-4 font-bold text-sm flex-1 group shadow-xl shadow-green-600/20">
+                            <i class="fas fa-check-circle mr-2 group-hover:scale-110 transition-transform"></i>
+                            Confirm Return
+                        </button>
+                        
+                        <a href="{% url 'teacher_book_borrow' %}" class="px-8 py-4 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-2xl transition-all font-bold text-sm text-center">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

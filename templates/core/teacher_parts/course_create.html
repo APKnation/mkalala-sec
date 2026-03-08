@@ -1,0 +1,187 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Create Course | {{ school_info.name }}{% endblock %}
+{% block mobile_title %}Create Course{% endblock %}
+{% block user_role %}Teacher | {{ faculty_profile.department.name|default:"General" }}{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'teacher_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'teacher_assignment_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-reader"></i>
+    <span>Create Assignment</span>
+</a>
+<a href="{% url 'teacher_course_create' %}" class="sidebar-item-active">
+    <i class="fas fa-plus-circle"></i>
+    <span>Add Course</span>
+</a>
+<a href="{% url 'gradebook' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-pen-nib"></i>
+    <span>Grading</span>
+</a>
+<a href="{% url 'attendance_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-clipboard-check"></i>
+    <span>Attendance</span>
+</a>
+<a href="{% url 'teacher_timetable' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar-alt"></i>
+    <span>My Schedule</span>
+</a>
+<a href="{% url 'teacher_message_compose' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Compose Message</span>
+</a>
+<a href="{% url 'teacher_book_borrow' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Borrow Book</span>
+</a>
+<a href="{% url 'inbox' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-inbox"></i>
+    <span>Inbox</span>
+</a>
+<a href="{% url 'update_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-cog"></i>
+    <span>Profile Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 font-sans">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Create Course Offering</h1>
+            <p class="text-slate-500 font-medium">Create a new course offering for the current semester.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'teacher_dashboard' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Course Form -->
+    <div class="card-premium p-8 lg:p-10 bg-white shadow-2xl relative overflow-hidden">
+        <!-- Accent line -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="p-4 rounded-xl bg-red-50 text-red-700 border border-red-100 flex items-center space-x-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p class="text-xs font-bold">{{ form.non_field_errors.0 }}</p>
+                </div>
+            {% endif %}
+
+            <!-- Course Information -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label for="{{ form.course.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                        Course <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative group">
+                        {{ form.course }}
+                        {% if form.course.errors %}
+                            <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.course.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="{{ form.semester.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                        Semester <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative group">
+                        {{ form.semester }}
+                        {% if form.semester.errors %}
+                            <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.semester.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section -->
+            <div class="space-y-2">
+                <label for="{{ form.section.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                    Section/Class
+                </label>
+                <div class="relative group">
+                    {{ form.section }}
+                    {% if form.section.errors %}
+                        <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.section.errors.0 }}</p>
+                    {% endif %}
+                    <p class="text-xs text-slate-400 mt-1">e.g., "Section A", "Class 1", "Morning Batch"</p>
+                </div>
+            </div>
+
+            <!-- Faculty (Auto-filled) -->
+            <div class="space-y-2">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                    Assigned Teacher
+                </label>
+                <div class="relative group">
+                    <input type="text" value="{{ faculty_profile.user.get_full_name }}" readonly
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-slate-50 text-slate-600">
+                    <p class="text-xs text-slate-400 mt-1">Automatically assigned to current teacher</p>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="pt-6 flex flex-col sm:flex-row gap-4">
+                <button type="submit" class="btn-glow-primary px-8 py-4 font-bold text-sm flex-1 group shadow-xl shadow-blue-600/20">
+                    <i class="fas fa-plus mr-2 group-hover:scale-110 transition-transform"></i>
+                    Create Course Offering
+                </button>
+                <a href="{% url 'teacher_dashboard' %}" class="px-8 py-4 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-2xl transition-all font-bold text-sm text-center">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Help Section -->
+    <div class="card-premium p-6">
+        <h3 class="font-bold text-slate-900 mb-4 flex items-center">
+            <i class="fas fa-question-circle text-blue-600 mr-2"></i> Course Creation Help
+        </h3>
+        <div class="space-y-4 text-sm text-slate-600">
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+                <div>
+                    <p class="font-medium text-slate-700">Course Selection:</p>
+                    <p class="text-slate-600">Choose from existing courses in the system. The course information will be used for this offering.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+                <div>
+                    <p class="font-medium text-slate-700">Semester:</p>
+                    <p class="text-slate-600">Select the academic semester for this course offering.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+                <div>
+                    <p class="font-medium text-slate-700">Section/Class:</p>
+                    <p class="text-slate-600">Optional field to organize multiple offerings of the same course.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+                <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+                <div>
+                    <p class="font-medium text-slate-700">Teacher Assignment:</p>
+                    <p class="text-slate-600">You will be automatically assigned as the teacher for this course offering.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

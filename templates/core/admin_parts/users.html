@@ -7,10 +7,33 @@
             <p class="text-slate-500 font-medium">Manage all system users and their permissions.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{% url 'admin_unified_dashboard' page='students' %}" class="btn-glow-primary px-6 py-3 flex items-center">
-                <i class="fas fa-user-plus mr-2"></i> Add User
-            </a>
-            <a href="{% url 'admin_unified_dashboard' page='students' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+            <div class="dropdown relative">
+                <button class="btn-glow-primary px-6 py-3 flex items-center dropdown-toggle" type="button" id="addUserDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-user-plus mr-2"></i> Add User
+                    <i class="fas fa-chevron-down ml-2"></i>
+                </button>
+                <ul class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-50">
+                    <li>
+                        <a href="{% url 'admin_create_student' %}" class="dropdown-item flex items-center px-4 py-3 hover:bg-blue-50 text-slate-700 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-graduation-cap mr-3 text-blue-500"></i>
+                            Add Student
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_create_teacher' %}" class="dropdown-item flex items-center px-4 py-3 hover:bg-purple-50 text-slate-700 hover:text-purple-600 transition-colors">
+                            <i class="fas fa-chalkboard-teacher mr-3 text-purple-500"></i>
+                            Add Teacher
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_create_headmaster' %}" class="dropdown-item flex items-center px-4 py-3 hover:bg-orange-50 text-slate-700 hover:text-orange-600 transition-colors">
+                            <i class="fas fa-user-tie mr-3 text-orange-500"></i>
+                            Add Headmaster
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <a href="{% url 'admin_unified_dashboard' page='users' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
                 <i class="fas fa-user-shield mr-2"></i> Manage Roles
             </a>
         </div>
@@ -92,15 +115,25 @@
             </div>
         </div>
         <div class="px-6 py-4 space-y-3">
-            <a href="{% url 'admin_unified_dashboard' page='students' %}" class="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
-                <i class="fas fa-graduation-cap mr-2"></i> Manage Students
-            </a>
-            <a href="{% url 'admin_unified_dashboard' page='teachers' %}" class="w-full flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">
-                <i class="fas fa-chalkboard-teacher mr-2"></i> Manage Teachers
-            </a>
-            <a href="{% url 'admin_unified_dashboard' page='users' %}" class="w-full flex items-center justify-center bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition-all">
-                <i class="fas fa-user-shield mr-2"></i> User Permissions
-            </a>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <a href="{% url 'admin_create_student' %}" class="flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
+                    <i class="fas fa-graduation-cap mr-2"></i> Add Student
+                </a>
+                <a href="{% url 'admin_create_teacher' %}" class="flex items-center justify-center bg-purple-600 text-white py-3 rounded-xl hover:bg-purple-700 transition-all">
+                    <i class="fas fa-chalkboard-teacher mr-2"></i> Add Teacher
+                </a>
+                <a href="{% url 'admin_create_headmaster' %}" class="flex items-center justify-center bg-orange-600 text-white py-3 rounded-xl hover:bg-orange-700 transition-all">
+                    <i class="fas fa-user-tie mr-2"></i> Add Headmaster
+                </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                <a href="{% url 'admin_unified_dashboard' page='students' %}" class="flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">
+                    <i class="fas fa-users mr-2"></i> Manage Students
+                </a>
+                <a href="{% url 'admin_unified_dashboard' page='teachers' %}" class="flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">
+                    <i class="fas fa-chalkboard-teacher mr-2"></i> Manage Teachers
+                </a>
+            </div>
         </div>
     </div>
 
@@ -176,9 +209,17 @@
                             <div class="flex flex-col items-center space-y-4">
                                 <i class="fas fa-users text-4xl text-slate-300 mb-3"></i>
                                 <p class="text-slate-500">No users found</p>
-                                <a href="{% url 'admin_unified_dashboard' page='students' %}" class="mt-4 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
-                                    <i class="fas fa-user-plus mr-2"></i> Add First User
-                                </a>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <a href="{% url 'admin_create_student' %}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                        <i class="fas fa-graduation-cap mr-2"></i> Add Student
+                                    </a>
+                                    <a href="{% url 'admin_create_teacher' %}" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all">
+                                        <i class="fas fa-chalkboard-teacher mr-2"></i> Add Teacher
+                                    </a>
+                                    <a href="{% url 'admin_create_headmaster' %}" class="inline-flex items-center px-6 py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition-all">
+                                        <i class="fas fa-user-tie mr-2"></i> Add Headmaster
+                                    </a>
+                                </div>
                             </div>
                         </td>
                     </tr>

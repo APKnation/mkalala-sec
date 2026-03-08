@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from . import views
 from . import views_dashboard
 from . import views_role_dashboard
+from . import views_admin
 from .views import CourseUpdateView
 from .views import CreateCourseView  # <--this is correct now
 from .views import CourseListView
@@ -67,6 +68,11 @@ urlpatterns = [
     path('dashboard/attendance/mark/', views_dashboard.MarkAttendanceAjaxView.as_view(), name='dashboard_mark_attendance'),
     
     path('teacher/timetable/', views.teacher_timetable, name='teacher_timetable'),
+path('teacher/assignment/create/', views.teacher_assignment_create, name='teacher_assignment_create'),
+path('teacher/course/create/', views.teacher_course_create, name='teacher_course_create'),
+path('teacher/message/compose/', views.teacher_message_compose, name='teacher_message_compose'),
+path('teacher/book/borrow/', views.teacher_book_borrow, name='teacher_book_borrow'),
+path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teacher_book_return'),
     path('dashboard/faculty/', views.FacultyDashboardView.as_view(), name='faculty_dashboard'),  # Legacy
     
     # Student Navigation URLs
@@ -106,8 +112,8 @@ urlpatterns = [
     path('users/add/', views.add_user, name='add_user'),
     path('users/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
     
-    # Student Management URLs
-    path('students/', views.admin_student_list, name='admin_student_list'),
+    # Student Management URLs - Redirect to Admin Dashboard
+    path('students/', lambda request: redirect('admin_unified_dashboard', page='students') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_student_list'),
     path('students/add/', views.admin_student_create, name='admin_student_create'),
     path('students/<int:pk>/', views.admin_student_detail, name='admin_student_detail'),
     path('students/<int:pk>/edit/', views.admin_student_edit, name='admin_student_edit'),
@@ -119,6 +125,15 @@ urlpatterns = [
     path('teachers/<int:pk>/', views.admin_teacher_detail, name='admin_teacher_detail'),
     path('teachers/<int:pk>/edit/', views.admin_teacher_edit, name='admin_teacher_edit'),
     path('teachers/<int:pk>/delete/', views.admin_teacher_delete, name='admin_teacher_delete'),
+    
+    # Admin User Creation URLs
+    path('admin/create/student/', views_admin.admin_create_student, name='admin_create_student'),
+    path('admin/create/teacher/', views_admin.admin_create_teacher, name='admin_create_teacher'),
+    path('admin/create/headmaster/', views_admin.admin_create_headmaster, name='admin_create_headmaster'),
+    
+    # Headmaster User Creation URLs
+    path('headmaster/create/student/', views_admin.headmaster_create_student, name='headmaster_create_student'),
+    path('headmaster/create/teacher/', views_admin.headmaster_create_teacher, name='headmaster_create_teacher'),
     
     # Fee Management URLs
     path('fees/', views.admin_fees, name='admin_fees'),

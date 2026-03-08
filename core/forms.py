@@ -10,7 +10,7 @@ from .models import (
     Course, CourseOffering, Enrollment, Grade, Attendance,
     Fee, FeeCategory, Semester, LeaveRequest,
     Message, ForumTopic, ForumPost, Material, NECTAExam, SchoolCalendar,
-    Subject, SubjectEnrollment, Announcement, TimeTable, StudentClass
+    Subject, SubjectEnrollment, Announcement, TimeTable, StudentClass, Assignment, BorrowedBook
 )
 
 User = get_user_model()
@@ -143,15 +143,11 @@ class UserForm(UserCreationForm):
         self.fields['last_name'].widget.attrs.update({'placeholder': 'Enter last name'})
 
 class PublicUserRegistrationForm(UserCreationForm):
-    """Registration form for all user roles"""
-    role = forms.ChoiceField(
-        choices=User.ROLE_CHOICES,
-        initial='student',
-        widget=forms.Select(attrs={
-            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white',
-            'id': 'id_role'
-        }),
-        help_text="Select your role in the school system"
+    """Registration form for students only"""
+    # Hidden role field - always set to student for public registration
+    role = forms.CharField(
+        widget=forms.HiddenInput(),
+        initial='student'
     )
     
     # Additional fields for detailed user information
@@ -652,7 +648,53 @@ class CourseOfferingForm(forms.ModelForm):
             'semester': forms.Select(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
-            'section': forms.TextInput(attrs={
+        }
+
+
+class AssignmentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filter course offerings to only show courses taught by the current teacher
+        if 'teacher' in kwargs:
+            teacher = kwargs.pop('teacher')
+            self.fields['course_offering'].queryset = CourseOffering.objects.filter(
+                faculty=teacher
+            ).select_related('course', 'semester')
+    
+    class Meta:
+        model = Assignment
+        fields = ['title', 'description', 'course_offering', 'due_date', 'max_marks']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Enter assignment title'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'rows': 4,
+                'placeholder': 'Enter assignment description'
+            }),
+            'course_offering': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+            }),
+            'due_date': forms.DateInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'type': 'date'
+            }),
+            'max_marks': forms.NumberInput(attrs={
+                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+                'placeholder': 'Maximum marks',
+                'min': 1
+            }),
+        }
+
+
+class BookBorrowForm(forms.ModelForm):
+    class Meta:
+        model = BorrowedBook
+        fields = ['book']
+        widgets = {
+            'book': forms.Select(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
         }

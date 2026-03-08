@@ -1,0 +1,206 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Borrow Book | {{ school_info.name }}{% endblock %}
+{% block mobile_title %}Borrow Book{% endblock %}
+{% block user_role %}Teacher | {{ faculty_profile.department.name|default:"General" }}{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'teacher_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'teacher_assignment_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-reader"></i>
+    <span>Create Assignment</span>
+</a>
+<a href="{% url 'teacher_course_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-plus-circle"></i>
+    <span>Add Course</span>
+</a>
+<a href="{% url 'gradebook' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-pen-nib"></i>
+    <span>Grading</span>
+</a>
+<a href="{% url 'attendance_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-clipboard-check"></i>
+    <span>Attendance</span>
+</a>
+<a href="{% url 'teacher_timetable' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar-alt"></i>
+    <span>My Schedule</span>
+</a>
+<a href="{% url 'teacher_message_compose' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-envelope"></i>
+    <span>Compose Message</span>
+</a>
+<a href="{% url 'teacher_book_borrow' %}" class="sidebar-item-active">
+    <i class="fas fa-book"></i>
+    <span>Borrow Book</span>
+</a>
+<a href="#" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-open"></i>
+    <span>My Borrowed Books</span>
+</a>
+<a href="{% url 'inbox' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-inbox"></i>
+    <span>Inbox</span>
+</a>
+<a href="{% url 'update_profile' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-user-cog"></i>
+    <span>Profile Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8 font-sans">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Borrow Book</h1>
+            <p class="text-slate-500 font-medium">Browse and borrow books from the school library.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="#" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-history mr-2"></i> My Borrowed Books
+            </a>
+            <a href="{% url 'teacher_dashboard' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Borrow Form -->
+        <div class="lg:col-span-2">
+            <div class="card-premium p-8 bg-white shadow-2xl relative overflow-hidden">
+                <!-- Accent line -->
+                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="p-4 rounded-xl bg-red-50 text-red-700 border border-red-100 flex items-center space-x-3">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p class="text-xs font-bold">{{ form.non_field_errors.0 }}</p>
+                        </div>
+                    {% endif %}
+
+                    <!-- Book Selection -->
+                    <div class="space-y-2">
+                        <label for="{{ form.book.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                            Select Book <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative group">
+                            {{ form.book }}
+                            {% if form.book.errors %}
+                                <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.book.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Borrow Details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                                Borrow Date
+                            </label>
+                            <div class="relative group">
+                                <input type="date" name="borrow_date" value="{{ today|date:'Y-m-d' }}" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                       readonly>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                                Due Date
+                            </label>
+                            <div class="relative group">
+                                <input type="date" name="due_date" value="{{ today|date:'Y-m-d'|add_days:14 }}" 
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                       readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-6">
+                        <button type="submit" class="btn-glow-primary w-full px-8 py-4 font-bold text-sm group shadow-xl shadow-blue-600/20">
+                            <i class="fas fa-book-reader mr-2 group-hover:scale-110 transition-transform"></i>
+                            Borrow Book
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Available Books -->
+        <div class="lg:col-span-1">
+            <div class="card-premium">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 class="font-bold text-slate-900 flex items-center">
+                        <i class="fas fa-book text-blue-600 mr-2"></i> Available Books
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest ml-auto">{{ available_books|length }} Total</span>
+                    </h3>
+                </div>
+                
+                <div class="p-0 max-h-96 overflow-y-auto">
+                    {% if available_books %}
+                        <div class="divide-y divide-slate-100">
+                            {% for book in available_books %}
+                                <div class="p-4 hover:bg-slate-50 transition-colors">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-slate-900">{{ book.title }}</h4>
+                                            <p class="text-sm text-slate-600 mt-1">by {{ book.author|default:"Unknown Author" }}</p>
+                                            <div class="flex items-center space-x-2 mt-2">
+                                                <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
+                                                    {{ book.isbn|default:"No ISBN" }}
+                                                </span>
+                                                <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                                                    {{ book.category|default:"General" }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <button onclick="selectBook({{ book.id }}, '{{ book.title }}')" 
+                                                class="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                                            Select
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="p-12 text-center">
+                            <i class="fas fa-book text-4xl text-slate-300 mb-4"></i>
+                            <p class="text-slate-500 font-medium">No books available in the library.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function selectBook(bookId, bookTitle) {
+    const bookField = document.getElementById('{{ form.book.id_for_label }}');
+    bookField.value = bookId;
+    
+    // Show selection feedback
+    const button = event.target;
+    button.textContent = 'Selected';
+    button.classList.add('bg-green-600', 'hover:bg-green-700');
+    button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+    
+    // Show confirmation
+    setTimeout(() => {
+        button.textContent = 'Select';
+        button.classList.remove('bg-green-600', 'hover:bg-green-700');
+        button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+    }, 1000);
+}
+</script>
+{% endblock %}

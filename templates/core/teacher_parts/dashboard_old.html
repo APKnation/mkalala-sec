@@ -14,9 +14,13 @@
     <i class="fas fa-th-large"></i>
     <span>Overview</span>
 </a>
-<a href="#" class="sidebar-item text-slate-400">
+<a href="{% url 'teacher_assignment_create' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-book-reader"></i>
-    <span>My Classes</span>
+    <span>Create Assignment</span>
+</a>
+<a href="{% url 'teacher_course_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-plus-circle"></i>
+    <span>Add Course</span>
 </a>
 <a href="{% url 'gradebook' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-pen-nib"></i>
@@ -30,9 +34,13 @@
     <i class="fas fa-calendar-alt"></i>
     <span>My Schedule</span>
 </a>
-<a href="{% url 'inbox' %}" class="sidebar-item text-slate-400">
+<a href="{% url 'teacher_message_compose' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-envelope"></i>
-    <span>Messages</span>
+    <span>Compose Message</span>
+</a>
+<a href="{% url 'teacher_book_borrow' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Borrow Book</span>
 </a>
 <a href="{% url 'teacher_announcements' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-bullhorn"></i>
@@ -53,12 +61,12 @@
             <p class="text-slate-400">You have <span class="text-blue-400 font-bold">5 assignments</span> waiting to be graded today.</p>
         </div>
         <div class="flex gap-3">
-            <button class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-bold text-sm border border-white/10">
-                <i class="fas fa-calendar-plus mr-2"></i>Schedule Class
-            </button>
-            <button class="btn-glow-primary px-5 py-3 text-sm">
+            <a href="{% url 'teacher_assignment_create' %}" class="btn-glow-primary px-5 py-3 text-sm">
                 <i class="fas fa-plus mr-2"></i>New Assignment
-            </button>
+            </a>
+            <a href="{% url 'teacher_course_create' %}" class="btn-glow-secondary px-5 py-3 text-sm">
+                <i class="fas fa-plus mr-2"></i>Add Course
+            </a>
             <a href="{% url 'teacher_announcements' %}" class="btn-glow-secondary px-5 py-3 text-sm inline-flex items-center">
                 <i class="fas fa-bullhorn mr-2"></i>Create Announcement
             </a>

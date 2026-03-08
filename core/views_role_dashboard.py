@@ -697,7 +697,7 @@ def get_admin_courses_context(user, admin_profile):
     return {
         'courses': courses,
         'total_courses': courses.count(),
-        'active_offerings': courses.filter(is_active=True).count(),
+        'active_offerings': courses.count(),  # All offerings are considered active
         'total_subjects': subjects.count(),
         'total_departments': departments.count(),
     }
@@ -716,7 +716,7 @@ def get_admin_subjects_context(user, admin_profile):
     """Get admin subjects page context"""
     from .models import Subject, Department
     
-    subjects = Subject.objects.all().select_related('department').order_by('name')
+    subjects = Subject.objects.all().order_by('name')
     departments = Department.objects.all().order_by('name')
     
     # Calculate core vs elective subjects
