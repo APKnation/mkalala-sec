@@ -8,12 +8,12 @@
                 <p class="text-slate-400">You have <span class="text-blue-400 font-bold">{{ pending_tasks|default:"5" }} assignments</span> waiting to be graded today.</p>
             </div>
             <div class="flex gap-3">
-                <button class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-bold text-sm border border-white/10" onclick="unifiedDashboard.navigateToPage('announcements')">
+                <a href="{% url 'unified_dashboard' page='announcements' %}" class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-bold text-sm border border-white/10">
                     <i class="fas fa-bullhorn mr-2"></i>Create Announcement
-                </button>
-                <button class="btn-glow-primary px-5 py-3 text-sm" onclick="unifiedDashboard.navigateToPage('attendance')">
+                </a>
+                <a href="{% url 'unified_dashboard' page='attendance' %}" class="btn-glow-primary px-5 py-3 text-sm">
                     <i class="fas fa-clipboard-check mr-2"></i>Mark Attendance
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -93,22 +93,22 @@
                 Quick Actions
             </h2>
             <div class="grid grid-cols-2 gap-4">
-                <button onclick="unifiedDashboard.navigateToPage('attendance')" class="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all">
+                <a href="{% url 'unified_dashboard' page='attendance' %}" class="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl hover:shadow-lg transition-all">
                     <i class="fas fa-clipboard-check text-2xl mb-2"></i>
                     <p class="text-sm font-medium">Mark Attendance</p>
-                </button>
-                <button onclick="unifiedDashboard.navigateToPage('grading')" class="p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all">
+                </a>
+                <a href="{% url 'unified_dashboard' page='grading' %}" class="p-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all">
                     <i class="fas fa-pen-nib text-2xl mb-2"></i>
                     <p class="text-sm font-medium">Grade Assignments</p>
-                </button>
-                <button onclick="unifiedDashboard.navigateToPage('announcements')" class="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all">
+                </a>
+                <a href="{% url 'unified_dashboard' page='announcements' %}" class="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all">
                     <i class="fas fa-bullhorn text-2xl mb-2"></i>
                     <p class="text-sm font-medium">Create Announcement</p>
-                </button>
-                <button onclick="unifiedDashboard.navigateToPage('messages')" class="p-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:shadow-lg transition-all">
+                </a>
+                <a href="{% url 'unified_dashboard' page='messages' %}" class="p-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl hover:shadow-lg transition-all">
                     <i class="fas fa-envelope text-2xl mb-2"></i>
                     <p class="text-sm font-medium">Send Message</p>
-                </button>
+                </a>
             </div>
         </div>
     </div>

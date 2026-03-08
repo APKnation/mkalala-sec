@@ -78,7 +78,7 @@
 
 {% block sidebar_nav %}
 <!-- Admin Dashboard Navigation -->
-<a href="#" data-page="overview" class="sidebar-item {% if current_page == 'overview' %}sidebar-item-active{% endif %} text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='overview' %}" data-page="overview" class="sidebar-item {% if current_page == 'overview' %}sidebar-item-active{% endif %} text-slate-400 font-sans">
     <i class="fas fa-th-large"></i>
     <span>Overview</span>
 </a>
@@ -88,27 +88,27 @@
     <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Management</h3>
 </div>
 
-<a href="#" data-page="users" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='users' %}" data-page="users" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-users"></i>
     <span>User Management</span>
 </a>
-<a href="#" data-page="students" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='students' %}" data-page="students" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-graduation-cap"></i>
     <span>Students</span>
 </a>
-<a href="#" data-page="teachers" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='teachers' %}" data-page="teachers" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-chalkboard-teacher"></i>
     <span>Teachers</span>
 </a>
-<a href="#" data-page="courses" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='courses' %}" data-page="courses" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-book"></i>
     <span>Courses</span>
 </a>
-<a href="#" data-page="classes" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='classes' %}" data-page="classes" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-school"></i>
     <span>Classes</span>
 </a>
-<a href="#" data-page="subjects" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='subjects' %}" data-page="subjects" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-book-open"></i>
     <span>Subjects</span>
 </a>
@@ -118,19 +118,19 @@
     <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Academic</h3>
 </div>
 
-<a href="#" data-page="attendance" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='attendance' %}" data-page="attendance" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-calendar-check"></i>
     <span>Attendance</span>
 </a>
-<a href="#" data-page="grading" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='grading' %}" data-page="grading" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-chart-line"></i>
     <span>Grading</span>
 </a>
-<a href="#" data-page="exams" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='exams' %}" data-page="exams" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-file-alt"></i>
     <span>Exams</span>
 </a>
-<a href="#" data-page="timetable" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='timetable' %}" data-page="timetable" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-calendar-alt"></i>
     <span>Timetable</span>
 </a>
@@ -140,22 +140,22 @@
     <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Operations</h3>
 </div>
 
-<a href="#" data-page="announcements" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='announcements' %}" data-page="announcements" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-bullhorn"></i>
     <span>Announcements</span>
     {% if pending_announcements > 0 %}
     <span class="notification-badge">{{ pending_announcements }}</span>
     {% endif %}
 </a>
-<a href="#" data-page="fees" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='fees' %}" data-page="fees" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-dollar-sign"></i>
     <span>Fees</span>
 </a>
-<a href="#" data-page="library" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='library' %}" data-page="library" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-book"></i>
     <span>Library</span>
 </a>
-<a href="#" data-page="reports" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='reports' %}" data-page="reports" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-chart-bar"></i>
     <span>Reports</span>
 </a>
@@ -165,11 +165,11 @@
     <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">System</h3>
 </div>
 
-<a href="#" data-page="settings" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='settings' %}" data-page="settings" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-cog"></i>
     <span>System Settings</span>
 </a>
-<a href="#" data-page="logs" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_unified_dashboard' page='logs' %}" data-page="logs" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-list"></i>
     <span>Activity Logs</span>
 </a>
@@ -179,7 +179,7 @@
     <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Account</h3>
 </div>
 
-<a href="#" data-page="profile" class="sidebar-item text-slate-400 font-sans mt-auto">
+<a href="{% url 'admin_unified_dashboard' page='profile' %}" data-page="profile" class="sidebar-item text-slate-400 font-sans mt-auto">
     <i class="fas fa-user-cog"></i>
     <span>Profile Settings</span>
 </a>
