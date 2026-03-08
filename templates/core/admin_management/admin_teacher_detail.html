@@ -1,0 +1,214 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Teacher Details | Mkalala Sec{% endblock %}
+{% block mobile_title %}Teacher Details{% endblock %}
+{% block user_role %}System Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-coins"></i>
+    <span>Finance</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Teacher Details</h1>
+        <p class="text-slate-500 font-medium">Comprehensive information about {{ teacher.user.get_full_name }}.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+        <a href="{% url 'admin_teacher_edit' teacher.pk %}" class="btn-glow-primary px-6 py-3 flex items-center">
+            <i class="fas fa-edit mr-2"></i> Edit Teacher
+        </a>
+        <a href="{% url 'admin_teacher_list' %}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<!-- Teacher Information -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+    <!-- Basic Information -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <h3 class="font-bold text-slate-900 text-lg mb-4">Basic Information</h3>
+        </div>
+        <div class="p-6 space-y-4">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center">
+                    {% if teacher.profile_photo %}
+                        <img src="{{ teacher.profile_photo.url }}" alt="{{ teacher.user.get_full_name }}" 
+                             class="w-full h-full rounded-full object-cover">
+                    {% else %}
+                        <i class="fas fa-chalkboard-teacher text-indigo-600 text-2xl"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-lg">{{ teacher.user.get_full_name }}</h4>
+                    <p class="text-slate-500">{{ teacher.user.email }}</p>
+                    <p class="text-sm text-slate-400">ID: {{ teacher.employee_id }}</p>
+                </div>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Specialization</p>
+                <p class="text-slate-900">{{ teacher.specialization }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Qualification</p>
+                <p class="text-slate-900">{{ teacher.qualification|default:"Not specified" }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Experience</p>
+                <p class="text-slate-900">{{ teacher.experience_years|default:0 }} years</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Information -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <h3 class="font-bold text-slate-900 text-lg mb-4">Academic Information</h3>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <p class="text-sm font-medium text-slate-600">Department</p>
+                <p class="text-slate-900">{{ teacher.department.name|default:"Not assigned" }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Active Courses</p>
+                <p class="text-slate-900">{{ active_courses }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Total Students</p>
+                <p class="text-slate-900">{{ total_students }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Date Joined</p>
+                <p class="text-slate-900">{{ teacher.user.date_joined|date:"M d, Y" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <h3 class="font-bold text-slate-900 text-lg mb-4">Contact Information</h3>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <p class="text-sm font-medium text-slate-600">Email</p>
+                <p class="text-slate-900">{{ teacher.user.email }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Phone</p>
+                <p class="text-slate-900">{{ teacher.phone|default:"Not specified" }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Address</p>
+                <p class="text-slate-900">{{ teacher.address|default:"Not specified" }}</p>
+            </div>
+            
+            <div>
+                <p class="text-sm font-medium text-slate-600">Status</p>
+                <span class="px-2 py-1 {% if teacher.user.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} text-xs font-bold rounded-full">
+                    {% if teacher.user.is_active %}Active{% else %}Inactive{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Course Offerings -->
+<div class="card-premium">
+    <div class="p-6 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-lg mb-4">Course Offerings</h3>
+    </div>
+    <div class="p-2">
+        {% for offering in course_offerings %}
+            <div class="p-4 border border-slate-100 rounded-lg mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h4 class="font-bold text-slate-900">{{ offering.course.name }}</h4>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">
+                        {{ offering.semester.name }}
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                        <p class="text-slate-600">Course Code:</p>
+                        <p class="text-slate-900">{{ offering.course.code|default:"N/A" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-600">Credits:</p>
+                        <p class="text-slate-900">{{ offering.course.credits|default:"N/A" }}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-600">Enrolled Students:</p>
+                        <p class="text-slate-900">{{ offering.enrollments.count }}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-600">Schedule:</p>
+                        {% with timetable=offering.timetable_set.first %}
+                            {% if timetable %}
+                                <p class="text-slate-900">{{ timetable.get_day_display }} {{ timetable.start_time }}-{{ timetable.end_time }}</p>
+                            {% else %}
+                                <p class="text-slate-400">Not scheduled</p>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center py-8 text-slate-400">No course offerings found</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Recent Activities -->
+<div class="card-premium">
+    <div class="p-6 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-lg mb-4">Recent Activities</h3>
+    </div>
+    <div class="p-2">
+        <div class="space-y-2">
+            {% for activity in recent_activities %}
+                <div class="p-3 flex items-center space-x-3 bg-slate-50 rounded-lg">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <i class="fas fa-{{ activity.icon|default:'user' }} text-indigo-600 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">{{ activity.description }}</p>
+                        <p class="text-xs text-slate-400">{{ activity.timestamp|date:"M d, Y H:i" }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center py-4 text-slate-400">No recent activities</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

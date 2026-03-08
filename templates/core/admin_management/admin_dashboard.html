@@ -19,10 +19,6 @@
     <i class="fas fa-chalkboard-teacher"></i>
     <span>Teachers</span>
 </a>
-<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
-    <i class="fas fa-book"></i>
-    <span>Subjects</span>
-</a>
 <a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
     <i class="fas fa-coins"></i>
     <span>Finance</span>
@@ -66,17 +62,40 @@
     </div>
 </div>
 
-<!-- Stats Grid -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+{% block main_content %}
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Complete School Management</h1>
+        <p class="text-slate-500 font-medium">Full CRUD operations for students, teachers, and school administration.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+        <a href="{% url 'admin_student_create' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+            <i class="fas fa-user-plus mr-2"></i> Add Student
+        </a>
+        <a href="{% url 'admin_teacher_create' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+            <i class="fas fa-chalkboard-teacher mr-2"></i> Add Teacher
+        </a>
+    </div>
+</div>
+
+<!-- Management Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
     <div class="card-premium p-6 group hover:border-blue-200 transition-all">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
-                <i class="fas fa-users"></i>
+                <i class="fas fa-user-graduate"></i>
             </div>
-            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+12%</span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ student_growth_rate }}%</span>
         </div>
-        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ students }}</p>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_students }}</p>
         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Students</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Active: {{ active_students }}</span>
+                <span class="text-green-600">New: {{ new_students_this_month }}</span>
+            </div>
+        </div>
     </div>
     
     <div class="card-premium p-6 group hover:border-indigo-200 transition-all">
@@ -84,22 +103,128 @@
             <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
                 <i class="fas fa-chalkboard-teacher"></i>
             </div>
-            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+2%</span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ teacher_growth_rate }}%</span>
         </div>
-        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ teachers }}</p>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_teachers }}</p>
         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Faculty</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Active: {{ active_teachers }}</span>
+                <span class="text-green-600">New: {{ new_teachers_this_month }}</span>
+            </div>
+        </div>
     </div>
     
     <div class="card-premium p-6 group hover:border-amber-200 transition-all">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
-                <i class="fas fa-university"></i>
+                <i class="fas fa-book"></i>
             </div>
-            <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">Stable</span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ course_growth_rate }}%</span>
         </div>
-        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_subjects }}</p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Subjects</p>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_courses }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Courses</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Active: {{ active_courses }}</span>
+                <span class="text-green-600">New: {{ new_courses_this_month }}</span>
+            </div>
+        </div>
     </div>
+    
+    <div class="card-premium p-6 group hover:border-emerald-200 transition-all">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-coins"></i>
+            </div>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ revenue_growth_rate }}%</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_revenue|floatformat:0 }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Revenue (TZS)</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Collected: {{ fees_collected }}</span>
+                <span class="text-orange-600">Pending: {{ fees_pending }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Student Management -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 text-lg">Student Management</h3>
+                <a href="{% url 'admin_student_list' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    View All <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 gap-4">
+                <a href="{% url 'admin_student_create' %}" class="p-4 rounded-xl border border-blue-100 hover:bg-blue-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-user-plus text-blue-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Add Student</p>
+                </a>
+                <a href="{% url 'admin_student_list' %}" class="p-4 rounded-xl border border-green-100 hover:bg-green-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-list text-green-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">View Students</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Management -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 text-lg">Teacher Management</h3>
+                <a href="{% url 'admin_teacher_list' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                    View All <i class="fas fa-arrow-right ml-1"></i>
+                </a>
+            </div>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 gap-4">
+                <a href="{% url 'admin_teacher_create' %}" class="p-4 rounded-xl border border-indigo-100 hover:bg-indigo-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-chalkboard-teacher text-indigo-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Add Teacher</p>
+                </a>
+                <a href="{% url 'admin_teacher_list' %}" class="p-4 rounded-xl border border-green-100 hover:bg-green-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-list text-green-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">View Teachers</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="card-premium">
+    <div class="p-6 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-lg">Recent Activity</h3>
+    </div>
+    <div class="p-2">
+        <div class="space-y-2">
+            {% for activity in recent_activities %}
+                <div class="p-3 flex items-center space-x-3 bg-slate-50 rounded-lg">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-{{ activity.icon|default:'user' }} text-blue-600 text-sm"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">{{ activity.description }}</p>
+                        <p class="text-xs text-slate-400">{{ activity.timestamp|date:"M d, Y H:i" }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center py-4 text-slate-400">No recent activity</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
     
     <div class="card-premium p-6 group hover:border-emerald-200 transition-all">
         <div class="flex items-center justify-between mb-4">

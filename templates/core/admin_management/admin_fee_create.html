@@ -1,0 +1,106 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Create Fee | Mkalala Sec{% endblock %}
+{% block mobile_title %}Create Fee{% endblock %}
+{% block user_role %}System Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'admin_fees' %}" class="sidebar-item-active">
+    <i class="fas fa-coins"></i>
+    <span>Finance</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Create New Fee</h1>
+        <p class="text-slate-500 font-medium">Add a new fee record for a student.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+        <a href="{% url 'admin_fees' %}" 
+           class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Fees
+        </a>
+    </div>
+</div>
+
+<!-- Create Form -->
+<div class="card-premium">
+    <div class="p-6 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-lg">Fee Information</h3>
+    </div>
+    <form method="post" class="p-6 space-y-6">
+        {% csrf_token %}
+        
+        <!-- Student Selection -->
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Student *</label>
+            <select name="student" required
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                <option value="">Select Student</option>
+                {% for student in students %}
+                    <option value="{{ student.id }}">
+                        {{ student.user.get_full_name }} ({{ student.roll_number }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Fee Structure *</label>
+                <select name="fee_structure" required
+                        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="">Select Fee Structure</option>
+                    {% for structure in fee_structures %}
+                        <option value="{{ structure.id }}">
+                            {{ structure.name }} - TZS {{ structure.amount }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Amount (TZS) *</label>
+                <input type="number" name="amount" required min="0" step="0.01"
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                       placeholder="Enter amount">
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Due Date *</label>
+            <input type="date" name="due_date" required
+                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end space-x-4 pt-6">
+            <a href="{% url 'admin_fees' %}" 
+               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all">
+                Cancel
+            </a>
+            <button type="submit" 
+                    class="btn-glow-primary px-6 py-3 font-bold">
+                <i class="fas fa-plus mr-2"></i> Create Fee
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

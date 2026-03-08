@@ -1,0 +1,348 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard | Mkalala Sec{% endblock %}
+{% block mobile_title %}Admin Portal{% endblock %}
+{% block user_role %}System Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<!-- Overview -->
+<a href="{% url 'admin_dashboard_complete' %}" class="sidebar-item-active">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+
+<!-- Student Management -->
+<a href="{% url 'admin_student_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_student_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-plus"></i>
+    <span>Add Student</span>
+</a>
+<a href="{% url 'admin_student_bulk_import' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-file-import"></i>
+    <span>Import Students</span>
+</a>
+
+<!-- Teacher Management -->
+<a href="{% url 'admin_teacher_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'admin_teacher_create' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-plus"></i>
+    <span>Add Teacher</span>
+</a>
+
+<!-- Academic Management -->
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Academic</div>
+<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'courses_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-graduation-cap"></i>
+    <span>Courses</span>
+</a>
+<a href="{% url 'classes_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-door-open"></i>
+    <span>Classes</span>
+</a>
+<a href="{% url 'timetable_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-calendar-alt"></i>
+    <span>Timetable</span>
+</a>
+<a href="{% url 'exams_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-file-invoice"></i>
+    <span>Exams</span>
+</a>
+<a href="{% url 'grades_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-line"></i>
+    <span>Grades</span>
+</a>
+
+<!-- School Management -->
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">School</div>
+<a href="{% url 'departments_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-building"></i>
+    <span>Departments</span>
+</a>
+<a href="{% url 'school_info_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-school"></i>
+    <span>School Info</span>
+</a>
+<a href="{% url 'facilities_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-hospital"></i>
+    <span>Facilities</span>
+</a>
+
+<!-- Finance Management -->
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Finance</div>
+<a href="{% url 'fees_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-coins"></i>
+    <span>Fees</span>
+</a>
+<a href="{% url 'payments_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-credit-card"></i>
+    <span>Payments</span>
+</a>
+<a href="{% url 'finance_reports' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+
+<!-- System Management -->
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">System</div>
+<a href="{% url 'user_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-users-cog"></i>
+    <span>User Accounts</span>
+</a>
+<a href="{% url 'system_settings' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-cogs"></i>
+    <span>Settings</span>
+</a>
+<a href="{% url 'system_logs' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-list-alt"></i>
+    <span>System Logs</span>
+</a>
+<a href="{% url 'backup_restore' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-database"></i>
+    <span>Backup & Restore</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Admin Header with Role Info -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Complete School Management</h1>
+        <p class="text-slate-500 font-medium">Full CRUD operations for students, teachers, and school administration.</p>
+        <div class="flex items-center space-x-4 mt-2">
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">
+                {{ user.get_role_display|default:"Administrator" }}
+            </span>
+            <span class="px-3 py-1 bg-green-100 text-green-800 text-xs font-bold rounded-full">
+                Full Access
+            </span>
+        </div>
+    </div>
+    <div class="flex items-center space-x-3">
+        <button class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+            <i class="fas fa-download mr-2 text-slate-400"></i> Export Data
+        </button>
+        <button class="btn-glow-primary px-4 py-2.5 text-sm">
+            <i class="fas fa-sync mr-2"></i> Sync Data
+        </button>
+        <button class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+            <i class="fas fa-cog mr-2 text-slate-400"></i> Settings
+        </button>
+    </div>
+</div>
+
+<!-- Quick Stats Overview -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="card-premium p-6 group hover:border-blue-200 transition-all">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ student_growth_rate }}%</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_students }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Students</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Active: {{ active_students }}</span>
+                <span class="text-green-600">New: {{ new_students_this_month }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-premium p-6 group hover:border-indigo-200 transition-all">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ teacher_growth_rate }}%</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_teachers }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Faculty</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Active: {{ active_teachers }}</span>
+                <span class="text-green-600">New: {{ new_teachers_this_month }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-premium p-6 group hover:border-amber-200 transition-all">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-book"></i>
+            </div>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ course_growth_rate }}%</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_courses }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Courses</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Active: {{ active_courses }}</span>
+                <span class="text-green-600">New: {{ new_courses_this_month }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card-premium p-6 group hover:border-emerald-200 transition-all">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
+                <i class="fas fa-coins"></i>
+            </div>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">+{{ revenue_growth_rate }}%</span>
+        </div>
+        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_revenue|floatformat:0 }}</p>
+        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Revenue (TZS)</p>
+        <div class="mt-2">
+            <div class="flex justify-between text-xs">
+                <span class="text-slate-500">Collected: {{ fees_collected }}</span>
+                <span class="text-orange-600">Pending: {{ fees_pending }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Management Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Student Management Section -->
+    <div class="lg:col-span-2 space-y-6">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900 text-lg">Student Management</h3>
+                    <a href="{% url 'admin_student_management' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View All <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="p-4 grid grid-cols-2 gap-4">
+                <a href="{% url 'admin_student_create' %}" class="p-4 rounded-xl border border-blue-100 hover:bg-blue-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-user-plus text-blue-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Add Student</p>
+                </a>
+                <a href="{% url 'admin_student_bulk_import' %}" class="p-4 rounded-xl border border-green-100 hover:bg-green-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-file-import text-green-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Import Students</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900 text-lg">Recent Students</h3>
+                    <a href="{% url 'admin_student_management' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View All <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="p-2 divide-y divide-slate-50">
+                {% for student in recent_students %}
+                    <div class="p-3 flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <img src="{{ student.profile_photo.url|default:'/static/images/default-avatar.png' }}" 
+                                 alt="{{ student.get_full_name }}" 
+                                 class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-bold text-slate-900 truncate">{{ student.get_full_name }}</p>
+                            <p class="text-[10px] text-slate-400">{{ student.current_form }} • {{ student.roll_number }}</p>
+                        </div>
+                        <div class="text-right">
+                            <a href="{% url 'admin_student_detail' student.id %}" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center py-4 text-xs text-slate-400">No recent student registrations.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions & Reports -->
+    <div class="space-y-6">
+        <!-- Quick Actions -->
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900">Quick Actions</h3>
+            </div>
+            <div class="p-4 grid grid-cols-2 gap-3">
+                <a href="{% url 'admin_teacher_create' %}" class="p-4 rounded-xl border border-indigo-100 hover:bg-indigo-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-chalkboard-teacher text-indigo-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Add Teacher</p>
+                </a>
+                <a href="{% url 'subjects_management' %}" class="p-4 rounded-xl border border-amber-100 hover:bg-amber-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-book text-amber-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Manage Subjects</p>
+                </a>
+                <a href="{% url 'exams_management' %}" class="p-4 rounded-xl border border-red-100 hover:bg-red-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-file-invoice text-red-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Create Exam</p>
+                </a>
+                <a href="{% url 'fees_management' %}" class="p-4 rounded-xl border border-green-100 hover:bg-green-50 transition-all text-center space-y-2 group">
+                    <i class="fas fa-coins text-green-600 group-hover:scale-110 transition-transform"></i>
+                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Manage Fees</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- System Reports -->
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900">System Reports</h3>
+            </div>
+            <div class="p-4 space-y-3">
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-chart-bar text-blue-600 mr-3"></i>
+                        <span class="text-sm font-medium text-slate-700">Enrollment Report</span>
+                    </div>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-chart-line text-green-600 mr-3"></i>
+                        <span class="text-sm font-medium text-slate-700">Academic Performance</span>
+                    </div>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-coins text-amber-600 mr-3"></i>
+                        <span class="text-sm font-medium text-slate-700">Financial Summary</span>
+                    </div>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-users text-indigo-600 mr-3"></i>
+                        <span class="text-sm font-medium text-slate-700">User Activity</span>
+                    </div>
+                    <a href="#" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

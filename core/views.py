@@ -641,56 +641,26 @@ def headmaster_dashboard(request):
 
 # School Admin Dashboard
 @login_required
+@user_passes_test(is_admin)
 def admin_dashboard(request):
-    """Enhanced admin dashboard with comprehensive student and teacher management"""
+    """Enhanced admin dashboard with comprehensive CRUD operations"""
     
-    # Debug information
-    print(f"DEBUG: admin_dashboard called")
-    print(f"DEBUG: request.user = {request.user}")
+    # Get comprehensive statistics
+    total_students = StudentProfile.objects.count()
+    active_students = StudentProfile.objects.filter(user__is_active=True).count()
+    new_students_this_month = StudentProfile.objects.filter(
+        date_enrolled__month=timezone.now().month,
+        date_enrolled__year=timezone.now().year
+    ).count()
     
-    if not request.user.role == 'admin':
-        messages.error(request, "You don't have permission to access the admin dashboard.")
-        return redirect('public_home')
+    total_teachers = FacultyProfile.objects.count()
+    active_teachers = FacultyProfile.objects.filter(user__is_active=True).count()
+    new_teachers_this_month = FacultyProfile.objects.filter(
+        user__date_joined__month=timezone.now().month,
+        user__date_joined__year=timezone.now().year
+    ).count()
     
-    print("DEBUG: Admin role confirmed, proceeding with dashboard data loading")
-    
-    # Basic user statistics
-    total_users = User.objects.all().count()
-    students = User.objects.filter(role='student').count()
-    teachers = User.objects.filter(role='teacher').count()
-    headmasters = User.objects.filter(role='headmaster').count()
-    admins = User.objects.filter(role='admin').count()
-    
-    # Pending registrations (users who haven't been approved)
-    pending_registrations = User.objects.filter(is_active=False).count()
-    
-    # Enhanced student information
-    recent_students = StudentProfile.objects.select_related('user', 'department').order_by('-id')[:10]
-    total_enrollments = Enrollment.objects.count()
-    active_enrollments = Enrollment.objects.count()
-    
-    # Get all registered students for admin dashboard
-    all_students = StudentProfile.objects.select_related('user', 'department').order_by('user__first_name', 'user__last_name')
-    total_students_count = all_students.count()
-    
-    # Get departments list (needed for student statistics and form options)
-    departments_list = Department.objects.all()
-    print(f"DEBUG: departments_list loaded, count: {departments_list.count()}")
-    
-    # Student statistics by form level with percentages
-    students_by_form = {}
-    for form_num in range(1, 5):
-        count = StudentProfile.objects.filter(current_form=form_num).count()
-        percentage = (count / total_students_count * 100) if total_students_count > 0 else 0
-        students_by_form[f'Form_{form_num}'] = {
-            'count': count,
-            'percentage': round(percentage, 1)
-        }
-    
-    # Student statistics by department with percentages
-    students_by_department = {}
-    for department in departments_list:
-        count = StudentProfile.objects.filter(department=department).count()
+    # Course statistics
         percentage = (count / total_students_count * 100) if total_students_count > 0 else 0
         students_by_department[department.name] = {
             'count': count,
@@ -1063,54 +1033,179 @@ class StudentListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 @login_required
 @user_passes_test(is_admin)
-def admin_student_create(request):
-    """Create a new student"""
+def admin_student_list(request):
+    """Complete student management with CRUD operations"""
+    
+    # Get all students with related data
+    students = StudentProfile.objects.select_related(
+        'user', 'department'
+    ).prefetch_related(
+        'enrollments__course_offering__course',
+        'enrollments__attendances'
+    ).order_by('-date_enrolled')
+    
+    # Get departments for filter
+    departments = Department.objects.all()
+    
+    # Apply filters
+    search_query = request.GET.get('search', '')
+    department_filter = request.GET.get('department', '')
+    status_filter = request.GET.get('status', '')
+    
+    if search_query:
+        students = students.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__email__icontains=search_query) |
+            Q(roll_number__icontains=search_query) |
+            Q(phone__icontains=search_query)
+        )
+    
+    if department_filter:
+        students = students.filter(department_id=department_filter)
+    
+    if status_filter:
+        if status_filter == 'active':
+            students = students.filter(user__is_active=True)
+        elif status_filter == 'inactive':
+            students = students.filter(user__is_active=False)
+    
+    # Calculate statistics
+    total_students = students.count()
+    active_students = students.filter(user__is_active=True).count()
+    new_students_this_month = students.filter(
+        date_enrolled__month=timezone.now().month,
+        date_enrolled__year=timezone.now().year
+    ).count()
+    
+    context = {
+        'students': students,
+        'departments': departments,
+        'total_students': total_students,
+        'active_students': active_students,
+        'new_students_this_month': new_students_this_month,
+        'search_query': search_query,
+        'department_filter': department_filter,
+        'status_filter': status_filter,
+    }
+    
+    return render(request, 'core/admin_management/admin_student_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_student_detail(request, pk):
+    """View detailed student information"""
+    student = get_object_or_404(
+        StudentProfile.objects.select_related(
+            'user', 'department'
+        ).prefetch_related(
+            'enrollments__course_offering__course',
+            'enrollments__attendances',
+            'enrollments__grades'
+        ),
+        pk=pk
+    )
+    
+    # Get student statistics
+    enrollments = student.enrollments.all()
+    total_attendance = 0
+    present_attendance = 0
+    
+    for enrollment in enrollments:
+        attendance_records = enrollment.attendances.all()
+        total_attendance += attendance_records.count()
+        present_attendance += attendance_records.filter(status='P').count()
+    
+    attendance_percentage = (present_attendance / total_attendance * 100) if total_attendance > 0 else 0
+    
+    # Get recent activities
+    recent_activities = ActivityLog.objects.filter(
+        user=student.user
+    ).order_by('-timestamp')[:10]
+    
+    context = {
+        'student': student,
+        'enrollments': enrollments,
+        'attendance_percentage': round(attendance_percentage, 1),
+        'recent_activities': recent_activities,
+    }
+    
+    return render(request, 'core/admin_management/admin_student_detail.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_student_edit(request, pk):
+    """Edit existing student"""
+    student = get_object_or_404(StudentProfile.objects.select_related('user', 'department'), pk=pk)
+    
     if request.method == 'POST':
         try:
-            # Get form data
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            username = request.POST.get('username')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            roll_number = request.POST.get('roll_number')
-            department = request.POST.get('department')
-            admission_year = request.POST.get('admission_year')
-            current_form = request.POST.get('current_form')
-            current_semester = request.POST.get('current_semester')
-            phone = request.POST.get('phone', '')
-            address = request.POST.get('address', '')
-            necta_exam_number = request.POST.get('necta_exam_number', '')
-            birth_certificate_number = request.POST.get('birth_certificate_number', '')
-            previous_school = request.POST.get('previous_school', '')
+            # Update user information
+            student.user.first_name = request.POST.get('first_name')
+            student.user.last_name = request.POST.get('last_name')
+            student.user.email = request.POST.get('email')
             
-            # Validate required fields
-            if not all([first_name, last_name, username, email, password, roll_number, 
-                       department, admission_year, current_form, current_semester]):
-                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
-                return redirect('admin_student_list')
+            # Update password if provided
+            new_password = request.POST.get('password')
+            if new_password:
+                student.user.set_password(new_password)
             
-            # Check if username already exists
-            if User.objects.filter(username=username).exists():
-                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
-                return redirect('admin_student_list')
+            student.user.save()
             
-            # Check if email already exists
-            if User.objects.filter(email=email).exists():
-                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
-                return redirect('admin_student_list')
+            # Update student profile
+            student.roll_number = request.POST.get('roll_number')
+            student.phone = request.POST.get('phone', '')
+            student.address = request.POST.get('address', '')
+            student.current_form = request.POST.get('current_form')
+            student.father_name = request.POST.get('father_name', '')
+            student.mother_name = request.POST.get('mother_name', '')
+            student.guardian_name = request.POST.get('guardian_name', '')
+            student.guardian_phone = request.POST.get('guardian_phone', '')
             
-            # Check if roll number already exists
-            if StudentProfile.objects.filter(roll_number=roll_number).exists():
-                messages.error(request, 'Roll number already exists. Please use a different roll number.', extra_tags='error')
-                return redirect('admin_student_list')
+            # Update department
+            department_id = request.POST.get('department')
+            if department_id:
+                student.department = get_object_or_404(Department, id=department_id)
             
-            # Create user account
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                first_name=first_name,
+            student.save()
+            
+            messages.success(request, f'Student {student.user.get_full_name()} updated successfully!')
+            return redirect('admin_student_detail', pk=student.pk)
+            
+        except Exception as e:
+            messages.error(request, f'Error updating student: {str(e)}')
+    
+    departments = Department.objects.all()
+    context = {
+        'student': student,
+        'departments': departments,
+    }
+    
+    return render(request, 'core/admin_management/admin_student_edit.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_student_delete(request, pk):
+    """Delete student"""
+    student = get_object_or_404(StudentProfile, pk=pk)
+    
+    if request.method == 'POST':
+        student_name = student.user.get_full_name()
+        user = student.user
+        student.delete()
+        user.delete()
+        
+        messages.success(request, f'Student {student_name} deleted successfully!')
+        return redirect('admin_student_list')
+    
+    context = {
+        'student': student,
+    }
+    
+    return render(request, 'core/admin_management/admin_student_delete.html', context)
                 last_name=last_name,
                 role='student',
                 is_active=True
@@ -1287,54 +1382,178 @@ class TeacherListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
 @login_required
 @user_passes_test(is_admin)
-def admin_teacher_create(request):
-    """Create a new teacher"""
+def admin_teacher_list(request):
+    """Complete teacher management with CRUD operations"""
+    
+    # Get all teachers with related data
+    teachers = FacultyProfile.objects.select_related(
+        'user', 'department'
+    ).prefetch_related(
+        'courseofferings__course',
+        'courseofferings__semester'
+    ).order_by('-user__date_joined')
+    
+    # Get departments for filter
+    departments = Department.objects.all()
+    
+    # Apply filters
+    search_query = request.GET.get('search', '')
+    department_filter = request.GET.get('department', '')
+    status_filter = request.GET.get('status', '')
+    
+    if search_query:
+        teachers = teachers.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__email__icontains=search_query) |
+            Q(employee_id__icontains=search_query) |
+            Q(specialization__icontains=search_query) |
+            Q(phone__icontains=search_query)
+        )
+    
+    if department_filter:
+        teachers = teachers.filter(department_id=department_filter)
+    
+    if status_filter:
+        if status_filter == 'active':
+            teachers = teachers.filter(user__is_active=True)
+        elif status_filter == 'inactive':
+            teachers = teachers.filter(user__is_active=False)
+    
+    # Calculate statistics
+    total_teachers = teachers.count()
+    active_teachers = teachers.filter(user__is_active=True).count()
+    new_teachers_this_month = teachers.filter(
+        user__date_joined__month=timezone.now().month,
+        user__date_joined__year=timezone.now().year
+    ).count()
+    
+    context = {
+        'teachers': teachers,
+        'departments': departments,
+        'total_teachers': total_teachers,
+        'active_teachers': active_teachers,
+        'new_teachers_this_month': new_teachers_this_month,
+        'search_query': search_query,
+        'department_filter': department_filter,
+        'status_filter': status_filter,
+    }
+    
+    return render(request, 'core/admin_management/admin_teacher_list.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_teacher_detail(request, pk):
+    """View detailed teacher information"""
+    teacher = get_object_or_404(
+        FacultyProfile.objects.select_related(
+            'user', 'department'
+        ).prefetch_related(
+            'courseofferings__course',
+            'courseofferings__semester',
+            'courseofferings__enrollments'
+        ),
+        pk=pk
+    )
+    
+    # Get teacher statistics
+    course_offerings = teacher.courseofferings.all()
+    total_students = 0
+    active_courses = 0
+    
+    for offering in course_offerings:
+        enrollment_count = offering.enrollments.count()
+        total_students += enrollment_count
+        if enrollment_count > 0:
+            active_courses += 1
+    
+    # Get recent activities
+    recent_activities = ActivityLog.objects.filter(
+        user=teacher.user
+    ).order_by('-timestamp')[:10]
+    
+    context = {
+        'teacher': teacher,
+        'course_offerings': course_offerings,
+        'total_students': total_students,
+        'active_courses': active_courses,
+        'recent_activities': recent_activities,
+    }
+    
+    return render(request, 'core/admin_management/admin_teacher_detail.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_teacher_edit(request, pk):
+    """Edit existing teacher"""
+    teacher = get_object_or_404(FacultyProfile.objects.select_related('user', 'department'), pk=pk)
+    
     if request.method == 'POST':
         try:
-            # Get form data
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            username = request.POST.get('username')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            employee_id = request.POST.get('employee_id')
+            # Update user information
+            teacher.user.first_name = request.POST.get('first_name')
+            teacher.user.last_name = request.POST.get('last_name')
+            teacher.user.email = request.POST.get('email')
+            
+            # Update password if provided
+            new_password = request.POST.get('password')
+            if new_password:
+                teacher.user.set_password(new_password)
+            
+            teacher.user.save()
+            
+            # Update teacher profile
+            teacher.employee_id = request.POST.get('employee_id')
+            teacher.phone = request.POST.get('phone', '')
+            teacher.specialization = request.POST.get('specialization')
+            teacher.qualification = request.POST.get('qualification', '')
+            teacher.experience_years = request.POST.get('experience_years', 0)
+            teacher.address = request.POST.get('address', '')
+            
+            # Update department
             department_id = request.POST.get('department')
-            specialization = request.POST.get('specialization')
-            qualification = request.POST.get('qualification', '')
-            experience_years = request.POST.get('experience_years', 0)
-            phone = request.POST.get('phone', '')
+            if department_id:
+                teacher.department = get_object_or_404(Department, id=department_id)
             
-            # Validate required fields
-            if not all([first_name, last_name, username, email, password, employee_id, 
-                       department_id, specialization]):
-                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
-                return redirect('admin_dashboard')
+            teacher.save()
             
-            # Check if username already exists
-            if User.objects.filter(username=username).exists():
-                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
-                return redirect('admin_dashboard')
+            messages.success(request, f'Teacher {teacher.user.get_full_name()} updated successfully!')
+            return redirect('admin_teacher_detail', pk=teacher.pk)
             
-            # Check if email already exists
-            if User.objects.filter(email=email).exists():
-                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
-                return redirect('admin_dashboard')
-            
-            # Check if employee ID already exists
-            if FacultyProfile.objects.filter(employee_id=employee_id).exists():
-                messages.error(request, 'Employee ID already exists. Please use a different employee ID.', extra_tags='error')
-                return redirect('admin_dashboard')
-            
-            # Get department
-            department = get_object_or_404(Department, id=department_id)
-            
-            # Create user
-            user = User.objects.create_user(
-                username=username,
-                email=email,
-                password=password,
-                first_name=first_name,
-                last_name=last_name,
+        except Exception as e:
+            messages.error(request, f'Error updating teacher: {str(e)}')
+    
+    departments = Department.objects.all()
+    context = {
+        'teacher': teacher,
+        'departments': departments,
+    }
+    
+    return render(request, 'core/admin_management/admin_teacher_edit.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_teacher_delete(request, pk):
+    """Delete teacher"""
+    teacher = get_object_or_404(FacultyProfile, pk=pk)
+    
+    if request.method == 'POST':
+        teacher_name = teacher.user.get_full_name()
+        user = teacher.user
+        teacher.delete()
+        user.delete()
+        
+        messages.success(request, f'Teacher {teacher_name} deleted successfully!')
+        return redirect('admin_teacher_list')
+    
+    context = {
+        'teacher': teacher,
+    }
+    
+    return render(request, 'core/admin_management/admin_teacher_delete.html', context)
                 role='teacher',
                 is_active=True
             )
@@ -4544,35 +4763,22 @@ def bulk_class_assignment(request):
     }
     return render(request, 'core/bulk_class_assignment.html', context)
 
-
-# Additional Admin Views
 @login_required
 @user_passes_test(is_admin)
 def admin_timetable(request):
-    """Admin timetable management with CRUD"""
-    if request.method == 'POST':
-        form = TimeTableForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Timetable entry added successfully.")
-            return redirect('admin_timetable')
-        else:
-            messages.error(request, "Error adding timetable entry.")
-    else:
-        form = TimeTableForm()
+    """Complete timetable management with CRUD operations"""
     
-    # Group by form/department to make it manageable
-    schedules = TimeTable.objects.select_related('course_offering__course', 'semester', 'course_offering__course__department').all()
-    departments = Department.objects.all()
+    # Get all timetable entries with related data
+    timetable_entries = TimeTable.objects.select_related(
+        'course_offering__course',
+        'course_offering__faculty__user',
+        'semester'
+    ).order_by('day', 'start_time')
     
-    context = {
-        'title': 'Timetable Management',
-        'school_info': get_school_info(),
-        'form': form,
-        'schedules': schedules,
-        'departments': departments,
-        'days': [day[0] for day in TimeTable.DAY_CHOICES],
-    }
+    # Get related data for filters
+    courses = CourseOffering.objects.select_related('course', 'faculty__user').filter(semester__is_active=True)
+    faculties = FacultyProfile.objects.select_related('user').all()
+    semesters = Semester.objects.all()
     return render(request, 'core/admin_management/admin_timetable.html', context)
 
 @login_required
@@ -4609,9 +4815,165 @@ def admin_library(request):
 @login_required
 @user_passes_test(is_admin)
 def admin_fees(request):
-    """Admin fee management"""
+    """Complete fee management with CRUD operations"""
+    
+    # Get all fees with related data
+    fees = Fee.objects.select_related(
+        'student__user', 'fee_structure'
+    ).prefetch_related(
+        'payments'
+    ).order_by('-due_date')
+    
+    # Get fee structures for filter
+    fee_structures = FeeStructure.objects.all()
+    
+    # Apply filters
+    search_query = request.GET.get('search', '')
+    status_filter = request.GET.get('status', '')
+    fee_structure_filter = request.GET.get('fee_structure', '')
+    
+    if search_query:
+        fees = fees.filter(
+            Q(student__user__first_name__icontains=search_query) |
+            Q(student__user__last_name__icontains=search_query) |
+            Q(student__roll_number__icontains=search_query) |
+            Q(amount__icontains=search_query)
+        )
+    
+    if status_filter:
+        if status_filter == 'paid':
+            fees = fees.filter(payments__status='completed')
+        elif status_filter == 'pending':
+            fees = fees.filter(payments__status='pending')
+        elif status_filter == 'overdue':
+            fees = fees.filter(due_date__lt=timezone.now().date(), payments__status__in=['pending', 'partial'])
+    
+    if fee_structure_filter:
+        fees = fees.filter(fee_structure_id=fee_structure_filter)
+    
+    # Calculate statistics
+    total_fees = fees.count()
+    paid_fees = fees.filter(payments__status='completed').count()
+    pending_fees = fees.filter(payments__status='pending').count()
+    overdue_fees = fees.filter(due_date__lt=timezone.now().date(), payments__status__in=['pending', 'partial']).count()
+    total_revenue = fees.aggregate(total=Sum('amount'))['total'] or 0
+    collected_revenue = fees.filter(payments__status='completed').aggregate(total=Sum('amount'))['total'] or 0
+    
     context = {
-        'title': 'Fee Management',
+        'fees': fees,
+        'fee_structures': fee_structures,
+        'total_fees': total_fees,
+        'paid_fees': paid_fees,
+        'pending_fees': pending_fees,
+        'overdue_fees': overdue_fees,
+        'total_revenue': total_revenue,
+        'collected_revenue': collected_revenue,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'fee_structure_filter': fee_structure_filter,
+    }
+    
+    return render(request, 'core/admin_management/admin_fees.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_fee_create(request):
+    """Create new fee"""
+    if request.method == 'POST':
+        try:
+            student_id = request.POST.get('student')
+            fee_structure_id = request.POST.get('fee_structure')
+            amount = request.POST.get('amount')
+            due_date = request.POST.get('due_date')
+            
+            # Validate required fields
+            if not all([student_id, fee_structure_id, amount, due_date]):
+                messages.error(request, 'Please fill in all required fields.')
+                return redirect('admin_fees')
+            
+            # Get related objects
+            student = get_object_or_404(StudentProfile, id=student_id)
+            fee_structure = get_object_or_404(FeeStructure, id=fee_structure_id)
+            
+            # Create fee
+            fee = Fee.objects.create(
+                student=student,
+                fee_structure=fee_structure,
+                amount=amount,
+                due_date=due_date,
+                created_by=request.user
+            )
+            
+            messages.success(request, f'Fee created for {student.user.get_full_name()} successfully!')
+            return redirect('admin_fees')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating fee: {str(e)}')
+    
+    students = StudentProfile.objects.select_related('user').all()
+    fee_structures = FeeStructure.objects.all()
+    context = {
+        'students': students,
+        'fee_structures': fee_structures,
+    }
+    
+    return render(request, 'core/admin_management/admin_fee_create.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_fee_edit(request, pk):
+    """Edit existing fee"""
+    fee = get_object_or_404(Fee.objects.select_related('student__user', 'fee_structure'), pk=pk)
+    
+    if request.method == 'POST':
+        try:
+            fee.amount = request.POST.get('amount')
+            fee.due_date = request.POST.get('due_date')
+            
+            # Update fee structure if changed
+            fee_structure_id = request.POST.get('fee_structure')
+            if fee_structure_id:
+                fee.fee_structure = get_object_or_404(FeeStructure, id=fee_structure_id)
+            
+            fee.save()
+            
+            messages.success(request, f'Fee updated successfully!')
+            return redirect('admin_fees')
+            
+        except Exception as e:
+            messages.error(request, f'Error updating fee: {str(e)}')
+    
+    students = StudentProfile.objects.select_related('user').all()
+    fee_structures = FeeStructure.objects.all()
+    context = {
+        'fee': fee,
+        'students': students,
+        'fee_structures': fee_structures,
+    }
+    
+    return render(request, 'core/admin_management/admin_fee_edit.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_fee_delete(request, pk):
+    """Delete fee"""
+    fee = get_object_or_404(Fee.objects.select_related('student__user'), pk=pk)
+    
+    if request.method == 'POST':
+        student_name = fee.student.user.get_full_name()
+        fee.delete()
+        
+        messages.success(request, f'Fee for {student_name} deleted successfully!')
+        return redirect('admin_fees')
+    
+    context = {
+        'fee': fee,
+    }
+    
+    return render(request, 'core/admin_management/admin_fee_delete.html', context)
         'school_info': get_school_info(),
     }
     return render(request, 'core/admin_management/admin_fees.html', context)

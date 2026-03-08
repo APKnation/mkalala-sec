@@ -1,0 +1,150 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Edit Teacher | Mkalala Sec{% endblock %}
+{% block mobile_title %}Edit Teacher{% endblock %}
+{% block user_role %}System Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-pie"></i>
+    <span>Overview</span>
+</a>
+<div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Management</div>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Teachers</span>
+</a>
+<a href="{% url 'admin_fee_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-coins"></i>
+    <span>Finance</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+    <div class="space-y-1">
+        <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Edit Teacher</h1>
+        <p class="text-slate-500 font-medium">Update information for {{ teacher.user.get_full_name }}.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+        <a href="{% url 'admin_teacher_detail' teacher.pk %}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Details
+        </a>
+        <a href="{% url 'admin_teacher_create' %}" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition-all flex items-center">
+            <i class="fas fa-user-plus mr-2"></i> Add New Teacher
+        </a>
+    </div>
+</div>
+
+<!-- Edit Form -->
+<div class="card-premium">
+    <div class="p-6 border-b border-slate-100">
+        <h3 class="font-bold text-slate-900 text-lg">Teacher Information</h3>
+    </div>
+    <form method="post" class="p-6 space-y-6">
+        {% csrf_token %}
+        
+        <!-- Basic Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">First Name *</label>
+                <input type="text" name="first_name" value="{{ teacher.user.first_name }}" required
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Last Name *</label>
+                <input type="text" name="last_name" value="{{ teacher.user.last_name }}" required
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Email Address *</label>
+                <input type="email" name="email" value="{{ teacher.user.email }}" required
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Employee ID *</label>
+                <input type="text" name="employee_id" value="{{ teacher.employee_id }}" required
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            </div>
+        </div>
+        
+        <!-- Optional Fields -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Password (leave blank to keep current)</label>
+                <input type="password" name="password" 
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                       placeholder="Enter new password to change">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Department *</label>
+                <select name="department" required
+                        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="">Select Department</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if teacher.department.id == dept.id %}selected{% endif %}>
+                            {{ dept.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Specialization *</label>
+            <input type="text" name="specialization" value="{{ teacher.specialization }}" required
+                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Qualification</label>
+            <input type="text" name="qualification" value="{{ teacher.qualification|default:"" }}"
+                   class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Experience (Years)</label>
+                <input type="number" name="experience_years" value="{{ teacher.experience_years|default:0 }}" min="0"
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                <input type="tel" name="phone" value="{{ teacher.phone|default:"" }}"
+                       class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium text-slate-700 mb-2">Address</label>
+            <textarea name="address" rows="3"
+                      class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">{{ teacher.address|default:"" }}</textarea>
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end space-x-4 pt-6">
+            <a href="{% url 'admin_teacher_detail' teacher.pk %}" 
+               class="px-6 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-all">
+                Cancel
+            </a>
+            <button type="submit" 
+                    class="btn-glow-primary px-6 py-3 font-bold">
+                <i class="fas fa-save mr-2"></i> Update Teacher
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -107,24 +107,30 @@ urlpatterns = [
     path('users/<int:pk>/', views.UserDetailView.as_view(), name='user_detail'),
     
     # Student Management URLs
-    path('students/', views.StudentListView.as_view(), name='admin_student_list'),
+    path('students/', views.admin_student_list, name='admin_student_list'),
     path('students/add/', views.admin_student_create, name='admin_student_create'),
-    path('students/<int:pk>/', views.StudentDetailView.as_view(), name='admin_student_detail'),
-    path('students/<int:pk>/edit/', views.StudentUpdateView.as_view(), name='admin_student_edit'),
-    path('students/<int:pk>/delete/', views.StudentDeleteView.as_view(), name='admin_student_delete'),
+    path('students/<int:pk>/', views.admin_student_detail, name='admin_student_detail'),
+    path('students/<int:pk>/edit/', views.admin_student_edit, name='admin_student_edit'),
+    path('students/<int:pk>/delete/', views.admin_student_delete, name='admin_student_delete'),
     
     # Teacher Management URLs
-    path('teachers/', views.TeacherListView.as_view(), name='admin_teacher_list'),
+    path('teachers/', views.admin_teacher_list, name='admin_teacher_list'),
     path('teachers/add/', views.admin_teacher_create, name='admin_teacher_create'),
-    path('teachers/<int:pk>/', views.TeacherDetailView.as_view(), name='admin_teacher_detail'),
-    path('teachers/<int:pk>/edit/', views.TeacherUpdateView.as_view(), name='admin_teacher_edit'),
-    path('teachers/<int:pk>/delete/', views.TeacherDeleteView.as_view(), name='admin_teacher_delete'),
+    path('teachers/<int:pk>/', views.admin_teacher_detail, name='admin_teacher_detail'),
+    path('teachers/<int:pk>/edit/', views.admin_teacher_edit, name='admin_teacher_edit'),
+    path('teachers/<int:pk>/delete/', views.admin_teacher_delete, name='admin_teacher_delete'),
     
     # Fee Management URLs
-    path('fees/', views.FeeListView.as_view(), name='admin_fee_list'),
-    path('fees/add/', views.FeeCreateView.as_view(), name='admin_fee_create'),
-    path('fees/<int:pk>/edit/', views.FeeUpdateView.as_view(), name='admin_fee_edit'),
-    path('fees/<int:pk>/delete/', views.FeeDeleteView.as_view(), name='admin_fee_delete'),
+    path('fees/', views.admin_fees, name='admin_fees'),
+    path('fees/add/', views.admin_fee_create, name='admin_fee_create'),
+    path('fees/<int:pk>/edit/', views.admin_fee_edit, name='admin_fee_edit'),
+    path('fees/<int:pk>/delete/', views.admin_fee_delete, name='admin_fee_delete'),
+    
+    # Timetable Management URLs
+    path('timetable/', views.admin_timetable, name='admin_timetable'),
+    path('timetable/add/', views.admin_timetable_create, name='admin_timetable_create'),
+    path('timetable/<int:pk>/edit/', views.admin_timetable_edit, name='admin_timetable_edit'),
+    path('timetable/<int:pk>/delete/', views.admin_timetable_delete, name='admin_timetable_delete'),
     
     # Additional Admin URLs
     path('admin/timetable/', views.admin_timetable, name='admin_timetable'),
