@@ -1,20 +1,184 @@
 <!-- Admin Students Dashboard Content -->
 <div class="space-y-8">
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
-                Students Management
-            </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage students system</p>
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Student Body</h1>
+            <p class="text-slate-500 font-medium">Manage all enrolled students and their academic profiles.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'admin_student_create' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+                <i class="fas fa-user-plus mr-2"></i> Register Student
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Students</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Students management interface coming soon</p>
+    <!-- Search & Filter Bar -->
+    <div class="card-premium p-6 shadow-soft mb-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2 relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" name="search" value="{{ search_query }}" 
+                       class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all"
+                       placeholder="Search by name, roll number, or email...">
+            </div>
+            <div>
+                <select name="department" class="w-full px-4 py-3 rounded-xl border border-slate-100 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all appearance-none bg-white">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if department_filter == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex space-x-2">
+                <button type="submit" class="flex-1 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all">Filter</button>
+                <a href="{% url 'admin_unified_dashboard' page='students' %}" class="px-4 flex items-center justify-center bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-all">
+                    <i class="fas fa-redo-alt"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Students</h3>
+                    <span class="text-3xl font-bold text-blue-600">{{ total_students }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-slate-600">New this month</span>
+                    <span class="text-sm font-bold text-emerald-600">+{{ new_students_this_month }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Active Students</h3>
+                    <span class="text-3xl font-bold text-emerald-600">{{ active_students }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-emerald-500 h-2 rounded-full" style="width: {% if total_students > 0 %}{{ active_students|multiply:100|divide:total_students }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Inactive Students</h3>
+                    <span class="text-3xl font-bold text-slate-400">{{ total_students|sub:active_students }}</span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="flex items-center">
+                    <div class="w-full bg-slate-200 rounded-full h-2">
+                        <div class="bg-slate-400 h-2 rounded-full" style="width: {% if total_students > 0 %}{{ total_students|sub:active_students|multiply:100|divide:total_students }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Quick Actions</h3>
+                    <i class="fas fa-bolt text-2xl text-blue-600"></i>
+                </div>
+            </div>
+            <div class="px-6 py-4 space-y-3">
+                <a href="{% url 'admin_student_create' %}" class="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition-all">
+                    <i class="fas fa-user-plus mr-2"></i> Add New Student
+                </a>
+                <a href="{% url 'admin_unified_dashboard' page='users' %}" class="w-full flex items-center justify-center bg-slate-100 text-slate-700 py-3 rounded-xl hover:bg-slate-200 transition-all">
+                    <i class="fas fa-users mr-2"></i> Manage Users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Student Table -->
+    <div class="card-premium overflow-hidden border-none shadow-soft">
+        <div class="p-0 overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Student Info</th>
+                        <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none text-center">Form / Level</th>
+                        <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Contact Details</th>
+                        <th class="px-6 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Status</th>
+                        <th class="px-8 py-5 text-xs font-bold text-slate-400 uppercase tracking-widest leading-none text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for student in students %}
+                    <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <td class="px-8 py-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold relative">
+                                    {{ student.user.get_full_name|first|upper }}
+                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white {% if student.user.is_active %}bg-emerald-500{% else %}bg-slate-300{% endif %}"></div>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-900">{{ student.user.get_full_name|default:student.user.username }}</p>
+                                    <p class="text-xs text-slate-400 font-medium tracking-tight">ID: #{{ student.roll_number|default:"N/A" }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-6 text-center">
+                            <span class="px-3 py-1 bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-full uppercase tracking-tighter">
+                                Form {{ student.current_form|default:"?" }}
+                            </span>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">{{ student.department.name|truncatechars:15|default:"General" }}</p>
+                        </td>
+                        <td class="px-6 py-6">
+                            <p class="text-sm font-medium text-slate-600">{{ student.user.email }}</p>
+                            <p class="text-xs text-slate-400 mt-1">{{ student.phone|default:"+255 --- ---" }}</p>
+                        </td>
+                        <td class="px-6 py-6 text-center">
+                            {% if student.user.is_active %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 uppercase tracking-widest">Active</span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-400 uppercase tracking-widest">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="{% url 'admin_student_detail' student.id %}" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 flex items-center justify-center transition-all shadow-sm">
+                                    <i class="fas fa-eye text-xs"></i>
+                                </a>
+                                <a href="{% url 'admin_student_edit' student.id %}" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 flex items-center justify-center transition-all shadow-sm">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </a>
+                                <a href="{% url 'admin_student_delete' student.id %}" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-red-600 hover:border-red-200 flex items-center justify-center transition-all shadow-sm">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-8 py-20 text-center">
+                            <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mx-auto mb-4">
+                                <i class="fas fa-user-slash text-2xl"></i>
+                            </div>
+                            <h3 class="text-slate-900 font-bold">No Students Registered</h3>
+                            <p class="text-slate-500 text-sm mt-1">Start by enrolling a new student to the institution.</p>
+                            <a href="{% url 'admin_student_create' %}" class="mt-6 inline-block text-blue-600 font-bold hover:underline">Register New Student</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -626,11 +626,55 @@ def get_admin_users_context(user, admin_profile):
 
 def get_admin_students_context(user, admin_profile):
     """Get admin students page context"""
-    students = User.objects.filter(role='student').select_related('student_profile').order_by('first_name', 'last_name')
+    from .models import Department
+    from django.db.models import Q
+    
+    # Get all students with related data
+    students = StudentProfile.objects.select_related(
+        'user', 'department'
+    ).prefetch_related(
+        'enrollments__course_offering__course',
+        'enrollments__attendances'
+    ).order_by('-date_enrolled')
+    
+    # Get departments for filter
+    departments = Department.objects.all()
+    
+    # Apply filters from request
+    search_query = user.request.GET.get('search', '')
+    department_filter = user.request.GET.get('department', '')
+    status_filter = user.request.GET.get('status', '')
+    
+    if search_query:
+        students = students.filter(
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query) |
+            Q(user__email__icontains=search_query) |
+            Q(roll_number__icontains=search_query) |
+            Q(phone__icontains=search_query)
+        )
+    
+    if department_filter:
+        students = students.filter(department_id=department_filter)
+    
+    if status_filter:
+        if status_filter == 'active':
+            students = students.filter(user__is_active=True)
+        elif status_filter == 'inactive':
+            students = students.filter(user__is_active=False)
+    
     return {
         'students': students,
+        'departments': departments,
         'total_students': students.count(),
-        'active_students': students.filter(is_active=True).count(),
+        'active_students': students.filter(user__is_active=True).count(),
+        'new_students_this_month': students.filter(
+            date_enrolled__month=timezone.now().month,
+            date_enrolled__year=timezone.now().year
+        ).count(),
+        'search_query': search_query,
+        'department_filter': department_filter,
+        'status_filter': status_filter,
     }
 
 def get_admin_teachers_context(user, admin_profile):

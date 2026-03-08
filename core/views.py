@@ -661,11 +661,35 @@ def admin_dashboard(request):
     ).count()
     
     # Course statistics
-        percentage = (count / total_students_count * 100) if total_students_count > 0 else 0
-        students_by_department[department.name] = {
-            'count': count,
-            'percentage': round(percentage, 1)
-        }
+    total_courses = Course.objects.count()
+    active_courses = CourseOffering.objects.filter(
+        semester__is_active=True
+    ).count()
+    new_courses_this_month = CourseOffering.objects.filter(
+        created_at__month=timezone.now().month,
+        created_at__year=timezone.now().year
+    ).count()
+    
+    # Financial statistics
+    from django.db.models import Sum
+    total_revenue = Payment.objects.aggregate(
+        total=Sum('amount')
+    )['total'] or 0
+    fees_collected = Payment.objects.filter(
+        status='completed'
+    ).count()
+    fees_pending = Payment.objects.filter(
+        status='pending'
+    ).count()
+    
+    # Calculate growth rates
+    student_growth_rate = 12  # Example growth rate
+    teacher_growth_rate = 8   # Example growth rate
+    course_growth_rate = 5   # Example growth rate
+    revenue_growth_rate = 15  # Example growth rate
+    
+    # Get recent activities
+    recent_activities = ActivityLog.objects.select_related('user').order_by('-timestamp')[:10]
     
     print("DEBUG: Statistics calculated successfully")
     
@@ -673,111 +697,27 @@ def admin_dashboard(request):
     from django.db.models import Sum
     total_fees_collected = Fee.objects.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
     pending_fees = Fee.objects.filter(is_paid=False).count()
-    overdue_fees = Fee.objects.filter(is_paid=False, due_date__lt=timezone.now().date()).count()
-    
-    # Recent enrollments with course information
-    recent_enrollments = Enrollment.objects.select_related(
-        'student__user', 'course_offering__course', 'course_offering__semester'
-    ).order_by('-enrollment_date')[:10]
-    
-    # Get recent users for activity feed
-    recent_users = User.objects.order_by('-date_joined')[:5]
-    
-    # Get message statistics for admin
-    from django.db.models import Q
-    received_messages = Message.objects.filter(recipient=request.user)
-    unread_count = received_messages.filter(is_read=False).count()
-    
-    # Additional statistics for enhanced dashboard
-    total_courses = Course.objects.count()
-    total_subjects = Subject.objects.count()
-    total_departments = Department.objects.count()
-    total_course_offerings = CourseOffering.objects.count()
-    
-    # Teacher data for dashboard
-    faculty_profiles = FacultyProfile.objects.select_related('user', 'department').order_by('user__first_name', 'user__last_name')
-    
-    # Recent activities
-    recent_activities = []
-    for enrollment in recent_enrollments:
-        recent_activities.append({
-            'type': 'enrollment',
-            'description': f'{enrollment.student.user.get_full_name} enrolled in {enrollment.course_offering.course.name}',
-            'timestamp': enrollment.enrollment_date,
-            'icon': 'user-plus',
-            'color': 'primary'
-        })
-    
-    # Get school information
-    try:
-        school_info = SystemSetting.objects.first()
-        if not school_info:
-            school_info = type('SchoolInfo', (), {
-                'name': 'School Management System',
-                'motto': 'Excellence in Education',
-                'vision': 'To provide quality education',
-                'mission': 'Empowering students for success',
-                'contact_phone': '+255 123 456 789',
-                'contact_email': 'info@school.ac.tz',
-                'address': 'Dar es Salaam, Tanzania',
-                'examination_center_number': 'PS123456',
-                'founded_year': '2000'
-            })()
-    except:
-        school_info = type('SchoolInfo', (), {
-            'name': 'School Management System',
-            'motto': 'Excellence in Education',
-            'vision': 'To provide quality education',
-            'mission': 'Empowering students for success',
-            'contact_phone': '+255 123 456 789',
-            'contact_email': 'info@school.ac.tz',
-            'address': 'Dar es Salaam, Tanzania',
-            'examination_center_number': 'PS123456',
-            'founded_year': '2000'
-        })()
-    
     context = {
-        'user': request.user,
-        'role': 'School Administrator',
-        # Basic statistics
-        'total_users': total_users,
-        'students': students,
-        'teachers': teachers,
-        'headmasters': headmasters,
-        'admins': admins,
-        'pending_registrations': pending_registrations,
-        # Enhanced statistics
+        'total_students': total_students,
+        'active_students': active_students,
+        'new_students_this_month': new_students_this_month,
+        'total_teachers': total_teachers,
+        'active_teachers': active_teachers,
+        'new_teachers_this_month': new_teachers_this_month,
         'total_courses': total_courses,
-        'total_subjects': total_subjects,
-        'pending_fees': pending_fees,
-        'overdue_fees': overdue_fees,
-        'total_fees_collected': total_fees_collected,
-        # Academic statistics
-        'total_courses': total_courses,
-        'departments': total_departments,
-        # Teacher data for dashboard
-        'faculty_profiles': faculty_profiles,
-        'departments_list': departments_list,
-        # Student data for dashboard
-        'all_students': all_students,
-        'total_students_count': total_students_count,
-        'recent_students': recent_students,
-        'students_by_form': students_by_form,
-        'students_by_department': students_by_department,
-        # Message information
-        'unread_count': unread_count,
-        # Activity feed
-        'recent_users': recent_users,
+        'active_courses': active_courses,
+        'new_courses_this_month': new_courses_this_month,
+        'total_revenue': total_revenue,
+        'fees_collected': fees_collected,
+        'fees_pending': fees_pending,
+        'student_growth_rate': student_growth_rate,
+        'teacher_growth_rate': teacher_growth_rate,
+        'course_growth_rate': course_growth_rate,
+        'revenue_growth_rate': revenue_growth_rate,
         'recent_activities': recent_activities,
-        # School information
-        'school_info': school_info,
-    }  
+    }
+    
     return render(request, 'core/admin_management/admin_dashboard.html', context)
-
-from django.http import JsonResponse
-from django.core.paginator import Paginator
-from django.db.models import Q
-from .utils import is_admin
 
 # API Views
 @login_required
@@ -1206,6 +1146,57 @@ def admin_student_delete(request, pk):
     }
     
     return render(request, 'core/admin_management/admin_student_delete.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def admin_student_create(request):
+    """Create a new student"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            roll_number = request.POST.get('roll_number')
+            department = request.POST.get('department')
+            admission_year = request.POST.get('admission_year')
+            current_form = request.POST.get('current_form')
+            current_semester = request.POST.get('current_semester')
+            phone = request.POST.get('phone', '')
+            address = request.POST.get('address', '')
+            necta_exam_number = request.POST.get('necta_exam_number', '')
+            birth_certificate_number = request.POST.get('birth_certificate_number', '')
+            previous_school = request.POST.get('previous_school', '')
+            
+            # Validate required fields
+            if not all([first_name, last_name, username, email, password, roll_number, 
+                       department, admission_year, current_form, current_semester]):
+                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Check if roll number already exists
+            if StudentProfile.objects.filter(roll_number=roll_number).exists():
+                messages.error(request, 'Roll number already exists. Please use a different roll number.', extra_tags='error')
+                return redirect('admin_student_list')
+            
+            # Create user account
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
                 last_name=last_name,
                 role='student',
                 is_active=True
@@ -1215,7 +1206,7 @@ def admin_student_delete(request, pk):
             student = StudentProfile.objects.create(
                 user=user,
                 roll_number=roll_number,
-                department=department,
+                department=Department.objects.get(id=department),
                 admission_year=int(admission_year),
                 current_form=int(current_form),
                 current_semester=int(current_semester),
@@ -1235,15 +1226,6 @@ def admin_student_delete(request, pk):
     
     # If GET request, redirect to student list
     return redirect('admin_student_list')
-    
-    def get_queryset(self):
-        return StudentProfile.objects.select_related('user', 'department').order_by('-id')
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['title'] = 'Student Management'
-        context['total_students'] = StudentProfile.objects.count()
-        return context
 
 class StudentDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = StudentProfile
@@ -1554,6 +1536,57 @@ def admin_teacher_delete(request, pk):
     }
     
     return render(request, 'core/admin_management/admin_teacher_delete.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def admin_teacher_create(request):
+    """Create a new teacher"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            username = request.POST.get('username')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            employee_id = request.POST.get('employee_id')
+            department_id = request.POST.get('department')
+            specialization = request.POST.get('specialization')
+            qualification = request.POST.get('qualification', '')
+            experience_years = request.POST.get('experience_years', 0)
+            phone = request.POST.get('phone', '')
+            
+            # Validate required fields
+            if not all([first_name, last_name, username, email, password, employee_id, 
+                       department_id, specialization]):
+                messages.error(request, 'Please fill in all required fields.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if username already exists
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists. Please choose a different username.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists. Please use a different email.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Check if employee ID already exists
+            if FacultyProfile.objects.filter(employee_id=employee_id).exists():
+                messages.error(request, 'Employee ID already exists. Please use a different employee ID.', extra_tags='error')
+                return redirect('admin_dashboard')
+            
+            # Get department
+            department = get_object_or_404(Department, id=department_id)
+            
+            # Create user
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
                 role='teacher',
                 is_active=True
             )
@@ -1565,7 +1598,7 @@ def admin_teacher_delete(request, pk):
                 department=department,
                 specialization=specialization,
                 qualification=qualification,
-                experience_years=experience_years,
+                experience_years=int(experience_years),
                 phone=phone
             )
             
@@ -1576,6 +1609,7 @@ def admin_teacher_delete(request, pk):
             messages.error(request, f'Error creating teacher: {str(e)}', extra_tags='error')
             return redirect('admin_dashboard')
     
+    # If GET request, redirect to admin dashboard
     return redirect('admin_dashboard')
 
 class TeacherDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -4974,10 +5008,6 @@ def admin_fee_delete(request, pk):
     }
     
     return render(request, 'core/admin_management/admin_fee_delete.html', context)
-        'school_info': get_school_info(),
-    }
-    return render(request, 'core/admin_management/admin_fees.html', context)
-
 
 @login_required
 @user_passes_test(is_admin)
@@ -4998,7 +5028,6 @@ def admin_reports(request):
     }
     return render(request, 'core/admin_management/admin_reports.html', context)
 
-
 @login_required
 @user_passes_test(is_admin)
 def admin_settings(request):
@@ -5009,8 +5038,110 @@ def admin_settings(request):
     }
     return render(request, 'core/admin_management/admin_settings.html', context)
 
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_create(request):
+    """Create new timetable entry"""
+    if request.method == 'POST':
+        try:
+            # Get form data
+            course_offering_id = request.POST.get('course_offering')
+            day = request.POST.get('day')
+            start_time = request.POST.get('start_time')
+            end_time = request.POST.get('end_time')
+            room = request.POST.get('room', '')
+            semester_id = request.POST.get('semester')
+            
+            # Validate required fields
+            if not all([course_offering_id, day, start_time, end_time, semester_id]):
+                messages.error(request, 'Please fill in all required fields.')
+                return redirect('admin_timetable')
+            
+            # Get related objects
+            course_offering = get_object_or_404(CourseOffering, id=course_offering_id)
+            semester = get_object_or_404(Semester, id=semester_id)
+            
+            # Create timetable entry
+            timetable = TimeTable.objects.create(
+                course_offering=course_offering,
+                day=day,
+                start_time=start_time,
+                end_time=end_time,
+                room=room,
+                semester=semester
+            )
+            
+            messages.success(request, 'Timetable entry created successfully!')
+            return redirect('admin_timetable')
+            
+        except Exception as e:
+            messages.error(request, f'Error creating timetable entry: {str(e)}')
+            return redirect('admin_timetable')
+    
+    # Get data for form
+    courses = CourseOffering.objects.select_related('course', 'faculty__user').filter(semester__is_active=True)
+    semesters = Semester.objects.all()
+    
+    context = {
+        'courses': courses,
+        'semesters': semesters,
+    }
+    
+    return render(request, 'core/admin_management/admin_timetable_create.html', context)
 
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_edit(request, pk):
+    """Edit existing timetable entry"""
+    timetable = get_object_or_404(TimeTable, pk=pk)
+    
+    if request.method == 'POST':
+        try:
+            # Update timetable
+            timetable.course_offering_id = request.POST.get('course_offering')
+            timetable.day = request.POST.get('day')
+            timetable.start_time = request.POST.get('start_time')
+            timetable.end_time = request.POST.get('end_time')
+            timetable.room = request.POST.get('room', '')
+            timetable.semester_id = request.POST.get('semester')
+            
+            timetable.save()
+            
+            messages.success(request, 'Timetable entry updated successfully!')
+            return redirect('admin_timetable')
+            
+        except Exception as e:
+            messages.error(request, f'Error updating timetable entry: {str(e)}')
+            return redirect('admin_timetable')
+    
+    # Get data for form
+    courses = CourseOffering.objects.select_related('course', 'faculty__user').filter(semester__is_active=True)
+    semesters = Semester.objects.all()
+    
+    context = {
+        'timetable': timetable,
+        'courses': courses,
+        'semesters': semesters,
+    }
+    
+    return render(request, 'core/admin_management/admin_timetable_edit.html', context)
 
+@login_required
+@user_passes_test(is_admin)
+def admin_timetable_delete(request, pk):
+    """Delete timetable entry"""
+    timetable = get_object_or_404(TimeTable, pk=pk)
+    
+    if request.method == 'POST':
+        timetable.delete()
+        messages.success(request, 'Timetable entry deleted successfully!')
+        return redirect('admin_timetable')
+    
+    context = {
+        'timetable': timetable,
+    }
+    
+    return render(request, 'core/admin_management/admin_timetable_delete.html', context)
 
 @login_required
 def teacher_timetable(request):
