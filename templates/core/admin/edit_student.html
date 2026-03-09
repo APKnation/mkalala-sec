@@ -1,0 +1,217 @@
+{% extends 'core/admin_unified_dashboard.html' %}
+{% load static %}
+
+{% block title %}Edit Student - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">
+                    <i class="fas fa-user-edit me-2"></i>Edit Student Account
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'admin_unified_dashboard' page='users' %}">User Management</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'admin_unified_dashboard' page='students' %}">Students</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Student</li>
+                    </ol>
+                </nav>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        {{ student.user.get_full_name }} - Student Profile
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                                        {{ form.username }}
+                                        {% if form.username.errors %}
+                                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                        {{ form.first_name }}
+                                        {% if form.first_name.errors %}
+                                            <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                        {{ form.last_name }}
+                                        {% if form.last_name.errors %}
+                                            <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+                                        {{ form.password1 }}
+                                        {% if form.password1.errors %}
+                                            <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.password2.id_for_label }}" class="form-label">Confirm Password</label>
+                                        {{ form.password2 }}
+                                        {% if form.password2.errors %}
+                                            <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.phone.id_for_label }}" class="form-label">Phone</label>
+                                        {{ form.phone }}
+                                        {% if form.phone.errors %}
+                                            <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.address.id_for_label }}" class="form-label">Address</label>
+                                        {{ form.address }}
+                                        {% if form.address.errors %}
+                                            <div class="text-danger small mt-1">{{ form.address.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.roll_number.id_for_label }}" class="form-label">Roll Number</label>
+                                        {{ form.roll_number }}
+                                        {% if form.roll_number.errors %}
+                                            <div class="text-danger small mt-1">{{ form.roll_number.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.admission_year.id_for_label }}" class="form-label">Admission Year</label>
+                                        {{ form.admission_year }}
+                                        {% if form.admission_year.errors %}
+                                            <div class="text-danger small mt-1">{{ form.admission_year.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="{{ form.current_form.id_for_label }}" class="form-label">Current Form</label>
+                                        {{ form.current_form }}
+                                        {% if form.current_form.errors %}
+                                            <div class="text-danger small mt-1">{{ form.current_form.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="{{ form.current_semester.id_for_label }}" class="form-label">Current Semester</label>
+                                        {{ form.current_semester }}
+                                        {% if form.current_semester.errors %}
+                                            <div class="text-danger small mt-1">{{ form.current_semester.errors.0 }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">
+                                        <i class="fas fa-save me-2"></i>
+                                        Update Student Account
+                                    </button>
+                                    <a href="{% url 'admin_unified_dashboard' page='students' %}" class="btn btn-secondary btn-lg ms-2">
+                                        <i class="fas fa-times me-2"></i>
+                                        Cancel
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Student Information
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Personal Details</h6>
+                                        <p class="mb-1"><strong>Username:</strong> {{ student.user.username }}</p>
+                                        <p class="mb-1"><strong>Full Name:</strong> {{ student.user.get_full_name }}</p>
+                                        <p class="mb-1"><strong>Email:</strong> {{ student.user.email }}</p>
+                                        <p class="mb-1"><strong>Role:</strong> <span class="badge bg-primary">Student</span></p>
+                                        <p class="mb-1"><strong>Account Status:</strong> 
+                                            {% if student.user.is_active %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Inactive</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Academic Information</h6>
+                                        <p class="mb-1"><strong>Roll Number:</strong> {{ student.roll_number }}</p>
+                                        <p class="mb-1"><strong>Admission Year:</strong> {{ student.admission_year }}</p>
+                                        <p class="mb-1"><strong>Current Form:</strong> {{ student.current_form }}</p>
+                                        <p class="mb-1"><strong>Current Semester:</strong> {{ student.current_semester }}</p>
+                                        <p class="mb-1"><strong>Phone:</strong> {{ student.phone }}</p>
+                                        <p class="mb-1"><strong>Address:</strong> {{ student.address }}</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Account Statistics</h6>
+                                        <p class="mb-1"><strong>Date Joined:</strong> {{ student.user.date_joined|date:"M d, Y" }}</p>
+                                        <p class="mb-1"><strong>Last Login:</strong> {{ student.user.last_login|date:"M d, Y H:i" }}</p>
+                                        <p class="mb-1"><strong>Profile Complete:</strong> 
+                                            {% if student.roll_number and student.admission_year %}
+                                                <span class="badge bg-success">Complete</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Incomplete</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <a href="{% url 'admin_unified_dashboard' page='students' %}" class="btn btn-info">
+                                            <i class="fas fa-arrow-left me-2"></i>
+                                            Back to Students
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

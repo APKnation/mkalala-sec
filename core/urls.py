@@ -136,6 +136,14 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     path('headmaster/create/student/', views_admin.headmaster_create_student, name='headmaster_create_student'),
     path('headmaster/create/teacher/', views_admin.headmaster_create_teacher, name='headmaster_create_teacher'),
     
+    # Admin User Management URLs (Edit/Delete)
+    path('admin/edit/student/<int:pk>/', views_admin.admin_edit_student, name='admin_edit_student'),
+    path('admin/delete/student/<int:pk>/', views_admin.admin_delete_student, name='admin_delete_student'),
+    path('admin/edit/teacher/<int:pk>/', views_admin.admin_edit_teacher, name='admin_edit_teacher'),
+    path('admin/delete/teacher/<int:pk>/', views_admin.admin_delete_teacher, name='admin_delete_teacher'),
+    path('admin/edit/headmaster/<int:pk>/', views_admin.admin_edit_headmaster, name='admin_edit_headmaster'),
+    path('admin/delete/headmaster/<int:pk>/', views_admin.admin_delete_headmaster, name='admin_delete_headmaster'),
+    
     # AJAX URLs for inline editing
     path('ajax/student/<int:student_id>/edit/', views_ajax.ajax_student_edit, name='ajax_student_edit'),
     path('ajax/student/<int:student_id>/detail/', views_ajax.ajax_student_detail, name='ajax_student_detail'),

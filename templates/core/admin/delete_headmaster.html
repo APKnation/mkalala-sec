@@ -1,0 +1,173 @@
+{% extends 'core/admin_unified_dashboard.html' %}
+{% load static %}
+
+{% block title %}Delete Headmaster - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">
+                    <i class="fas fa-user-times me-2"></i>Delete Headmaster Account
+                </h2>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'admin_unified_dashboard' page='users' %}">User Management</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'admin_unified_dashboard' page='users' %}">Headmasters</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">Delete Headmaster</li>
+                    </ol>
+                </nav>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirm Headmaster Deletion
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Warning: This action cannot be undone!
+                        </h5>
+                        <p>You are about to permanently delete the headmaster account and All associated data. This action is irreversible and will remove:</p>
+                        <ul>
+                            <li>Headmaster profile information</li>
+                            <li>Administrative access and permissions</li>
+                            <li>School management capabilities</li>
+                            <li>Teacher and student management records</li>
+                            <li>System settings and configurations</li>
+                            <li>All administrative history and logs</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="card bg-light border-left-danger">
+                                <div class="card-body">
+                                    <h6 class="text-danger mb-3">
+                                        <i class="fas fa-user-tie me-2"></i>
+                                        Headmaster to be Deleted
+                                    </h6>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Name:</strong> {{ headmaster.user.get_full_name }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Username:</strong> {{ headmaster.user.username }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Employee ID:</strong> {{ headmaster.employee_id }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Email:</strong> {{ headmaster.user.email }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Phone:</strong> {{ headmaster.phone }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Address:</strong> {{ headmaster.address }}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <p class="mb-1"><strong>Date Joined:</strong> {{ headmaster.user.date_joined|date:"M d, Y" }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-header bg-info text-white">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Deletion Impact
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <h6 class="text-danger">Data Loss</h6>
+                                        <p class="text-muted">All headmaster data will be permanently lost.</p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-warning">Administrative Impact</h6>
+                                        <p class="text-muted">
+                                            <i class="fas fa-shield-alt me-2"></i>
+                                            {{ headmaster.employee_id }}'s administrative access will be lost
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <h6 class="text-info">System Impact</h6>
+                                        <p class="text-muted">
+                                            <i class="fas fa-user-shield me-2"></i>
+                                            Headmaster account and all related records deleted
+                                        </p>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <a href="{% url 'admin_unified_dashboard' page='users' %}" class="btn btn-info">
+                                            <i class="fas fa-arrow-left me-2"></i>
+                                            Cancel Deletion
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <form method="post" onsubmit="return confirm('Are you sure you want to delete this headmaster? This action cannot be undone!');">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="confirm_text" class="form-label">
+                                    Type <strong>DELETE</strong> to confirm deletion:
+                                </label>
+                                <input type="text" name="confirm_text" id="confirm_text" class="form-control" required>
+                                <small class="form-text text-muted">This is required to prevent accidental deletions</small>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-danger btn-lg w-100" id="deleteBtn" disabled>
+                                    <i class="fas fa-trash me-2"></i>
+                                    Delete Headmaster Account
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmInput = document.getElementById('confirm_text');
+    const deleteBtn = document.getElementById('deleteBtn');
+    
+    confirmInput.addEventListener('input', function() {
+        deleteBtn.disabled = this.value !== 'DELETE';
+    });
+});
+</script>
+{% endblock %}
