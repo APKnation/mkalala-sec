@@ -150,6 +150,27 @@ class PublicUserRegistrationForm(UserCreationForm):
         initial='student'
     )
     
+    # Name fields for personalization
+    first_name = forms.CharField(
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+            'placeholder': 'Enter first name'
+        }),
+        help_text="Enter your first name"
+    )
+    
+    last_name = forms.CharField(
+        max_length=30,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+            'placeholder': 'Enter last name'
+        }),
+        help_text="Enter your last name"
+    )
+    
     # Additional fields for detailed user information
     phone = forms.CharField(
         max_length=20,

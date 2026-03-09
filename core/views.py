@@ -458,9 +458,12 @@ class CustomLoginView(View):
             
             auth_login(request, user)
             
-            # Show success message with actual role
+            # Show success message with actual role and name
             user_role = getattr(user, 'role', 'user').title()
-            messages.success(request, f'Welcome back! You are logged in as {user_role}.')
+            if user.role == 'student':
+                messages.success(request, f'Welcome back, {user.get_full_name() or user.username}! You are logged in as Student.')
+            else:
+                messages.success(request, f'Welcome back! You are logged in as {user_role}.')
             
             return self.redirect_based_on_role(user)
         else:
@@ -531,12 +534,7 @@ class PublicRegisterView(CreateView):
                 current_form=1,
                 current_semester=1,
                 phone=form.cleaned_data.get('phone', ''),
-                address=form.cleaned_data.get('address', ''),
-                date_of_birth=form.cleaned_data.get('date_of_birth', None),
-                gender=form.cleaned_data.get('gender', ''),
-                necta_exam_number=form.cleaned_data.get('necta_exam_number', ''),
-                birth_certificate_number=form.cleaned_data.get('birth_certificate_number', ''),
-                previous_school=form.cleaned_data.get('previous_school', ''),
+                address=form.cleaned_data.get('address', '')
             )
             messages.success(self.request, f"Welcome {user.get_full_name() or user.username}! Your student account has been created successfully. Please login to access your dashboard.")
         elif user.role == 'teacher':

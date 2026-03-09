@@ -84,14 +84,24 @@
                             </h3>
                             <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
                                 <div>
+                                    <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">First Name *</label>
+                                    {{ form.first_name }}
+                                    {% if form.first_name.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+                                </div>
+                                <div>
+                                    <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Last Name *</label>
+                                    {{ form.last_name }}
+                                    {% if form.last_name.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+                                </div>
+                                <div>
                                     <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Username *</label>
                                     {{ form.username }}
                                     {% if form.username.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.username.errors.0 }}</p>{% endif %}
                                 </div>
                                 <div>
-                                    <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">I am a *</label>
-                                    {{ form.role }}
-                                    {% if form.role.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.role.errors.0 }}</p>{% endif %}
+                                    <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Email Address</label>
+                                    {{ form.email }}
+                                    {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
                                 </div>
                                 <div>
                                     <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Password *</label>
@@ -116,11 +126,6 @@
                             </h3>
                             <div class="grid md:grid-cols-2 gap-4 sm:gap-6">
                                 <div>
-                                    <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Email Address</label>
-                                    {{ form.email }}
-                                    {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
-                                </div>
-                                <div>
                                     <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Phone Number</label>
                                     {{ form.phone }}
                                     {% if form.phone.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
@@ -129,6 +134,7 @@
                                     <label class="block text-xs sm:text-sm font-semibold text-blue-700 mb-1 sm:mb-2">Address</label>
                                     {{ form.address }}
                                     {% if form.address.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.address.errors.0 }}</p>{% endif %}
+                                </div>
                             </div>
                         </div>
 
