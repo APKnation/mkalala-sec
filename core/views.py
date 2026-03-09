@@ -2273,10 +2273,15 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     form_class = UserUpdateForm
     template_name = 'core/user_management/edit_user.html'
-    success_url = reverse_lazy('admin_dashboard')
+    success_url = reverse_lazy('admin_unified_dashboard', kwargs={'page': 'users'})
 
     def test_func(self):
         return is_admin(self.request.user)
+    
+    def get_object(self, queryset=None):
+        """Get the user object to edit"""
+        pk = self.kwargs.get('pk')
+        return get_object_or_404(User, pk=pk)
     
     def form_valid(self, form):
         messages.success(self.request, f'User "{form.instance.get_full_name()}" has been updated successfully!')

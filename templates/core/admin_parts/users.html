@@ -184,7 +184,7 @@
                                             <a href="{% url 'user_approve' user.pk %}" class="text-green-600 hover:text-green-800" title="Approve User">
                                                 <i class="fas fa-check"></i>
                                             </a>
-                                            <a href="{% url 'admin_unified_dashboard' 'edit-user' %}?user_id={{ user.pk }}" class="text-blue-600 hover:text-blue-800" title="Edit User">
+                                            <a href="{% url 'edit_user' user.pk %}" class="text-blue-600 hover:text-blue-800" title="Edit User">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <a href="{% url 'delete_user' user.pk %}" class="text-red-600 hover:text-red-800" title="Delete User" 
@@ -291,14 +291,15 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end space-x-2">
-                                <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors" title="Edit User">
+                                <a href="{% url 'edit_user' user.pk %}" class="text-blue-600 hover:text-blue-800 transition-colors" title="Edit User">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <a href="#" class="text-purple-600 hover:text-purple-800 transition-colors" title="User Permissions">
                                     <i class="fas fa-user-shield"></i>
                                 </a>
                                 {% if user != request.user %}
-                                <a href="#" class="text-red-600 hover:text-red-800 transition-colors" title="Delete User">
+                                <a href="{% url 'delete_user' user.pk %}" class="text-red-600 hover:text-red-800 transition-colors" title="Delete User" 
+                                   onclick="return confirm('Are you sure you want to delete {{ user.get_full_name|default:user.username }}?')">
                                     <i class="fas fa-trash"></i>
                                 </a>
                                 {% endif %}
