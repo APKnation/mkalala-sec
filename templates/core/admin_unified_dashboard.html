@@ -1,5 +1,6 @@
 {% extends "core/base_dashboard.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}{{ page_title|default:"Admin Dashboard" }} | Mkalala Sec{% endblock %}
 {% block mobile_title %}{{ page_title|default:"Admin Dashboard" }}{% endblock %}
@@ -205,6 +206,13 @@
     {% include 'core/admin_parts/users.html' %}
 </div>
 
+<!-- Edit User Section -->
+<div id="edit-user-section" class="content-section {% if current_page == 'edit-user' %}active{% endif %} page-content">
+    {% if current_page == 'edit-user' %}
+        {% include 'core/admin_parts/edit_user.html' %}
+    {% endif %}
+</div>
+
 <!-- Students Section -->
 <div id="students-section" class="content-section {% if current_page == 'students' %}active{% endif %} page-content">
     {% include 'core/admin_parts/students.html' %}
@@ -228,6 +236,26 @@
 <!-- Subjects Section -->
 <div id="subjects-section" class="content-section {% if current_page == 'subjects' %}active{% endif %} page-content">
     {% include 'core/admin_parts/subjects.html' %}
+</div>
+
+<!-- Add Subject Section -->
+<div id="add-subject-section" class="content-section {% if current_page == 'add-subject' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/add_subject.html' %}
+</div>
+
+<!-- Add Class Section -->
+<div id="add-class-section" class="content-section {% if current_page == 'add-class' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/add_class.html' %}
+</div>
+
+<!-- Edit Class Section -->
+<div id="edit-class-section" class="content-section {% if current_page == 'edit-class' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/edit_class.html' %}
+</div>
+
+<!-- Delete Class Section -->
+<div id="delete-class-section" class="content-section {% if current_page == 'delete-class' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/delete_class.html' %}
 </div>
 
 <!-- Attendance Section -->

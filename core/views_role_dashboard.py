@@ -102,6 +102,14 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_classes_context(user, admin_profile))
     elif page == 'subjects':
         context.update(get_admin_subjects_context(user, admin_profile))
+    elif page == 'add-subject':
+        context.update(get_admin_add_subject_context(request, user, admin_profile))
+    elif page == 'add-class':
+        context.update(get_admin_add_class_context(request, user, admin_profile))
+    elif page == 'edit-class':
+        context.update(get_admin_edit_class_context(request, user, admin_profile))
+    elif page == 'delete-class':
+        context.update(get_admin_delete_class_context(request, user, admin_profile))
     elif page == 'attendance':
         context.update(get_admin_attendance_context(user, admin_profile))
     elif page == 'grading':
@@ -114,6 +122,10 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_fees_context(user, admin_profile))
     elif page == 'reports':
         context.update(get_admin_reports_context(user, admin_profile))
+    elif page == 'users':
+        context.update(get_admin_users_context(user, admin_profile))
+    elif page == 'edit-user':
+        context.update(get_admin_edit_user_context(request, user, admin_profile))
     elif page == 'settings':
         context.update(get_admin_settings_context(user, admin_profile))
     elif page == 'logs':
@@ -390,11 +402,16 @@ def get_admin_page_title(page):
     titles = {
         'overview': 'Admin Dashboard',
         'users': 'User Management',
+        'edit-user': 'Edit User',
         'students': 'Students',
         'teachers': 'Teachers',
         'courses': 'Courses',
         'classes': 'Classes',
         'subjects': 'Subjects',
+        'add-subject': 'Add Subject',
+        'add-class': 'Add Class',
+        'edit-class': 'Edit Class',
+        'delete-class': 'Delete Class',
         'attendance': 'Attendance',
         'grading': 'Grading',
         'exams': 'Exams',
@@ -456,12 +473,39 @@ def get_student_overview_context(user, student_profile):
 
 def get_admin_overview_context(user, admin_profile):
     """Get admin overview page context"""
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in overview
+            'last_month': 0,  # Placeholder - no payment data in overview
+        },
+    }
+    
     context = {
         'total_users': User.objects.count(),
         'total_students': User.objects.filter(role='student').count(),
         'total_teachers': User.objects.filter(role='teacher').count(),
         'total_courses': CourseOffering.objects.count(),
         'pending_announcements': 3,  # Placeholder
+        'monthly_trends': monthly_trends,  # Add monthly trends for reports template
     }
     
     return context
@@ -601,33 +645,88 @@ def get_student_messages_context(user, student_profile):
 def get_student_profile_context(user, student_profile):
     return {'user_profile': user}
 
-def get_admin_overview_context(user, admin_profile):
-    """Get admin overview page context"""
-    context = {
-        'total_users': User.objects.count(),
-        'total_students': User.objects.filter(role='student').count(),
-        'total_teachers': User.objects.filter(role='teacher').count(),
-        'total_courses': CourseOffering.objects.count(),
-        'pending_announcements': 3,  # Placeholder
-    }
-    
-    return context
-
 def get_admin_users_context(user, admin_profile):
     """Get admin users page context"""
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in users context
+            'last_month': 0,  # Placeholder - no payment data in users context
+        },
+    }
+    
     users = User.objects.all().order_by('-date_joined')[:20]
+    
+    # Get pending users for approval
+    pending_users = User.objects.filter(is_active=False)
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
     return {
         'users': users,
         'total_users': users.count(),
         'students_count': User.objects.filter(role='student').count(),
         'teachers_count': User.objects.filter(role='teacher').count(),
         'admins_count': User.objects.filter(role='admin').count(),
+        'pending_users': pending_users,
+        'pending_users_count': pending_users.count(),
+        'pending_students_count': pending_users.filter(role='student').count(),
+        'pending_teachers_count': pending_users.filter(role='teacher').count(),
+        'pending_admins_count': pending_users.filter(role='admin').count(),
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        'monthly_trends': monthly_trends,  # Add monthly trends for reports template
     }
 
 def get_admin_students_context(request, user, admin_profile):
     """Get admin students page context"""
     from .models import Department
     from django.db.models import Q
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in students context
+            'last_month': 0,  # Placeholder - no payment data in students context
+        },
+    }
     
     # Get all students with related data
     students = StudentProfile.objects.select_related(
@@ -675,24 +774,80 @@ def get_admin_students_context(request, user, admin_profile):
         'search_query': search_query,
         'department_filter': department_filter,
         'status_filter': status_filter,
+        'monthly_trends': monthly_trends,  # Add monthly trends for reports template
     }
 
 def get_admin_teachers_context(user, admin_profile):
     """Get admin teachers page context"""
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in teachers context
+            'last_month': 0,  # Placeholder - no payment data in teachers context
+        },
+    }
+    
     teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
     return {
         'teachers': teachers,
         'total_teachers': teachers.count(),
         'active_teachers': teachers.filter(is_active=True).count(),
+        'monthly_trends': monthly_trends,  # Add monthly trends for reports template
     }
 
 def get_admin_courses_context(user, admin_profile):
     """Get admin courses page context"""
     from .models import CourseOffering, Subject, Department
+    from django.utils import timezone
+    from datetime import timedelta
     
     courses = CourseOffering.objects.all().select_related('course', 'faculty').order_by('course__name')
     subjects = Subject.objects.all().order_by('name')
     departments = Department.objects.all().order_by('name')
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in courses context
+            'last_month': 0,  # Placeholder - no payment data in courses context
+        },
+    }
     
     return {
         'courses': courses,
@@ -700,21 +855,65 @@ def get_admin_courses_context(user, admin_profile):
         'active_offerings': courses.count(),  # All offerings are considered active
         'total_subjects': subjects.count(),
         'total_departments': departments.count(),
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
     }
 
 def get_admin_classes_context(user, admin_profile):
     """Get admin classes page context"""
+    from django.utils import timezone
+    from datetime import timedelta
+    
     classes = StudentClass.objects.all().order_by('form_level', 'name')
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in classes context
+            'last_month': 0,  # Placeholder - no payment data in classes context
+        },
+    }
+    
     return {
         'classes': classes,
         'total_classes': classes.count(),
         'active_classes': classes.filter(is_active=True).count(),
         'total_students': classes.aggregate(total=Sum('current_students'))['total'] or 0,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
     }
 
 def get_admin_subjects_context(user, admin_profile):
     """Get admin subjects page context"""
     from .models import Subject, Department
+    from django.utils import timezone
+    from datetime import timedelta
     
     subjects = Subject.objects.all().order_by('name')
     departments = Department.objects.all().order_by('name')
@@ -723,12 +922,388 @@ def get_admin_subjects_context(user, admin_profile):
     core_subjects = subjects.filter(is_core=True)
     elective_subjects = subjects.filter(is_core=False)
     
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in subjects context
+            'last_month': 0,  # Placeholder - no payment data in subjects context
+        },
+    }
+    
     return {
         'subjects': subjects,
         'total_subjects': subjects.count(),
         'core_subjects': core_subjects.count(),
         'elective_subjects': elective_subjects.count(),
         'total_departments': departments.count(),
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_add_subject_context(request, user, admin_profile):
+    """Get admin add subject page context"""
+    from .forms import SubjectForm
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, f'Subject "{form.instance.name}" has been created successfully!')
+            # Redirect back to subjects page
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'subjects')
+    else:
+        form = SubjectForm()
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in add subject context
+            'last_month': 0,  # Placeholder - no payment data in add subject context
+        },
+    }
+    
+    return {
+        'form': form,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_add_class_context(request, user, admin_profile):
+    """Get admin add class page context"""
+    from django import forms
+    from .models import StudentClass, FacultyProfile, Department
+    
+    # Create a simple form for StudentClass
+    class StudentClassForm(forms.ModelForm):
+        class Meta:
+            model = StudentClass
+            fields = ['name', 'form_level', 'class_teacher', 'department', 'max_students', 'current_students', 'academic_year', 'is_active']
+            widgets = {
+                'name': forms.TextInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Enter class name (e.g., Form 1A, Form 2B)'
+                }),
+                'form_level': forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                }),
+                'class_teacher': forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                }),
+                'department': forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                }),
+                'max_students': forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Maximum number of students',
+                    'min': '1'
+                }),
+                'current_students': forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Current number of students',
+                    'min': '0'
+                }),
+                'academic_year': forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Academic year (e.g., 2026)',
+                    'min': '2020',
+                    'max': '2030'
+                }),
+                'is_active': forms.CheckboxInput(attrs={
+                    'class': 'w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500'
+                })
+            }
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Filter class_teacher queryset to only include teachers
+            self.fields['class_teacher'].queryset = FacultyProfile.objects.filter(user__role='teacher')
+            self.fields['class_teacher'].empty_label = "Select a class teacher (optional)"
+            
+            # Set current academic year as default
+            if not self.instance.pk:  # Only for new instances
+                from django.utils import timezone
+                current_year = timezone.now().year
+                self.fields['academic_year'].initial = current_year
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = StudentClassForm(request.POST)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, f'Class "{form.instance.name}" has been created successfully!')
+            # Redirect back to classes page
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'classes')
+    else:
+        form = StudentClassForm()
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in add class context
+            'last_month': 0,  # Placeholder - no payment data in add class context
+        },
+    }
+    
+    return {
+        'form': form,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_edit_class_context(request, user, admin_profile):
+    """Get admin edit class page context"""
+    from django import forms
+    from django.shortcuts import get_object_or_404
+    from .models import StudentClass, FacultyProfile, Department
+    
+    # Get class ID from URL parameter
+    class_id = request.GET.get('class_id')
+    if not class_id:
+        # Redirect to classes page if no class ID provided
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'classes')
+    
+    # Get the class to edit
+    class_obj = get_object_or_404(StudentClass, id=class_id)
+    
+    # Create a simple form for StudentClass
+    class StudentClassForm(forms.ModelForm):
+        class Meta:
+            model = StudentClass
+            fields = ['name', 'form_level', 'class_teacher', 'department', 'max_students', 'current_students', 'academic_year', 'is_active']
+            widgets = {
+                'name': forms.TextInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Enter class name (e.g., Form 1A, Form 2B)'
+                }),
+                'form_level': forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                }),
+                'class_teacher': forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                }),
+                'department': forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                }),
+                'max_students': forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Maximum number of students',
+                    'min': '1'
+                }),
+                'current_students': forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Current number of students',
+                    'min': '0'
+                }),
+                'academic_year': forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+                    'placeholder': 'Academic year (e.g., 2026)',
+                    'min': '2020',
+                    'max': '2030'
+                }),
+                'is_active': forms.CheckboxInput(attrs={
+                    'class': 'w-4 h-4 text-primary-600 border-neutral-300 rounded focus:ring-primary-500'
+                })
+            }
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Filter class_teacher queryset to only include teachers
+            self.fields['class_teacher'].queryset = FacultyProfile.objects.filter(user__role='teacher')
+            self.fields['class_teacher'].empty_label = "Select a class teacher (optional)"
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = StudentClassForm(request.POST, instance=class_obj)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, f'Class "{form.instance.name}" has been updated successfully!')
+            # Redirect back to classes page
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'classes')
+    else:
+        form = StudentClassForm(instance=class_obj)
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in edit class context
+            'last_month': 0,  # Placeholder - no payment data in edit class context
+        },
+    }
+    
+    return {
+        'form': form,
+        'class_obj': class_obj,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_delete_class_context(request, user, admin_profile):
+    """Get admin delete class page context"""
+    from django.shortcuts import get_object_or_404
+    from .models import StudentClass
+    
+    # Get class ID from URL parameter
+    class_id = request.GET.get('class_id')
+    if not class_id:
+        # Redirect to classes page if no class ID provided
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'classes')
+    
+    # Get the class to delete
+    class_obj = get_object_or_404(StudentClass, id=class_id)
+    
+    # Handle deletion
+    if request.method == 'POST':
+        class_name = class_obj.name
+        class_obj.delete()
+        from django.contrib import messages
+        messages.success(request, f'Class "{class_name}" has been deleted successfully!')
+        # Redirect back to classes page
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'classes')
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in delete class context
+            'last_month': 0,  # Placeholder - no payment data in delete class context
+        },
+    }
+    
+    return {
+        'class_obj': class_obj,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
     }
 
 def get_admin_attendance_context(user, admin_profile):
@@ -756,19 +1331,103 @@ def get_admin_grading_context(user, admin_profile):
 
 def get_admin_exams_context(user, admin_profile):
     """Get admin exams page context"""
-    # Placeholder for exam data - you may need to add Exam model
+    from .models import Exam, CourseOffering, StudentClass, Grade
+    from django.db.models import Count, Avg
+    from django.utils import timezone
+    
+    # Get all exams with related data
+    exams = Exam.objects.select_related(
+        'course_offering', 'course_offering__course', 'course_offering__faculty', 
+        'course_offering__faculty__user', 'student_class'
+    ).order_by('-exam_date')
+    
+    # Calculate statistics
+    total_exams = exams.count()
+    upcoming_exams = exams.filter(exam_date__gt=timezone.now().date()).count()
+    completed_exams = exams.filter(exam_date__lt=timezone.now().date()).count()
+    
+    # Get recent grades for performance analysis
+    recent_grades = Grade.objects.select_related(
+        'enrollment', 'enrollment__student', 'enrollment__student__user',
+        'enrollment__course_offering', 'enrollment__course_offering__course'
+    ).order_by('-awarded_on')[:20]
+    
+    # Calculate average grade
+    average_grade = Grade.objects.aggregate(avg=Avg('points'))['avg'] or 0
+    
+    # Get course offerings for dropdown
+    course_offerings = CourseOffering.objects.select_related('course', 'faculty', 'faculty__user').order_by('course__name')
+    
+    # Get classes for dropdown
+    classes = StudentClass.objects.all().order_by('form_level', 'name')
+    
+    # Exam statistics by type
+    exam_stats = {
+        'total': total_exams,
+        'upcoming': upcoming_exams,
+        'completed': completed_exams,
+        'today': exams.filter(exam_date=timezone.now().date()).count(),
+    }
+    
+    # Performance statistics
+    performance_stats = {
+        'total_grades': Grade.objects.count(),
+        'average_grade': average_grade,
+        'recent_grades': recent_grades.count(),
+        'unique_students': Grade.objects.values('enrollment__student').distinct().count(),
+    }
+    
     return {
-        'exams': [],
-        'total_exams': 0,
-        'upcoming_exams': 0,
+        'exams': exams[:50],  # Limit to 50 for performance
+        'recent_grades': recent_grades,
+        'course_offerings': course_offerings,
+        'classes': classes,
+        'exam_stats': exam_stats,
+        'performance_stats': performance_stats,
+        'total_exams': total_exams,
+        'upcoming_exams': upcoming_exams,
     }
 
 def get_admin_timetable_context(user, admin_profile):
     """Get admin timetable page context"""
-    # Placeholder for timetable data
+    from .models import TimetableEntry, CourseOffering, StudentClass, FacultyProfile
+    from django.db.models import Count
+    
+    # Get all timetable entries with related data
+    timetable_entries = TimetableEntry.objects.select_related(
+        'course_offering', 'course_offering__course', 'course_offering__faculty', 
+        'course_offering__faculty__user', 'student_class'
+    ).order_by('day', 'start_time')
+    
+    # Get statistics
+    total_entries = timetable_entries.count()
+    entries_by_day = timetable_entries.values('day').annotate(count=Count('id')).order_by('day')
+    
+    # Get course offerings for dropdown
+    course_offerings = CourseOffering.objects.select_related('course', 'faculty', 'faculty__user').order_by('course__name')
+    
+    # Get classes for dropdown
+    classes = StudentClass.objects.all().order_by('form_level', 'name')
+    
+    # Get teachers for dropdown
+    teachers = FacultyProfile.objects.select_related('user').order_by('user__first_name', 'user__last_name')
+    
+    # Schedule statistics
+    schedule_stats = {
+        'total_entries': total_entries,
+        'unique_courses': timetable_entries.values('course_offering__course').distinct().count(),
+        'unique_teachers': timetable_entries.values('course_offering__faculty').distinct().count(),
+        'unique_classes': timetable_entries.values('student_class').distinct().count(),
+    }
+    
     return {
-        'timetable_entries': [],
-        'total_entries': 0,
+        'timetable_entries': timetable_entries,
+        'entries_by_day': entries_by_day,
+        'course_offerings': course_offerings,
+        'classes': classes,
+        'teachers': teachers,
+        'schedule_stats': schedule_stats,
+        'total_entries': total_entries,
     }
 
 def get_admin_announcements_context(user, admin_profile):
@@ -784,11 +1443,36 @@ def get_admin_announcements_context(user, admin_profile):
 
 def get_admin_fees_context(user, admin_profile):
     """Get admin fees page context"""
-    # Placeholder for fees data - you may need to add Fee model
+    from .models import Fee, StudentProfile, Payment
+    from django.db.models import Sum, Q
+    
+    # Get all fee records with related student data
+    fee_records = Fee.objects.select_related('student', 'student__user').order_by('-due_date')
+    
+    # Calculate statistics
+    total_fees = fee_records.aggregate(total=Sum('amount'))['total'] or 0
+    collected_amount = Payment.objects.aggregate(total=Sum('amount'))['total'] or 0
+    pending_fees = fee_records.filter(status='pending').aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Get recent payments
+    recent_payments = Payment.objects.select_related('fee', 'fee__student', 'fee__student__user').order_by('-payment_date')[:10]
+    
+    # Fee statistics by status
+    fee_stats = {
+        'total': fee_records.count(),
+        'paid': fee_records.filter(status='paid').count(),
+        'pending': fee_records.filter(status='pending').count(),
+        'overdue': fee_records.filter(status='overdue').count(),
+    }
+    
     return {
-        'fee_records': [],
-        'total_collected': 0,
-        'pending_fees': 0,
+        'fee_records': fee_records[:50],  # Limit to 50 for performance
+        'recent_payments': recent_payments,
+        'total_fees': total_fees,
+        'collected_amount': collected_amount,
+        'pending_fees': pending_fees,
+        'fee_stats': fee_stats,
+        'total_students': StudentProfile.objects.count(),
     }
 
 def get_admin_library_context(user, admin_profile):
@@ -797,23 +1481,158 @@ def get_admin_library_context(user, admin_profile):
     return {
         'library_items': [],
         'total_books': 0,
-        'borrowed_books': 0,
-    }
-
-def get_admin_reports_context(user, admin_profile):
-    """Get admin reports page context"""
-    # Placeholder for reports data
-    return {
-        'reports': [],
-        'generated_reports': 0,
     }
 
 def get_admin_settings_context(user, admin_profile):
     """Get admin settings page context"""
-    # Placeholder for settings data
+    from .models import SystemSetting, SchoolInfo, User, StudentProfile, FacultyProfile, HeadmasterProfile
+    from django.db.models import Count
+    
+    # Get system settings
+    system_settings = SystemSetting.objects.all().order_by('category', 'key')
+    
+    # Get school information
+    try:
+        school_info = SchoolInfo.objects.first()
+    except:
+        school_info = None
+    
+    # User statistics for settings
+    user_stats = {
+        'total_users': User.objects.count(),
+        'active_users': User.objects.filter(is_active=True).count(),
+        'students': StudentProfile.objects.count(),
+        'teachers': FacultyProfile.objects.count(),
+        'headmasters': HeadmasterProfile.objects.count(),
+        'admins': User.objects.filter(is_superuser=True).count(),
+    }
+    
+    # Settings by category
+    settings_by_category = {}
+    for setting in system_settings:
+        if setting.category not in settings_by_category:
+            settings_by_category[setting.category] = []
+        settings_by_category[setting.category].append(setting)
+    
+    # Recent user activity (last 30 days)
+    from django.utils import timezone
+    from datetime import timedelta
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+    
+    recent_users = User.objects.filter(
+        date_joined__gte=thirty_days_ago
+    ).order_by('-date_joined')[:10]
+    
     return {
-        'settings': {},
-        'system_settings': {},
+        'system_settings': system_settings,
+        'school_info': school_info,
+        'user_stats': user_stats,
+        'settings_by_category': settings_by_category,
+        'recent_users': recent_users,
+        'total_settings': system_settings.count(),
+    }
+
+def get_admin_reports_context(user, admin_profile):
+    """Get admin reports page context"""
+    from .models import StudentProfile, Grade, Fee, Payment, Exam, CourseOffering, Attendance
+    from django.db.models import Count, Avg, Sum, Q
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get current date and date ranges
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Student statistics
+    total_students = StudentProfile.objects.count()
+    active_students = StudentProfile.objects.filter(user__is_active=True).count()
+    new_students_this_month = StudentProfile.objects.filter(
+        user__date_joined__gte=this_month_start
+    ).count()
+    
+    # Academic performance statistics
+    grades_data = Grade.objects.aggregate(
+        total_grades=Count('id'),
+        avg_grade=Avg('points'),
+        excellent_grades=Count('id', filter=Q(points__gte=4.0)),
+        good_grades=Count('id', filter=Q(points__gte=3.0, points__lt=4.0)),
+        passing_grades=Count('id', filter=Q(points__gte=2.0)),
+    )
+    
+    # Fee statistics
+    fee_data = Fee.objects.aggregate(
+        total_fees=Sum('amount'),
+        pending_fees=Sum('amount', filter=Q(status='pending')),
+        collected_fees=Sum('amount', filter=Q(status='paid')),
+    )
+    
+    payment_data = Payment.objects.filter(
+        payment_date__gte=this_month_start
+    ).aggregate(
+        monthly_collected=Sum('amount'),
+        payment_count=Count('id'),
+    )
+    
+    # Attendance statistics
+    attendance_data = Attendance.objects.aggregate(
+        total_sessions=Count('id'),
+        present_sessions=Count('id', filter=Q(status='P')),
+        absent_sessions=Count('id', filter=Q(status='A')),
+        late_sessions=Count('id', filter=Q(status='L')),
+    )
+    
+    # Recent activity
+    recent_grades = Grade.objects.select_related(
+        'enrollment__student__user', 'enrollment__course_offering__course'
+    ).order_by('-awarded_on')[:10]
+    
+    recent_payments = Payment.objects.select_related(
+        'fee__student__user', 'fee'
+    ).order_by('-payment_date')[:10]
+    
+    recent_exams = Exam.objects.select_related(
+        'course_offering__course', 'student_class'
+    ).order_by('-exam_date')[:10]
+    
+    # Course enrollment statistics
+    course_stats = CourseOffering.objects.annotate(
+        enrollment_count=Count('enrollments')
+    ).order_by('-enrollment_count')[:10]
+    
+    # Monthly trends
+    monthly_trends = {
+        'student_growth': {
+            'this_month': new_students_this_month,
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': payment_data['monthly_collected'] or 0,
+            'last_month': Payment.objects.filter(
+                payment_date__gte=last_month_start,
+                payment_date__lt=this_month_start
+            ).aggregate(total=Sum('amount'))['total'] or 0,
+        },
+    }
+    
+    return {
+        'total_students': total_students,
+        'active_students': active_students,
+        'new_students_this_month': new_students_this_month,
+        'grades_data': grades_data,
+        'fee_data': fee_data,
+        'payment_data': payment_data,
+        'attendance_data': attendance_data,
+        'recent_grades': recent_grades,
+        'recent_payments': recent_payments,
+        'recent_exams': recent_exams,
+        'course_stats': course_stats,
+        'monthly_trends': monthly_trends,
+        'generated_reports': 0,  # Placeholder for generated reports count
     }
 
 def get_admin_logs_context(user, admin_profile):
@@ -887,4 +1706,72 @@ def get_headmaster_notification_counts(user):
         'discipline': 2,  # Placeholder
         'messages': 1,  # Placeholder
         'announcements': 0,  # Placeholder
+    }
+
+def get_admin_edit_user_context(request, user, admin_profile):
+    """Get admin edit user page context"""
+    from django.shortcuts import get_object_or_404
+    from .forms import UserUpdateForm
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Get user ID from URL parameter
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        # Redirect to users page if no user ID provided
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'users')
+    
+    # Get the user to edit
+    edit_user = get_object_or_404(User, id=user_id)
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=edit_user)
+        if form.is_valid():
+            form.save()
+            from django.contrib import messages
+            messages.success(request, f'User "{edit_user.get_full_name()}" has been updated successfully!')
+            # Redirect back to users page
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'users')
+    else:
+        form = UserUpdateForm(instance=edit_user)
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in edit user context
+            'last_month': 0,  # Placeholder - no payment data in edit user context
+        },
+    }
+    
+    return {
+        'edit_user': edit_user,
+        'form': form,
+        'user_id': user_id,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
     }

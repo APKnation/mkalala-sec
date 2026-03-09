@@ -265,6 +265,17 @@ class UserApprovalView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         # Filter users who are pending approval, adjust this as per your logic
         return User.objects.filter(is_active=False)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pending_users = self.get_queryset()
+        
+        # Calculate statistics
+        context['pending_students_count'] = pending_users.filter(role='student').count()
+        context['pending_teachers_count'] = pending_users.filter(role='teacher').count()
+        context['pending_admins_count'] = pending_users.filter(role='admin').count()
+        
+        return context
+
     def test_func(self):
         # Only allow admins or staff to access this view
         return self.request.user.is_staff
@@ -3733,6 +3744,71 @@ class SystemSettingsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def test_func(self):
         return is_admin(self.request.user)
 
+@login_required
+@user_passes_test(is_admin)
+def admin_school_info_edit(request):
+    """Admin school information editing view"""
+    from django.contrib import messages
+    
+    if request.method == 'POST':
+        # Get form data
+        school_name = request.POST.get('school_name', '')
+        school_motto = request.POST.get('school_motto', '')
+        school_vision = request.POST.get('school_vision', '')
+        school_mission = request.POST.get('school_mission', '')
+        school_address = request.POST.get('school_address', '')
+        school_phone = request.POST.get('school_phone', '')
+        school_email = request.POST.get('school_email', '')
+        school_website = request.POST.get('school_website', '')
+        school_founded_year = request.POST.get('school_founded_year', '')
+        school_type = request.POST.get('school_type', '')
+        school_registration = request.POST.get('school_registration', '')
+        school_exam_center = request.POST.get('school_exam_center', '')
+        
+        # Update or create system settings
+        settings_data = {
+            'school_name': school_name,
+            'school_motto': school_motto,
+            'school_vision': school_vision,
+            'school_mission': school_mission,
+            'school_address': school_address,
+            'school_phone': school_phone,
+            'school_email': school_email,
+            'school_website': school_website,
+            'school_founded_year': school_founded_year,
+            'school_type': school_type,
+            'school_registration': school_registration,
+            'school_exam_center': school_exam_center,
+        }
+        
+        try:
+            for key, value in settings_data.items():
+                SystemSetting.objects.update_or_create(
+                    key=key,
+                    defaults={'value': value}
+                )
+            
+            messages.success(request, 'School information updated successfully!')
+            return redirect('admin_unified_dashboard', page='settings')
+        except Exception as e:
+            messages.error(request, f'Error updating school information: {str(e)}')
+    
+    # Get current school information
+    school_info = {}
+    try:
+        settings = SystemSetting.objects.all()
+        for setting in settings:
+            school_info[setting.key] = setting.value
+    except:
+        pass
+    
+    context = {
+        'school_info': school_info,
+        'title': 'Edit School Information',
+    }
+    
+    return render(request, 'core/admin_management/admin_school_info_edit.html', context)
+
 # ======================
 # Enrollment Views
 # ======================
@@ -4989,11 +5065,71 @@ def admin_timetable_delete(request, pk):
 @user_passes_test(is_admin)
 def admin_exams(request):
     """Admin exam management"""
+    # Get all exams with related data
+    exams = ExamSchedule.objects.select_related('course').order_by('-date', '-start_time')
+    
+    # Calculate statistics
+    total_exams = exams.count()
+    upcoming_exams = exams.filter(date__gte=timezone.now().date()).count()
+    past_exams = exams.filter(date__lt=timezone.now().date()).count()
+    today_exams = exams.filter(date=timezone.now().date()).count()
+    
     context = {
         'title': 'Exam Management',
+        'exams': exams,
+        'total_exams': total_exams,
+        'upcoming_exams': upcoming_exams,
+        'past_exams': past_exams,
+        'today_exams': today_exams,
         'school_info': get_school_info(),
     }
     return render(request, 'core/admin_management/admin_exams.html', context)
+
+
+@login_required
+@user_passes_test(is_admin)
+def admin_exam_create(request):
+    """Admin exam creation"""
+    if request.method == 'POST':
+        # Get form data
+        course_id = request.POST.get('course')
+        exam_type = request.POST.get('exam_type')
+        exam_date = request.POST.get('date')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        venue = request.POST.get('venue')
+        
+        # Validate required fields
+        if course_id and exam_type and exam_date and start_time and end_time and venue:
+            try:
+                course = Course.objects.get(id=course_id)
+                ExamSchedule.objects.create(
+                    course=course,
+                    exam_type=exam_type,
+                    date=exam_date,
+                    start_time=start_time,
+                    end_time=end_time,
+                    venue=venue
+                )
+                messages.success(request, f'Exam "{exam_type}" for {course.code} scheduled successfully!')
+                return redirect('admin_exams')
+            except Course.DoesNotExist:
+                messages.error(request, 'Invalid course selected.')
+            except Exception as e:
+                messages.error(request, f'Error creating exam: {str(e)}')
+        else:
+            messages.error(request, 'Please fill in all required fields.')
+    
+    # Get courses for dropdown
+    courses = Course.objects.all().order_by('code')
+    
+    context = {
+        'title': 'Create Exam',
+        'courses': courses,
+        'exam_types': ExamSchedule.EXAM_TYPE_CHOICES,
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/admin_management/admin_exam_create.html', context)
 
 
 @login_required
@@ -5047,34 +5183,45 @@ def admin_fees(request):
         fees = fees.filter(fee_structure_id=fee_structure_filter)
     
     # Calculate statistics
-    total_fees = fees.count()
-    paid_fees = fees.filter(is_paid=True).count()
-    pending_fees = fees.filter(is_paid=False).count()
-    overdue_fees = fees.filter(due_date__lt=timezone.now().date(), is_paid=False).count()
-    total_revenue = fees.aggregate(total=Sum('amount'))['total'] or 0
-    collected_revenue = fees.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
+    total_fees_amount = fees.aggregate(total=Sum('amount'))['total'] or 0
+    collected_amount = fees.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
+    pending_fees_amount = fees.filter(is_paid=False).aggregate(total=Sum('amount'))['total'] or 0
     
-    # Calculate percentages
-    paid_percentage = (paid_fees / total_fees * 100) if total_fees > 0 else 0
-    pending_percentage = (pending_fees / total_fees * 100) if total_fees > 0 else 0
-    overdue_percentage = (overdue_fees / total_fees * 100) if total_fees > 0 else 0
+    # Fee counts for stats
+    total_fees_count = fees.count()
+    paid_fees_count = fees.filter(is_paid=True).count()
+    pending_fees_count = fees.filter(is_paid=False).count()
+    overdue_fees_count = fees.filter(due_date__lt=timezone.now().date(), is_paid=False).count()
+    
+    # Get total students
+    total_students = StudentProfile.objects.count()
+    
+    # Get recent payments
+    recent_payments = Payment.objects.select_related(
+        'fee__student__user'
+    ).order_by('-payment_date')[:10]
+    
+    # Create fee stats dictionary
+    fee_stats = {
+        'total': total_fees_count,
+        'paid': paid_fees_count,
+        'pending': pending_fees_count,
+        'overdue': overdue_fees_count,
+    }
     
     context = {
-        'fees': fees,
+        'fee_records': fees,
         'fee_structures': fee_structures,
-        'total_fees': total_fees,
-        'paid_fees': paid_fees,
-        'pending_fees': pending_fees,
-        'overdue_fees': overdue_fees,
-        'total_revenue': total_revenue,
-        'collected_revenue': collected_revenue,
+        'total_fees': total_fees_amount,
+        'collected_amount': collected_amount,
+        'pending_fees': pending_fees_amount,
+        'fee_stats': fee_stats,
+        'recent_payments': recent_payments,
+        'total_students': total_students,
         'search_query': search_query,
         'status_filter': status_filter,
         'fee_structure_filter': fee_structure_filter,
         'today': timezone.now().date(),
-        'paid_percentage': paid_percentage,
-        'pending_percentage': pending_percentage,
-        'overdue_percentage': overdue_percentage,
     }
     
     return render(request, 'core/admin_management/admin_fees.html', context)
@@ -5424,3 +5571,33 @@ def process_payment(request):
             messages.error(request, f"Payment error: {str(e)}")
             
     return redirect('student_fees')
+
+@login_required
+def delete_user(request, pk):
+    """Delete a user"""
+    from django.shortcuts import get_object_or_404
+    
+    user = get_object_or_404(User, pk=pk)
+    
+    # Check if user has permission to delete
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to delete users.")
+        return redirect('admin_unified_dashboard', 'users')
+    
+    # Prevent deletion of self
+    if user == request.user:
+        messages.error(request, "You cannot delete your own account.")
+        return redirect('admin_unified_dashboard', 'users')
+    
+    if request.method == 'POST':
+        try:
+            user_name = user.get_full_name() or user.username
+            user.delete()
+            messages.success(request, f'User "{user_name}" has been deleted successfully.')
+        except Exception as e:
+            messages.error(request, f'Error deleting user: {str(e)}')
+        
+        return redirect('admin_unified_dashboard', 'users')
+    else:
+        # For GET requests, show confirmation page or redirect back
+        return redirect('admin_unified_dashboard', 'users')

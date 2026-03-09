@@ -1,0 +1,180 @@
+<!-- Admin Add Subject Dashboard Content -->
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-plus-circle mr-3 text-blue-600"></i>
+                Add New Subject
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Create a new subject for the academic curriculum</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_unified_dashboard' page='subjects' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Subjects
+            </a>
+        </div>
+    </div>
+
+    <!-- Subject Creation Form -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="p-4 rounded-xl bg-red-50 text-red-700 border border-red-100 flex items-center space-x-3">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p class="text-xs font-bold">{{ form.non_field_errors.0 }}</p>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Subject Code -->
+                <div class="space-y-2">
+                    <label for="{{ form.code.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.code.label }}
+                        {% if form.code.field.required %}<span class="text-red-500">*</span>{% endif %}
+                    </label>
+                    <div class="relative">
+                        {{ form.code }}
+                        {% if form.code.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.code.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Subject Name -->
+                <div class="space-y-2">
+                    <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.name.label }}
+                        {% if form.name.field.required %}<span class="text-red-500">*</span>{% endif %}
+                    </label>
+                    <div class="relative">
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Form Level -->
+                <div class="space-y-2">
+                    <label for="{{ form.form_level.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ form.form_level.label }}
+                        {% if form.form_level.field.required %}<span class="text-red-500">*</span>{% endif %}
+                    </label>
+                    <div class="relative">
+                        {{ form.form_level }}
+                        {% if form.form_level.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.form_level.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Checkboxes -->
+                <div class="space-y-4">
+                    <!-- Is Core -->
+                    <div class="flex items-center space-x-3">
+                        {{ form.is_core }}
+                        <label for="{{ form.is_core.id_for_label }}" class="text-sm font-medium text-gray-700">
+                            {{ form.is_core.label }}
+                        </label>
+                        {% if form.is_core.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.is_core.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Is Optional -->
+                    <div class="flex items-center space-x-3">
+                        {{ form.is_optional }}
+                        <label for="{{ form.is_optional.id_for_label }}" class="text-sm font-medium text-gray-700">
+                            {{ form.is_optional.label }}
+                        </label>
+                        {% if form.is_optional.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.is_optional.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    All fields marked with * are required
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'admin_unified_dashboard' page='subjects' %}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        <i class="fas fa-save mr-2"></i>
+                        Create Subject
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Guidelines -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Subject Guidelines</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Subject codes should follow NECTA conventions</li>
+                        <li>Core subjects are mandatory for all students</li>
+                        <li>Optional subjects can be chosen by students</li>
+                        <li>Form level determines which students can access the subject</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Form styling */
+    input[type="text"], select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        background-color: #ffffff;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        color: #111827;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    input[type="text"]:focus, select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        color: #3b82f6;
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    input[type="checkbox"]:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    input[type="checkbox"]:checked {
+        background-color: #3b82f6;
+        border-color: #3b82f6;
+    }
+</style>

@@ -138,16 +138,16 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ fee.fee_structure.name|default:fee.category }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ fee.fee_type }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">TZS {{ fee.amount|floatformat:0|intcomma }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ fee.due_date|date:"M d, Y" }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            {% if fee.is_paid %}
+                            {% if fee.status == 'paid' %}
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
-                            {% elif fee.due_date < today %}
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Overdue</span>
-                            {% else %}
+                            {% elif fee.status == 'pending' %}
                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                            {% elif fee.status == 'overdue' %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Overdue</span>
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -158,7 +158,7 @@
                                 <a href="{% url 'admin_fee_delete' fee.id %}" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this fee record?')">
                                     <i class="fas fa-trash"></i>
                                 </a>
-                                {% if not fee.is_paid %}
+                                {% if fee.status != 'paid' %}
                                 <button onclick="markAsPaid({{ fee.id }})" class="text-green-600 hover:text-green-900">
                                     <i class="fas fa-check"></i>
                                 </button>

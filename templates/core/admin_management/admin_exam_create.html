@@ -1,0 +1,207 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Create Exam | {{ school_info.name }}{% endblock %}
+{% block mobile_title %}Create Exam{% endblock %}
+{% block user_role %}Administrator{% endblock %}
+
+{% block sidebar_nav %}
+<a href="{% url 'admin_dashboard' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-th-large"></i>
+    <span>Overview</span>
+</a>
+<a href="{% url 'admin_student_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-user-graduate"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'admin_teacher_list' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chalkboard-teacher"></i>
+    <span>Faculty</span>
+</a>
+<a href="{% url 'subjects_management' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-book-open"></i>
+    <span>Subjects</span>
+</a>
+<a href="{% url 'admin_fees' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-wallet"></i>
+    <span>Fees & Finance</span>
+</a>
+<a href="{% url 'admin_exams' %}" class="sidebar-item-active">
+    <i class="fas fa-clipboard-list"></i>
+    <span>Exams</span>
+</a>
+<a href="{% url 'admin_announcements' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+<a href="{% url 'admin_reports' %}" class="sidebar-item text-slate-400">
+    <i class="fas fa-chart-bar"></i>
+    <span>Reports</span>
+</a>
+<a href="{% url 'admin_settings' %}" class="sidebar-item text-slate-400 mt-auto">
+    <i class="fas fa-cog"></i>
+    <span>Settings</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<!-- Create Exam Content -->
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-clipboard-list mr-3 text-purple-600"></i>
+                Create Exam
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Schedule a new exam for students</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_exams' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Exams
+            </a>
+        </div>
+    </div>
+
+    <!-- Create Exam Form -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Exam Details</h2>
+            <p class="text-sm text-gray-600 mt-1">Fill in the information below to schedule a new exam</p>
+        </div>
+        
+        <div class="p-6">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Course Selection -->
+                    <div>
+                        <label for="course" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-book mr-2 text-purple-500"></i>Course
+                        </label>
+                        <select name="course" id="course" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            <option value="">Select a course...</option>
+                            {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.code }} - {{ course.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Exam Type -->
+                    <div>
+                        <label for="exam_type" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-tag mr-2 text-purple-500"></i>Exam Type
+                        </label>
+                        <select name="exam_type" id="exam_type" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            <option value="">Select exam type...</option>
+                            {% for type_value, type_label in exam_types %}
+                                <option value="{{ type_value }}">{{ type_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Exam Date -->
+                    <div>
+                        <label for="date" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar mr-2 text-purple-500"></i>Exam Date
+                        </label>
+                        <input type="date" name="date" id="date" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <!-- Venue -->
+                    <div>
+                        <label for="venue" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-map-marker-alt mr-2 text-purple-500"></i>Venue
+                        </label>
+                        <input type="text" name="venue" id="venue" required placeholder="e.g., Room 101, Main Hall" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <!-- Start Time -->
+                    <div>
+                        <label for="start_time" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-clock mr-2 text-purple-500"></i>Start Time
+                        </label>
+                        <input type="time" name="start_time" id="start_time" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                    
+                    <!-- End Time -->
+                    <div>
+                        <label for="end_time" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-clock mr-2 text-purple-500"></i>End Time
+                        </label>
+                        <input type="time" name="end_time" id="end_time" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <a href="{% url 'admin_exams' %}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center">
+                        <i class="fas fa-save mr-2"></i> Create Exam
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="{% url 'admin_exams' %}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fas fa-list text-purple-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-gray-900">View All Exams</div>
+                    <div class="text-sm text-gray-600">See scheduled exams</div>
+                </div>
+            </a>
+            <a href="{% url 'admin_dashboard' %}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fas fa-th-large text-purple-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-gray-900">Dashboard</div>
+                    <div class="text-sm text-gray-600">Back to overview</div>
+                </div>
+            </a>
+            <a href="{% url 'admin_settings' %}" class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fas fa-cog text-purple-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-gray-900">Settings</div>
+                    <div class="text-sm text-gray-600">System configuration</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+// Validate end time is after start time
+document.getElementById('start_time').addEventListener('change', function() {
+    const startTime = this.value;
+    const endTimeInput = document.getElementById('end_time');
+    
+    if (startTime) {
+        // Set minimum end time to start time
+        endTimeInput.min = startTime;
+        
+        // If end time is before start time, clear it
+        if (endTimeInput.value && endTimeInput.value <= startTime) {
+            endTimeInput.value = '';
+        }
+    }
+});
+</script>
+{% endblock %}

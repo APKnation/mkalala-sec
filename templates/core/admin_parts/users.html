@@ -106,6 +106,108 @@
         </div>
     </div>
 
+    <!-- Pending Users Section -->
+    <div class="card-premium mb-8">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-900 flex items-center">
+                        <i class="fas fa-user-clock mr-3 text-yellow-500"></i>
+                        Pending User Approvals
+                    </h3>
+                    <p class="text-slate-500 text-sm mt-1">Users awaiting admin approval</p>
+                </div>
+                <div class="text-right">
+                    <span class="text-3xl font-bold text-yellow-600">{{ pending_users_count }}</span>
+                    <p class="text-slate-500 text-sm">Total Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-6">
+            {% if pending_users %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-slate-200">
+                                <th class="text-left py-3 px-4 font-semibold text-slate-700">User</th>
+                                <th class="text-left py-3 px-4 font-semibold text-slate-700">Email</th>
+                                <th class="text-left py-3 px-4 font-semibold text-slate-700">Role</th>
+                                <th class="text-left py-3 px-4 font-semibold text-slate-700">Registration Date</th>
+                                <th class="text-left py-3 px-4 font-semibold text-slate-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in pending_users %}
+                                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-slate-500 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-slate-900">{{ user.get_full_name|default:user.username }}</div>
+                                                {% if user.student_profile %}
+                                                    <div class="text-sm text-slate-500">{{ user.student_profile.roll_number|default:"No ID" }}</div>
+                                                {% elif user.faculty_profile %}
+                                                    <div class="text-sm text-slate-500">{{ user.faculty_profile.employee_id|default:"No ID" }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="text-slate-700">{{ user.email }}</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        {% if user.role == 'student' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="fas fa-graduation-cap mr-1"></i>Student
+                                            </span>
+                                        {% elif user.role == 'teacher' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                <i class="fas fa-chalkboard-teacher mr-1"></i>Teacher
+                                            </span>
+                                        {% elif user.role == 'admin' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-user-shield mr-1"></i>Admin
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                                                {{ user.role|title }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="text-slate-600 text-sm">{{ user.date_joined|date:"M d, Y H:i" }}</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="{% url 'user_approve' user.pk %}" class="text-green-600 hover:text-green-800" title="Approve User">
+                                                <i class="fas fa-check"></i>
+                                            </a>
+                                            <a href="{% url 'admin_unified_dashboard' 'edit-user' %}?user_id={{ user.pk }}" class="text-blue-600 hover:text-blue-800" title="Edit User">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'delete_user' user.pk %}" class="text-red-600 hover:text-red-800" title="Delete User" 
+                                               onclick="return confirm('Are you sure you want to delete {{ user.get_full_name|default:user.username }}?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <i class="fas fa-user-check text-4xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-500">No pending users</p>
+                                            <p class="text-sm text-slate-400">All users have been approved!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="card-premium">
         <div class="p-6 border-b border-slate-100">

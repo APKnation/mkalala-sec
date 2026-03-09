@@ -3,18 +3,168 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
+                <i class="fas fa-chalkboard-teacher mr-3 text-blue-600"></i>
                 Teachers Management
             </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage teachers system</p>
+            <p class="mt-2 text-sm text-gray-600">Manage teachers and faculty members</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_create_teacher' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+                <i class="fas fa-user-plus mr-2"></i>
+                Add Teacher
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Teachers</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Teachers management interface coming soon</p>
+    <!-- Teachers Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Total Teachers</h3>
+                    <p class="text-2xl font-bold text-blue-600">{{ total_teachers }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-check text-green-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Active Teachers</h3>
+                    <p class="text-2xl font-bold text-green-600">{{ active_teachers }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-times text-yellow-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Inactive Teachers</h3>
+                    <p class="text-2xl font-bold text-yellow-600">{{ total_teachers|add:'-1'|add:active_teachers|default:0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teachers List -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Teachers List</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Teacher
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Email
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Department
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for teacher in teachers %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10">
+                                        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                                            <i class="fas fa-user text-gray-500"></i>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ teacher.get_full_name|default:teacher.username }}
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            {% if teacher.faculty_profile %}
+                                                {{ teacher.faculty_profile.employee_id|default:"No ID" }}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ teacher.email }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">
+                                    {% if teacher.faculty_profile.department %}
+                                        {{ teacher.faculty_profile.department.name }}
+                                    {% else %}
+                                        <span class="text-gray-500">Not Assigned</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if teacher.is_active %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        Active
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                        Inactive
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <a href="{% url 'admin_unified_dashboard' 'edit-user' %}?user_id={{ teacher.pk }}" class="text-blue-600 hover:text-blue-900">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if teacher.is_active %}
+                                        <a href="{% url 'deactivate_user' teacher.pk %}" class="text-red-600 hover:text-red-900" 
+                                           onclick="return confirm('Are you sure you want to deactivate this teacher?')">
+                                            <i class="fas fa-ban"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'user_approve' teacher.pk %}" class="text-green-600 hover:text-green-900">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                <div class="py-8">
+                                    <i class="fas fa-users text-4xl text-gray-300 mb-3"></i>
+                                    <p>No teachers found</p>
+                                    <a href="{% url 'admin_unified_dashboard' 'users' %}" class="mt-2 inline-flex bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                        <i class="fas fa-plus mr-2"></i>Add First Teacher
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

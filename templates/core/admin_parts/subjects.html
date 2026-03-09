@@ -7,7 +7,7 @@
             <p class="text-slate-500 font-medium">Manage all academic subjects and curriculum.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{% url 'admin_unified_dashboard' page='courses' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+            <a href="{% url 'admin_unified_dashboard' page='add-subject' %}" class="btn-glow-primary px-6 py-3 flex items-center">
                 <i class="fas fa-plus mr-2"></i> Add Subject
             </a>
             <a href="{% url 'admin_unified_dashboard' page='classes' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
@@ -168,7 +168,7 @@
                             <div class="flex flex-col items-center space-y-4">
                                 <i class="fas fa-book text-4xl text-slate-300 mb-3"></i>
                                 <p class="text-slate-500">No subjects found</p>
-                                <a href="{% url 'admin_unified_dashboard' page='subjects' %}" class="mt-4 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                <a href="{% url 'admin_unified_dashboard' page='add-subject' %}" class="mt-4 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
                                     <i class="fas fa-plus mr-2"></i> Add First Subject
                                 </a>
                             </div>

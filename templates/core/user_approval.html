@@ -1,0 +1,225 @@
+{% extends 'core/base_dashboard.html' %}
+{% load static %}
+
+{% block title %}User Approval - {{ school_info.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-user-check me-2 text-primary"></i>
+                    User Approval
+                </h1>
+                <div>
+                    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pending Users Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Pending Users
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ pending_users|length }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Students
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ pending_students_count }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-graduation-cap fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Teachers
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{ pending_teachers_count }}
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Users List -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-list me-2"></i>Pending User Approvals
+                    </h6>
+                    <div class="text-muted">
+                        <small>{{ pending_users|length }} user{{ pending_users|length|pluralize }} awaiting approval</small>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if pending_users %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Registration Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in pending_users %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="avatar-circle bg-primary text-white">
+                                                            {{ user.get_full_name|default:user.username|first|upper }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="ms-3">
+                                                        <div class="fw-bold">{{ user.get_full_name|default:user.username }}</div>
+                                                        {% if user.student_profile %}
+                                                            <small class="text-muted">ID: {{ user.student_profile.roll_number|default:"N/A" }}</small>
+                                                        {% elif user.faculty_profile %}
+                                                            <small class="text-muted">ID: {{ user.faculty_profile.employee_id|default:"N/A" }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="text-muted">{{ user.email }}</div>
+                                            </td>
+                                            <td>
+                                                {% if user.role == 'student' %}
+                                                    <span class="badge bg-primary">Student</span>
+                                                {% elif user.role == 'teacher' %}
+                                                    <span class="badge bg-info">Teacher</span>
+                                                {% elif user.role == 'admin' %}
+                                                    <span class="badge bg-danger">Admin</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ user.role|title }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="text-muted small">{{ user.date_joined|date:"M d, Y H:i" }}</div>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning">
+                                                    <i class="fas fa-clock me-1"></i>Pending Approval
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <a href="{% url 'user_approve' user.pk %}" 
+                                                       class="btn btn-success" 
+                                                       title="Approve User"
+                                                       onclick="return confirm('Are you sure you want to approve {{ user.get_full_name|default:user.username }}?')">
+                                                        <i class="fas fa-check"></i>
+                                                    </a>
+                                                    <a href="{% url 'edit_user' user.pk %}" 
+                                                       class="btn btn-info" 
+                                                       title="Edit User">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <a href="{% url 'delete_user' user.pk %}" 
+                                                       class="btn btn-danger" 
+                                                       title="Delete User"
+                                                       onclick="return confirm('Are you sure you want to delete {{ user.get_full_name|default:user.username }}? This action cannot be undone.')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-user-check fa-4x text-gray-300 mb-4"></i>
+                            <h5 class="text-gray-600 mb-2">No Pending Users</h5>
+                            <p class="text-gray-500 mb-4">All users have been approved. Great job!</p>
+                            <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.card.border-left-primary {
+    border-left: 4px solid #4e73df;
+}
+
+.card.border-left-warning {
+    border-left: 4px solid #f6c23e;
+}
+
+.card.border-left-info {
+    border-left: 4px solid #36b9cc;
+}
+
+.table th {
+    background-color: #f8f9fc;
+    border-top: 1px solid #e3e6f0;
+}
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}

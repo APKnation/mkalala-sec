@@ -3,18 +3,241 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-calendar-alt mr-3 text-red-600"></i>
+                <i class="fas fa-calendar-alt mr-3 text-blue-600"></i>
                 Timetable Management
             </h1>
             <p class="mt-2 text-sm text-gray-600">Manage school timetables and schedules</p>
         </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_timetable_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add Schedule
+            </a>
+            <button onclick="exportTimetable()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center">
+                <i class="fas fa-download mr-2"></i> Export
+            </button>
+        </div>
     </div>
 
+    <!-- Schedule Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="fas fa-clock text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Entries</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_entries }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="fas fa-book text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Courses</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ schedule_stats.unique_courses }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-full">
+                    <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Teachers</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ schedule_stats.unique_teachers }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-full">
+                    <i class="fas fa-users text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Classes</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ schedule_stats.unique_classes }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule by Day Overview -->
     <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Timetable Overview</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-calendar-alt text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Timetable management interface coming soon</p>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Schedule by Day</h2>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {% for day_stat in entries_by_day %}
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <p class="text-2xl font-bold text-blue-600">{{ day_stat.count }}</p>
+                <p class="text-sm text-gray-600">{{ day_stat.day|title }}</p>
+            </div>
+            {% empty %}
+            <div class="col-span-5 text-center py-8 text-gray-500">
+                <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                <p>No schedule entries found</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Timetable Entries Table -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-900">Timetable Entries</h2>
+                <div class="flex items-center space-x-3">
+                    <input type="text" placeholder="Search schedule..." class="border border-gray-300 rounded-lg px-3 py-2 text-sm" id="timetableSearch">
+                    <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" id="dayFilter">
+                        <option value="">All Days</option>
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednesday">Wednesday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Day</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teacher</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for entry in timetable_entries %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {{ entry.day|title }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ entry.start_time|date:"H:i" }} - {{ entry.end_time|date:"H:i" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ entry.course_offering.course.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <div class="flex items-center">
+                                <div class="h-6 w-6 flex-shrink-0">
+                                    <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <span class="text-xs font-medium text-gray-600">{{ entry.course_offering.faculty.user.get_full_name|first|upper }}</span>
+                                    </div>
+                                </div>
+                                <div class="ml-2">
+                                    <div class="text-sm font-medium text-gray-900">{{ entry.course_offering.faculty.user.get_full_name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ entry.student_class.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ entry.room|default:"TBA" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <a href="{% url 'admin_timetable_edit' entry.id %}" class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'admin_timetable_delete' entry.id %}" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this schedule entry?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-calendar-times text-4xl text-gray-300 mb-3"></i>
+                            <p>No timetable entries found</p>
+                            <a href="{% url 'admin_timetable_create' %}" class="mt-2 inline-flex bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                <i class="fas fa-plus mr-2"></i>Add First Entry
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="showAddScheduleModal()">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-full mr-3">
+                        <i class="fas fa-plus text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Add Schedule Entry</h3>
+                        <p class="text-sm text-gray-500">Create new timetable entry</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="showBulkScheduleModal()">
+                <div class="flex items-center">
+                    <div class="p-2 bg-green-100 rounded-full mr-3">
+                        <i class="fas fa-layer-group text-green-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Bulk Schedule</h3>
+                        <p class="text-sm text-gray-500">Add multiple entries</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="showConflictCheck()">
+                <div class="flex items-center">
+                    <div class="p-2 bg-orange-100 rounded-full mr-3">
+                        <i class="fas fa-exclamation-triangle text-orange-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Check Conflicts</h3>
+                        <p class="text-sm text-gray-500">Verify schedule conflicts</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+function exportTimetable() {
+    window.location.href = '/admin/timetable/export/';
+}
+
+function showAddScheduleModal() {
+    // Implementation for add schedule modal
+    window.location.href = '{% url "admin_timetable_create" %}';
+}
+
+function showBulkScheduleModal() {
+    // Implementation for bulk schedule modal
+    alert('Bulk schedule feature coming soon!');
+}
+
+function showConflictCheck() {
+    // Implementation for conflict check
+    alert('Conflict check feature coming soon!');
+}
+</script>

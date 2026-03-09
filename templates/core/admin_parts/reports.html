@@ -1,20 +1,353 @@
+{% load humanize %}
 <!-- Admin Reports Dashboard Content -->
 <div class="space-y-8">
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
+                <i class="fas fa-chart-bar mr-3 text-indigo-600"></i>
                 Reports Management
             </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage reports system</p>
+            <p class="mt-2 text-sm text-gray-600">Generate and manage school reports</p>
+        </div>
+        <div class="flex space-x-3">
+            <button onclick="generateReport()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center">
+                <i class="fas fa-file-export mr-2"></i> Generate Report
+            </button>
+            <button onclick="exportReports()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center">
+                <i class="fas fa-download mr-2"></i> Export All
+            </button>
         </div>
     </div>
 
+    <!-- Overview Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-indigo-100 rounded-full">
+                    <i class="fas fa-users text-indigo-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Students</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_students }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="fas fa-user-check text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Active Students</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ active_students }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Avg Grade</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ grades_data.avg_grade|floatformat:1 }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-full">
+                    <i class="fas fa-money-bill-wave text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Fees</p>
+                    <p class="text-2xl font-bold text-gray-900">TZS {{ fee_data.total_fees|floatformat:0|intcomma }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Performance Overview -->
     <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Reports</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Reports management interface coming soon</p>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Academic Performance Overview</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-center p-4 bg-green-50 rounded-lg">
+                <p class="text-3xl font-bold text-green-600">{{ grades_data.excellent_grades }}</p>
+                <p class="text-sm text-gray-600">Excellent Grades</p>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <p class="text-3xl font-bold text-blue-600">{{ grades_data.good_grades }}</p>
+                <p class="text-sm text-gray-600">Good Grades</p>
+            </div>
+            <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                <p class="text-3xl font-bold text-yellow-600">{{ grades_data.passing_grades }}</p>
+                <p class="text-sm text-gray-600">Passing Grades</p>
+            </div>
+            <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <p class="text-3xl font-bold text-gray-600">{{ grades_data.total_grades }}</p>
+                <p class="text-sm text-gray-600">Total Grades</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Overview -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Financial Overview</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-green-50 rounded-lg">
+                <p class="text-3xl font-bold text-green-600">TZS {{ fee_data.collected_fees|floatformat:0|intcomma }}</p>
+                <p class="text-sm text-gray-600">Collected Fees</p>
+            </div>
+            <div class="text-center p-4 bg-yellow-50 rounded-lg">
+                <p class="text-3xl font-bold text-yellow-600">TZS {{ fee_data.pending_fees|floatformat:0|intcomma }}</p>
+                <p class="text-sm text-gray-600">Pending Fees</p>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <p class="text-3xl font-bold text-blue-600">TZS {{ payment_data.monthly_collected|floatformat:0|intcomma }}</p>
+                <p class="text-sm text-gray-600">This Month Collection</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Trends -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Monthly Trends</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-md font-medium text-gray-700 mb-3">Student Growth</h3>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Last Month:</span>
+                    <span class="font-medium">{{ monthly_trends.student_growth.last_month }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">This Month:</span>
+                    <span class="font-medium">{{ monthly_trends.student_growth.this_month }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Growth:</span>
+                    <span class="font-medium {% if monthly_trends.student_growth.this_month > monthly_trends.student_growth.last_month %}text-green-600{% else %}text-red-600{% endif %}">
+                        {% if monthly_trends.student_growth.this_month > monthly_trends.student_growth.last_month %}+{% endif %}{{ monthly_trends.student_growth.this_month|add:"-"|add:monthly_trends.student_growth.last_month|stringformat:"0" }}
+                    </span>
+                </div>
+            </div>
+            <div>
+                <h3 class="text-md font-medium text-gray-700 mb-3">Fee Collection</h3>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Last Month:</span>
+                    <span class="font-medium">TZS {{ monthly_trends.fee_collection.last_month|floatformat:0|intcomma }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">This Month:</span>
+                    <span class="font-medium">TZS {{ monthly_trends.fee_collection.this_month|floatformat:0|intcomma }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Growth:</span>
+                    <span class="font-medium {% if monthly_trends.fee_collection.this_month > monthly_trends.fee_collection.last_month %}text-green-600{% else %}text-red-600{% endif %}">
+                        TZS {{ monthly_trends.fee_collection.this_month|add:"-"|add:monthly_trends.fee_collection.last_month|floatformat:0|intcomma }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Recent Grades -->
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Grades</h2>
+            <div class="space-y-3">
+                {% for grade in recent_grades %}
+                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                    <div class="flex items-center">
+                        <div class="h-6 w-6 flex-shrink-0">
+                            <div class="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
+                                <span class="text-xs font-medium text-indigo-600">{{ grade.enrollment.student.user.get_full_name|first|upper }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-2">
+                            <div class="text-sm font-medium text-gray-900">{{ grade.enrollment.student.user.get_full_name }}</div>
+                            <div class="text-xs text-gray-500">{{ grade.enrollment.course_offering.course.name }}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-medium text-gray-900">{{ grade.grade }}</div>
+                        <div class="text-xs text-gray-500">{{ grade.points }} pts</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-gray-500">
+                    <i class="fas fa-award text-2xl text-gray-300 mb-2"></i>
+                    <p class="text-sm">No recent grades</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Payments -->
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Payments</h2>
+            <div class="space-y-3">
+                {% for payment in recent_payments %}
+                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                    <div class="flex items-center">
+                        <div class="h-6 w-6 flex-shrink-0">
+                            <div class="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
+                                <span class="text-xs font-medium text-green-600">{{ payment.fee.student.user.get_full_name|first|upper }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-2">
+                            <div class="text-sm font-medium text-gray-900">{{ payment.fee.student.user.get_full_name }}</div>
+                            <div class="text-xs text-gray-500">{{ payment.payment_date|date:"M d" }}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-medium text-gray-900">TZS {{ payment.amount|floatformat:0|intcomma }}</div>
+                        <div class="text-xs text-gray-500">{{ payment.payment_method|default:"Cash" }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-gray-500">
+                    <i class="fas fa-receipt text-2xl text-gray-300 mb-2"></i>
+                    <p class="text-sm">No recent payments</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Exams -->
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Exams</h2>
+            <div class="space-y-3">
+                {% for exam in recent_exams %}
+                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                    <div class="flex items-center">
+                        <div class="h-6 w-6 flex-shrink-0">
+                            <div class="h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center">
+                                <span class="text-xs font-medium text-purple-600">{{ exam.title|first|upper }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-2">
+                            <div class="text-sm font-medium text-gray-900">{{ exam.title }}</div>
+                            <div class="text-xs text-gray-500">{{ exam.course_offering.course.name }}</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm font-medium text-gray-900">{{ exam.exam_date|date:"M d" }}</div>
+                        <div class="text-xs text-gray-500">{{ exam.exam_type|title }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-4 text-gray-500">
+                    <i class="fas fa-clipboard-list text-2xl text-gray-300 mb-2"></i>
+                    <p class="text-sm">No recent exams</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Available Reports -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Available Reports</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="generateStudentReport()">
+                <div class="flex items-center">
+                    <div class="p-2 bg-blue-100 rounded-full mr-3">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Student Report</h3>
+                        <p class="text-sm text-gray-500">Complete student statistics</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="generateAcademicReport()">
+                <div class="p-2 bg-green-100 rounded-full mr-3">
+                    <i class="fas fa-graduation-cap text-green-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Academic Report</h3>
+                    <p class="text-sm text-gray-500">Grades and performance analysis</p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="generateFinancialReport()">
+                <div class="p-2 bg-purple-100 rounded-full mr-3">
+                    <i class="fas fa-dollar-sign text-purple-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Financial Report</h3>
+                    <p class="text-sm text-gray-500">Fee collection and payments</p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="generateAttendanceReport()">
+                <div class="p-2 bg-orange-100 rounded-full mr-3">
+                    <i class="fas fa-calendar-check text-orange-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Attendance Report</h3>
+                    <p class="text-sm text-gray-500">Student attendance statistics</p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="generateExamReport()">
+                <div class="p-2 bg-red-100 rounded-full mr-3">
+                    <i class="fas fa-file-invoice text-red-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Exam Report</h3>
+                    <p class="text-sm text-gray-500">Exam results and analysis</p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="generateCustomReport()">
+                <div class="p-2 bg-indigo-100 rounded-full mr-3">
+                    <i class="fas fa-cog text-indigo-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Custom Report</h3>
+                    <p class="text-sm text-gray-500">Generate custom reports</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+function generateReport() {
+    alert('Report generation feature coming soon!');
+}
+
+function exportReports() {
+    window.location.href = '/admin/reports/export/';
+}
+
+function generateStudentReport() {
+    window.location.href = '/admin/reports/student/';
+}
+
+function generateAcademicReport() {
+    window.location.href = '/admin/reports/academic/';
+}
+
+function generateFinancialReport() {
+    window.location.href = '/admin/reports/financial/';
+}
+
+function generateAttendanceReport() {
+    window.location.href = '/admin/reports/attendance/';
+}
+
+function generateExamReport() {
+    window.location.href = '/admin/reports/exam/';
+}
+
+function generateCustomReport() {
+    alert('Custom report builder coming soon!');
+}
+</script>

@@ -1,0 +1,151 @@
+<!-- Admin Delete Class Dashboard Content -->
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-trash-alt mr-3 text-red-600"></i>
+                Delete Class
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Remove a class from the system</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_unified_dashboard' 'classes' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Classes
+            </a>
+        </div>
+    </div>
+
+    <!-- Class Information Card -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <div class="flex items-center mb-6">
+            <div class="flex-shrink-0">
+                <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                    <i class="fas fa-school text-red-600 text-2xl"></i>
+                </div>
+            </div>
+            <div class="ml-4">
+                <h2 class="text-xl font-semibold text-gray-900">{{ class_obj.name }}</h2>
+                <p class="text-gray-600">Form {{ class_obj.form_level }} - {{ class_obj.academic_year }}</p>
+                <div class="mt-1">
+                    {% if class_obj.is_active %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle mr-1"></i>Active
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <i class="fas fa-times-circle mr-1"></i>Inactive
+                        </span>
+                    {% endif %}
+                    <span class="ml-2 text-sm text-gray-500">
+                        {{ class_obj.current_students|default:0 }}/{{ class_obj.max_students }} students
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning Message -->
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <h3 class="text-sm font-semibold text-red-800 mb-2">
+                <i class="fas fa-exclamation-triangle mr-2"></i>Warning: This action cannot be undone!
+            </h3>
+            <p class="text-sm text-red-700">
+                Deleting this class will permanently remove all associated data including student enrollments, assignments, and records. This action is irreversible.
+            </p>
+        </div>
+
+        <!-- Class Details -->
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <h3 class="text-sm font-semibold text-gray-800 mb-3">Class Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <span class="font-medium text-gray-600">Class Name:</span>
+                    <span class="ml-2 text-gray-900">{{ class_obj.name }}</span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-600">Form Level:</span>
+                    <span class="ml-2 text-gray-900">Form {{ class_obj.form_level }}</span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-600">Academic Year:</span>
+                    <span class="ml-2 text-gray-900">{{ class_obj.academic_year }}</span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-600">Department:</span>
+                    <span class="ml-2 text-gray-900">{{ class_obj.department.name }}</span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-600">Class Teacher:</span>
+                    <span class="ml-2 text-gray-900">
+                        {% if class_obj.class_teacher %}
+                            {{ class_obj.class_teacher.user.get_full_name }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+                    </span>
+                </div>
+                <div>
+                    <span class="font-medium text-gray-600">Student Count:</span>
+                    <span class="ml-2 text-gray-900">{{ class_obj.current_students|default:0 }}/{{ class_obj.max_students }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    <i class="fas fa-clipboard-check mr-2 text-red-500"></i>Confirmation Required
+                </h3>
+                
+                <div class="space-y-3">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="confirm_delete" required class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                        <span class="ml-2 text-sm text-gray-700">
+                            I understand that this action cannot be undone
+                        </span>
+                    </label>
+                    
+                    <label class="flex items-center">
+                        <input type="checkbox" name="confirm_class_name" required class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                        <span class="ml-2 text-sm text-gray-700">
+                            I want to delete the class "{{ class_obj.name }}"
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    All checkboxes must be checked to proceed with deletion
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'admin_unified_dashboard' 'classes' %}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                        <i class="fas fa-trash mr-2"></i>Delete Class Permanently
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-yellow-800 mb-2">
+            <i class="fas fa-info-circle mr-2"></i>Before Deleting
+        </h3>
+        <ul class="text-sm text-yellow-700 space-y-1">
+            <li>• Ensure all students have been transferred to other classes</li>
+            <li>• Export any important class records you need to keep</li>
+            <li>• Inform the class teacher about the deletion</li>
+            <li>• Update any related schedules or timetables</li>
+            <li>• Consider archiving the class instead of deleting if you might need the data later</li>
+        </ul>
+    </div>
+</div>

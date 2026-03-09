@@ -1,0 +1,315 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Edit School Information - {{ school_info.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .form-section h3 {
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-control {
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 0.75rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+    
+    .form-control:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: all 0.15s ease-in-out;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn-secondary {
+        background: #6b7280;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: all 0.15s ease-in-out;
+    }
+    
+    .btn-secondary:hover {
+        background: #4b5563;
+        transform: translateY(-1px);
+    }
+    
+    .row-cols-md-2 > div {
+        padding-right: 1rem;
+        padding-left: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-0">Edit School Information</h1>
+                    <p class="text-muted mb-0">Update your school's basic information and details</p>
+                </div>
+                <div>
+                    <a href="{% url 'admin_unified_dashboard' page='settings' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Settings
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- School Information Form -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-school me-2"></i>Basic Information</h3>
+                    
+                    <div class="row row-cols-md-2">
+                        <div class="mb-3">
+                            <label for="school_name" class="form-label">School Name *</label>
+                            <input type="text" class="form-control" id="school_name" name="school_name" 
+                                   value="{{ school_info.school_name|default:'' }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="school_type" class="form-label">School Type</label>
+                            <select class="form-control" id="school_type" name="school_type">
+                                <option value="">Select School Type</option>
+                                <option value="Primary" {% if school_info.school_type == 'Primary' %}selected{% endif %}>Primary School</option>
+                                <option value="Secondary" {% if school_info.school_type == 'Secondary' %}selected{% endif %}>Secondary School</option>
+                                <option value="High School" {% if school_info.school_type == 'High School' %}selected{% endif %}>High School</option>
+                                <option value="Mixed" {% if school_info.school_type == 'Mixed' %}selected{% endif %}>Mixed Level</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="school_founded_year" class="form-label">Founded Year</label>
+                            <input type="number" class="form-control" id="school_founded_year" name="school_founded_year" 
+                                   value="{{ school_info.school_founded_year|default:'' }}" min="1900" max="{{ current_year }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="school_registration" class="form-label">Registration Number</label>
+                            <input type="text" class="form-control" id="school_registration" name="school_registration" 
+                                   value="{{ school_info.school_registration|default:'' }}">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="school_motto" class="form-label">School Motto</label>
+                        <textarea class="form-control" id="school_motto" name="school_motto" rows="2">{{ school_info.school_motto|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Vision & Mission Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-bullseye me-2"></i>Vision & Mission</h3>
+                    
+                    <div class="mb-3">
+                        <label for="school_vision" class="form-label">School Vision</label>
+                        <textarea class="form-control" id="school_vision" name="school_vision" rows="3">{{ school_info.school_vision|default:'' }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="school_mission" class="form-label">School Mission</label>
+                        <textarea class="form-control" id="school_mission" name="school_mission" rows="3">{{ school_info.school_mission|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-address-book me-2"></i>Contact Information</h3>
+                    
+                    <div class="row row-cols-md-2">
+                        <div class="mb-3">
+                            <label for="school_address" class="form-label">Physical Address</label>
+                            <textarea class="form-control" id="school_address" name="school_address" rows="3">{{ school_info.school_address|default:'' }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="school_phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="school_phone" name="school_phone" 
+                                   value="{{ school_info.school_phone|default:'' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="school_email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="school_email" name="school_email" 
+                                   value="{{ school_info.school_email|default:'' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="school_website" class="form-label">Website</label>
+                            <input type="url" class="form-control" id="school_website" name="school_website" 
+                                   value="{{ school_info.school_website|default:'' }}" placeholder="https://">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examination Information Section -->
+                <div class="form-section">
+                    <h3><i class="fas fa-graduation-cap me-2"></i>Examination Information</h3>
+                    
+                    <div class="mb-3">
+                        <label for="school_exam_center" class="form-label">Examination Center Number</label>
+                        <input type="text" class="form-control" id="school_exam_center" name="school_exam_center" 
+                               value="{{ school_info.school_exam_center|default:'' }}">
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href="{% url 'admin_unified_dashboard' page='settings' %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set current year for max attribute in founded year field
+    const currentYear = new Date().getFullYear();
+    const foundedYearField = document.getElementById('school_founded_year');
+    if (foundedYearField) {
+        foundedYearField.max = currentYear;
+    }
+    
+    // Auto-format phone number
+    const phoneField = document.getElementById('school_phone');
+    if (phoneField) {
+        phoneField.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Format as phone number (simple formatting)
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = value;
+                } else if (value.length <= 6) {
+                    value = value.slice(0, 3) + '-' + value.slice(3);
+                } else {
+                    value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6, 10);
+                }
+            }
+            
+            e.target.value = value;
+        });
+    }
+    
+    // Auto-format website URL
+    const websiteField = document.getElementById('school_website');
+    if (websiteField) {
+        websiteField.addEventListener('blur', function(e) {
+            let value = e.target.value.trim();
+            if (value && !value.startsWith('http://') && !value.startsWith('https://')) {
+                e.target.value = 'https://' + value;
+            }
+        });
+    }
+    
+    // Form validation
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const schoolName = document.getElementById('school_name').value.trim();
+            
+            if (!schoolName) {
+                e.preventDefault();
+                alert('School name is required!');
+                document.getElementById('school_name').focus();
+                return false;
+            }
+            
+            // Validate email format if provided
+            const email = document.getElementById('school_email').value.trim();
+            if (email && !isValidEmail(email)) {
+                e.preventDefault();
+                alert('Please enter a valid email address!');
+                document.getElementById('school_email').focus();
+                return false;
+            }
+            
+            // Validate website URL if provided
+            const website = document.getElementById('school_website').value.trim();
+            if (website && !isValidURL(website)) {
+                e.preventDefault();
+                alert('Please enter a valid website URL!');
+                document.getElementById('school_website').focus();
+                return false;
+            }
+        });
+    }
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    function isValidURL(url) {
+        try {
+            new URL(url);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+});
+</script>
+{% endblock %}

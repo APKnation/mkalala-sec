@@ -3,18 +3,274 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
+                <i class="fas fa-file-invoice mr-3 text-purple-600"></i>
                 Exams Management
             </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage exams system</p>
+            <p class="mt-2 text-sm text-gray-600">Manage exams and student assessments</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_exam_create' %}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add Exam
+            </a>
+            <button onclick="exportExams()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                <i class="fas fa-download mr-2"></i> Export
+            </button>
         </div>
     </div>
 
+    <!-- Exam Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-purple-100 rounded-full">
+                    <i class="fas fa-clipboard-list text-purple-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Total Exams</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_exams }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-blue-100 rounded-full">
+                    <i class="fas fa-calendar-check text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Upcoming</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ upcoming_exams }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-green-100 rounded-full">
+                    <i class="fas fa-chart-line text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Avg Grade</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ performance_stats.average_grade|floatformat:1 }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="p-3 bg-orange-100 rounded-full">
+                    <i class="fas fa-award text-orange-600 text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600">Grades</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ performance_stats.total_grades }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Status Overview -->
     <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Exams</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Exams management interface coming soon</p>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Exam Status Overview</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                <p class="text-3xl font-bold text-purple-600">{{ exam_stats.total }}</p>
+                <p class="text-sm text-gray-600">Total Exams</p>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <p class="text-3xl font-bold text-blue-600">{{ exam_stats.upcoming }}</p>
+                <p class="text-sm text-gray-600">Upcoming</p>
+            </div>
+            <div class="text-center p-4 bg-green-50 rounded-lg">
+                <p class="text-3xl font-bold text-green-600">{{ exam_stats.completed }}</p>
+                <p class="text-sm text-gray-600">Completed</p>
+            </div>
+            <div class="text-center p-4 bg-orange-50 rounded-lg">
+                <p class="text-3xl font-bold text-orange-600">{{ exam_stats.today }}</p>
+                <p class="text-sm text-gray-600">Today</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exams Table -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-900">Exam Schedule</h2>
+                <div class="flex items-center space-x-3">
+                    <input type="text" placeholder="Search exams..." class="border border-gray-300 rounded-lg px-3 py-2 text-sm" id="examSearch">
+                    <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="completed">Completed</option>
+                        <option value="today">Today</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exam Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for exam in exams %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ exam.title }}</div>
+                            <div class="text-sm text-gray-500">{{ exam.exam_type|title }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ exam.course_offering.course.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ exam.student_class.name }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ exam.exam_date|date:"M d, Y" }}
+                            {% if exam.exam_date == today %}
+                                <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">Today</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ exam.start_time|date:"H:i" }} - {{ exam.end_time|date:"H:i" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if exam.exam_date > today %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Upcoming</span>
+                            {% elif exam.exam_date == today %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">Today</span>
+                            {% else %}
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Completed</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <a href="{% url 'admin_exam_edit' exam.id %}" class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'admin_exam_delete' exam.id %}" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this exam?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% if exam.exam_date >= today %}
+                                <a href="{% url 'admin_exam_grade' exam.id %}" class="text-green-600 hover:text-green-900">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-3"></i>
+                            <p>No exams found</p>
+                            <a href="{% url 'admin_exam_create' %}" class="mt-2 inline-flex bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
+                                <i class="fas fa-plus mr-2"></i>Add First Exam
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Grades -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Grades</h2>
+        </div>
+        <div class="p-6">
+            {% for grade in recent_grades %}
+            <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                <div class="flex items-center">
+                    <div class="h-8 w-8 flex-shrink-0">
+                        <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                            <span class="text-sm font-medium text-purple-600">{{ grade.enrollment.student.user.get_full_name|first|upper }}</span>
+                        </div>
+                    </div>
+                    <div class="ml-3">
+                        <div class="text-sm font-medium text-gray-900">{{ grade.enrollment.student.user.get_full_name }}</div>
+                        <div class="text-sm text-gray-500">{{ grade.enrollment.course_offering.course.name }}</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm font-medium text-gray-900">{{ grade.grade }} ({{ grade.points }} pts)</div>
+                    <div class="text-sm text-gray-500">{{ grade.awarded_on|date:"M d, Y" }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-award text-4xl text-gray-300 mb-3"></i>
+                <p>No recent grades</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="showAddExamModal()">
+                <div class="flex items-center">
+                    <div class="p-2 bg-purple-100 rounded-full mr-3">
+                        <i class="fas fa-plus text-purple-600"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-medium text-gray-900">Add Exam</h3>
+                        <p class="text-sm text-gray-500">Create new exam</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="showBulkGradesModal()">
+                <div class="p-2 bg-green-100 rounded-full mr-3">
+                    <i class="fas fa-layer-group text-green-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Bulk Grades</h3>
+                    <p class="text-sm text-gray-500">Import multiple grades</p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="showGradeReport()">
+                <div class="p-2 bg-blue-100 rounded-full mr-3">
+                    <i class="fas fa-chart-bar text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="font-medium text-gray-900">Grade Report</h3>
+                    <p class="text-sm text-gray-500">View performance analysis</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+function exportExams() {
+    window.location.href = '/admin/exams/export/';
+}
+
+function showAddExamModal() {
+    window.location.href = '{% url "admin_exam_create" %}';
+}
+
+function showBulkGradesModal() {
+    alert('Bulk grades feature coming soon!');
+}
+
+function showGradeReport() {
+    alert('Grade report feature coming soon!');
+}
+</script>
