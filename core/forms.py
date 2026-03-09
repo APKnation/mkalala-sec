@@ -172,6 +172,24 @@ class PublicUserRegistrationForm(UserCreationForm):
     )
     
     # Additional fields for detailed user information
+    date_of_birth = forms.DateField(
+        required=True,
+        widget=forms.DateInput(attrs={
+            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
+            'type': 'date'
+        }),
+        help_text="Enter your date of birth"
+    )
+    
+    gender = forms.ChoiceField(
+        choices=[('', 'Select Gender'), ('M', 'Male'), ('F', 'Female')],
+        required=True,
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white'
+        }),
+        help_text="Select your gender"
+    )
+    
     phone = forms.CharField(
         max_length=20,
         required=False,

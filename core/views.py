@@ -534,7 +534,9 @@ class PublicRegisterView(CreateView):
                 current_form=1,
                 current_semester=1,
                 phone=form.cleaned_data.get('phone', ''),
-                address=form.cleaned_data.get('address', '')
+                address=form.cleaned_data.get('address', ''),
+                date_of_birth=form.cleaned_data.get('date_of_birth', None),
+                gender=form.cleaned_data.get('gender', '')
             )
             messages.success(self.request, f"Welcome {user.get_full_name() or user.username}! Your student account has been created successfully. Please login to access your dashboard.")
         elif user.role == 'teacher':

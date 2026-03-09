@@ -150,6 +150,10 @@ class StudentProfile(models.Model):
     phone = models.CharField(max_length=15, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='student_pics/', blank=True, null=True)
     
+    # Personal information fields
+    date_of_birth = models.DateField(null=True, blank=True, help_text="Student's date of birth")
+    gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True, help_text="Student's gender")
+    
     # Tanzania O-level specific fields
     necta_exam_number = models.CharField(max_length=20, blank=True, null=True, help_text="NECTA examination number")
     birth_certificate_number = models.CharField(max_length=50, blank=True, null=True)
