@@ -528,6 +528,9 @@ def get_admin_overview_context(user, admin_profile):
         },
     }
     
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
     context = {
         'total_users': User.objects.count(),
         'total_students': User.objects.filter(role='student').count(),
@@ -535,6 +538,10 @@ def get_admin_overview_context(user, admin_profile):
         'total_courses': CourseOffering.objects.count(),
         'pending_announcements': 3,  # Placeholder
         'monthly_trends': monthly_trends,  # Add monthly trends for reports template
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
     }
     
     return context
@@ -791,6 +798,9 @@ def get_admin_students_context(request, user, admin_profile):
         elif status_filter == 'inactive':
             students = students.filter(user__is_active=False)
     
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
     return {
         'students': students,
         'departments': departments,
@@ -804,6 +814,10 @@ def get_admin_students_context(request, user, admin_profile):
         'department_filter': department_filter,
         'status_filter': status_filter,
         'monthly_trends': monthly_trends,  # Add monthly trends for reports template
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
     }
 
 def get_admin_teachers_context(user, admin_profile):
