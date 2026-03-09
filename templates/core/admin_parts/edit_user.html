@@ -262,7 +262,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
+            // Don't prevent default submission - let Django handle it
+            // Only prevent for validation errors
             
             // Basic form validation
             const firstName = document.getElementById('{{ form.first_name.id_for_label }}');
@@ -272,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const role = document.getElementById('id_role'); // Manual dropdown ID
             
             if (!firstName || !firstName.value.trim()) {
+                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
@@ -282,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (!lastName || !lastName.value.trim()) {
+                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
@@ -292,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (!username || !username.value.trim()) {
+                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
@@ -302,6 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (!email || !email.value.trim()) {
+                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
@@ -312,6 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (!role || !role.value) {
+                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
@@ -321,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Show loading
+            // Show loading for valid forms
             Swal.fire({
                 title: 'Updating User...',
                 text: 'Please wait while we update the user information.',
@@ -331,8 +337,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            // Submit form
-            form.submit();
+            // Submit form normally - let Django handle it
+            // No need for setTimeout or manual form.submit()
         });
     }
 });

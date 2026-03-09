@@ -97,6 +97,10 @@
     <i class="fas fa-graduation-cap"></i>
     <span>Students</span>
 </a>
+<a href="{% url 'admin_unified_dashboard' page='create-student' %}" data-page="create-student" class="sidebar-item {% if current_page == 'create-student' %}sidebar-item-active{% endif %} text-slate-400 font-sans">
+    <i class="fas fa-user-plus"></i>
+    <span>Create Student</span>
+</a>
 <a href="{% url 'admin_unified_dashboard' page='teachers' %}" data-page="teachers" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-chalkboard-teacher"></i>
     <span>Teachers</span>
@@ -216,6 +220,11 @@
 <!-- Students Section -->
 <div id="students-section" class="content-section {% if current_page == 'students' %}active{% endif %} page-content">
     {% include 'core/admin_parts/students.html' %}
+</div>
+
+<!-- Create Student Section -->
+<div id="create-student-section" class="content-section {% if current_page == 'create-student' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/create_student.html' %}
 </div>
 
 <!-- Teachers Section -->

@@ -153,6 +153,8 @@ def admin_unified_dashboard(request, page='overview'):
         if hasattr(context_result, 'status_code'):
             return context_result
         context.update(context_result)
+    elif page == 'create-student':
+        context.update(get_admin_create_student_context(request, user, admin_profile))
     elif page == 'delete-user':
         context_result = get_admin_delete_user_context(request, user, admin_profile)
         # Handle form submission for delete-user
@@ -2716,6 +2718,76 @@ def get_admin_edit_user_context(request, user, admin_profile):
         from django.contrib import messages
         messages.error(request, "User not found.")
         return {}
+
+def get_admin_create_student_context(request, user, admin_profile):
+    """Get admin create student page context"""
+    from .forms_admin import PublicUserRegistrationForm
+    
+    if request.method == 'POST':
+        # Use the same form as public registration
+        from .forms_admin import PublicUserRegistrationForm
+        form = PublicUserRegistrationForm(request.POST)
+        
+        if form.is_valid():
+            # Save the user with student role
+            new_user = form.save(commit=False)
+            new_user.role = 'student'
+            new_user.save()
+            
+            from django.contrib import messages
+            messages.success(request, f'Student "{form.cleaned_data.get("first_name")} {form.cleaned_data.get("last_name")}" has been created successfully!')
+            return HttpResponseRedirect(reverse('admin_unified_dashboard', kwargs={'page': 'users'}))
+        else:
+            from django.contrib import messages
+            messages.error(request, 'Failed to create student. Please check the form for errors.')
+    
+    # Use the same form as public registration for GET requests
+    from .forms_admin import PublicUserRegistrationForm
+    form = PublicUserRegistrationForm()
+    
+    return {
+        'form': form,
+        'user_role_display': 'Administrator',
+        'current_page': 'create-student',
+        # Add teacher statistics for template compatibility
+        'teachers': User.objects.filter(role='teacher'),
+        'total_teachers': User.objects.filter(role='teacher').count(),
+        'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': {
+            'student_growth': {
+                'this_month': 0,  # Placeholder for current month
+                'last_month': 0,   # Placeholder for last month
+            },
+            'fee_collection': {
+                'this_month': 0,  # Placeholder for current month
+                'last_month': 0,   # Placeholder for last month
+            },
+            'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']  # Month labels
+        },
+    }
+    except Exception as e:
+        from django.contrib import messages
+        messages.error(request, f'Error loading form: {str(e)}')
+        return {
+            'form': PublicUserRegistrationForm(),
+            'user_role_display': 'Administrator',
+            'current_page': 'create-student',
+            'teachers': User.objects.filter(role='teacher'),
+            'total_teachers': User.objects.filter(role='teacher').count(),
+            'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+            'monthly_trends': {
+                'student_growth': {
+                    'this_month': 0,
+                    'last_month': 0,
+                },
+                'fee_collection': {
+                    'this_month': 0,
+                    'last_month': 0,
+                },
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+        }
 
 def get_admin_delete_user_context(request, user, admin_profile):
     """Get admin delete user page context"""
