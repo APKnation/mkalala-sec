@@ -2766,28 +2766,6 @@ def get_admin_create_student_context(request, user, admin_profile):
             'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']  # Month labels
         },
     }
-    except Exception as e:
-        from django.contrib import messages
-        messages.error(request, f'Error loading form: {str(e)}')
-        return {
-            'form': PublicUserRegistrationForm(),
-            'user_role_display': 'Administrator',
-            'current_page': 'create-student',
-            'teachers': User.objects.filter(role='teacher'),
-            'total_teachers': User.objects.filter(role='teacher').count(),
-            'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
-            'monthly_trends': {
-                'student_growth': {
-                    'this_month': 0,
-                    'last_month': 0,
-                },
-                'fee_collection': {
-                    'this_month': 0,
-                    'last_month': 0,
-                },
-                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-            },
-        }
 
 def get_admin_delete_user_context(request, user, admin_profile):
     """Get admin delete user page context"""
