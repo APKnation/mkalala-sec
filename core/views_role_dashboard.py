@@ -1310,6 +1310,35 @@ def get_admin_attendance_context(user, admin_profile):
     """Get admin attendance page context"""
     attendance_records = Attendance.objects.all().select_related('enrollment', 'enrollment__student', 'enrollment__course_offering').order_by('-date')[:50]
     
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in attendance context
+            'last_month': 0,  # Placeholder - no payment data in attendance context
+        },
+    }
+    
     return {
         'attendance_records': attendance_records,
         'total_records': attendance_records.count(),
@@ -1317,6 +1346,12 @@ def get_admin_attendance_context(user, admin_profile):
         'present_count': Attendance.objects.filter(status='P').count(),
         'absent_count': Attendance.objects.filter(status='A').count(),
         'late_count': Attendance.objects.filter(status='L').count(),
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
     }
 
 def get_admin_grading_context(user, admin_profile):

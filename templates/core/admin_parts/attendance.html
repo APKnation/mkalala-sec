@@ -3,18 +3,280 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
+                <i class="fas fa-calendar-check mr-3 text-blue-600"></i>
                 Attendance Management
             </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage attendance system</p>
+            <p class="mt-2 text-sm text-gray-600">Track and manage student attendance records</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="#" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+                <i class="fas fa-plus mr-2"></i>
+                Mark Attendance
+            </a>
+            <a href="#" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Export Report
+            </a>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Attendance</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Attendance management interface coming soon</p>
+    <!-- Attendance Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Total Records</h3>
+                    <p class="text-2xl font-bold text-blue-600">{{ total_records }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-green-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Present</h3>
+                    <p class="text-2xl font-bold text-green-600">{{ present_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-times-circle text-red-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Absent</h3>
+                    <p class="text-2xl font-bold text-red-600">{{ absent_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-yellow-600"></i>
+                    </div>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Late</h3>
+                    <p class="text-2xl font-bold text-yellow-600">{{ late_count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Records Table -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-900">Recent Attendance Records</h2>
+                <div class="flex items-center space-x-2">
+                    <div class="relative">
+                        <input type="text" placeholder="Search attendance..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <select class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option>All Status</option>
+                        <option>Present</option>
+                        <option>Absent</option>
+                        <option>Late</option>
+                    </select>
+                    <input type="date" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-gray-200">
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Student</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Date</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Course</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Check In</th>
+                        <th class="text-left py-3 px-4 font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in attendance_records %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="py-3 px-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                                    <i class="fas fa-user text-gray-500 text-sm"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900">{{ record.enrollment.student.user.get_full_name|default:record.enrollment.student.user.username }}</div>
+                                    <div class="text-sm text-gray-500">{{ record.enrollment.student.roll_number|default:"No ID" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-gray-700">{{ record.date|date:"M d, Y" }}</div>
+                            <div class="text-sm text-gray-500">{{ record.date|date:"H:i"|default:"--:--" }}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-gray-700">{{ record.enrollment.course_offering.course.name|default:"N/A" }}</div>
+                            <div class="text-sm text-gray-500">{{ record.enrollment.course_offering.course.code|default:"N/A" }}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            {% if record.status == 'P' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>Present
+                                </span>
+                            {% elif record.status == 'A' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-times-circle mr-1"></i>Absent
+                                </span>
+                            {% elif record.status == 'L' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <i class="fas fa-clock mr-1"></i>Late
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <i class="fas fa-question-circle mr-1"></i>Unknown
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-gray-600 text-sm">{{ record.check_in_time|date:"H:i"|default:"--:--" }}</div>
+                            {% if record.check_out_time %}
+                                <div class="text-gray-500 text-sm">Out: {{ record.check_out_time|date:"H:i" }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 whitespace-nowrap text-sm font-medium">
+                            <a href="#" class="text-blue-600 hover:text-blue-900 mr-3" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3" title="Edit Attendance">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#" class="text-red-600 hover:text-red-900" title="Delete Record">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-20 text-center">
+                            <div class="flex flex-col items-center space-y-4">
+                                <i class="fas fa-calendar-check text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500">No attendance records found</p>
+                                <a href="#" class="mt-4 inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                    <i class="fas fa-plus mr-2"></i> Mark First Attendance
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">{{ attendance_records|length }}</span> of <span class="font-medium">{{ total_records }}</span> results
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="px-3 py-1 bg-blue-600 text-white rounded-md">1</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">2</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">3</button>
+                    <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-bullhorn mr-2 text-blue-500"></i>Today's Summary
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Today's Records</span>
+                    <span class="font-semibold text-gray-900">{{ today_records }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Present Rate</span>
+                    <span class="font-semibold text-green-600">
+                        {% if today_records > 0 %}
+                            {% widthratio present_count today_records 100 %}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Absent Rate</span>
+                    <span class="font-semibold text-red-600">
+                        {% if today_records > 0 %}
+                            {% widthratio absent_count today_records 100 %}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-chart-line mr-2 text-green-500"></i>Weekly Trends
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">This Week</span>
+                    <span class="font-semibold text-gray-900">{{ attendance_records|length }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Avg Daily</span>
+                    <span class="font-semibold text-blue-600">--</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Best Day</span>
+                    <span class="font-semibold text-green-600">--</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-exclamation-triangle mr-2 text-yellow-500"></i>Alerts
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Frequent Absences</span>
+                    <span class="font-semibold text-yellow-600">--</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Late Arrivals</span>
+                    <span class="font-semibold text-yellow-600">{{ late_count }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Unmarked Sessions</span>
+                    <span class="font-semibold text-red-600">--</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
