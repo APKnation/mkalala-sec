@@ -148,7 +148,17 @@ def admin_unified_dashboard(request, page='overview'):
     elif page == 'users':
         context.update(get_admin_users_context(user, admin_profile))
     elif page == 'edit-user':
-        context.update(get_admin_edit_user_context(request, user, admin_profile))
+        context_result = get_admin_edit_user_context(request, user, admin_profile)
+        # Handle form submission for edit-user
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
+    elif page == 'delete-user':
+        context_result = get_admin_delete_user_context(request, user, admin_profile)
+        # Handle form submission for delete-user
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'settings':
         context.update(get_admin_settings_context(user, admin_profile))
     elif page == 'logs':
@@ -2646,3 +2656,91 @@ def get_admin_add_grade_context(request, user, admin_profile):
         'active_teachers': teachers.filter(is_active=True).count(),
         'monthly_trends': monthly_trends,
     }
+
+def get_admin_edit_user_context(request, user, admin_profile):
+    """Get admin edit user page context"""
+    from django.shortcuts import get_object_or_404
+    from django.http import HttpResponseRedirect
+    from django.urls import reverse
+    
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        from django.contrib import messages
+        messages.error(request, "User ID not provided.")
+        return {}
+    
+    try:
+        edit_user = get_object_or_404(User, pk=user_id)
+        
+        if request.method == 'POST':
+            # Use the same form as the separate edit view
+            from .forms import UserUpdateForm
+            form = UserUpdateForm(request.POST, instance=edit_user)
+            
+            if form.is_valid():
+                form.save()
+                from django.contrib import messages
+                messages.success(request, f'User "{form.instance.get_full_name()}" has been updated successfully!')
+                return HttpResponseRedirect(reverse('admin_unified_dashboard', kwargs={'page': 'users'}))
+            else:
+                from django.contrib import messages
+                messages.error(request, 'Failed to update user. Please check the form for errors.')
+        
+        # Use the same form as the separate edit view
+        from .forms import UserUpdateForm
+        form = UserUpdateForm(instance=edit_user)
+        
+        return {
+            'edit_user': edit_user,
+            'form': form,
+            'user_role_display': 'Administrator',
+            'current_page': 'edit-user',
+        }
+    except User.DoesNotExist:
+        from django.contrib import messages
+        messages.error(request, "User not found.")
+        return {}
+
+def get_admin_delete_user_context(request, user, admin_profile):
+    """Get admin delete user page context"""
+    from django.shortcuts import get_object_or_404
+    from django.http import HttpResponseRedirect
+    from django.urls import reverse
+    from django.contrib import messages
+    
+    user_id = request.GET.get('user_id')
+    if not user_id:
+        messages.error(request, "User ID not provided.")
+        return {}
+    
+    try:
+        delete_user = get_object_or_404(User, pk=user_id)
+        
+        if request.method == 'POST':
+            # Prevent deletion of self
+            if delete_user == request.user:
+                messages.error(request, "You cannot delete your own account.")
+                return {'delete_user': delete_user}
+            
+            # Check if user has permission
+            if not request.user.is_staff:
+                messages.error(request, "You don't have permission to delete users.")
+                return {'delete_user': delete_user}
+            
+            try:
+                user_name = delete_user.get_full_name() or delete_user.username
+                delete_user.delete()
+                messages.success(request, f'User "{user_name}" has been deleted successfully.')
+                return HttpResponseRedirect(reverse('admin_unified_dashboard', kwargs={'page': 'users'}))
+            except Exception as e:
+                messages.error(request, f'Error deleting user: {str(e)}')
+                return {'deleted': False, 'error': str(e)}
+        
+        return {
+            'delete_user': delete_user,
+            'user_role_display': 'Administrator',
+            'current_page': 'delete-user',
+        }
+    except User.DoesNotExist:
+        messages.error(request, "User not found.")
+        return {}
