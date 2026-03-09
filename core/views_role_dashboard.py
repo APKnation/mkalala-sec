@@ -2695,6 +2695,22 @@ def get_admin_edit_user_context(request, user, admin_profile):
             'form': form,
             'user_role_display': 'Administrator',
             'current_page': 'edit-user',
+            # Add teacher statistics for template compatibility
+            'teachers': User.objects.filter(role='teacher'),
+            'total_teachers': User.objects.filter(role='teacher').count(),
+            'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+            # Add monthly trends for template compatibility with nested structure
+            'monthly_trends': {
+                'student_growth': {
+                    'this_month': 0,  # Placeholder for current month
+                    'last_month': 0,   # Placeholder for last month
+                },
+                'fee_collection': {
+                    'this_month': 0,  # Placeholder for current month
+                    'last_month': 0,   # Placeholder for last month
+                },
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
         }
     except User.DoesNotExist:
         from django.contrib import messages
@@ -2740,6 +2756,22 @@ def get_admin_delete_user_context(request, user, admin_profile):
             'delete_user': delete_user,
             'user_role_display': 'Administrator',
             'current_page': 'delete-user',
+            # Add teacher statistics for template compatibility
+            'teachers': User.objects.filter(role='teacher'),
+            'total_teachers': User.objects.filter(role='teacher').count(),
+            'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+            # Add monthly trends for template compatibility with nested structure
+            'monthly_trends': {
+                'student_growth': {
+                    'this_month': 0,  # Placeholder for current month
+                    'last_month': 0,   # Placeholder for last month
+                },
+                'fee_collection': {
+                    'this_month': 0,  # Placeholder for current month
+                    'last_month': 0,   # Placeholder for last month
+                },
+                'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
         }
     except User.DoesNotExist:
         messages.error(request, "User not found.")

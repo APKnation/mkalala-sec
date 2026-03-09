@@ -52,12 +52,25 @@
             </div>
         </div>
         
-        <!-- Edit Form -->
-        <form method="post" class="p-6 space-y-6">
-            {% csrf_token %}
+        <!-- Main Form Card -->
+        <div class="card-premium">
+            {% if messages %}
+                <div class="p-4">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% empty %}
+                        <p>No messages to display.</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
             
-            <!-- Personal Information Section -->
-            <div class="space-y-6">
+            <form method="post">
+                {% csrf_token %}
                 <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
                     <i class="fas fa-user mr-2 text-blue-500"></i>Personal Information
                 </h4>
@@ -226,6 +239,104 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript for form handling and SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for messages and show SweetAlert
+    {% if messages %}
+        {% for message in messages %}
+            Swal.fire({
+                icon: '{% if "success" in message.tags %}success{% else %}error{% endif %}',
+                title: '{% if "success" in message.tags %}Success!{% else %}Error!{% endif %}',
+                text: '{{ message|escapejs }}',
+                confirmButtonColor: '{% if "success" in message.tags %}#10b981{% else %}#dc3545{% endif %}',
+                timer: 5000,
+                showConfirmButton: false
+            });
+        {% endfor %}
+    {% endif %}
+    
+    // Handle form submission with SweetAlert
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic form validation
+            const firstName = document.getElementById('{{ form.first_name.id_for_label }}');
+            const lastName = document.getElementById('{{ form.last_name.id_for_label }}');
+            const username = document.getElementById('{{ form.username.id_for_label }}');
+            const email = document.getElementById('{{ form.email.id_for_label }}');
+            const role = document.getElementById('id_role'); // Manual dropdown ID
+            
+            if (!firstName || !firstName.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'First name is required',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+            
+            if (!lastName || !lastName.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Last name is required',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+            
+            if (!username || !username.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Username is required',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+            
+            if (!email || !email.value.trim()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Email address is required',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+            
+            if (!role || !role.value) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Please select a user role',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+            
+            // Show loading
+            Swal.fire({
+                title: 'Updating User...',
+                text: 'Please wait while we update the user information.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Submit form
+            form.submit();
+        });
+    }
+});
+</script>
 
 <style>
 /* Form styling */
