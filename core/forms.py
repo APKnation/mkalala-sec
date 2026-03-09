@@ -211,34 +211,6 @@ class PublicUserRegistrationForm(UserCreationForm):
         help_text="Enter your complete home address (optional)"
     )
     
-    date_of_birth = forms.DateField(
-        required=False,
-        widget=forms.DateInput(attrs={
-            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
-            'type': 'date'
-        }),
-        help_text="Enter your date of birth (optional)"
-    )
-    
-    gender = forms.ChoiceField(
-        choices=[('', 'Select Gender'), ('M', 'Male'), ('F', 'Female')],
-        required=False,
-        widget=forms.Select(attrs={
-            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white'
-        }),
-        help_text="Select your gender (optional)"
-    )
-    
-    necta_exam_number = forms.CharField(
-        max_length=50,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
-            'placeholder': 'Enter NECTA exam number'
-        }),
-        help_text="Enter your NECTA examination number (optional)"
-    )
-    
     birth_certificate_number = forms.CharField(
         max_length=50,
         required=False,
@@ -263,7 +235,7 @@ class PublicUserRegistrationForm(UserCreationForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'role', 'password1', 'password2', 
                   'phone', 'address', 'date_of_birth', 'gender', 
-                  'necta_exam_number', 'birth_certificate_number', 'previous_school']
+                  'birth_certificate_number', 'previous_school']
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
@@ -307,10 +279,6 @@ class PublicUserRegistrationForm(UserCreationForm):
             'gender': forms.Select(attrs={
                 'class': 'form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
             }),
-            'necta_exam_number': forms.TextInput(attrs={
-                'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
-                'placeholder': 'Enter NECTA exam number'
-            }),
             'birth_certificate_number': forms.TextInput(attrs={
                 'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200',
                 'placeholder': 'Enter birth certificate number'
@@ -330,7 +298,6 @@ class PublicUserRegistrationForm(UserCreationForm):
         self.fields['address'].widget.attrs.update({'class': 'form-textarea w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'})
         self.fields['date_of_birth'].widget.attrs.update({'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'})
         self.fields['gender'].widget.attrs.update({'class': 'form-select w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'})
-        self.fields['necta_exam_number'].widget.attrs.update({'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'})
         self.fields['birth_certificate_number'].widget.attrs.update({'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'})
         self.fields['previous_school'].widget.attrs.update({'class': 'form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'})
 

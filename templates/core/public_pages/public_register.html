@@ -158,17 +158,17 @@
                             </div>
                             
                             <div class="grid md:grid-cols-2 gap-6">
-                                <div class="space-y-2">
-                                    <label for="{{ form.necta_exam_number.id_for_label }}" class="text-sm font-semibold text-gray-700 uppercase tracking-wider block mb-2">NECTA Exam Number</label>
-                                    {{ form.necta_exam_number }}
-                                    {% if form.necta_exam_number.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.necta_exam_number.errors.0 }}</p>{% endif %}
-                                </div>
-                                <div class="space-y-2">
-                                    <label for="{{ form.previous_school.id_for_label }}" class="text-sm font-semibold text-gray-700 uppercase tracking-wider block mb-2">Previous School</label>
-                                    {{ form.previous_school }}
-                                    {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.previous_school.errors.0 }}</p>{% endif %}
-                                </div>
-                            </div>
+        <div class="space-y-2">
+            <label for="{{ form.previous_school.id_for_label }}" class="text-sm font-semibold text-gray-700 uppercase tracking-wider block mb-2">Previous School</label>
+            {{ form.previous_school }}
+            {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.previous_school.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="space-y-2">
+            <label for="{{ form.birth_certificate_number.id_for_label }}" class="text-sm font-semibold text-gray-700 uppercase tracking-wider block mb-2">Birth Certificate Number</label>
+            {{ form.birth_certificate_number }}
+            {% if form.birth_certificate_number.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.birth_certificate_number.errors.0 }}</p>{% endif %}
+        </div>
+    </div>
                         </div>
 
                         <div class="pt-8 border-t border-gray-200 flex flex-col items-center space-y-6">
