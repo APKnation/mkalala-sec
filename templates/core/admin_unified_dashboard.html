@@ -268,6 +268,21 @@
     {% include 'core/admin_parts/export_attendance.html' %}
 </div>
 
+<!-- View Attendance Section -->
+<div id="view-attendance-section" class="content-section {% if current_page == 'view-attendance' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/view_attendance.html' %}
+</div>
+
+<!-- Edit Attendance Section -->
+<div id="edit-attendance-section" class="content-section {% if current_page == 'edit-attendance' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/edit_attendance.html' %}
+</div>
+
+<!-- Delete Attendance Section -->
+<div id="delete-attendance-section" class="content-section {% if current_page == 'delete-attendance' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/delete_attendance.html' %}
+</div>
+
 <!-- Attendance Section -->
 <div id="attendance-section" class="content-section {% if current_page == 'attendance' %}active{% endif %} page-content">
     {% include 'core/admin_parts/attendance.html' %}

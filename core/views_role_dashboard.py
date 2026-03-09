@@ -111,9 +111,23 @@ def admin_unified_dashboard(request, page='overview'):
     elif page == 'delete-class':
         context.update(get_admin_delete_class_context(request, user, admin_profile))
     elif page == 'mark-attendance':
-        context.update(get_admin_mark_attendance_context(request, user, admin_profile))
+        context_result = get_admin_mark_attendance_context(request, user, admin_profile)
+        # Handle redirect responses (both redirect and HttpResponse)
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'export-attendance':
-        context.update(get_admin_export_attendance_context(request, user, admin_profile))
+        context_result = get_admin_export_attendance_context(request, user, admin_profile)
+        # Handle redirect responses (both redirect and HttpResponse)
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
+    elif page == 'view-attendance':
+        context.update(get_admin_view_attendance_context(request, user, admin_profile))
+    elif page == 'edit-attendance':
+        context.update(get_admin_edit_attendance_context(request, user, admin_profile))
+    elif page == 'delete-attendance':
+        context.update(get_admin_delete_attendance_context(request, user, admin_profile))
     elif page == 'attendance':
         context.update(get_admin_attendance_context(user, admin_profile))
     elif page == 'grading':
@@ -418,6 +432,9 @@ def get_admin_page_title(page):
         'delete-class': 'Delete Class',
         'mark-attendance': 'Mark Attendance',
         'export-attendance': 'Export Attendance',
+        'view-attendance': 'View Attendance',
+        'edit-attendance': 'Edit Attendance',
+        'delete-attendance': 'Delete Attendance',
         'attendance': 'Attendance',
         'grading': 'Grading',
         'exams': 'Exams',
@@ -1318,30 +1335,22 @@ def get_admin_mark_attendance_context(request, user, admin_profile):
     from .models import Attendance, Enrollment, CourseOffering, AttendanceSession
     from django.utils import timezone
     
-    # Create form for marking attendance
-    class AttendanceMarkingForm(forms.Form):
-        course_offering = forms.ModelChoiceField(
-            queryset=CourseOffering.objects.all().select_related('course'),
-            empty_label="Select Course",
-            widget=forms.Select(attrs={
-                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
-            })
-        )
-        date = forms.DateField(
-            widget=forms.DateInput(attrs={
-                'type': 'date',
-                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
-            })
-        )
-        
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            # Set default date to today
-            if not self.initial.get('date'):
-                self.initial['date'] = timezone.now().date()
-    
-    # Handle form submission
+    # Handle form submission - redirect immediately if successful
     if request.method == 'POST':
+        from django.shortcuts import redirect
+        
+        class AttendanceMarkingForm(forms.Form):
+            course_offering = forms.ModelChoiceField(
+                queryset=CourseOffering.objects.all().select_related('course'),
+                empty_label="Select Course"
+            )
+            date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+            
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                if not self.initial.get('date'):
+                    self.initial['date'] = timezone.now().date()
+        
         form = AttendanceMarkingForm(request.POST)
         if form.is_valid():
             course_offering = form.cleaned_data['course_offering']
@@ -1363,11 +1372,32 @@ def get_admin_mark_attendance_context(request, user, admin_profile):
             from django.contrib import messages
             messages.success(request, f'Attendance marked for {len(attendance_records)} students in {course_offering.course.name}')
             
-            # Redirect to attendance page
-            from django.shortcuts import redirect
+            # Return redirect directly - this will be handled in the main view
             return redirect('admin_unified_dashboard', 'attendance')
-    else:
-        form = AttendanceMarkingForm()
+    
+    # Create form for GET requests
+    class AttendanceMarkingForm(forms.Form):
+        course_offering = forms.ModelChoiceField(
+            queryset=CourseOffering.objects.all().select_related('course'),
+            empty_label="Select Course",
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        date = forms.DateField(
+            widget=forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Set default date to today
+            if not self.initial.get('date'):
+                self.initial['date'] = timezone.now().date()
+    
+    form = AttendanceMarkingForm()
     
     # Get teacher statistics for template compatibility
     teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
@@ -1415,7 +1445,155 @@ def get_admin_export_attendance_context(request, user, admin_profile):
     import csv
     from django.http import HttpResponse
     
-    # Create form for export options
+    # Debug: Print request method
+    print(f"Export attendance request method: {request.method}")
+    
+    # Handle form submission - return response immediately if successful
+    if request.method == 'POST':
+        try:
+            class AttendanceExportForm(forms.Form):
+                course_offering = forms.ModelChoiceField(
+                    queryset=CourseOffering.objects.all().select_related('course'),
+                    empty_label="All Courses",
+                    required=False
+                )
+                start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+                end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+                export_format = forms.ChoiceField(
+                    choices=[
+                        ('excel', 'Excel'),
+                        ('pdf', 'PDF'),
+                    ],
+                    initial='excel'
+                )
+                
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    # Set default date range to last 30 days
+                    if not self.initial.get('start_date'):
+                        self.initial['start_date'] = (timezone.now().date() - timedelta(days=30))
+                    if not self.initial.get('end_date'):
+                        self.initial['end_date'] = timezone.now().date()
+            
+            form = AttendanceExportForm(request.POST)
+            if form.is_valid():
+                course_offering = form.cleaned_data['course_offering']
+                start_date = form.cleaned_data['start_date']
+                end_date = form.cleaned_data['end_date']
+                export_format = form.cleaned_data['export_format']
+                
+                # Debug: Print form data
+                print(f"Export form valid: course={course_offering}, start={start_date}, end={end_date}, format={export_format}")
+                
+                # Query attendance records
+                attendance_records = Attendance.objects.filter(
+                    date__gte=start_date,
+                    date__lte=end_date
+                ).select_related('enrollment__student__user', 'enrollment__course_offering__course')
+                
+                if course_offering:
+                    attendance_records = attendance_records.filter(enrollment__course_offering=course_offering)
+                
+                print(f"Found {len(attendance_records)} attendance records")
+                
+                # Create response based on format
+                if export_format == 'excel':
+                    # Create Excel-compatible CSV response
+                    response = HttpResponse(content_type='application/vnd.ms-excel')
+                    response['Content-Disposition'] = f'attachment; filename="attendance_report_{start_date}_to_{end_date}.xls"'
+                    
+                    writer = csv.writer(response)
+                    writer.writerow(['Student Name', 'Roll Number', 'Course', 'Date', 'Status', 'Check In', 'Check Out', 'Notes'])
+                    
+                    for record in attendance_records:
+                        writer.writerow([
+                            record.enrollment.student.user.get_full_name(),
+                            record.enrollment.student.roll_number or '',
+                            record.enrollment.course_offering.course.name,
+                            record.date,
+                            record.get_status_display(),
+                            record.check_in_time or '',
+                            record.check_out_time or '',
+                            record.notes or ''
+                        ])
+                    
+                    print(f"Created Excel response with {len(attendance_records)} records")
+                    return response
+                    
+                elif export_format == 'pdf':
+                    # Create PDF response
+                    from reportlab.lib.pagesizes import letter, A4
+                    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+                    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+                    from reportlab.lib import colors
+                    from reportlab.lib.units import inch
+                    
+                    response = HttpResponse(content_type='application/pdf')
+                    response['Content-Disposition'] = f'attachment; filename="attendance_report_{start_date}_to_{end_date}.pdf"'
+                    
+                    # Create PDF document
+                    doc = SimpleDocTemplate(response, pagesize=A4)
+                    styles = getSampleStyleSheet()
+                    story = []
+                    
+                    # Title
+                    title_style = ParagraphStyle(
+                        'CustomTitle',
+                        parent=styles['Heading1'],
+                        fontSize=18,
+                        spaceAfter=30,
+                        alignment=1  # Center alignment
+                    )
+                    story.append(Paragraph("Attendance Report", title_style))
+                    story.append(Paragraph(f"Period: {start_date} to {end_date}", styles['Normal']))
+                    story.append(Spacer(1, 12))
+                    
+                    # Table data
+                    table_data = [['Student Name', 'Roll Number', 'Course', 'Date', 'Status', 'Check In', 'Check Out']]
+                    for record in attendance_records:
+                        table_data.append([
+                            record.enrollment.student.user.get_full_name(),
+                            record.enrollment.student.roll_number or '',
+                            record.enrollment.course_offering.course.name,
+                            str(record.date),
+                            record.get_status_display(),
+                            str(record.check_in_time) if record.check_in_time else '',
+                            str(record.check_out_time) if record.check_out_time else ''
+                        ])
+                    
+                    # Create table
+                    table = Table(table_data, repeatRows=1)
+                    table.setStyle(TableStyle([
+                        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('FONTSIZE', (0, 0), (-1, 0), 10),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                        ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ]))
+                    
+                    story.append(table)
+                    doc.build(story)
+                    
+                    print(f"Created PDF response with {len(attendance_records)} records")
+                    return response
+                
+            else:
+                print(f"Form invalid: {form.errors}")
+                
+        except Exception as e:
+            print(f"Exception in export: {str(e)}")
+            # If there's an error, create a simple error response
+            from django.contrib import messages
+            messages.error(request, f'Error exporting attendance: {str(e)}')
+            # Return a simple redirect on error
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'export-attendance')
+    
+    # Create form for GET requests
     class AttendanceExportForm(forms.Form):
         course_offering = forms.ModelChoiceField(
             queryset=CourseOffering.objects.all().select_related('course'),
@@ -1439,10 +1617,10 @@ def get_admin_export_attendance_context(request, user, admin_profile):
         )
         export_format = forms.ChoiceField(
             choices=[
-                ('csv', 'CSV'),
                 ('excel', 'Excel'),
+                ('pdf', 'PDF'),
             ],
-            initial='csv',
+            initial='excel',
             widget=forms.Select(attrs={
                 'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
             })
@@ -1456,49 +1634,7 @@ def get_admin_export_attendance_context(request, user, admin_profile):
             if not self.initial.get('end_date'):
                 self.initial['end_date'] = timezone.now().date()
     
-    # Handle form submission
-    if request.method == 'POST':
-        form = AttendanceExportForm(request.POST)
-        if form.is_valid():
-            course_offering = form.cleaned_data['course_offering']
-            start_date = form.cleaned_data['start_date']
-            end_date = form.cleaned_data['end_date']
-            export_format = form.cleaned_data['export_format']
-            
-            # Query attendance records
-            attendance_records = Attendance.objects.filter(
-                date__gte=start_date,
-                date__lte=end_date
-            ).select_related('enrollment__student__user', 'enrollment__course_offering__course')
-            
-            if course_offering:
-                attendance_records = attendance_records.filter(enrollment__course_offering=course_offering)
-            
-            # Create CSV response
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = f'attachment; filename="attendance_report_{start_date}_to_{end_date}.csv"'
-            
-            writer = csv.writer(response)
-            writer.writerow(['Student Name', 'Roll Number', 'Course', 'Date', 'Status', 'Check In', 'Check Out', 'Notes'])
-            
-            for record in attendance_records:
-                writer.writerow([
-                    record.enrollment.student.user.get_full_name(),
-                    record.enrollment.student.roll_number or '',
-                    record.enrollment.course_offering.course.name,
-                    record.date,
-                    record.get_status_display(),
-                    record.check_in_time or '',
-                    record.check_out_time or '',
-                    record.notes or ''
-                ])
-            
-            from django.contrib import messages
-            messages.success(request, f'Exported {len(attendance_records)} attendance records')
-            
-            return response
-    else:
-        form = AttendanceExportForm()
+    form = AttendanceExportForm()
     
     # Get teacher statistics for template compatibility
     teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
@@ -1586,12 +1722,48 @@ def get_admin_attendance_context(user, admin_profile):
 
 def get_admin_grading_context(user, admin_profile):
     """Get admin grading page context"""
+    from django.db.models import Avg
     grades = Grade.objects.all().select_related('enrollment', 'enrollment__student', 'enrollment__course_offering').order_by('-awarded_on')[:50]
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in grading context
+            'last_month': 0,  # Placeholder - no payment data in grading context
+        },
+    }
     
     return {
         'grades': grades,
         'total_grades': grades.count(),
         'average_grade': grades.aggregate(avg=Avg('points'))['avg'] or 0,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
     }
 
 def get_admin_exams_context(user, admin_profile):
@@ -2038,5 +2210,264 @@ def get_admin_edit_user_context(request, user, admin_profile):
         'total_teachers': teachers.count(),
         'active_teachers': teachers.filter(is_active=True).count(),
         # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_view_attendance_context(request, user, admin_profile):
+    """Get admin view attendance page context"""
+    from django import forms
+    from .models import Attendance
+    
+    # Get attendance ID from query parameters
+    attendance_id = request.GET.get('attendance_id')
+    
+    if not attendance_id:
+        from django.contrib import messages
+        messages.error(request, 'Attendance ID is required')
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    try:
+        attendance = Attendance.objects.get(id=attendance_id)
+    except Attendance.DoesNotExist:
+        from django.contrib import messages
+        messages.error(request, 'Attendance record not found')
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in view attendance context
+            'last_month': 0,  # Placeholder - no payment data in view attendance context
+        },
+    }
+    
+    return {
+        'attendance': attendance,
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_edit_attendance_context(request, user, admin_profile):
+    """Get admin edit attendance page context"""
+    from django import forms
+    from .models import Attendance
+    
+    # Get attendance ID from query parameters
+    attendance_id = request.GET.get('attendance_id')
+    
+    if not attendance_id:
+        from django.contrib import messages
+        messages.error(request, 'Attendance ID is required')
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    try:
+        attendance = Attendance.objects.get(id=attendance_id)
+    except Attendance.DoesNotExist:
+        from django.contrib import messages
+        messages.error(request, 'Attendance record not found')
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    # Create form for editing attendance
+    class AttendanceEditForm(forms.Form):
+        STATUS_CHOICES = [
+            ('P', 'Present'),
+            ('A', 'Absent'),
+            ('L', 'Late'),
+            ('E', 'Excused'),
+        ]
+        
+        status = forms.ChoiceField(
+            choices=STATUS_CHOICES,
+            initial=attendance.status,
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        check_in_time = forms.TimeField(
+            required=False,
+            initial=attendance.check_in_time,
+            widget=forms.TimeInput(attrs={
+                'type': 'time',
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        check_out_time = forms.TimeField(
+            required=False,
+            initial=attendance.check_out_time,
+            widget=forms.TimeInput(attrs={
+                'type': 'time',
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        notes = forms.CharField(
+            required=False,
+            initial=attendance.notes,
+            widget=forms.Textarea(attrs={
+                'rows': 3,
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = AttendanceEditForm(request.POST)
+        if form.is_valid():
+            attendance.status = form.cleaned_data['status']
+            attendance.check_in_time = form.cleaned_data['check_in_time']
+            attendance.check_out_time = form.cleaned_data['check_out_time']
+            attendance.notes = form.cleaned_data['notes']
+            attendance.save()
+            
+            from django.contrib import messages
+            messages.success(request, f'Attendance record for {attendance.enrollment.student.user.get_full_name()} has been updated successfully!')
+            
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'attendance')
+    else:
+        form = AttendanceEditForm()
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in edit attendance context
+            'last_month': 0,  # Placeholder - no payment data in edit attendance context
+        },
+    }
+    
+    return {
+        'attendance': attendance,
+        'form': form,
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_delete_attendance_context(request, user, admin_profile):
+    """Get admin delete attendance page context"""
+    from django import forms
+    from .models import Attendance
+    
+    # Get attendance ID from query parameters
+    attendance_id = request.GET.get('attendance_id')
+    
+    if not attendance_id:
+        from django.contrib import messages
+        messages.error(request, 'Attendance ID is required')
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    try:
+        attendance = Attendance.objects.get(id=attendance_id)
+    except Attendance.DoesNotExist:
+        from django.contrib import messages
+        messages.error(request, 'Attendance record not found')
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    # Handle form submission
+    if request.method == 'POST':
+        confirm_text = request.POST.get('confirm_text', '').strip()
+        
+        if confirm_text != 'DELETE':
+            from django.contrib import messages
+            messages.error(request, 'Invalid confirmation. Please type DELETE exactly to confirm.')
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'delete-attendance') + f'?attendance_id={attendance_id}'
+        
+        student_name = attendance.enrollment.student.user.get_full_name()
+        attendance_date = attendance.date
+        
+        # Delete the attendance record
+        attendance.delete()
+        
+        from django.contrib import messages
+        messages.success(request, f'Attendance record for {student_name} on {attendance_date} has been deleted successfully!')
+        
+        from django.shortcuts import redirect
+        return redirect('admin_unified_dashboard', 'attendance')
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in delete attendance context
+            'last_month': 0,  # Placeholder - no payment data in delete attendance context
+        },
+    }
+    
+    return {
+        'attendance': attendance,
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
         'monthly_trends': monthly_trends,
     }
