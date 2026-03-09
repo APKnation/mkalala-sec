@@ -128,6 +128,11 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_edit_attendance_context(request, user, admin_profile))
     elif page == 'delete-attendance':
         context.update(get_admin_delete_attendance_context(request, user, admin_profile))
+    elif page == 'add-grade':
+        context_result = get_admin_add_grade_context(request, user, admin_profile)
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'attendance':
         context.update(get_admin_attendance_context(user, admin_profile))
     elif page == 'grading':
@@ -435,6 +440,7 @@ def get_admin_page_title(page):
         'view-attendance': 'View Attendance',
         'edit-attendance': 'Edit Attendance',
         'delete-attendance': 'Delete Attendance',
+        'add-grade': 'Add Grade',
         'attendance': 'Attendance',
         'grading': 'Grading',
         'exams': 'Exams',
@@ -2466,6 +2472,161 @@ def get_admin_delete_attendance_context(request, user, admin_profile):
     
     return {
         'attendance': attendance,
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_add_grade_context(request, user, admin_profile):
+    """Get admin add grade page context"""
+    from django import forms
+    from .models import Grade, Enrollment, CourseOffering
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Handle form submission
+    if request.method == 'POST':
+        class GradeForm(forms.Form):
+            enrollment = forms.ModelChoiceField(
+                queryset=Enrollment.objects.all().select_related('student__user', 'course_offering__course'),
+                widget=forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            )
+            points = forms.IntegerField(
+                min_value=0,
+                max_value=100,
+                widget=forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            )
+            remarks = forms.CharField(
+                required=False,
+                widget=forms.Textarea(attrs={
+                    'rows': 3,
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            )
+        
+        form = GradeForm(request.POST)
+        if form.is_valid():
+            # Calculate letter grade based on points using model's grade scale
+            points = form.cleaned_data['points']
+            if points >= 90:
+                letter_grade = 'A+'
+            elif points >= 85:
+                letter_grade = 'A'
+            elif points >= 80:
+                letter_grade = 'A-'
+            elif points >= 75:
+                letter_grade = 'B+'
+            elif points >= 70:
+                letter_grade = 'B'
+            elif points >= 65:
+                letter_grade = 'B-'
+            elif points >= 60:
+                letter_grade = 'C+'
+            elif points >= 55:
+                letter_grade = 'C'
+            elif points >= 50:
+                letter_grade = 'C-'
+            elif points >= 45:
+                letter_grade = 'D'
+            else:
+                letter_grade = 'F'
+            
+            enrollment = form.cleaned_data['enrollment']
+            
+            # Check if grade already exists for this enrollment
+            try:
+                grade = Grade.objects.get(enrollment=enrollment)
+                # Update existing grade
+                grade.points = points
+                grade.grade = letter_grade
+                grade.remarks = form.cleaned_data['remarks']
+                grade.save()
+                
+                from django.contrib import messages
+                messages.success(request, f'Grade updated to {grade.points} ({grade.grade}) for {grade.enrollment.student.user.get_full_name()} in {grade.enrollment.course_offering.course.name}!')
+                
+            except Grade.DoesNotExist:
+                # Create new grade
+                grade = Grade.objects.create(
+                    enrollment=enrollment,
+                    points=points,
+                    grade=letter_grade,
+                    remarks=form.cleaned_data['remarks'],
+                    awarded_on=timezone.now().date()
+                )
+                
+                from django.contrib import messages
+                messages.success(request, f'Grade {grade.points} ({grade.grade}) has been successfully assigned to {grade.enrollment.student.user.get_full_name()} for {grade.enrollment.course_offering.course.name}!')
+            
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'grading')
+    else:
+        class GradeForm(forms.Form):
+            enrollment = forms.ModelChoiceField(
+                queryset=Enrollment.objects.all().select_related('student__user', 'course_offering__course'),
+                widget=forms.Select(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            )
+            points = forms.IntegerField(
+                min_value=0,
+                max_value=100,
+                widget=forms.NumberInput(attrs={
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            )
+            remarks = forms.CharField(
+                required=False,
+                widget=forms.Textarea(attrs={
+                    'rows': 3,
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            )
+        
+        form = GradeForm()
+    
+    # Calculate statistics for template
+    enrollments = Enrollment.objects.all().select_related('student', 'course_offering__course')
+    total_students = enrollments.values('student').distinct().count()
+    total_courses = enrollments.values('course_offering__course').distinct().count()
+    total_enrollments = enrollments.count()
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in add grade context
+            'last_month': 0,  # Placeholder - no payment data in add grade context
+        },
+    }
+    
+    return {
+        'form': form,
+        'total_students': total_students,
+        'total_courses': total_courses,
+        'total_enrollments': total_enrollments,
         'teachers': teachers,
         'total_teachers': teachers.count(),
         'active_teachers': teachers.filter(is_active=True).count(),

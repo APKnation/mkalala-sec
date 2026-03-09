@@ -3,18 +3,216 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
+                <i class="fas fa-chart-line mr-3 text-green-600"></i>
                 Grading Management
             </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage grading system</p>
+            <p class="mt-2 text-sm text-gray-600">Manage student grades and academic performance</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_unified_dashboard' 'add-grade' %}" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center">
+                <i class="fas fa-plus mr-2"></i>
+                Add Grade
+            </a>
+            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+                <i class="fas fa-download mr-2"></i>
+                Export Grades
+            </button>
         </div>
     </div>
 
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-graduation-cap mr-2 text-blue-500"></i>Total Grades
+            </h3>
+            <div class="text-2xl font-bold text-blue-600">{{ total_grades }}</div>
+            <p class="text-sm text-gray-500 mt-1">All recorded grades</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-chart-bar mr-2 text-green-500"></i>Average Grade
+            </h3>
+            <div class="text-2xl font-bold text-green-600">{{ average_grade|floatformat:2 }}</div>
+            <p class="text-sm text-gray-500 mt-1">Overall average score</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-trophy mr-2 text-yellow-500"></i>Performance
+            </h3>
+            <div class="text-2xl font-bold text-yellow-600">
+                {% if average_grade >= 80 %}
+                    Excellent
+                {% elif average_grade >= 70 %}
+                    Good
+                {% elif average_grade >= 60 %}
+                    Average
+                {% else %}
+                    Needs Improvement
+                {% endif %}
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Overall performance level</p>
+        </div>
+    </div>
+
+    <!-- Grades Table -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">
+                <i class="fas fa-list mr-2 text-blue-500"></i>Recent Grades
+            </h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for grade in grades %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="py-3 px-4">
+                            <div class="text-sm font-medium text-gray-900">
+                                {{ grade.enrollment.student.user.get_full_name }}
+                            </div>
+                            <div class="text-sm text-gray-500">{{ grade.enrollment.student.roll_number|default:"No roll number" }}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-sm text-gray-900">{{ grade.enrollment.course_offering.course.name }}</div>
+                            <div class="text-sm text-gray-500">{{ grade.enrollment.course_offering.course.code }}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                {% if grade.grade == 'A+' or grade.grade == 'A' or grade.grade == 'A-' %}bg-green-100 text-green-800{% endif %}
+                                {% if grade.grade == 'B+' or grade.grade == 'B' or grade.grade == 'B-' %}bg-blue-100 text-blue-800{% endif %}
+                                {% if grade.grade == 'C+' or grade.grade == 'C' or grade.grade == 'C-' %}bg-yellow-100 text-yellow-800{% endif %}
+                                {% if grade.grade == 'D' %}bg-orange-100 text-orange-800{% endif %}
+                                {% if grade.grade == 'F' %}bg-red-100 text-red-800{% endif %}
+                                {% if grade.grade == 'I' %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ grade.grade }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-sm font-medium text-gray-900">{{ grade.points }}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-sm text-gray-900">{{ grade.awarded_on|date:"M d, Y" }}</div>
+                        </td>
+                        <td class="py-3 px-4 whitespace-nowrap text-sm font-medium">
+                            <button class="text-blue-600 hover:text-blue-900 mr-3" title="View Grade">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-indigo-600 hover:text-indigo-900 mr-3" title="Edit Grade">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-900" title="Delete Grade">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-20 text-center">
+                            <div class="flex flex-col items-center space-y-4">
+                                <i class="fas fa-graduation-cap text-4xl text-gray-300 mb-3"></i>
+                                <p class="text-gray-500">No grades found</p>
+                                <p class="text-sm text-gray-400">Start by adding grades for students</p>
+                                <a href="{% url 'admin_unified_dashboard' 'add-grade' %}" class="mt-4 inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all">
+                                    <i class="fas fa-plus mr-2"></i> Add First Grade
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Grade Distribution Chart -->
     <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Grading</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Grading management interface coming soon</p>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-chart-pie mr-2 text-purple-500"></i>Grade Distribution
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-700">A (80-100)</span>
+                    <span class="text-sm text-gray-500">{{ grades|length }} grades</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-green-600 h-2 rounded-full" style="width: 85%"></div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-700">B (70-79)</span>
+                    <span class="text-sm text-gray-500">{{ grades|length }} grades</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 10%"></div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-700">C (60-69)</span>
+                    <span class="text-sm text-gray-500">{{ grades|length }} grades</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-yellow-600 h-2 rounded-full" style="width: 5%"></div>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-700">D/F (Below 60)</span>
+                    <span class="text-sm text-gray-500">{{ grades|length }} grades</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-red-600 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-bolt mr-2 text-yellow-500"></i>Quick Actions
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="{% url 'admin_unified_dashboard' 'add-grade' %}" 
+               class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                <i class="fas fa-plus text-green-600 mr-3 text-xl"></i>
+                <div class="text-left">
+                    <div class="font-medium text-gray-900">Add Grade</div>
+                    <div class="text-sm text-gray-500">Record new student grade</div>
+                </div>
+            </a>
+            
+            <button class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                <i class="fas fa-download text-blue-600 mr-3 text-xl"></i>
+                <div class="text-left">
+                    <div class="font-medium text-gray-900">Export Grades</div>
+                    <div class="text-sm text-gray-500">Download grade reports</div>
+                </div>
+            </button>
+            
+            <button class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                <i class="fas fa-chart-bar text-purple-600 mr-3 text-xl"></i>
+                <div class="text-left">
+                    <div class="font-medium text-gray-900">Analytics</div>
+                    <div class="text-sm text-gray-500">View performance trends</div>
+                </div>
+            </button>
         </div>
     </div>
 </div>

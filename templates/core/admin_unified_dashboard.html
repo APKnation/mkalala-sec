@@ -283,6 +283,11 @@
     {% include 'core/admin_parts/delete_attendance.html' %}
 </div>
 
+<!-- Add Grade Section -->
+<div id="add-grade-section" class="content-section {% if current_page == 'add-grade' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/add_grade.html' %}
+</div>
+
 <!-- Attendance Section -->
 <div id="attendance-section" class="content-section {% if current_page == 'attendance' %}active{% endif %} page-content">
     {% include 'core/admin_parts/attendance.html' %}

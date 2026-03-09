@@ -1,0 +1,170 @@
+<!-- Admin Add Grade Dashboard Content -->
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-plus mr-3 text-green-600"></i>
+                Add Grade
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Assign a new grade to a student</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_unified_dashboard' 'grading' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Grading
+            </a>
+        </div>
+    </div>
+
+    <!-- Add Grade Form -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Grade Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                        <i class="fas fa-graduation-cap mr-2 text-green-500"></i>Grade Information
+                    </h3>
+                    
+                    <div>
+                        <label for="id_enrollment" class="block text-sm font-medium text-gray-700 mb-1">Student & Course *</label>
+                        {{ form.enrollment }}
+                        {% if form.enrollment.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.enrollment.errors|join:", " }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Select the student and course combination for this grade</p>
+                    </div>
+                    
+                    <div>
+                        <label for="id_points" class="block text-sm font-medium text-gray-700 mb-1">Grade Points *</label>
+                        {{ form.points }}
+                        {% if form.points.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.points.errors|join:", " }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Enter the grade points (0-100)</p>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>Additional Information
+                    </h3>
+                    
+                    <div>
+                        <label for="id_remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
+                        {{ form.remarks }}
+                        {% if form.remarks.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.remarks.errors|join:", " }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Any additional notes about this grade (optional)</p>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="text-sm font-semibold text-blue-800 mb-2">Grade Scale:</h4>
+                        <div class="text-sm text-blue-700 space-y-1">
+                            <div><strong>A:</strong> 80-100 points (Excellent)</div>
+                            <div><strong>B:</strong> 70-79 points (Good)</div>
+                            <div><strong>C:</strong> 60-69 points (Average)</div>
+                            <div><strong>D:</strong> 50-59 points (Below Average)</div>
+                            <div><strong>F:</strong> 0-49 points (Fail)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex justify-between items-center pt-6 border-t border-gray-200">
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Required fields are marked with *
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'admin_unified_dashboard' 'grading' %}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        <i class="fas fa-save mr-2"></i>Add Grade
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-users mr-2 text-blue-500"></i>Total Students
+            </h3>
+            <div class="text-2xl font-bold text-blue-600">{{ total_students }}</div>
+            <p class="text-sm text-gray-500 mt-1">Enrolled students</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-book mr-2 text-green-500"></i>Total Courses
+            </h3>
+            <div class="text-2xl font-bold text-green-600">{{ total_courses }}</div>
+            <p class="text-sm text-gray-500 mt-1">Available courses</p>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-chart-line mr-2 text-purple-500"></i>Total Enrollments
+            </h3>
+            <div class="text-2xl font-bold text-purple-600">{{ total_enrollments }}</div>
+            <p class="text-sm text-gray-500 mt-1">Student-course combinations</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="fas fa-bolt mr-2 text-yellow-500"></i>Quick Actions
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="{% url 'admin_unified_dashboard' 'grading' %}" 
+               class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <i class="fas fa-list text-gray-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-gray-900">View All Grades</div>
+                    <div class="text-sm text-gray-500">See grade list</div>
+                </div>
+            </a>
+            
+            <a href="{% url 'admin_unified_dashboard' 'add-student' %}" 
+               class="flex items-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                <i class="fas fa-user-plus text-blue-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-gray-900">Add Student</div>
+                    <div class="text-sm text-gray-500">Enroll new student</div>
+                </div>
+            </a>
+            
+            <a href="{% url 'admin_unified_dashboard' 'add-course' %}" 
+               class="flex items-center p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                <i class="fas fa-plus-circle text-green-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-gray-900">Add Course</div>
+                    <div class="text-sm text-gray-500">Create new course</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Help Information -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <h3 class="text-sm font-semibold text-blue-800 mb-2">
+            <i class="fas fa-info-circle mr-2"></i>Grade Information
+        </h3>
+        <div class="text-sm text-blue-700 space-y-1">
+            <div><strong>Student Selection:</strong> Choose from enrolled students with their course assignments</div>
+            <div><strong>Grade Points:</strong> Enter a value between 0 and 100</div>
+            <div><strong>Remarks:</strong> Optional notes about the student's performance</div>
+            <div><strong>Automatic Date:</strong> Grade will be assigned with today's date</div>
+        </div>
+    </div>
+</div>
