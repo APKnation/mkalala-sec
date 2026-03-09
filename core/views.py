@@ -1203,7 +1203,7 @@ def admin_student_detail(request, pk):
         ).prefetch_related(
             'enrollments__course_offering__course',
             'enrollments__attendances',
-            'enrollments__grades'
+            'enrollments__grade'
         ),
         pk=pk
     )

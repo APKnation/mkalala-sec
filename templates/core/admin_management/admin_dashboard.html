@@ -45,7 +45,7 @@
 </a>
 {% endblock %}
 
-{% block main_content %}
+{% block admin_dashboard_content %}
 <!-- Admin Header -->
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
     <div class="space-y-1">
@@ -224,88 +224,8 @@
         </div>
     </div>
 </div>
-{% endblock %}
-    
-    <div class="card-premium p-6 group hover:border-emerald-200 transition-all">
-        <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-xl">
-                <i class="fas fa-money-bill-wave"></i>
-            </div>
-            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">94%</span>
-        </div>
-        <p class="text-3xl font-bold text-slate-900 tracking-tight">{{ total_fees_collected|floatformat:0 }}</p>
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Fees Collected (TZS)</p>
-    </div>
-</div>
+{% endblock main_content %}
+{% endblock admin_dashboard_content %}
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- performance Chart -->
-    <div class="lg:col-span-2 card-premium p-8">
-        <div class="flex items-center justify-between mb-8">
-            <h3 class="font-bold text-slate-900 text-lg">Enrollment Growth</h3>
-            <div class="flex items-center space-x-2">
-                <span class="w-3 h-3 bg-blue-600 rounded-full"></span>
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Students</span>
-            </div>
-        </div>
-        <div class="h-80 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center">
-            <!-- In a real app, use Chart.js here -->
-            <p class="text-slate-400 font-medium">Enrollment Trend Visualization</p>
-        </div>
-    </div>
-
-    <!-- Quick Management -->
-    <div class="space-y-6">
-        <div class="card-premium">
-            <div class="p-6 border-b border-slate-100">
-                <h3 class="font-bold text-slate-900">System Shortcuts</h3>
-            </div>
-            <div class="p-4 grid grid-cols-2 gap-3">
-                <a href="{% url 'add_user' %}" class="p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all text-center space-y-2 group">
-                    <i class="fas fa-user-plus text-blue-600 group-hover:scale-110 transition-transform"></i>
-                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Add User</p>
-                </a>
-                <a href="#" class="p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all text-center space-y-2 group">
-                    <i class="fas fa-bullhorn text-amber-600 group-hover:scale-110 transition-transform"></i>
-                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Broadcast</p>
-                </a>
-                <a href="#" class="p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all text-center space-y-2 group">
-                    <i class="fas fa-file-invoice text-indigo-600 group-hover:scale-110 transition-transform"></i>
-                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Invoice</p>
-                </a>
-                <a href="{% url 'admin_settings' %}" class="p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-all text-center space-y-2 group">
-                    <i class="fas fa-sliders-h text-slate-600 group-hover:scale-110 transition-transform"></i>
-                    <p class="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Configure</p>
-                </a>
-            </div>
-        </div>
-
-        <div class="card-premium">
-            <div class="p-6 border-b border-slate-100">
-                <h3 class="font-bold text-slate-900">Recent Users</h3>
-            </div>
-            <div class="p-2 divide-y divide-slate-50">
-                {% for recent_user in recent_users %}
-                    <div class="p-4 flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                             {% if recent_user.role == 'student' %}
-                                <i class="fas fa-user-graduate text-xs"></i>
-                             {% elif recent_user.role == 'teacher' %}
-                                <i class="fas fa-chalkboard-teacher text-xs"></i>
-                             {% else %}
-                                <i class="fas fa-user-shield text-xs"></i>
-                             {% endif %}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-xs font-bold text-slate-900 truncate">{{ recent_user.get_full_name|default:recent_user.username }}</p>
-                            <p class="text-[10px] text-slate-400 uppercase">{{ recent_user.role }} • {{ recent_user.date_joined|timesince }} ago</p>
-                        </div>
-                    </div>
-                {% empty %}
-                    <p class="text-center py-6 text-xs text-slate-400">No recent activity.</p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+{% block student_detail_content %}
+{% endblock student_detail_content %}

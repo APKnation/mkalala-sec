@@ -8,6 +8,7 @@ from . import views
 from . import views_dashboard
 from . import views_role_dashboard
 from . import views_admin
+from . import views_ajax
 from .views import CourseUpdateView
 from .views import CreateCourseView  # <--this is correct now
 from .views import CourseListView
@@ -134,6 +135,10 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     # Headmaster User Creation URLs
     path('headmaster/create/student/', views_admin.headmaster_create_student, name='headmaster_create_student'),
     path('headmaster/create/teacher/', views_admin.headmaster_create_teacher, name='headmaster_create_teacher'),
+    
+    # AJAX URLs for inline editing
+    path('ajax/student/<int:student_id>/edit/', views_ajax.ajax_student_edit, name='ajax_student_edit'),
+    path('ajax/student/<int:student_id>/detail/', views_ajax.ajax_student_detail, name='ajax_student_detail'),
     
     # Fee Management URLs
     path('fees/', views.admin_fees, name='admin_fees'),

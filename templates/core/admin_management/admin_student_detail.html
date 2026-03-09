@@ -1,9 +1,9 @@
-{% extends 'core/admin_dashboard.html' %}
+{% extends 'core/admin_management/admin_dashboard.html' %}
 {% load static %}
 
 {% block title %}Student Details - {{ school_info.name }}{% endblock %}
 
-{% block main_content %}
+{% block student_detail_content %}
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0">Student Details</h1>
@@ -243,4 +243,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock student_detail_content %}

@@ -157,9 +157,9 @@
                                 <a href="{% url 'admin_student_detail' student.id %}" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-blue-600 hover:border-blue-200 flex items-center justify-center transition-all shadow-sm">
                                     <i class="fas fa-eye text-xs"></i>
                                 </a>
-                                <a href="{% url 'admin_student_edit' student.id %}" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 flex items-center justify-center transition-all shadow-sm">
+                                <button onclick="editStudent({{ student.id }})" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-200 flex items-center justify-center transition-all shadow-sm">
                                     <i class="fas fa-edit text-xs"></i>
-                                </a>
+                                </button>
                                 <a href="{% url 'admin_student_delete' student.id %}" class="w-9 h-9 rounded-xl bg-white border border-slate-100 text-slate-400 hover:text-red-600 hover:border-red-200 flex items-center justify-center transition-all shadow-sm">
                                     <i class="fas fa-trash text-xs"></i>
                                 </a>
@@ -184,6 +184,138 @@
     </div>
 </div>
 
+<!-- Inline Edit Modal -->
+<div id="editStudentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-900">Edit Student</h3>
+                    <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="editStudentForm" class="p-6 space-y-6">
+                <input type="hidden" id="studentId" name="studentId">
+                
+                <!-- Basic Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input type="text" id="firstName" name="first_name" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input type="text" id="lastName" name="last_name" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="email" name="email" required
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <!-- Academic Information -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Roll Number</label>
+                        <input type="text" id="rollNumber" name="roll_number" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Current Form</label>
+                        <select id="currentForm" name="current_form" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="1">Form 1</option>
+                            <option value="2">Form 2</option>
+                            <option value="3">Form 3</option>
+                            <option value="4">Form 4</option>
+                            <option value="5">Form 5</option>
+                            <option value="6">Form 6</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                        <select id="department" name="department" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select Department</option>
+                            {% for dept in departments %}
+                            <option value="{{ dept.id }}">{{ dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <input type="tel" id="phone" name="phone"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                        <input type="text" id="address" name="address"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <!-- Parent/Guardian Information -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Father Name</label>
+                        <input type="text" id="fatherName" name="father_name"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mother Name</label>
+                        <input type="text" id="motherName" name="mother_name"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Guardian Name</label>
+                        <input type="text" id="guardianName" name="guardian_name"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Guardian Phone</label>
+                        <input type="tel" id="guardianPhone" name="guardian_phone"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <!-- Password (Optional) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">New Password (leave blank to keep current)</label>
+                    <input type="password" id="password" name="password"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeEditModal()"
+                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 // Set progress bar widths dynamically
 document.addEventListener('DOMContentLoaded', function() {
@@ -197,4 +329,132 @@ document.addEventListener('DOMContentLoaded', function() {
         inactiveBar.style.width = '{{ inactive_students_percentage }}%';
     }
 });
+
+// Inline edit functionality
+function editStudent(studentId) {
+    // Fetch student data
+    fetch(`/ajax/student/${studentId}/detail/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Populate form with student data
+                document.getElementById('studentId').value = data.student.id;
+                document.getElementById('firstName').value = data.student.first_name;
+                document.getElementById('lastName').value = data.student.last_name;
+                document.getElementById('email').value = data.student.email;
+                document.getElementById('rollNumber').value = data.student.roll_number;
+                document.getElementById('currentForm').value = data.student.current_form;
+                document.getElementById('phone').value = data.student.phone;
+                document.getElementById('address').value = data.student.address;
+                document.getElementById('fatherName').value = data.student.father_name;
+                document.getElementById('motherName').value = data.student.mother_name;
+                document.getElementById('guardianName').value = data.student.guardian_name;
+                document.getElementById('guardianPhone').value = data.student.guardian_phone;
+                
+                // Set department
+                const deptSelect = document.getElementById('department');
+                deptSelect.value = data.student.department_id;
+                
+                // Show modal
+                document.getElementById('editStudentModal').classList.remove('hidden');
+            } else {
+                alert('Error fetching student data: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error fetching student data');
+        });
+}
+
+function closeEditModal() {
+    document.getElementById('editStudentModal').classList.add('hidden');
+    document.getElementById('editStudentForm').reset();
+}
+
+// Handle form submission
+document.getElementById('editStudentForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const studentId = document.getElementById('studentId').value;
+    const formData = new FormData(this);
+    
+    // Convert FormData to JSON
+    const data = {};
+    formData.forEach((value, key) => {
+        if (value !== '') {
+            data[key] = value;
+        }
+    });
+    
+    // Send AJAX request
+    fetch(`/ajax/student/${studentId}/edit/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            // Close modal
+            closeEditModal();
+            
+            // Show success message
+            showNotification(result.message, 'success');
+            
+            // Reload the current page to show updated data
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            showNotification(result.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error updating student', 'error');
+    });
+});
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Notification function
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 </script>
