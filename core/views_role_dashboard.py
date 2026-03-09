@@ -110,6 +110,10 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_edit_class_context(request, user, admin_profile))
     elif page == 'delete-class':
         context.update(get_admin_delete_class_context(request, user, admin_profile))
+    elif page == 'mark-attendance':
+        context.update(get_admin_mark_attendance_context(request, user, admin_profile))
+    elif page == 'export-attendance':
+        context.update(get_admin_export_attendance_context(request, user, admin_profile))
     elif page == 'attendance':
         context.update(get_admin_attendance_context(user, admin_profile))
     elif page == 'grading':
@@ -412,6 +416,8 @@ def get_admin_page_title(page):
         'add-class': 'Add Class',
         'edit-class': 'Edit Class',
         'delete-class': 'Delete Class',
+        'mark-attendance': 'Mark Attendance',
+        'export-attendance': 'Export Attendance',
         'attendance': 'Attendance',
         'grading': 'Grading',
         'exams': 'Exams',
@@ -1298,6 +1304,230 @@ def get_admin_delete_class_context(request, user, admin_profile):
     
     return {
         'class_obj': class_obj,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_mark_attendance_context(request, user, admin_profile):
+    """Get admin mark attendance page context"""
+    from django import forms
+    from .models import Attendance, Enrollment, CourseOffering, AttendanceSession
+    from django.utils import timezone
+    
+    # Create form for marking attendance
+    class AttendanceMarkingForm(forms.Form):
+        course_offering = forms.ModelChoiceField(
+            queryset=CourseOffering.objects.all().select_related('course'),
+            empty_label="Select Course",
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        date = forms.DateField(
+            widget=forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Set default date to today
+            if not self.initial.get('date'):
+                self.initial['date'] = timezone.now().date()
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = AttendanceMarkingForm(request.POST)
+        if form.is_valid():
+            course_offering = form.cleaned_data['course_offering']
+            date = form.cleaned_data['date']
+            
+            # Get all enrollments for this course
+            enrollments = Enrollment.objects.filter(course_offering=course_offering).select_related('student', 'student__user')
+            
+            # Create attendance records for each student
+            attendance_records = []
+            for enrollment in enrollments:
+                attendance, created = Attendance.objects.get_or_create(
+                    enrollment=enrollment,
+                    date=date,
+                    defaults={'status': 'P'}
+                )
+                attendance_records.append(attendance)
+            
+            from django.contrib import messages
+            messages.success(request, f'Attendance marked for {len(attendance_records)} students in {course_offering.course.name}')
+            
+            # Redirect to attendance page
+            from django.shortcuts import redirect
+            return redirect('admin_unified_dashboard', 'attendance')
+    else:
+        form = AttendanceMarkingForm()
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    from datetime import timedelta
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in mark attendance context
+            'last_month': 0,  # Placeholder - no payment data in mark attendance context
+        },
+    }
+    
+    return {
+        'form': form,
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        # Add monthly trends for template compatibility
+        'monthly_trends': monthly_trends,
+    }
+
+def get_admin_export_attendance_context(request, user, admin_profile):
+    """Get admin export attendance page context"""
+    from django import forms
+    from .models import Attendance, CourseOffering
+    from django.utils import timezone
+    from datetime import timedelta
+    import csv
+    from django.http import HttpResponse
+    
+    # Create form for export options
+    class AttendanceExportForm(forms.Form):
+        course_offering = forms.ModelChoiceField(
+            queryset=CourseOffering.objects.all().select_related('course'),
+            empty_label="All Courses",
+            required=False,
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        start_date = forms.DateField(
+            widget=forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        end_date = forms.DateField(
+            widget=forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        export_format = forms.ChoiceField(
+            choices=[
+                ('csv', 'CSV'),
+                ('excel', 'Excel'),
+            ],
+            initial='csv',
+            widget=forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+            })
+        )
+        
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            # Set default date range to last 30 days
+            if not self.initial.get('start_date'):
+                self.initial['start_date'] = (timezone.now().date() - timedelta(days=30))
+            if not self.initial.get('end_date'):
+                self.initial['end_date'] = timezone.now().date()
+    
+    # Handle form submission
+    if request.method == 'POST':
+        form = AttendanceExportForm(request.POST)
+        if form.is_valid():
+            course_offering = form.cleaned_data['course_offering']
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
+            export_format = form.cleaned_data['export_format']
+            
+            # Query attendance records
+            attendance_records = Attendance.objects.filter(
+                date__gte=start_date,
+                date__lte=end_date
+            ).select_related('enrollment__student__user', 'enrollment__course_offering__course')
+            
+            if course_offering:
+                attendance_records = attendance_records.filter(enrollment__course_offering=course_offering)
+            
+            # Create CSV response
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename="attendance_report_{start_date}_to_{end_date}.csv"'
+            
+            writer = csv.writer(response)
+            writer.writerow(['Student Name', 'Roll Number', 'Course', 'Date', 'Status', 'Check In', 'Check Out', 'Notes'])
+            
+            for record in attendance_records:
+                writer.writerow([
+                    record.enrollment.student.user.get_full_name(),
+                    record.enrollment.student.roll_number or '',
+                    record.enrollment.course_offering.course.name,
+                    record.date,
+                    record.get_status_display(),
+                    record.check_in_time or '',
+                    record.check_out_time or '',
+                    record.notes or ''
+                ])
+            
+            from django.contrib import messages
+            messages.success(request, f'Exported {len(attendance_records)} attendance records')
+            
+            return response
+    else:
+        form = AttendanceExportForm()
+    
+    # Get teacher statistics for template compatibility
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    # Get current date and date ranges for monthly trends
+    today = timezone.now().date()
+    this_month_start = today.replace(day=1)
+    last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=this_month_start
+            ).count(),
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no payment data in export attendance context
+            'last_month': 0,  # Placeholder - no payment data in export attendance context
+        },
+    }
+    
+    return {
+        'form': form,
         # Add teacher statistics for template compatibility
         'teachers': teachers,
         'total_teachers': teachers.count(),

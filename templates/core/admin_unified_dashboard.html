@@ -258,6 +258,16 @@
     {% include 'core/admin_parts/delete_class.html' %}
 </div>
 
+<!-- Mark Attendance Section -->
+<div id="mark-attendance-section" class="content-section {% if current_page == 'mark-attendance' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/mark_attendance.html' %}
+</div>
+
+<!-- Export Attendance Section -->
+<div id="export-attendance-section" class="content-section {% if current_page == 'export-attendance' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/export_attendance.html' %}
+</div>
+
 <!-- Attendance Section -->
 <div id="attendance-section" class="content-section {% if current_page == 'attendance' %}active{% endif %} page-content">
     {% include 'core/admin_parts/attendance.html' %}

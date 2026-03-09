@@ -492,6 +492,8 @@ class Attendance(models.Model):
     date = models.DateField()
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='P')
     notes = models.TextField(blank=True, null=True)
+    check_in_time = models.TimeField(null=True, blank=True, help_text="Time when student checked in")
+    check_out_time = models.TimeField(null=True, blank=True, help_text="Time when student checked out")
 
     class Meta:
         unique_together = ('enrollment', 'date')
