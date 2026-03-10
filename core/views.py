@@ -2301,7 +2301,7 @@ def deactivate_user(request, user_id):
     user.is_active = False
     user.save()
     messages.success(request, f"User {user.username} deactivated")
-    return redirect('admin_unified_dashboard', kwargs={'page': 'users'})
+    return redirect('admin_unified_dashboard', page='users')
 
 @login_required
 def activate_user(request, user_id):
@@ -2313,7 +2313,7 @@ def activate_user(request, user_id):
     user.is_active = True
     user.save()
     messages.success(request, f"User {user.username} activated")
-    return redirect('admin_unified_dashboard', kwargs={'page': 'users'})
+    return redirect('admin_unified_dashboard', page='users')
 
 # ======================
 # Course Management Views
