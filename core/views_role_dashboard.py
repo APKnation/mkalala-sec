@@ -80,7 +80,6 @@ def admin_unified_dashboard(request, page='overview'):
         admin_profile = None
     
     # Get pending users count for notification badge
-    from django.contrib.auth.models import User
     pending_users_count = User.objects.filter(is_active=False).count()
     
     context = {
