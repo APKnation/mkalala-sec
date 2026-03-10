@@ -151,80 +151,192 @@
 <!-- Create Announcement Modal -->
 <div id="createAnnouncementModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 rounded-t-xl">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden border border-slate-200">
+            <!-- Modal Header -->
+            <div class="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 rounded-t-2xl">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-slate-900">Create New Announcement</h3>
-                    <button onclick="hideCreateAnnouncementModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-bullhorn text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">Create New Announcement</h3>
+                            <p class="text-blue-100 text-sm">Share important information with your audience</p>
+                        </div>
+                    </div>
+                    <button onclick="hideCreateAnnouncementModal()" class="text-white/80 hover:text-white transition-colors">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
             </div>
             
-            <form method="post" action="{% url 'admin_create_announcement' %}" class="p-6 space-y-6">
+            <!-- Form Content -->
+            <form method="post" action="{% url 'admin_create_announcement' %}" class="p-6 space-y-6 bg-gradient-to-b from-slate-50 to-white">
                 {% csrf_token %}
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="md:col-span-2">
-                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
-                            Announcement Title <span class="text-red-500">*</span>
-                        </label>
-                        {{ form.title }}
-                        {% if form.title.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.title.errors|join:", " }}</p>
-                        {% endif %}
+                <!-- Title Section -->
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-heading text-blue-600 text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-slate-800">Announcement Details</h4>
                     </div>
                     
-                    <div class="md:col-span-2">
-                        <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
-                            Message <span class="text-red-500">*</span>
-                        </label>
-                        {{ form.message }}
-                        {% if form.message.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.message.errors|join:", " }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div>
-                        <label for="{{ form.target_audience.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
-                            Target Audience <span class="text-red-500">*</span>
-                        </label>
-                        {{ form.target_audience }}
-                        {% if form.target_audience.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.target_audience.errors|join:", " }}</p>
-                        {% endif %}
-                        <p class="mt-1 text-xs text-slate-500">Choose who should receive this announcement</p>
-                    </div>
-                    
-                    <div id="targetClassField" class="hidden">
-                        <label for="{{ form.target_class.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
-                            Target Class
-                        </label>
-                        {{ form.target_class }}
-                        {% if form.target_class.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.target_class.errors|join:", " }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div>
-                        <label for="{{ form.expires_at.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
-                            Expires At (Optional)
-                        </label>
-                        {{ form.expires_at }}
-                        {% if form.expires_at.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ form.expires_at.errors|join:", " }}</p>
-                        {% endif %}
-                        <p class="mt-1 text-xs text-slate-500">Leave empty for no expiration</p>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="{{ form.title.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
+                                <i class="fas fa-tag mr-2 text-blue-500"></i>
+                                Announcement Title <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                {{ form.title }}
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-edit text-slate-400"></i>
+                                </div>
+                            </div>
+                            {% if form.title.errors %}
+                                <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <p class="text-sm text-red-600 flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        {{ form.title.errors|join:", " }}
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.message.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
+                                <i class="fas fa-message mr-2 text-purple-500"></i>
+                                Message <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                {{ form.message }}
+                                <div class="absolute top-3 right-3 pointer-events-none">
+                                    <i class="fas fa-align-left text-slate-400"></i>
+                                </div>
+                            </div>
+                            {% if form.message.errors %}
+                                <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <p class="text-sm text-red-600 flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        {{ form.message.errors|join:", " }}
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 
-                <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200">
-                    <button type="button" onclick="hideCreateAnnouncementModal()" class="px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
-                        <i class="fas fa-paper-plane mr-2"></i> Send Announcement
-                    </button>
+                <!-- Audience Section -->
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-purple-600 text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-slate-800">Target Audience</h4>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="{{ form.target_audience.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
+                                <i class="fas fa-bullseye mr-2 text-orange-500"></i>
+                                Target Audience <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                {{ form.target_audience }}
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-chevron-down text-slate-400"></i>
+                                </div>
+                            </div>
+                            {% if form.target_audience.errors %}
+                                <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <p class="text-sm text-red-600 flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        {{ form.target_audience.errors|join:", " }}
+                                    </p>
+                                </div>
+                            {% endif %}
+                            <p class="mt-2 text-xs text-slate-500 flex items-center">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Choose who should receive this announcement
+                            </p>
+                        </div>
+                        
+                        <div id="targetClassField" class="hidden">
+                            <label for="{{ form.target_class.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
+                                <i class="fas fa-school mr-2 text-green-500"></i>
+                                Target Class
+                            </label>
+                            <div class="relative">
+                                {{ form.target_class }}
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-graduation-cap text-slate-400"></i>
+                                </div>
+                            </div>
+                            {% if form.target_class.errors %}
+                                <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <p class="text-sm text-red-600 flex items-center">
+                                        <i class="fas fa-exclamation-circle mr-2"></i>
+                                        {{ form.target_class.errors|join:", " }}
+                                    </p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-2 mb-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-cog text-green-600 text-sm"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-slate-800">Settings</h4>
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.expires_at.id_for_label }}" class="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
+                            <i class="fas fa-clock mr-2 text-indigo-500"></i>
+                            Expires At (Optional)
+                        </label>
+                        <div class="relative">
+                            {{ form.expires_at }}
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fas fa-calendar-alt text-slate-400"></i>
+                            </div>
+                        </div>
+                        {% if form.expires_at.errors %}
+                            <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <p class="text-sm text-red-600 flex items-center">
+                                    <i class="fas fa-exclamation-circle mr-2"></i>
+                                    {{ form.expires_at.errors|join:", " }}
+                                </p>
+                            </div>
+                        {% endif %}
+                        <p class="mt-2 text-xs text-slate-500 flex items-center">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Leave empty for no expiration
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex justify-between items-center pt-6 border-t border-slate-200 bg-slate-50 -mx-6 -mb-6 px-6 pb-6 rounded-b-2xl">
+                    <div class="flex items-center space-x-2 text-sm text-slate-500">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secured form submission</span>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" onclick="hideCreateAnnouncementModal()" class="px-6 py-3 border border-slate-300 rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all flex items-center">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all transform hover:scale-105 flex items-center shadow-lg">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Send Announcement
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -376,47 +488,66 @@
     
     // Edit announcement function
     function editAnnouncement(id) {
+        console.log('Editing announcement:', id);
+        
         // Fetch announcement data
-        fetch(`/admin/announcements/edit/${id}/`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: data.error,
-                        confirmButtonColor: '#dc3545'
-                    });
-                    return;
-                }
-                
-                // Populate edit form
-                document.getElementById('editAnnouncementId').value = data.id;
-                document.getElementById('edit_title').value = data.title;
-                document.getElementById('edit_message').value = data.message;
-                document.getElementById('edit_target_audience').value = data.target_audience;
-                document.getElementById('edit_expires_at').value = data.expires_at || '';
-                document.getElementById('edit_is_active').checked = data.is_active;
-                
-                // Handle target class
-                if (data.target_audience === 'Class' && data.target_class) {
-                    document.getElementById('editTargetClassField').classList.remove('hidden');
-                    document.getElementById('edit_target_class').value = data.target_class;
-                } else {
-                    document.getElementById('editTargetClassField').classList.add('hidden');
-                }
-                
-                // Show modal
-                showEditAnnouncementModal();
-            })
-            .catch(error => {
+        fetch(`/admin/announcements/edit/${id}/`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Received data:', data);
+            
+            if (data.error) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Failed to fetch announcement data',
+                    text: data.error,
                     confirmButtonColor: '#dc3545'
                 });
+                return;
+            }
+            
+            // Populate edit form
+            document.getElementById('editAnnouncementId').value = data.id;
+            document.getElementById('edit_title').value = data.title;
+            document.getElementById('edit_message').value = data.message;
+            document.getElementById('edit_target_audience').value = data.target_audience;
+            document.getElementById('edit_expires_at').value = data.expires_at || '';
+            document.getElementById('edit_is_active').checked = data.is_active;
+            
+            // Handle target class
+            if (data.target_audience === 'Class' && data.target_class) {
+                document.getElementById('editTargetClassField').classList.remove('hidden');
+                document.getElementById('edit_target_class').value = data.target_class;
+            } else {
+                document.getElementById('editTargetClassField').classList.add('hidden');
+            }
+            
+            // Show modal
+            showEditAnnouncementModal();
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: `Failed to fetch announcement data: ${error.message}`,
+                confirmButtonColor: '#dc3545'
             });
+        });
     }
     
     // Delete announcement function
@@ -555,38 +686,361 @@
 </script>
 
 <style>
-/* Modal styling */
+/* Enhanced Form Styling */
+.announcement-form input[type="text"],
+.announcement-form textarea,
+.announcement-form select {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none shadow-sm;
+}
+
+.announcement-form input[type="text"]:focus,
+.announcement-form textarea:focus,
+.announcement-form select:focus {
+    @apply border-blue-500 shadow-md bg-blue-50/30;
+}
+
+.announcement-form textarea {
+    @apply min-h-[120px] resize-y;
+}
+
+.announcement-form input[type="datetime-local"] {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none shadow-sm;
+}
+
+.announcement-form input[type="datetime-local"]:focus {
+    @apply border-blue-500 shadow-md bg-blue-50/30;
+}
+
+/* Modal Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.announcement-modal {
+    animation: slideIn 0.3s ease-out;
+}
+
+.announcement-backdrop {
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* Section Headers */
+.section-header {
+    @apply flex items-center space-x-2 mb-3 pb-2 border-b border-slate-200;
+}
+
+/* Form Field Icons */
+.form-icon {
+    @apply w-8 h-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full flex items-center justify-center border border-blue-100;
+}
+
+/* Error Styling */
+.form-error {
+    @apply mt-2 p-3 bg-red-50 border border-red-200 rounded-lg;
+}
+
+.form-error p {
+    @apply text-sm text-red-600 flex items-center;
+}
+
+/* Success Styling */
+.form-success {
+    @apply mt-2 p-3 bg-green-50 border border-green-200 rounded-lg;
+}
+
+.form-success p {
+    @apply text-sm text-green-600 flex items-center;
+}
+
+/* Button Styling */
+.btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all transform hover:scale-105 flex items-center shadow-lg;
+}
+
+.btn-secondary {
+    @apply px-6 py-3 border border-slate-300 rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all flex items-center;
+}
+
+/* Label Styling */
+.form-label {
+    @apply block text-sm font-semibold text-slate-700 mb-2 flex items-center;
+}
+
+.form-label i {
+    @apply mr-2;
+}
+
+/* Help Text */
+.help-text {
+    @apply mt-2 text-xs text-slate-500 flex items-center;
+}
+
+.help-text i {
+    @apply mr-1;
+}
+
+/* Modal Header */
+.modal-header {
+    @apply sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 rounded-t-2xl;
+}
+
+.modal-header-content {
+    @apply flex items-center space-x-3;
+}
+
+.modal-icon {
+    @apply w-10 h-10 bg-white/20 rounded-full flex items-center justify-center;
+}
+
+/* Form Sections */
+.form-section {
+    @apply space-y-2;
+}
+
+.form-section-content {
+    @apply space-y-4;
+}
+
+/* Input Groups */
+.input-group {
+    @apply relative;
+}
+
+.input-icon {
+    @apply absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none;
+}
+
+.input-icon-left {
+    @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none;
+}
+
+/* Checkbox Styling */
+.form-checkbox {
+    @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded;
+}
+
+/* Radio Styling */
+.form-radio {
+    @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300;
+}
+
+/* Select Styling */
+.select-wrapper {
+    @apply relative;
+}
+
+.select-wrapper::after {
+    content: '';
+    @apply absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none;
+}
+
+/* Textarea Styling */
+.textarea-wrapper {
+    @apply relative;
+}
+
+.textarea-icon {
+    @apply absolute top-3 right-3 pointer-events-none;
+}
+
+/* Loading State */
+.loading {
+    @apply opacity-50 pointer-events-none;
+}
+
+.loading::after {
+    content: '';
+    @apply absolute inset-0 bg-white/50 flex items-center justify-center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .announcement-modal {
+        @apply mx-4 max-w-full;
+    }
+    
+    .form-section-content {
+        @apply space-y-3;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        @apply w-full justify-center;
+    }
+}
+
+/* Hover Effects */
+.form-field:hover {
+    @apply border-blue-300 shadow-sm;
+}
+
+.btn-primary:hover {
+    @apply shadow-xl transform scale-105;
+}
+
+.btn-secondary:hover {
+    @apply bg-slate-50 border-slate-400;
+}
+
+/* Focus States */
+.form-field:focus {
+    @apply ring-2 ring-blue-500 ring-opacity-50 border-blue-500;
+}
+
+/* Transitions */
+.form-field,
+.btn-primary,
+.btn-secondary {
+    @apply transition-all duration-200 ease-in-out;
+}
+
+/* Modal Backdrop */
 .modal-backdrop {
-    backdrop-filter: blur(4px);
+    @apply fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50;
 }
 
-/* Form styling */
-input[type="text"], textarea, select {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.2s;
+/* Modal Content */
+.modal-content {
+    @apply bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden border border-slate-200;
 }
 
-input[type="text"]:focus, textarea:focus, select:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+/* Form Container */
+.form-container {
+    @apply p-6 space-y-6 bg-gradient-to-b from-slate-50 to-white;
 }
 
-textarea {
-    min-height: 120px;
-    resize: vertical;
+/* Action Bar */
+.action-bar {
+    @apply flex justify-between items-center pt-6 border-t border-slate-200 bg-slate-50 -mx-6 -mb-6 px-6 pb-6 rounded-b-2xl;
 }
 
-/* Audience badge styling */
+/* Security Badge */
+.security-badge {
+    @apply flex items-center space-x-2 text-sm text-slate-500;
+}
+
+/* Audience Badge */
 .audience-badge {
-    transition: all 0.2s ease;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
 }
 
-.audience-badge:hover {
-    transform: scale(1.05);
+.audience-badge.all {
+    @apply bg-blue-100 text-blue-800;
+}
+
+.audience-badge.students {
+    @apply bg-green-100 text-green-800;
+}
+
+.audience-badge.faculty {
+    @apply bg-purple-100 text-purple-800;
+}
+
+.audience-badge.parents {
+    @apply bg-yellow-100 text-yellow-800;
+}
+
+.audience-badge.class {
+    @apply bg-orange-100 text-orange-800;
+}
+
+/* Status Badge */
+.status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-badge.active {
+    @apply bg-green-100 text-green-800;
+}
+
+.status-badge.inactive {
+    @apply bg-red-100 text-red-800;
+}
+
+/* Table Styling */
+.announcement-table {
+    @apply min-w-full divide-y divide-slate-200;
+}
+
+.announcement-table th {
+    @apply px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider bg-slate-50;
+}
+
+.announcement-table td {
+    @apply px-6 py-4 whitespace-nowrap;
+}
+
+.announcement-table tr:hover {
+    @apply bg-slate-50;
+}
+
+/* Empty State */
+.empty-state {
+    @apply text-center py-20;
+}
+
+.empty-state-icon {
+    @apply text-4xl text-slate-300 mb-3;
+}
+
+.empty-state-text {
+    @apply text-slate-500;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600;
+}
+
+/* Success Animation */
+@keyframes success {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-animation {
+    animation: success 0.3s ease-out;
+}
+
+/* Error Animation */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.error-animation {
+    animation: shake 0.3s ease-in-out;
 }
 </style>

@@ -1985,16 +1985,28 @@ def admin_edit_announcement(request, announcement_id):
     
     elif request.method == 'GET':
         # Handle AJAX request for getting announcement data
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'id': announcement.id,
-                'title': announcement.title,
-                'message': announcement.message,
-                'target_audience': announcement.target_audience,
-                'target_class': announcement.target_class.id if announcement.target_class else None,
-                'expires_at': announcement.expires_at.strftime('%Y-%m-%dT%H:%M') if announcement.expires_at else '',
-                'is_active': announcement.is_active
-            })
+        # More permissive AJAX detection for debugging
+        is_ajax = (
+            request.headers.get('X-Requested-With') == 'XMLHttpRequest' or
+            request.GET.get('ajax') == '1' or
+            'application/json' in request.headers.get('Accept', '')
+        )
+        
+        if is_ajax:
+            try:
+                return JsonResponse({
+                    'id': announcement.id,
+                    'title': announcement.title,
+                    'message': announcement.message,
+                    'target_audience': announcement.target_audience,
+                    'target_class': announcement.target_class.id if announcement.target_class else None,
+                    'expires_at': announcement.expires_at.strftime('%Y-%m-%dT%H:%M') if announcement.expires_at else '',
+                    'is_active': announcement.is_active
+                })
+            except Exception as e:
+                return JsonResponse({
+                    'error': f'Server error: {str(e)}'
+                }, status=500)
     
     # Get announcements context for the page (for regular form submission)
     admin_profile = getattr(request.user, 'adminprofile', None)
