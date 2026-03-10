@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, BaseUserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils.text import slugify
 from django.utils import timezone
@@ -14,6 +14,39 @@ from .models import (
 )
 
 User = get_user_model()
+
+class CustomUserCreationForm(BaseUserCreationForm):
+    """Custom UserCreationForm for our custom User model"""
+    class Meta(BaseUserCreationForm.Meta):
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Apply Tailwind CSS classes to all form fields
+        for field_name, field in self.fields.items():
+            if field_name not in ['password1', 'password2']:
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            else:
+                field.widget.attrs.update({
+                    'class': 'w-full px-4 py-3 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200'
+                })
+            
+            # Add placeholders for common fields
+            if field_name == 'username':
+                field.widget.attrs['placeholder'] = 'Enter username'
+            elif field_name == 'email':
+                field.widget.attrs['placeholder'] = 'Enter email address'
+            elif field_name == 'first_name':
+                field.widget.attrs['placeholder'] = 'Enter first name'
+            elif field_name == 'last_name':
+                field.widget.attrs['placeholder'] = 'Enter last name'
+            elif field_name == 'password1':
+                field.widget.attrs['placeholder'] = 'Enter password'
+            elif field_name == 'password2':
+                field.widget.attrs['placeholder'] = 'Confirm password'
 
 class UserUpdateForm(forms.ModelForm):
     """Form for updating user information (not creating new user)"""
@@ -145,7 +178,7 @@ class StudentProfileForm(forms.ModelForm):
             }),
         }
 
-class PublicUserRegistrationForm(UserCreationForm):
+class PublicUserRegistrationForm(CustomUserCreationForm):
     """Registration form for students only"""
     # Hidden role field - always set to student for public registration
     role = forms.CharField(
@@ -233,6 +266,10 @@ class PublicUserRegistrationForm(UserCreationForm):
         help_text="Enter your primary school leaving examination number (optional)"
     )
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'placeholder': 'Enter username'})
@@ -248,7 +285,7 @@ class PublicUserRegistrationForm(UserCreationForm):
 
 
 # Admin User Creation Forms
-class AdminCreateStudentForm(UserCreationForm):
+class AdminCreateStudentForm(CustomUserCreationForm):
     """Form for admins to create student accounts"""
     role = forms.CharField(
         widget=forms.HiddenInput(),
@@ -300,6 +337,10 @@ class AdminCreateStudentForm(UserCreationForm):
         })
     )
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Apply Tailwind CSS classes to all form fields
@@ -323,7 +364,7 @@ class AdminCreateStudentForm(UserCreationForm):
                     field.widget.attrs['placeholder'] = 'Confirm password'
 
 
-class AdminCreateTeacherForm(UserCreationForm):
+class AdminCreateTeacherForm(CustomUserCreationForm):
     """Form for admins/headmasters to create teacher accounts"""
     role = forms.CharField(
         widget=forms.HiddenInput(),
@@ -367,6 +408,10 @@ class AdminCreateTeacherForm(UserCreationForm):
         })
     )
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Apply Tailwind CSS classes to all form fields
@@ -390,7 +435,7 @@ class AdminCreateTeacherForm(UserCreationForm):
                     field.widget.attrs['placeholder'] = 'Confirm password'
 
 
-class AdminCreateHeadmasterForm(UserCreationForm):
+class AdminCreateHeadmasterForm(CustomUserCreationForm):
     """Form for admins to create headmaster accounts"""
     role = forms.CharField(
         widget=forms.HiddenInput(),

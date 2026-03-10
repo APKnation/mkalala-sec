@@ -2687,7 +2687,7 @@ def get_admin_edit_user_context(request, user, admin_profile):
                 form.save()
                 from django.contrib import messages
                 messages.success(request, f'User "{form.instance.get_full_name()}" has been updated successfully!')
-                return HttpResponseRedirect(reverse('admin_unified_dashboard', kwargs={'page': 'users'}))
+                return HttpResponseRedirect(reverse('admin_unified_dashboard', page='users'))
             else:
                 from django.contrib import messages
                 messages.error(request, 'Failed to update user. Please check the form for errors.')
