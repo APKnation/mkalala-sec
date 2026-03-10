@@ -1,20 +1,593 @@
 <!-- Admin Announcements Dashboard Content -->
 <div class="space-y-8">
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                <i class="fas fa-cog mr-3 text-red-600"></i>
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none flex items-center">
+                <i class="fas fa-bullhorn mr-3 text-red-600"></i>
                 Announcements Management
             </h1>
-            <p class="mt-2 text-sm text-gray-600">Manage announcements system</p>
+            <p class="text-slate-500 font-medium">Create and manage announcements for different audiences</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button onclick="showCreateAnnouncementModal()" class="btn-glow-primary px-6 py-3 flex items-center">
+                <i class="fas fa-plus mr-2"></i> Create Announcement
+            </button>
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Announcements</h2>
-        <div class="text-center py-8">
-            <i class="fas fa-cog text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Announcements management interface coming soon</p>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Total Announcements</h3>
+                    <span class="text-3xl font-bold text-blue-600">{{ total_announcements }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Active</h3>
+                    <span class="text-3xl font-bold text-green-600">{{ active_announcements }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Pending</h3>
+                    <span class="text-3xl font-bold text-yellow-600">{{ pending_announcements }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-premium">
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-slate-900">Faculty</h3>
+                    <span class="text-3xl font-bold text-purple-600">{{ active_teachers }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcements List -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900">Recent Announcements</h3>
+                <div class="flex items-center space-x-2">
+                    <button onclick="refreshAnnouncements()" class="text-blue-600 hover:text-blue-800 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Audience</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Created By</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Created At</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-slate-200">
+                    {% for announcement in announcements %}
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-slate-900">{{ announcement.title }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {% if announcement.target_audience == 'All' %}bg-blue-100 text-blue-800
+                                {% elif announcement.target_audience == 'Students' %}bg-green-100 text-green-800
+                                {% elif announcement.target_audience == 'Faculty' %}bg-purple-100 text-purple-800
+                                {% elif announcement.target_audience == 'Parents' %}bg-yellow-100 text-yellow-800
+                                {% elif announcement.target_audience == 'Class' %}bg-orange-100 text-orange-800
+                                {% endif %}">
+                                {% if announcement.target_audience == 'All' %}All
+                                {% elif announcement.target_audience == 'Students' %}Students
+                                {% elif announcement.target_audience == 'Faculty' %}Faculty
+                                {% elif announcement.target_audience == 'Parents' %}Parents
+                                {% elif announcement.target_audience == 'Class' %}Class: {{ announcement.target_class }}
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-slate-600">{{ announcement.created_by.get_full_name|default:announcement.created_by.username }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-slate-600">{{ announcement.created_at|date:"M d, Y H:i" }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {% if announcement.is_active %}bg-green-100 text-green-800
+                                {% else %}bg-red-100 text-red-800
+                                {% endif %}">
+                                {% if announcement.is_active %}Active{% else %}Inactive{% endif %}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex items-center justify-end space-x-2">
+                                <a href="#" onclick="editAnnouncement('{{ announcement.id }}')" class="text-blue-600 hover:text-blue-800 transition-colors" title="Edit Announcement">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" onclick="deleteAnnouncement('{{ announcement.id }}', '{{ announcement.title }}')" class="text-red-600 hover:text-red-800 transition-colors" title="Delete Announcement">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-8 py-20 text-center">
+                            <div class="flex flex-col items-center space-y-4">
+                                <i class="fas fa-bullhorn text-4xl text-slate-300 mb-3"></i>
+                                <p class="text-slate-500">No announcements found</p>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <button onclick="showCreateAnnouncementModal()" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all">
+                                        <i class="fas fa-plus mr-2"></i> Create First Announcement
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<!-- Create Announcement Modal -->
+<div id="createAnnouncementModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 rounded-t-xl">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-slate-900">Create New Announcement</h3>
+                    <button onclick="hideCreateAnnouncementModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form method="post" action="{% url 'admin_create_announcement' %}" class="p-6 space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            Announcement Title <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.title.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            Message <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.message.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.target_audience.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            Target Audience <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.target_audience }}
+                        {% if form.target_audience.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.target_audience.errors|join:", " }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-slate-500">Choose who should receive this announcement</p>
+                    </div>
+                    
+                    <div id="targetClassField" class="hidden">
+                        <label for="{{ form.target_class.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            Target Class
+                        </label>
+                        {{ form.target_class }}
+                        {% if form.target_class.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.target_class.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.expires_at.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            Expires At (Optional)
+                        </label>
+                        {{ form.expires_at }}
+                        {% if form.expires_at.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.expires_at.errors|join:", " }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-slate-500">Leave empty for no expiration</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200">
+                    <button type="button" onclick="hideCreateAnnouncementModal()" class="px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                        <i class="fas fa-paper-plane mr-2"></i> Send Announcement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Announcement Modal -->
+<div id="editAnnouncementModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 rounded-t-xl">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-slate-900">Edit Announcement</h3>
+                    <button onclick="hideEditAnnouncementModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <form id="editAnnouncementForm" method="post" class="p-6 space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="announcement_id" id="editAnnouncementId">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label for="edit_title" class="block text-sm font-medium text-slate-700 mb-2">
+                            Announcement Title <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="title" id="edit_title" required
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none">
+                    </div>
+                    
+                    <div class="md:col-span-2">
+                        <label for="edit_message" class="block text-sm font-medium text-slate-700 mb-2">
+                            Message <span class="text-red-500">*</span>
+                        </label>
+                        <textarea name="message" id="edit_message" required rows="4"
+                                  class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none min-h-[120px]"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="edit_target_audience" class="block text-sm font-medium text-slate-700 mb-2">
+                            Target Audience <span class="text-red-500">*</span>
+                        </label>
+                        <select name="target_audience" id="edit_target_audience" required
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none">
+                            <option value="All">All</option>
+                            <option value="Students">Students</option>
+                            <option value="Faculty">Faculty</option>
+                            <option value="Parents">Parents</option>
+                            <option value="Class">Specific Class</option>
+                        </select>
+                    </div>
+                    
+                    <div id="editTargetClassField" class="hidden">
+                        <label for="edit_target_class" class="block text-sm font-medium text-slate-700 mb-2">
+                            Target Class
+                        </label>
+                        <select name="target_class" id="edit_target_class"
+                                class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none">
+                            <option value="">Select a class</option>
+                            {% for class_obj in classes %}
+                                <option value="{{ class_obj.id }}">{{ class_obj.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="edit_expires_at" class="block text-sm font-medium text-slate-700 mb-2">
+                            Expires At (Optional)
+                        </label>
+                        <input type="datetime-local" name="expires_at" id="edit_expires_at"
+                               class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="is_active" id="edit_is_active" checked
+                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <span class="ml-2 text-sm text-slate-700">Active</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 pt-6 border-t border-slate-200">
+                    <button type="button" onclick="hideEditAnnouncementModal()" class="px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                        <i class="fas fa-save mr-2"></i> Update Announcement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for modal and form handling -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+(function() {
+    'use strict';
+    
+    // Show/hide create announcement modal
+    function showCreateAnnouncementModal() {
+        document.getElementById('createAnnouncementModal').classList.remove('hidden');
+    }
+    
+    function hideCreateAnnouncementModal() {
+        document.getElementById('createAnnouncementModal').classList.add('hidden');
+    }
+    
+    // Show/hide edit announcement modal
+    function showEditAnnouncementModal() {
+        document.getElementById('editAnnouncementModal').classList.remove('hidden');
+    }
+    
+    function hideEditAnnouncementModal() {
+        document.getElementById('editAnnouncementModal').classList.add('hidden');
+    }
+    
+    // Show target class field when audience is "Class" (for both create and edit)
+    document.addEventListener('DOMContentLoaded', function() {
+        const audienceField = document.querySelector('select[name="target_audience"]');
+        const targetClassField = document.getElementById('targetClassField');
+        const editAudienceField = document.querySelector('select[name="edit_target_audience"]');
+        const editTargetClassField = document.getElementById('editTargetClassField');
+        
+        if (audienceField && targetClassField) {
+            audienceField.addEventListener('change', function() {
+                if (this.value === 'Class') {
+                    targetClassField.classList.remove('hidden');
+                } else {
+                    targetClassField.classList.add('hidden');
+                }
+            });
+        }
+        
+        if (editAudienceField && editTargetClassField) {
+            editAudienceField.addEventListener('change', function() {
+                if (this.value === 'Class') {
+                    editTargetClassField.classList.remove('hidden');
+                } else {
+                    editTargetClassField.classList.add('hidden');
+                }
+            });
+        }
+    });
+    
+    // Edit announcement function
+    function editAnnouncement(id) {
+        // Fetch announcement data
+        fetch(`/admin/announcements/edit/${id}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.error,
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+                
+                // Populate edit form
+                document.getElementById('editAnnouncementId').value = data.id;
+                document.getElementById('edit_title').value = data.title;
+                document.getElementById('edit_message').value = data.message;
+                document.getElementById('edit_target_audience').value = data.target_audience;
+                document.getElementById('edit_expires_at').value = data.expires_at || '';
+                document.getElementById('edit_is_active').checked = data.is_active;
+                
+                // Handle target class
+                if (data.target_audience === 'Class' && data.target_class) {
+                    document.getElementById('editTargetClassField').classList.remove('hidden');
+                    document.getElementById('edit_target_class').value = data.target_class;
+                } else {
+                    document.getElementById('editTargetClassField').classList.add('hidden');
+                }
+                
+                // Show modal
+                showEditAnnouncementModal();
+            })
+            .catch(error => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to fetch announcement data',
+                    confirmButtonColor: '#dc3545'
+                });
+            });
+    }
+    
+    // Delete announcement function
+    function deleteAnnouncement(id, title) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Delete Announcement',
+            text: `Are you sure you want to delete "${title}"?`,
+            showCancelButton: true,
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc3545'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send delete request
+                fetch(`/admin/announcements/delete/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: data.message,
+                            confirmButtonColor: '#10b981',
+                            timer: 2000,
+                            timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.error || 'Failed to delete announcement',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to delete announcement',
+                        confirmButtonColor: '#dc3545'
+                    });
+                });
+            }
+        });
+    }
+    
+    // Handle edit form submission
+    document.getElementById('editAnnouncementForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const announcementId = formData.get('announcement_id');
+        
+        // Show loading
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while we update the announcement.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        fetch(`/admin/announcements/edit/${announcementId}/`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Updated!',
+                    text: data.message,
+                    confirmButtonColor: '#10b981',
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.error || 'Failed to update announcement',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to update announcement',
+                confirmButtonColor: '#dc3545'
+            });
+        });
+    });
+    
+    function refreshAnnouncements() {
+        location.reload();
+    }
+    
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Make functions globally available
+    window.showCreateAnnouncementModal = showCreateAnnouncementModal;
+    window.hideCreateAnnouncementModal = hideCreateAnnouncementModal;
+    window.editAnnouncement = editAnnouncement;
+    window.deleteAnnouncement = deleteAnnouncement;
+    window.refreshAnnouncements = refreshAnnouncements;
+})();
+</script>
+
+<style>
+/* Modal styling */
+.modal-backdrop {
+    backdrop-filter: blur(4px);
+}
+
+/* Form styling */
+input[type="text"], textarea, select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Audience badge styling */
+.audience-badge {
+    transition: all 0.2s ease;
+}
+
+.audience-badge:hover {
+    transform: scale(1.05);
+}
+</style>

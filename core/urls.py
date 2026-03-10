@@ -213,6 +213,9 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     path('exam-schedule/', views.exam_schedule_view, name='exam_schedule'),
     path('payment-history/', views.payment_history, name='payment_history'),
     path('admin/announcements/', views.admin_announcements, name='admin_announcements'),
+    path('admin/announcements/create/', views_role_dashboard.admin_create_announcement, name='admin_create_announcement'),
+    path('admin/announcements/edit/<int:announcement_id>/', views_role_dashboard.admin_edit_announcement, name='admin_edit_announcement'),
+    path('admin/announcements/delete/<int:announcement_id>/', views_role_dashboard.admin_delete_announcement, name='admin_delete_announcement'),
     path('teacher/announcements/', lambda request: redirect('unified_dashboard', page='announcements'), name='teacher_announcements'),
     path('announcements/', lambda request: redirect('unified_dashboard', page='announcements') if request.user.role == 'teacher' else 
                                           redirect('student_unified_dashboard', page='announcements') if request.user.role == 'student' else

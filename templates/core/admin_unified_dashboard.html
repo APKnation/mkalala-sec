@@ -348,7 +348,9 @@
 
 <!-- Reports Section -->
 <div id="reports-section" class="content-section {% if current_page == 'reports' %}active{% endif %} page-content">
-    {% include 'core/admin_parts/reports.html' %}
+    {% if current_page == 'reports' %}
+        {% include 'core/admin_parts/reports.html' %}
+    {% endif %}
 </div>
 
 <!-- Settings Section -->

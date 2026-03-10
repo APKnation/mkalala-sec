@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.utils import timezone
@@ -1910,15 +1910,148 @@ def get_admin_timetable_context(user, admin_profile):
         'total_entries': total_entries,
     }
 
+@login_required
+@user_passes_test(is_admin)
+def admin_create_announcement(request):
+    """Create a new announcement"""
+    from .forms import AnnouncementForm
+    
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            announcement = form.save(commit=False)
+            announcement.created_by = request.user
+            announcement.save()
+            
+            from django.contrib import messages
+            messages.success(request, f'Announcement "{announcement.title}" has been created successfully!')
+            return redirect('admin_unified_dashboard', page='announcements')
+        else:
+            from django.contrib import messages
+            messages.error(request, 'Failed to create announcement. Please check the form for errors.')
+    
+    else:
+        form = AnnouncementForm()
+    
+    # Get announcements context for the page
+    context = get_admin_announcements_context(request.user, request.user.adminprofile)
+    context.update({
+        'form': form,
+        'page_title': 'Create Announcement'
+    })
+    return render(request, 'core/admin_unified_dashboard.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def admin_edit_announcement(request, announcement_id):
+    """Edit an existing announcement"""
+    from .forms import AnnouncementForm
+    from django.http import JsonResponse
+    
+    try:
+        announcement = Announcement.objects.get(id=announcement_id)
+    except Announcement.DoesNotExist:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'Announcement not found.'}, status=404)
+        from django.contrib import messages
+        messages.error(request, 'Announcement not found.')
+        return redirect('admin_unified_dashboard', page='announcements')
+    
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST, instance=announcement)
+        if form.is_valid():
+            updated_announcement = form.save()
+            
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'message': f'Announcement "{updated_announcement.title}" has been updated successfully!'
+                })
+            
+            from django.contrib import messages
+            messages.success(request, f'Announcement "{updated_announcement.title}" has been updated successfully!')
+            return redirect('admin_unified_dashboard', page='announcements')
+        else:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Failed to update announcement. Please check the form for errors.'
+                }, status=400)
+            
+            from django.contrib import messages
+            messages.error(request, 'Failed to update announcement. Please check the form for errors.')
+    
+    elif request.method == 'GET':
+        # Handle AJAX request for getting announcement data
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'id': announcement.id,
+                'title': announcement.title,
+                'message': announcement.message,
+                'target_audience': announcement.target_audience,
+                'target_class': announcement.target_class.id if announcement.target_class else None,
+                'expires_at': announcement.expires_at.strftime('%Y-%m-%dT%H:%M') if announcement.expires_at else '',
+                'is_active': announcement.is_active
+            })
+    
+    # Get announcements context for the page (for regular form submission)
+    context = get_admin_announcements_context(request.user, request.user.adminprofile)
+    context.update({
+        'form': AnnouncementForm(instance=announcement),
+        'announcement': announcement,
+        'page_title': 'Edit Announcement'
+    })
+    return render(request, 'core/admin_unified_dashboard.html', context)
+
+@login_required
+@user_passes_test(is_admin)
+def admin_delete_announcement(request, announcement_id):
+    """Delete an announcement"""
+    from django.http import JsonResponse
+    
+    try:
+        announcement = Announcement.objects.get(id=announcement_id)
+        title = announcement.title
+        announcement.delete()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'message': f'Announcement "{title}" has been deleted successfully!'
+            })
+        
+        from django.contrib import messages
+        messages.success(request, f'Announcement "{title}" has been deleted successfully!')
+    except Announcement.DoesNotExist:
+        error_msg = 'Announcement not found.'
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': error_msg}, status=404)
+        from django.contrib import messages
+        messages.error(request, error_msg)
+    except Exception as e:
+        error_msg = 'Failed to delete announcement.'
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': error_msg}, status=500)
+        from django.contrib import messages
+        messages.error(request, error_msg)
+    
+    return redirect('admin_unified_dashboard', page='announcements')
+
 def get_admin_announcements_context(user, admin_profile):
     """Get admin announcements page context"""
     announcements = Announcement.objects.all().order_by('-created_at')
+    classes = StudentClass.objects.all().order_by('name')
     
     return {
         'announcements': announcements[:20],
         'total_announcements': announcements.count(),
         'active_announcements': announcements.filter(is_active=True).count(),
         'pending_announcements': announcements.filter(is_active=False).count(),
+        'classes': classes,  # Add classes for edit modal
+        # Add teacher statistics for template compatibility
+        'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+        'total_teachers': User.objects.filter(role='teacher').count(),
+        'new_teachers_this_month': User.objects.filter(role='teacher', date_joined__month=timezone.now().month).count(),
     }
 
 def get_admin_fees_context(user, admin_profile):
