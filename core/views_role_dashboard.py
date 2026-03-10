@@ -2848,16 +2848,40 @@ def get_admin_create_user_context(request, user, admin_profile):
         AdminCreateTeacherForm, 
         AdminCreateHeadmasterForm
     )
+    from datetime import datetime, timedelta
     
     # Get selected role from URL parameter or POST data
     selected_role = request.POST.get('role') or request.GET.get('role')
+    
+    # Calculate monthly trends data (same as other admin pages)
+    this_month_start = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    last_month_start = this_month_start - timedelta(days=32)
+    last_month_start = last_month_start.replace(day=1)
+    last_month_end = this_month_start - timedelta(days=1)
+    
+    # Monthly trends data
+    monthly_trends = {
+        'student_growth': {
+            'this_month': StudentProfile.objects.filter(
+                user__date_joined__gte=this_month_start
+            ).count(),
+            'last_month': StudentProfile.objects.filter(
+                user__date_joined__gte=last_month_start,
+                user__date_joined__lt=last_month_end
+            ).count()
+        },
+        'fee_collection': {
+            'this_month': 0,  # Placeholder - no fee data for create user page
+            'last_month': 0   # Placeholder - no fee data for create user page
+        }
+    }
     
     if request.method == 'POST':
         if not selected_role:
             from django.contrib import messages
             messages.error(request, 'Please select a user role.')
             return {
-                'selected_role': None,
+                'selected_role': selected_role,
                 'student_form': AdminCreateStudentForm(),
                 'teacher_form': AdminCreateTeacherForm(),
                 'headmaster_form': AdminCreateHeadmasterForm(),
@@ -2867,6 +2891,18 @@ def get_admin_create_user_context(request, user, admin_profile):
                 'teachers': User.objects.filter(role='teacher'),
                 'total_teachers': User.objects.filter(role='teacher').count(),
                 'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+                # Add monthly trends for template compatibility
+                'monthly_trends': {
+                    'student_growth': {
+                        'this_month': 0,
+                        'last_month': 0,
+                    },
+                    'fee_collection': {
+                        'this_month': 0,
+                        'last_month': 0,
+                    },
+                    'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                }
             }
         
         if selected_role == 'student':
@@ -2885,6 +2921,7 @@ def get_admin_create_user_context(request, user, admin_profile):
                 'headmaster_form': AdminCreateHeadmasterForm(),
                 'user_role_display': 'Administrator',
                 'current_page': 'create-user',
+                'monthly_trends': monthly_trends,  # Add monthly trends for template compatibility
                 # Add teacher statistics for template compatibility
                 'teachers': User.objects.filter(role='teacher'),
                 'total_teachers': User.objects.filter(role='teacher').count(),
@@ -2913,6 +2950,7 @@ def get_admin_create_user_context(request, user, admin_profile):
                 'headmaster_form': AdminCreateHeadmasterForm() if selected_role != 'headmaster' else form,
                 'user_role_display': 'Administrator',
                 'current_page': 'create-user',
+                'monthly_trends': monthly_trends,  # Add monthly trends for template compatibility
                 # Add teacher statistics for template compatibility
                 'teachers': User.objects.filter(role='teacher'),
                 'total_teachers': User.objects.filter(role='teacher').count(),
@@ -2928,6 +2966,7 @@ def get_admin_create_user_context(request, user, admin_profile):
             'headmaster_form': AdminCreateHeadmasterForm(),
             'user_role_display': 'Administrator',
             'current_page': 'create-user',
+            'monthly_trends': monthly_trends,  # Add monthly trends for template compatibility
             # Add teacher statistics for template compatibility
             'teachers': User.objects.filter(role='teacher'),
             'total_teachers': User.objects.filter(role='teacher').count(),
@@ -2941,6 +2980,7 @@ def get_admin_create_user_context(request, user, admin_profile):
             'headmaster_form': AdminCreateHeadmasterForm(),
             'user_role_display': 'Administrator',
             'current_page': 'create-user',
+            'monthly_trends': monthly_trends,  # Add monthly trends for template compatibility
             # Add teacher statistics for template compatibility
             'teachers': User.objects.filter(role='teacher'),
             'total_teachers': User.objects.filter(role='teacher').count(),
