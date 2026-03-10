@@ -1918,7 +1918,7 @@ def admin_create_announcement(request):
     from .forms import AnnouncementForm
     
     if request.method == 'POST':
-        form = AnnouncementForm(request.POST)
+        form = AnnouncementForm(request.POST, user=request.user)
         if form.is_valid():
             announcement = form.save(commit=False)
             announcement.created_by = request.user
@@ -1932,16 +1932,12 @@ def admin_create_announcement(request):
             messages.error(request, 'Failed to create announcement. Please check the form for errors.')
     
     else:
-        form = AnnouncementForm()
+        form = AnnouncementForm(user=request.user)
     
-    # Get announcements context for the page
-    admin_profile = getattr(request.user, 'adminprofile', None)
-    context = get_admin_announcements_context(request.user, admin_profile)
-    context.update({
+    return render(request, 'core/admin/create_announcement.html', {
         'form': form,
         'page_title': 'Create Announcement'
     })
-    return render(request, 'core/admin_unified_dashboard.html', context)
 
 @login_required
 @user_passes_test(is_admin)

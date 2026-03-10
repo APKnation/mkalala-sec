@@ -1,0 +1,347 @@
+{% extends 'core/admin_unified_dashboard.html' %}
+{% load static %}
+
+{% block title %}Create Announcement - School Management{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Enhanced form styling with Tailwind-like approach */
+.form-container {
+    @apply max-w-4xl mx-auto;
+}
+
+.form-header {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-2xl px-8 py-6;
+}
+
+.form-body {
+    @apply bg-white p-8 rounded-b-2xl shadow-xl border border-slate-200;
+}
+
+.form-section {
+    @apply mb-8;
+}
+
+.form-section-title {
+    @apply flex items-center space-x-3 mb-6 text-lg font-semibold text-slate-800;
+}
+
+.section-icon {
+    @apply w-10 h-10 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full flex items-center justify-center border border-blue-100;
+}
+
+.form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+}
+
+.form-field {
+    @apply space-y-2;
+}
+
+.form-label {
+    @apply block text-sm font-semibold text-slate-700 mb-2 flex items-center;
+}
+
+.form-label i {
+    @apply mr-2 text-blue-500;
+}
+
+.form-input {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-500 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md;
+}
+
+.form-textarea {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-500 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md resize-y min-h-[120px];
+}
+
+.form-select {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md appearance-none cursor-pointer;
+}
+
+.form-datetime {
+    @apply w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md cursor-pointer;
+}
+
+.help-text {
+    @apply mt-2 text-xs text-slate-500 flex items-center;
+}
+
+.help-text i {
+    @apply mr-1;
+}
+
+.error-list {
+    @apply mt-2 p-3 bg-red-50 border border-red-200 rounded-lg;
+}
+
+.error-list li {
+    @apply text-sm text-red-600 flex items-center;
+}
+
+.error-list li i {
+    @apply mr-2;
+}
+
+.btn-primary {
+    @apply px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all transform hover:scale-105 flex items-center shadow-lg;
+}
+
+.btn-secondary {
+    @apply px-6 py-3 border border-slate-300 rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all flex items-center;
+}
+
+.form-actions {
+    @apply flex justify-between items-center pt-8 border-t border-slate-200 mt-8;
+}
+
+.security-badge {
+    @apply flex items-center space-x-2 text-sm text-slate-500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-grid {
+        @apply grid-cols-1;
+    }
+    
+    .form-actions {
+        @apply flex-col space-y-3;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        @apply w-full justify-center;
+    }
+}
+
+/* Focus states */
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus,
+.form-datetime:focus {
+    @apply border-blue-500 shadow-md bg-blue-50/30;
+}
+
+/* Hover states */
+.form-input:hover,
+.form-textarea:hover,
+.form-select:hover,
+.form-datetime:hover {
+    @apply border-blue-300 shadow-sm;
+}
+
+/* Animation for form sections */
+.form-section {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+{% endblock %}
+
+{% block admin_dashboard_content %}
+<div class="form-container">
+    <!-- Form Header -->
+    <div class="form-header">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-bullhorn text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-white">Create New Announcement</h1>
+                    <p class="text-blue-100 mt-1">Share important information with your school community</p>
+                </div>
+            </div>
+            <a href="{% url 'admin_unified_dashboard' page='announcements' %}" class="text-white/80 hover:text-white transition-colors">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Form Body -->
+    <div class="form-body">
+        <form method="post" class="space-y-8">
+            {% csrf_token %}
+            
+            <!-- Announcement Details Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-heading text-blue-600"></i>
+                    </div>
+                    <span>Announcement Details</span>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-field md:col-span-2">
+                        <label for="{{ form.title.id_for_label }}" class="form-label">
+                            <i class="fas fa-tag"></i>
+                            Announcement Title <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <ul class="error-list">
+                                {% for error in form.title.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field md:col-span-2">
+                        <label for="{{ form.message.id_for_label }}" class="form-label">
+                            <i class="fas fa-message"></i>
+                            Message <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.message }}
+                        {% if form.message.errors %}
+                            <ul class="error-list">
+                                {% for error in form.message.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Audience Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-users text-purple-600"></i>
+                    </div>
+                    <span>Target Audience</span>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="{{ form.target_audience.id_for_label }}" class="form-label">
+                            <i class="fas fa-bullseye"></i>
+                            Target Audience <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.target_audience }}
+                        {% if form.target_audience.errors %}
+                            <ul class="error-list">
+                                {% for error in form.target_audience.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Choose who should receive this announcement
+                        </p>
+                    </div>
+                    
+                    <div class="form-field" id="targetClassField" style="display: none;">
+                        <label for="{{ form.target_class.id_for_label }}" class="form-label">
+                            <i class="fas fa-school"></i>
+                            Target Class
+                        </label>
+                        {{ form.target_class }}
+                        {% if form.target_class.errors %}
+                            <ul class="error-list">
+                                {% for error in form.target_class.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="form-section">
+                <div class="form-section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-cog text-green-600"></i>
+                    </div>
+                    <span>Settings</span>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label for="{{ form.expires_at.id_for_label }}" class="form-label">
+                            <i class="fas fa-clock"></i>
+                            Expires At (Optional)
+                        </label>
+                        {{ form.expires_at }}
+                        {% if form.expires_at.errors %}
+                            <ul class="error-list">
+                                {% for error in form.expires_at.errors %}
+                                    <li><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <p class="help-text">
+                            <i class="fas fa-info-circle"></i>
+                            Leave empty for no expiration
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="security-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Secured form submission</span>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{% url 'admin_unified_dashboard' page='announcements' %}" class="btn-secondary">
+                        <i class="fas fa-times mr-2"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Send Announcement
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide target class field based on audience selection
+    const audienceField = document.querySelector('#{{ form.target_audience.id_for_label }}');
+    const targetClassField = document.getElementById('targetClassField');
+    
+    if (audienceField && targetClassField) {
+        audienceField.addEventListener('change', function() {
+            if (this.value === 'Class') {
+                targetClassField.style.display = 'block';
+                targetClassField.classList.add('slideIn');
+            } else {
+                targetClassField.style.display = 'none';
+            }
+        });
+        
+        // Check initial value
+        if (audienceField.value === 'Class') {
+            targetClassField.style.display = 'block';
+        }
+    }
+    
+    // Add form submission animation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+    });
+});
+</script>
+{% endblock %}

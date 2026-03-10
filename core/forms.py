@@ -1081,6 +1081,19 @@ class AnnouncementForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         
+        # Add common Tailwind classes to all fields
+        for field_name, field in self.fields.items():
+            if field_name not in ['target_class']:  # Handle target_class separately
+                field.widget.attrs.update({
+                    'class': (
+                        'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl '
+                        'text-sm font-medium text-slate-900 placeholder-slate-500 '
+                        'focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 '
+                        'focus:outline-none transition-all duration-200 shadow-sm '
+                        'hover:border-slate-300 hover:shadow-md'
+                    )
+                })
+        
         # Filter target audience options based on user role
         if user and hasattr(user, 'role'):
             if user.role == 'teacher':
@@ -1099,34 +1112,76 @@ class AnnouncementForm(forms.ModelForm):
                     ('Class', 'Specific Class'),
                 ]
         
-        # Initialize target_class field
+        # Initialize target_class field with enhanced styling
         self.fields['target_class'] = forms.ModelChoiceField(
             queryset=StudentClass.objects.all(),
             required=False,
             empty_label="Select a class",
             widget=forms.Select(attrs={
-                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none appearance-none'
+                'class': (
+                    'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl '
+                    'text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 '
+                    'focus:border-blue-500/50 focus:outline-none transition-all duration-200 '
+                    'shadow-sm hover:border-slate-300 hover:shadow-md appearance-none cursor-pointer'
+                )
             })
         )
+        
+        # Update specific field attributes
+        self.fields['title'].widget.attrs.update({
+            'placeholder': 'Enter announcement title...',
+            'autocomplete': 'off'
+        })
+        
+        self.fields['message'].widget.attrs.update({
+            'placeholder': 'Write your announcement message...',
+            'rows': 4,
+            'class': (
+                'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl '
+                'text-sm font-medium text-slate-900 placeholder-slate-500 '
+                'focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 '
+                'focus:outline-none transition-all duration-200 shadow-sm resize-y '
+                'hover:border-slate-300 hover:shadow-md min-h-[120px]'
+            )
+        })
+        
+        self.fields['target_audience'].widget.attrs.update({
+            'class': (
+                'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl '
+                'text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 '
+                'focus:border-blue-500/50 focus:outline-none transition-all duration-200 '
+                'shadow-sm hover:border-slate-300 hover:shadow-md appearance-none cursor-pointer'
+            )
+        })
+        
+        self.fields['expires_at'].widget.attrs.update({
+            'type': 'datetime-local',
+            'class': (
+                'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl '
+                'text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 '
+                'focus:border-blue-500/50 focus:outline-none transition-all duration-200 '
+                'shadow-sm hover:border-slate-300 hover:shadow-md cursor-pointer'
+            )
+        })
     
     class Meta:
         model = Announcement
         fields = ['title', 'message', 'target_audience', 'target_class', 'expires_at']
         widgets = {
             'title': forms.TextInput(attrs={
-                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none',
-                'placeholder': 'Enter announcement title'
+                'class': 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-500 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md',
+                'placeholder': 'Enter announcement title...'
             }),
             'message': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none min-h-[150px]',
+                'class': 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-500 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm resize-y hover:border-slate-300 hover:shadow-md min-h-[120px]',
                 'placeholder': 'Write your announcement message...'
             }),
             'target_audience': forms.Select(attrs={
-                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none appearance-none'
+                'class': 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md appearance-none cursor-pointer'
             }),
             'expires_at': forms.DateTimeInput(attrs={
                 'type': 'datetime-local',
-                'class': 'w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 transition-all outline-none'
+                'class': 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md cursor-pointer'
             }),
         }
     
