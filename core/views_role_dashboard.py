@@ -2740,7 +2740,7 @@ def get_admin_create_student_context(request, user, admin_profile):
             
             from django.contrib import messages
             messages.success(request, f'Student "{form.cleaned_data.get("first_name")} {form.cleaned_data.get("last_name")}" has been created successfully!')
-            return HttpResponseRedirect(reverse('admin_unified_dashboard', kwargs={'page': 'users'}))
+            return HttpResponseRedirect(reverse('admin_unified_dashboard', page='users'))
         else:
             from django.contrib import messages
             messages.error(request, 'Failed to create student. Please check the form for errors.')
@@ -2801,7 +2801,7 @@ def get_admin_delete_user_context(request, user, admin_profile):
                 user_name = delete_user.get_full_name() or delete_user.username
                 delete_user.delete()
                 messages.success(request, f'User "{user_name}" has been deleted successfully.')
-                return HttpResponseRedirect(reverse('admin_unified_dashboard', kwargs={'page': 'users'}))
+                return HttpResponseRedirect(reverse('admin_unified_dashboard', page='users'))
             except Exception as e:
                 messages.error(request, f'Error deleting user: {str(e)}')
                 return {'deleted': False, 'error': str(e)}
