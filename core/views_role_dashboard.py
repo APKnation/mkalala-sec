@@ -79,12 +79,17 @@ def admin_unified_dashboard(request, page='overview'):
     except AdminProfile.DoesNotExist:
         admin_profile = None
     
+    # Get pending users count for notification badge
+    from django.contrib.auth.models import User
+    pending_users_count = User.objects.filter(is_active=False).count()
+    
     context = {
         'user': user,
         'admin_profile': admin_profile,
         'current_page': page,
         'page_title': get_admin_page_title(page),
         'user_role_display': 'Administrator',
+        'pending_users_count': pending_users_count,
     }
     
     # Add page-specific context

@@ -255,7 +255,7 @@ def user_approve(request, user_id):
     user.is_active = True  # or any logic to approve the user
     user.save()
     messages.success(request, f"User {user.username} has been approved.")
-    return redirect('user_approval')
+    return redirect('admin_unified_dashboard', page='users')
 class UserApprovalView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
     template_name = 'core/admin_management/admin_user_approval.html'

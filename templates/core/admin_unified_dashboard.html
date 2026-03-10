@@ -93,6 +93,13 @@
     <i class="fas fa-users"></i>
     <span>User Management</span>
 </a>
+<a href="{% url 'user_approval' %}" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-user-check"></i>
+    <span>Pending Approvals</span>
+    {% if pending_users_count > 0 %}
+    <span class="notification-badge">{{ pending_users_count }}</span>
+    {% endif %}
+</a>
 <a href="{% url 'admin_unified_dashboard' page='students' %}" data-page="students" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-graduation-cap"></i>
     <span>Students</span>
