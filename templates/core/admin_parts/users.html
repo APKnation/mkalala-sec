@@ -7,32 +7,9 @@
             <p class="text-slate-500 font-medium">Manage all system users and their permissions.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <div class="dropdown relative">
-                <button class="btn-glow-primary px-6 py-3 flex items-center dropdown-toggle" type="button" id="addUserDropdown" data-bs-toggle="dropdown">
-                    <i class="fas fa-user-plus mr-2"></i> Add User
-                    <i class="fas fa-chevron-down ml-2"></i>
-                </button>
-                <ul class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 z-50">
-                    <li>
-                        <a href="{% url 'admin_create_student' %}" class="dropdown-item flex items-center px-4 py-3 hover:bg-blue-50 text-slate-700 hover:text-blue-600 transition-colors">
-                            <i class="fas fa-graduation-cap mr-3 text-blue-500"></i>
-                            Add Student
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'admin_create_teacher' %}" class="dropdown-item flex items-center px-4 py-3 hover:bg-purple-50 text-slate-700 hover:text-purple-600 transition-colors">
-                            <i class="fas fa-chalkboard-teacher mr-3 text-purple-500"></i>
-                            Add Teacher
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'admin_create_headmaster' %}" class="dropdown-item flex items-center px-4 py-3 hover:bg-orange-50 text-slate-700 hover:text-orange-600 transition-colors">
-                            <i class="fas fa-user-tie mr-3 text-orange-500"></i>
-                            Add Headmaster
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            <a href="{% url 'admin_unified_dashboard' page='create-user' %}" class="btn-glow-primary px-6 py-3 flex items-center">
+                <i class="fas fa-user-plus mr-2"></i> Add User
+            </a>
             <a href="{% url 'admin_unified_dashboard' page='users' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
                 <i class="fas fa-user-shield mr-2"></i> Manage Roles
             </a>

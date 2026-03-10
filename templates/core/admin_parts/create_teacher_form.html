@@ -1,0 +1,171 @@
+<div class="space-y-6">
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-user mr-2 text-purple-500"></i>Personal Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                First Name <span class="text-red-500">*</span>
+            </label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Last Name <span class="text-red-500">*</span>
+            </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Username <span class="text-red-500">*</span>
+            </label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.username.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Email Address <span class="text-red-500">*</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.email.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-lock mr-2 text-purple-500"></i>Password Settings
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Password <span class="text-red-500">*</span>
+            </label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.password1.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Confirm Password <span class="text-red-500">*</span>
+            </label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.password2.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-chalkboard-teacher mr-2 text-purple-500"></i>Teacher Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.employee_id.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Employee ID <span class="text-red-500">*</span>
+            </label>
+            {{ form.employee_id }}
+            {% if form.employee_id.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.employee_id.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Department <span class="text-red-500">*</span>
+            </label>
+            {{ form.department }}
+            {% if form.department.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.department.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.specialization.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Specialization
+            </label>
+            {{ form.specialization }}
+            {% if form.specialization.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.specialization.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.qualification.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Qualification
+            </label>
+            {{ form.qualification }}
+            {% if form.qualification.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.qualification.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-phone mr-2 text-purple-500"></i>Contact Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Phone Number
+            </label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.phone.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Address
+            </label>
+            {{ form.address }}
+            {% if form.address.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.address.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-calendar mr-2 text-purple-500"></i>Employment Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.date_of_hire.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Date of Hire
+            </label>
+            {{ form.date_of_hire }}
+            {% if form.date_of_hire.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.date_of_hire.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.salary.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Salary
+            </label>
+            {{ form.salary }}
+            {% if form.salary.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.salary.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,333 @@
+<!-- Admin Create User Dashboard Content -->
+<div class="space-y-8">
+    <!-- Page Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Create User</h1>
+            <p class="text-slate-500 font-medium">Add new users to the system with dynamic role selection.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'admin_unified_dashboard' page='users' %}" class="btn-glow-secondary px-6 py-3 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Users
+            </a>
+        </div>
+    </div>
+
+    <!-- Role Selection Card -->
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 flex items-center">
+                    <i class="fas fa-user-plus mr-3 text-blue-600"></i>
+                    Select User Role
+                </h3>
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <i class="fas fa-info-circle mr-1"></i>Choose role first
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Student Role -->
+                <div class="role-card {% if selected_role == 'student' %}border-blue-500 bg-blue-50{% else %}border-slate-200 hover:border-blue-300{% endif %} border-2 rounded-xl p-4 cursor-pointer transition-all" onclick="selectRole('student')">
+                    <div class="text-center">
+                        <div class="w-12 h-12 {% if selected_role == 'student' %}bg-blue-600{% else %}bg-slate-400{% endif %} rounded-full flex items-center justify-center text-white mx-auto mb-3">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Student</h4>
+                        <p class="text-xs text-slate-500">Regular student account with class enrollment</p>
+                    </div>
+                </div>
+
+                <!-- Teacher Role -->
+                <div class="role-card {% if selected_role == 'teacher' %}border-purple-500 bg-purple-50{% else %}border-slate-200 hover:border-purple-300{% endif %} border-2 rounded-xl p-4 cursor-pointer transition-all" onclick="selectRole('teacher')">
+                    <div class="text-center">
+                        <div class="w-12 h-12 {% if selected_role == 'teacher' %}bg-purple-600{% else %}bg-slate-400{% endif %} rounded-full flex items-center justify-center text-white mx-auto mb-3">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Teacher</h4>
+                        <p class="text-xs text-slate-500">Teacher account with subject assignment</p>
+                    </div>
+                </div>
+
+                <!-- Headmaster Role -->
+                <div class="role-card {% if selected_role == 'headmaster' %}border-orange-500 bg-orange-50{% else %}border-slate-200 hover:border-orange-300{% endif %} border-2 rounded-xl p-4 cursor-pointer transition-all" onclick="selectRole('headmaster')">
+                    <div class="text-center">
+                        <div class="w-12 h-12 {% if selected_role == 'headmaster' %}bg-orange-600{% else %}bg-slate-400{% endif %} rounded-full flex items-center justify-center text-white mx-auto mb-3">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-900 mb-1">Headmaster</h4>
+                        <p class="text-xs text-slate-500">Administrator with full system access</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Creation Form -->
+    {% if selected_role %}
+    <div class="card-premium">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900 flex items-center">
+                    {% if selected_role == 'student' %}
+                        <i class="fas fa-graduation-cap mr-3 text-blue-600"></i>
+                        Create Student Account
+                    {% elif selected_role == 'teacher' %}
+                        <i class="fas fa-chalkboard-teacher mr-3 text-purple-600"></i>
+                        Create Teacher Account
+                    {% elif selected_role == 'headmaster' %}
+                        <i class="fas fa-user-tie mr-3 text-orange-600"></i>
+                        Create Headmaster Account
+                    {% endif %}
+                </h3>
+                <div class="flex items-center space-x-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <i class="fas fa-check-circle mr-1"></i>{{ selected_role|title }} selected
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            <form method="post" id="createUserForm">
+                {% csrf_token %}
+                <input type="hidden" name="role" value="{{ selected_role }}" id="selectedRoleInput">
+                
+                {% if selected_role == 'student' %}
+                    {% include 'core/admin_parts/create_student_form.html' with form=student_form %}
+                {% elif selected_role == 'teacher' %}
+                    {% include 'core/admin_parts/create_teacher_form.html' with form=teacher_form %}
+                {% elif selected_role == 'headmaster' %}
+                    {% include 'core/admin_parts/create_headmaster_form.html' with form=headmaster_form %}
+                {% endif %}
+                
+                <!-- Form Actions -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-200">
+                    <div>
+                        <button type="button" onclick="selectRole(null)" class="inline-flex items-center px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i> Change Role
+                        </button>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="reset" class="inline-flex items-center px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                            <i class="fas fa-undo mr-2"></i> Reset
+                        </button>
+                        <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i> Create {{ selected_role|title }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Instructions -->
+    {% if not selected_role %}
+    <div class="card-premium mt-6">
+        <div class="p-6 border-b border-slate-100">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-slate-900">How to Create a User</h3>
+                <i class="fas fa-question-circle text-2xl text-blue-600"></i>
+            </div>
+        </div>
+        <div class="px-6 py-4 space-y-4">
+            <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">1</div>
+                <div>
+                    <h4 class="font-semibold text-slate-900 mb-1">Select User Role</h4>
+                    <p class="text-sm text-slate-600">Choose between Student, Teacher, or Headmaster from the options above.</p>
+                </div>
+            </div>
+            <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">2</div>
+                <div>
+                    <h4 class="font-semibold text-slate-900 mb-1">Fill User Information</h4>
+                    <p class="text-sm text-slate-600">Complete the form with personal details and role-specific information.</p>
+                </div>
+            </div>
+            <div class="flex items-start space-x-3">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">3</div>
+                <div>
+                    <h4 class="font-semibold text-slate-900 mb-1">Create Account</h4>
+                    <p class="text-sm text-slate-600">Review the information and click "Create" to add the user to the system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- JavaScript for role selection and form handling -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+(function() {
+    'use strict';
+    
+    function selectRole(role) {
+        if (role) {
+            // Show loading
+            Swal.fire({
+                title: 'Loading Form...',
+                text: 'Please wait while we load the form.',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            // Redirect to the same page with role parameter
+            const url = new URL(window.location);
+            url.searchParams.set('role', role);
+            window.location.href = url.toString();
+        } else {
+            // Clear role selection
+            const url = new URL(window.location);
+            url.searchParams.delete('role');
+            window.location.href = url.toString();
+        }
+    }
+    
+    // Make selectRole available globally
+    window.selectRole = selectRole;
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('createUserForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // Basic form validation
+                const username = document.querySelector('input[name="username"]');
+                const email = document.querySelector('input[name="email"]');
+                const password1 = document.querySelector('input[name="password1"]');
+                const password2 = document.querySelector('input[name="password2"]');
+                
+                if (!username || !username.value.trim()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Username is required',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+                
+                if (!email || !email.value.trim()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Email address is required',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+                
+                if (!password1 || !password1.value.trim()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Password is required',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+                
+                if (!password2 || !password2.value.trim()) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Password confirmation is required',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+                
+                if (password1.value !== password2.value) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Validation Error',
+                        text: 'Passwords do not match',
+                        confirmButtonColor: '#dc3545'
+                    });
+                    return;
+                }
+                
+                // Show loading for valid forms
+                Swal.fire({
+                    title: 'Creating User...',
+                    text: 'Please wait while we create the user account.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            });
+        }
+    });
+})();
+</script>
+
+<style>
+.role-card {
+    transition: all 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.role-card.border-blue-500,
+.role-card.border-purple-500,
+.role-card.border-orange-500 {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Form styling */
+input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+}
+
+input[type="checkbox"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.error input {
+    border-color: #ef4444;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 12px;
+    margin-top: 4px;
+}
+</style>

@@ -1,0 +1,171 @@
+<div class="space-y-6">
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-user mr-2 text-blue-500"></i>Personal Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                First Name <span class="text-red-500">*</span>
+            </label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.first_name.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Last Name <span class="text-red-500">*</span>
+            </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.last_name.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Username <span class="text-red-500">*</span>
+            </label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.username.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Email Address <span class="text-red-500">*</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.email.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-lock mr-2 text-blue-500"></i>Password Settings
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Password <span class="text-red-500">*</span>
+            </label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.password1.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Confirm Password <span class="text-red-500">*</span>
+            </label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.password2.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-graduation-cap mr-2 text-blue-500"></i>Student Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.roll_number.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Roll Number <span class="text-red-500">*</span>
+            </label>
+            {{ form.roll_number }}
+            {% if form.roll_number.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.roll_number.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.admission_number.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Admission Number <span class="text-red-500">*</span>
+            </label>
+            {{ form.admission_number }}
+            {% if form.admission_number.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.admission_number.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Date of Birth <span class="text-red-500">*</span>
+            </label>
+            {{ form.date_of_birth }}
+            {% if form.date_of_birth.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.date_of_birth.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.gender.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Gender <span class="text-red-500">*</span>
+            </label>
+            {{ form.gender }}
+            {% if form.gender.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.gender.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-phone mr-2 text-blue-500"></i>Contact Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Phone Number
+            </label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.phone.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Address
+            </label>
+            {{ form.address }}
+            {% if form.address.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.address.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+        <i class="fas fa-school mr-2 text-blue-500"></i>Academic Information
+    </h4>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="{{ form.previous_school.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Previous School
+            </label>
+            {{ form.previous_school }}
+            {% if form.previous_school.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.previous_school.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+        
+        <div>
+            <label for="{{ form.primary_school_leaving_exam_number.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                Primary School Leaving Exam Number
+            </label>
+            {{ form.primary_school_leaving_exam_number }}
+            {% if form.primary_school_leaving_exam_number.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.primary_school_leaving_exam_number.errors|join:", " }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -151,6 +151,12 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_reports_context(user, admin_profile))
     elif page == 'users':
         context.update(get_admin_users_context(user, admin_profile))
+    elif page == 'create-user':
+        context_result = get_admin_create_user_context(request, user, admin_profile)
+        # Handle form submission for create-user
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'edit-user':
         context_result = get_admin_edit_user_context(request, user, admin_profile)
         # Handle form submission for edit-user
@@ -441,6 +447,7 @@ def get_admin_page_title(page):
     titles = {
         'overview': 'Admin Dashboard',
         'users': 'User Management',
+        'create-user': 'Create User',
         'edit-user': 'Edit User',
         'students': 'Students',
         'teachers': 'Teachers',
@@ -2830,3 +2837,112 @@ def get_admin_delete_user_context(request, user, admin_profile):
     except User.DoesNotExist:
         messages.error(request, "User not found.")
         return {}
+
+def get_admin_create_user_context(request, user, admin_profile):
+    """Get admin create user page context with dynamic role selection"""
+    from django.contrib import messages
+    from django.http import HttpResponseRedirect
+    from django.urls import reverse
+    from .forms_admin import (
+        AdminCreateStudentForm, 
+        AdminCreateTeacherForm, 
+        AdminCreateHeadmasterForm
+    )
+    
+    # Get selected role from URL parameter or POST data
+    selected_role = request.POST.get('role') or request.GET.get('role')
+    
+    if request.method == 'POST':
+        if not selected_role:
+            from django.contrib import messages
+            messages.error(request, 'Please select a user role.')
+            return {
+                'selected_role': None,
+                'student_form': AdminCreateStudentForm(),
+                'teacher_form': AdminCreateTeacherForm(),
+                'headmaster_form': AdminCreateHeadmasterForm(),
+                'user_role_display': 'Administrator',
+                'current_page': 'create-user',
+                # Add teacher statistics for template compatibility
+                'teachers': User.objects.filter(role='teacher'),
+                'total_teachers': User.objects.filter(role='teacher').count(),
+                'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+            }
+        
+        if selected_role == 'student':
+            form = AdminCreateStudentForm(request.POST)
+        elif selected_role == 'teacher':
+            form = AdminCreateTeacherForm(request.POST)
+        elif selected_role == 'headmaster':
+            form = AdminCreateHeadmasterForm(request.POST)
+        else:
+            from django.contrib import messages
+            messages.error(request, 'Invalid user role selected.')
+            return {
+                'selected_role': selected_role,
+                'student_form': AdminCreateStudentForm(),
+                'teacher_form': AdminCreateTeacherForm(),
+                'headmaster_form': AdminCreateHeadmasterForm(),
+                'user_role_display': 'Administrator',
+                'current_page': 'create-user',
+                # Add teacher statistics for template compatibility
+                'teachers': User.objects.filter(role='teacher'),
+                'total_teachers': User.objects.filter(role='teacher').count(),
+                'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+            }
+        
+        if form.is_valid():
+            # Save the user with the selected role
+            new_user = form.save(commit=False)
+            if selected_role:
+                new_user.role = selected_role
+            new_user.save()
+            
+            from django.contrib import messages
+            role_display = selected_role.title() if selected_role else 'User'
+            messages.success(request, f'{role_display} "{new_user.get_full_name()}" has been created successfully!')
+            return HttpResponseRedirect(reverse('admin_unified_dashboard', page='users'))
+        else:
+            from django.contrib import messages
+            role_display = selected_role.title() if selected_role else 'User'
+            messages.error(request, f'Failed to create {role_display}. Please check the form for errors.')
+            return {
+                'selected_role': selected_role,
+                'student_form': AdminCreateStudentForm() if selected_role != 'student' else form,
+                'teacher_form': AdminCreateTeacherForm() if selected_role != 'teacher' else form,
+                'headmaster_form': AdminCreateHeadmasterForm() if selected_role != 'headmaster' else form,
+                'user_role_display': 'Administrator',
+                'current_page': 'create-user',
+                # Add teacher statistics for template compatibility
+                'teachers': User.objects.filter(role='teacher'),
+                'total_teachers': User.objects.filter(role='teacher').count(),
+                'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+            }
+    
+    # GET request - show all forms or specific form if role is selected
+    if selected_role:
+        return {
+            'selected_role': selected_role,
+            'student_form': AdminCreateStudentForm(),
+            'teacher_form': AdminCreateTeacherForm(),
+            'headmaster_form': AdminCreateHeadmasterForm(),
+            'user_role_display': 'Administrator',
+            'current_page': 'create-user',
+            # Add teacher statistics for template compatibility
+            'teachers': User.objects.filter(role='teacher'),
+            'total_teachers': User.objects.filter(role='teacher').count(),
+            'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+        }
+    else:
+        return {
+            'selected_role': None,
+            'student_form': AdminCreateStudentForm(),
+            'teacher_form': AdminCreateTeacherForm(),
+            'headmaster_form': AdminCreateHeadmasterForm(),
+            'user_role_display': 'Administrator',
+            'current_page': 'create-user',
+            # Add teacher statistics for template compatibility
+            'teachers': User.objects.filter(role='teacher'),
+            'total_teachers': User.objects.filter(role='teacher').count(),
+            'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
+        }

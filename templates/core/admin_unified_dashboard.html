@@ -224,6 +224,13 @@
     {% endif %}
 </div>
 
+<!-- Create User Section -->
+<div id="create-user-section" class="content-section {% if current_page == 'create-user' %}active{% endif %} page-content">
+    {% if current_page == 'create-user' %}
+        {% include 'core/admin_parts/create_user.html' %}
+    {% endif %}
+</div>
+
 <!-- Students Section -->
 <div id="students-section" class="content-section {% if current_page == 'students' %}active{% endif %} page-content">
     {% include 'core/admin_parts/students.html' %}
@@ -368,8 +375,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin dashboard loaded');
     
     // Optional: Add simple hover effects
-    const sidebarItems = document.querySelectorAll('.sidebar-item');
-    sidebarItems.forEach(item => {
+    const adminSidebarItems = document.querySelectorAll('.sidebar-item');
+    adminSidebarItems.forEach(item => {
         item.addEventListener('mouseenter', function() {
             this.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
         });
