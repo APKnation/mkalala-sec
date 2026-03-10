@@ -244,24 +244,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Check for messages and show SweetAlert
-    {% if messages %}
-        {% for message in messages %}
-            Swal.fire({
-                icon: '{% if "success" in message.tags %}success{% else %}error{% endif %}',
-                title: '{% if "success" in message.tags %}Success!{% else %}Error!{% endif %}',
-                text: '{{ message|escapejs }}',
-                confirmButtonColor: '{% if "success" in message.tags %}#10b981{% else %}#dc3545{% endif %}',
-                timer: 5000,
-                showConfirmButton: false
-            });
-        {% endfor %}
-    {% endif %}
-    
     // Handle form submission with SweetAlert
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
+    const editUserForm = document.querySelector('form');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', function(e) {
             // Don't prevent default submission - let Django handle it
             // Only prevent for validation errors
             
@@ -330,15 +316,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show loading for valid forms
             Swal.fire({
                 title: 'Updating User...',
-                text: 'Please wait while we update the user information.',
+                text: 'Please wait while we update user information.',
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
                 }
             });
-            
-            // Submit form normally - let Django handle it
-            // No need for setTimeout or manual form.submit()
         });
     }
 });
