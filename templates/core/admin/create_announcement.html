@@ -1,6 +1,5 @@
 {% extends 'core/admin_unified_dashboard.html' %}
 {% load static %}
-{% load add_class %}
 
 {% block title %}Create Announcement - School Management{% endblock %}
 
@@ -207,7 +206,7 @@
                                 <i class="fas fa-tag"></i>
                                 Announcement Title <span class="text-red-500">*</span>
                             </label>
-                            {{ form.title|add_class:"form-input" }}
+                            {{ form.title }}
                             {% if form.title.errors %}
                                 <ul class="error-list">
                                     {% for error in form.title.errors %}
@@ -222,7 +221,7 @@
                                 <i class="fas fa-message"></i>
                                 Message <span class="text-red-500">*</span>
                             </label>
-                            {{ form.message|add_class:"form-textarea" }}
+                            {{ form.message }}
                             {% if form.message.errors %}
                                 <ul class="error-list">
                                     {% for error in form.message.errors %}
@@ -249,7 +248,7 @@
                                 <i class="fas fa-bullseye"></i>
                                 Target Audience <span class="text-red-500">*</span>
                             </label>
-                            {{ form.target_audience|add_class:"form-select" }}
+                            {{ form.target_audience }}
                             {% if form.target_audience.errors %}
                                 <ul class="error-list">
                                     {% for error in form.target_audience.errors %}
@@ -268,7 +267,7 @@
                                 <i class="fas fa-school"></i>
                                 Target Class
                             </label>
-                            {{ form.target_class|add_class:"form-select" }}
+                            {{ form.target_class }}
                             {% if form.target_class.errors %}
                                 <ul class="error-list">
                                     {% for error in form.target_class.errors %}
@@ -295,7 +294,7 @@
                                 <i class="fas fa-clock"></i>
                                 Expires At (Optional)
                             </label>
-                            {{ form.expires_at|add_class:"form-datetime" }}
+                            {{ form.expires_at }}
                             {% if form.expires_at.errors %}
                                 <ul class="error-list">
                                     {% for error in form.expires_at.errors %}
@@ -335,6 +334,42 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Apply Tailwind CSS classes to form fields
+    function applyFormStyles() {
+        // Style title input
+        const titleField = document.querySelector('#{{ form.title.id_for_label }}');
+        if (titleField) {
+            titleField.className = 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-500 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md';
+        }
+        
+        // Style message textarea
+        const messageField = document.querySelector('#{{ form.message.id_for_label }}');
+        if (messageField) {
+            messageField.className = 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 placeholder-slate-500 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md resize-y min-h-[120px]';
+        }
+        
+        // Style audience select
+        const audienceField = document.querySelector('#{{ form.target_audience.id_for_label }}');
+        if (audienceField) {
+            audienceField.className = 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md appearance-none cursor-pointer';
+        }
+        
+        // Style class select
+        const classField = document.querySelector('#{{ form.target_class.id_for_label }}');
+        if (classField) {
+            classField.className = 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md appearance-none cursor-pointer';
+        }
+        
+        // Style datetime field
+        const expiresField = document.querySelector('#{{ form.expires_at.id_for_label }}');
+        if (expiresField) {
+            expiresField.className = 'w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500/50 focus:outline-none transition-all duration-200 shadow-sm hover:border-slate-300 hover:shadow-md cursor-pointer';
+        }
+    }
+    
+    // Apply styles immediately
+    applyFormStyles();
+    
     // Show/hide target class field based on audience selection
     const audienceField = document.querySelector('#{{ form.target_audience.id_for_label }}');
     const targetClassField = document.getElementById('targetClassField');
