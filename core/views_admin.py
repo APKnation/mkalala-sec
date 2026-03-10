@@ -291,26 +291,40 @@ def admin_create_headmaster(request):
     if request.method == 'POST':
         form = AdminCreateHeadmasterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password1'])
-            user.save()
+            try:
+                user = form.save(commit=False)
+                user.set_password(form.cleaned_data['password1'])
+                user.save()
+                
+                # Set user role and flags
+                user.role = 'headmaster'
+                user.is_headmaster = True
+                user.save()
+                
+                # Create HeadmasterProfile
+                HeadmasterProfile.objects.create(
+                    user=user,
+                    employee_id=form.cleaned_data['employee_id'],
+                    phone=form.cleaned_data.get('phone', ''),
+                    address=form.cleaned_data.get('address', ''),
+                    date_joined=timezone.now().date()
+                )
+                
+                messages.success(request, f"Headmaster account for {user.get_full_name()} created successfully!")
+                return redirect('admin_unified_dashboard', page='users')
+            except Exception as e:
+                messages.error(request, f"Failed to create headmaster account: {str(e)}")
+        else:
+            # Form validation errors - display specific field errors
+            error_messages = []
+            for field, errors in form.errors.items():
+                for error in errors:
+                    error_messages.append(f"{field.replace('_', ' ').title()}: {error}")
             
-            # Set user role and flags
-            user.role = 'headmaster'
-            user.is_headmaster = True
-            user.save()
-            
-            # Create HeadmasterProfile
-            HeadmasterProfile.objects.create(
-                user=user,
-                employee_id=form.cleaned_data['employee_id'],
-                phone=form.cleaned_data.get('phone', ''),
-                address=form.cleaned_data.get('address', ''),
-                date_joined=timezone.now().date()
-            )
-            
-            messages.success(request, f"Headmaster account for {user.get_full_name()} created successfully!")
-            return redirect('admin_unified_dashboard', page='users')
+            if error_messages:
+                messages.error(request, f"Please correct the following errors: {'; '.join(error_messages)}")
+            else:
+                messages.error(request, "Failed to create headmaster account. Please check the form for errors.")
     else:
         form = AdminCreateHeadmasterForm()
     

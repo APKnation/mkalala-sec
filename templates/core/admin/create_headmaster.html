@@ -3,6 +3,46 @@
 
 {% block title %}Create Headmaster Account - {{ school_info.name }}{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Enhanced form styling */
+    .form-input-error {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+    
+    .form-error-message {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .form-error-message::before {
+        content: "⚠️";
+        margin-right: 8px;
+        font-size: 16px;
+    }
+</style>
+{% endblock %}
+
 {% block main_content %}
 <div class="space-y-8">
     <!-- Page Header -->
@@ -32,7 +72,7 @@
             </div>
         </div>
         <div class="p-6">
-            <form method="post" class="space-y-6">
+            <form method="post" id="headmasterCreateForm" class="space-y-6">
                 {% csrf_token %}
                 
                 <!-- Account Information -->
@@ -46,7 +86,7 @@
                             <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Username *</label>
                             {{ form.username }}
                             {% if form.username.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.username.errors.0 }}
                                 </div>
                             {% endif %}
@@ -55,7 +95,7 @@
                             <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Email *</label>
                             {{ form.email }}
                             {% if form.email.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.email.errors.0 }}
                                 </div>
                             {% endif %}
@@ -67,7 +107,7 @@
                             <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">First Name *</label>
                             {{ form.first_name }}
                             {% if form.first_name.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.first_name.errors.0 }}
                                 </div>
                             {% endif %}
@@ -76,7 +116,7 @@
                             <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Last Name *</label>
                             {{ form.last_name }}
                             {% if form.last_name.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.last_name.errors.0 }}
                                 </div>
                             {% endif %}
@@ -88,7 +128,7 @@
                             <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Password *</label>
                             {{ form.password1 }}
                             {% if form.password1.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.password1.errors.0 }}
                                 </div>
                             {% endif %}
@@ -97,7 +137,7 @@
                             <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Confirm Password *</label>
                             {{ form.password2 }}
                             {% if form.password2.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.password2.errors.0 }}
                                 </div>
                             {% endif %}
@@ -116,7 +156,7 @@
                             <label for="{{ form.employee_id.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Employee ID *</label>
                             {{ form.employee_id }}
                             {% if form.employee_id.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.employee_id.errors.0 }}
                                 </div>
                             {% endif %}
@@ -135,7 +175,7 @@
                             <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
                             {{ form.phone }}
                             {% if form.phone.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.phone.errors.0 }}
                                 </div>
                             {% endif %}
@@ -144,7 +184,7 @@
                             <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">Address</label>
                             {{ form.address }}
                             {% if form.address.errors %}
-                                <div class="text-red-500 text-sm mt-1">
+                                <div class="form-error-message">
                                     {{ form.address.errors.0 }}
                                 </div>
                             {% endif %}
@@ -154,7 +194,7 @@
 
                 <!-- Submit Button -->
                 <div class="flex justify-end pt-6 border-t border-slate-100">
-                    <button type="submit" class="btn-glow-primary px-8 py-3 flex items-center">
+                    <button type="submit" class="btn-glow-primary px-8 py-3 flex items-center" id="submitBtn">
                         <i class="fas fa-user-plus mr-2"></i>Create Headmaster Account
                     </button>
                 </div>
@@ -162,4 +202,173 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('headmasterCreateForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Check for Django messages and show SweetAlert
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ message|escapejs }}',
+                    confirmButtonColor: '#10b981',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    showConfirmButton: true
+                });
+            {% elif message.tags == 'error' %}
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ message|escapejs }}',
+                    confirmButtonColor: '#ef4444',
+                    showConfirmButton: true
+                });
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    
+    // Form submission with SweetAlert loading
+    form.addEventListener('submit', function(e) {
+        // Basic client-side validation
+        const username = document.getElementById('{{ form.username.id_for_label }}').value.trim();
+        const email = document.getElementById('{{ form.email.id_for_label }}').value.trim();
+        const firstName = document.getElementById('{{ form.first_name.id_for_label }}').value.trim();
+        const lastName = document.getElementById('{{ form.last_name.id_for_label }}').value.trim();
+        const password1 = document.getElementById('{{ form.password1.id_for_label }}').value;
+        const password2 = document.getElementById('{{ form.password2.id_for_label }}').value;
+        const employeeId = document.getElementById('{{ form.employee_id.id_for_label }}').value.trim();
+        
+        // Validate required fields
+        if (!username || !email || !firstName || !lastName || !password1 || !password2 || !employeeId) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: 'Please fill in all required fields marked with *',
+                confirmButtonColor: '#f59e0b'
+            });
+            return;
+        }
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Invalid Email',
+                text: 'Please enter a valid email address',
+                confirmButtonColor: '#f59e0b'
+            });
+            return;
+        }
+        
+        // Validate password match
+        if (password1 !== password2) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Password Mismatch',
+                text: 'Password and Confirm Password must match',
+                confirmButtonColor: '#f59e0b'
+            });
+            return;
+        }
+        
+        // Validate password length
+        if (password1.length < 8) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Password Too Short',
+                text: 'Password must be at least 8 characters long',
+                confirmButtonColor: '#f59e0b'
+            });
+            return;
+        }
+        
+        // Show loading SweetAlert
+        Swal.fire({
+            title: 'Creating Headmaster Account...',
+            text: 'Please wait while we create the headmaster account.',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Disable submit button to prevent double submission
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
+        
+        // Allow form to submit normally
+        // The page will redirect on success or show errors on reload
+    });
+    
+    // Add input event listeners for real-time validation feedback
+    const requiredFields = [
+        '{{ form.username.id_for_label }}',
+        '{{ form.email.id_for_label }}',
+        '{{ form.first_name.id_for_label }}',
+        '{{ form.last_name.id_for_label }}',
+        '{{ form.password1.id_for_label }}',
+        '{{ form.password2.id_for_label }}',
+        '{{ form.employee_id.id_for_label }}'
+    ];
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('form-input-error');
+                }
+            });
+            
+            field.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.classList.add('form-input-error');
+                }
+            });
+        }
+    });
+    
+    // Password match validation
+    const password1Field = document.getElementById('{{ form.password1.id_for_label }}');
+    const password2Field = document.getElementById('{{ form.password2.id_for_label }}');
+    
+    function validatePasswordMatch() {
+        if (password1Field.value && password2Field.value) {
+            if (password1Field.value !== password2Field.value) {
+                password2Field.classList.add('form-input-error');
+            } else {
+                password2Field.classList.remove('form-input-error');
+            }
+        }
+    }
+    
+    password1Field.addEventListener('input', validatePasswordMatch);
+    password2Field.addEventListener('input', validatePasswordMatch);
+    
+    // Email validation
+    const emailField = document.getElementById('{{ form.email.id_for_label }}');
+    emailField.addEventListener('blur', function() {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (this.value && !emailRegex.test(this.value)) {
+            this.classList.add('form-input-error');
+        } else {
+            this.classList.remove('form-input-error');
+        }
+    });
+});
+</script>
 {% endblock %}
