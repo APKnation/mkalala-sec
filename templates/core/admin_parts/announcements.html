@@ -432,11 +432,14 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 // Send delete request
+                const formData = new FormData();
+                formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+                
                 fetch(`/admin/announcements/delete/${id}/`, {
                     method: 'POST',
+                    body: formData,
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
                 .then(response => response.json())
