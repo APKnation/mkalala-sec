@@ -1934,7 +1934,8 @@ def admin_create_announcement(request):
         form = AnnouncementForm()
     
     # Get announcements context for the page
-    context = get_admin_announcements_context(request.user, request.user.adminprofile)
+    admin_profile = getattr(request.user, 'adminprofile', None)
+    context = get_admin_announcements_context(request.user, admin_profile)
     context.update({
         'form': form,
         'page_title': 'Create Announcement'
@@ -1995,7 +1996,8 @@ def admin_edit_announcement(request, announcement_id):
             })
     
     # Get announcements context for the page (for regular form submission)
-    context = get_admin_announcements_context(request.user, request.user.adminprofile)
+    admin_profile = getattr(request.user, 'adminprofile', None)
+    context = get_admin_announcements_context(request.user, admin_profile)
     context.update({
         'form': AnnouncementForm(instance=announcement),
         'announcement': announcement,
