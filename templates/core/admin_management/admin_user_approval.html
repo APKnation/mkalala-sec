@@ -1,0 +1,196 @@
+{% extends 'core/admin_management/admin_dashboard.html' %}
+{% load static %}
+
+{% block title %}User Approval - {{ school_info.name }}{% endblock %}
+
+{% block main_content %}
+<div class="p-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 flex items-center">
+                <i class="fas fa-user-check mr-3 text-blue-600"></i>
+                User Approval
+            </h1>
+            <p class="text-slate-600 mt-1">Review and approve pending user registrations</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_unified_dashboard' page='users' %}" 
+               class="px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Users
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Total Pending</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ pending_users|length }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Students</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ pending_students_count }}</p>
+                </div>
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-purple-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Teachers</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ pending_teachers_count }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chalkboard-teacher text-green-600"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-slate-600">Admins</p>
+                    <p class="text-2xl font-bold text-slate-900">{{ pending_admins_count }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-shield text-red-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Users List -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+        <div class="p-6 border-b border-slate-200">
+            <div class="flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-slate-900">
+                    <i class="fas fa-list mr-2 text-blue-600"></i>
+                    Pending User Approvals
+                </h2>
+                <div class="text-sm text-slate-600">
+                    {{ pending_users|length }} user{{ pending_users|length|pluralize }} awaiting approval
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-6">
+            {% if pending_users %}
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-slate-200">
+                                <th class="text-left py-3 px-4 font-medium text-slate-700">User</th>
+                                <th class="text-left py-3 px-4 font-medium text-slate-700">Email</th>
+                                <th class="text-left py-3 px-4 font-medium text-slate-700">Role</th>
+                                <th class="text-left py-3 px-4 font-medium text-slate-700">Registration Date</th>
+                                <th class="text-left py-3 px-4 font-medium text-slate-700">Status</th>
+                                <th class="text-center py-3 px-4 font-medium text-slate-700">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in pending_users %}
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                    <td class="py-4 px-4">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                                {{ user.get_full_name|default:user.username|first|upper }}
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="font-medium text-slate-900">
+                                                    {{ user.get_full_name|default:user.username }}
+                                                </div>
+                                                {% if user.student_profile %}
+                                                    <div class="text-sm text-slate-600">ID: {{ user.student_profile.roll_number|default:"N/A" }}</div>
+                                                {% elif user.faculty_profile %}
+                                                    <div class="text-sm text-slate-600">ID: {{ user.faculty_profile.employee_id|default:"N/A" }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="text-slate-700">{{ user.email }}</div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        {% if user.role == 'student' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <i class="fas fa-graduation-cap mr-1"></i>Student
+                                            </span>
+                                        {% elif user.role == 'teacher' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="fas fa-chalkboard-teacher mr-1"></i>Teacher
+                                            </span>
+                                        {% elif user.role == 'admin' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-user-shield mr-1"></i>Admin
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                                                {{ user.role|title }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="text-sm text-slate-700">{{ user.date_joined|date:"M d, Y H:i" }}</div>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i>Pending Approval
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4">
+                                        <div class="flex justify-center space-x-2">
+                                            <a href="{% url 'user_approve' user.pk %}" 
+                                               class="w-8 h-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors"
+                                               title="Approve User"
+                                               onclick="return confirm('Are you sure you want to approve {{ user.get_full_name|default:user.username }}?')">
+                                                <i class="fas fa-check text-sm"></i>
+                                            </a>
+                                            <a href="{% url 'edit_user' user.pk %}" 
+                                               class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 flex items-center justify-center transition-colors"
+                                               title="Edit User">
+                                                <i class="fas fa-edit text-sm"></i>
+                                            </a>
+                                            <a href="{% url 'delete_user' user.pk %}" 
+                                               class="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition-colors"
+                                               title="Delete User"
+                                               onclick="return confirm('Are you sure you want to delete {{ user.get_full_name|default:user.username }}? This action cannot be undone.')">
+                                                <i class="fas fa-trash text-sm"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-check text-3xl text-slate-400"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-slate-900 mb-2">No Pending Users</h3>
+                    <p class="text-slate-600 mb-6">All users have been approved. Great job!</p>
+                    <a href="{% url 'admin_unified_dashboard' page='users' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-tachometer-alt mr-2"></i>Go to Users
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

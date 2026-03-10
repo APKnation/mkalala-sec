@@ -124,6 +124,20 @@
             </div>
         </div>
         <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    {% if pending_users %}
+                        <p class="text-slate-600 text-sm">Showing latest {{ pending_users|length }} pending user{{ pending_users|length|pluralize }}</p>
+                    {% else %}
+                        <p class="text-slate-500 text-sm">No pending users at the moment</p>
+                    {% endif %}
+                </div>
+                {% if pending_users %}
+                    <a href="{% url 'user_approval' %}" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                        <i class="fas fa-users mr-2"></i>View All Pending Users
+                    </a>
+                {% endif %}
+            </div>
             {% if pending_users %}
                 <div class="overflow-x-auto">
                     <table class="w-full">

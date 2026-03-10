@@ -258,7 +258,7 @@ def user_approve(request, user_id):
     return redirect('user_approval')
 class UserApprovalView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = User
-    template_name = 'core/user_approval.html'  # create this template
+    template_name = 'core/admin_management/admin_user_approval.html'
     context_object_name = 'pending_users'
 
     def get_queryset(self):
