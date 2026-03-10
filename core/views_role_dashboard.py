@@ -1934,10 +1934,15 @@ def admin_create_announcement(request):
     else:
         form = AnnouncementForm(user=request.user)
     
-    return render(request, 'core/admin/create_announcement.html', {
+    # Get announcements context for template compatibility
+    admin_profile = getattr(request.user, 'adminprofile', None)
+    context = get_admin_announcements_context(request.user, admin_profile)
+    context.update({
         'form': form,
         'page_title': 'Create Announcement'
     })
+    
+    return render(request, 'core/admin/create_announcement.html', context)
 
 @login_required
 @user_passes_test(is_admin)
