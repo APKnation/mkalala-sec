@@ -46,6 +46,7 @@ urlpatterns = [
     path('student/dashboard/notifications', views_role_dashboard.get_student_notifications, name='student_dashboard_notifications'),
     
     path('admin/dashboard/<str:page>/', views_role_dashboard.admin_unified_dashboard, name='admin_unified_dashboard'),
+    path('admin/dashboard/pending-users/', views.UserApprovalView.as_view(), name='admin_pending_users'),
     path('admin/dashboard/load/<str:page>/', views_role_dashboard.load_admin_dashboard_page, name='load_admin_dashboard_page'),
     path('admin/dashboard/notifications', views_role_dashboard.get_admin_notifications, name='admin_dashboard_notifications'),
     
@@ -174,7 +175,6 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     path('users/<int:pk>/edit/', views.UserUpdateView.as_view(), name='edit_user'),
     path('users/<int:pk>/delete/', views.delete_user, name='delete_user'),
     path('users/<int:user_id>/deactivate/', views.deactivate_user, name='deactivate_user'),
-    path('users/pending/', views.UserApprovalView.as_view(), name='user_approval'),
     path('users/<int:user_id>/approve/', views.user_approve, name='user_approve'),
     
     # Faculty URLs

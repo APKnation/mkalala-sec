@@ -133,7 +133,7 @@
                     {% endif %}
                 </div>
                 {% if pending_users %}
-                    <a href="{% url 'user_approval' %}" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                    <a href="{% url 'admin_pending_users' %}" class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors text-sm">
                         <i class="fas fa-users mr-2"></i>View All Pending Users
                     </a>
                 {% endif %}

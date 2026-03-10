@@ -93,7 +93,7 @@
     <i class="fas fa-users"></i>
     <span>User Management</span>
 </a>
-<a href="{% url 'user_approval' %}" class="sidebar-item text-slate-400 font-sans">
+<a href="{% url 'admin_pending_users' %}" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-user-check"></i>
     <span>Pending Approvals</span>
     {% if pending_users_count > 0 %}
