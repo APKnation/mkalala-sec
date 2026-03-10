@@ -73,17 +73,17 @@
     <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden lg:hidden animate-in fade-in duration-300"></div>
 
     <script>
-        const dashboardSidebar = document.getElementById('sidebar');
-        const dashboardSidebarBackdrop = document.getElementById('sidebar-backdrop');
-        const dashboardSidebarToggle = document.getElementById('mobile-sidebar-toggle');
+        const baseSidebarElement = document.getElementById('sidebar');
+        const baseSidebarBackdrop = document.getElementById('sidebar-backdrop');
+        const baseSidebarToggle = document.getElementById('mobile-sidebar-toggle');
 
         function toggleSidebar() {
-            dashboardSidebar.classList.toggle('-translate-x-full');
-            dashboardSidebarBackdrop.classList.toggle('hidden');
+            baseSidebarElement.classList.toggle('-translate-x-full');
+            baseSidebarBackdrop.classList.toggle('hidden');
         }
 
-        dashboardSidebarToggle?.addEventListener('click', toggleSidebar);
-        dashboardSidebarBackdrop?.addEventListener('click', toggleSidebar);
+        baseSidebarToggle?.addEventListener('click', toggleSidebar);
+        baseSidebarBackdrop?.addEventListener('click', toggleSidebar);
     </script>
     {% block extra_script %}{% endblock %}
 </body>

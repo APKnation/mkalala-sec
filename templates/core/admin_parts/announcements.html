@@ -431,13 +431,9 @@
             confirmButtonColor: '#dc3545'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Send delete request
-                const formData = new FormData();
-                formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
-                
+                // Use GET request to avoid CSRF issues
                 fetch(`/admin/announcements/delete/${id}/`, {
-                    method: 'POST',
-                    body: formData,
+                    method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }

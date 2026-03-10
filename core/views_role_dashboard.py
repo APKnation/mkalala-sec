@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.utils import timezone
@@ -2007,37 +2008,32 @@ def admin_edit_announcement(request, announcement_id):
 
 @login_required
 @user_passes_test(is_admin)
+@csrf_exempt
 def admin_delete_announcement(request, announcement_id):
     """Delete an announcement"""
     from django.http import JsonResponse
+    
+    # Only allow AJAX requests
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        from django.contrib import messages
+        messages.error(request, 'Invalid request method.')
+        return redirect('admin_unified_dashboard', page='announcements')
     
     try:
         announcement = Announcement.objects.get(id=announcement_id)
         title = announcement.title
         announcement.delete()
         
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({
-                'success': True,
-                'message': f'Announcement "{title}" has been deleted successfully!'
-            })
-        
-        from django.contrib import messages
-        messages.success(request, f'Announcement "{title}" has been deleted successfully!')
+        return JsonResponse({
+            'success': True,
+            'message': f'Announcement "{title}" has been deleted successfully!'
+        })
     except Announcement.DoesNotExist:
         error_msg = 'Announcement not found.'
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': False, 'error': error_msg}, status=404)
-        from django.contrib import messages
-        messages.error(request, error_msg)
+        return JsonResponse({'success': False, 'error': error_msg}, status=404)
     except Exception as e:
         error_msg = 'Failed to delete announcement.'
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': False, 'error': error_msg}, status=500)
-        from django.contrib import messages
-        messages.error(request, error_msg)
-    
-    return redirect('admin_unified_dashboard', page='announcements')
+        return JsonResponse({'success': False, 'error': error_msg}, status=500)
 
 def get_admin_announcements_context(user, admin_profile):
     """Get admin announcements page context"""
