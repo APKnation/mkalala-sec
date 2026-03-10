@@ -1,5 +1,6 @@
 {% extends 'core/admin_unified_dashboard.html' %}
 {% load static %}
+{% load add_class %}
 
 {% block title %}Create Announcement - School Management{% endblock %}
 
@@ -206,7 +207,7 @@
                                 <i class="fas fa-tag"></i>
                                 Announcement Title <span class="text-red-500">*</span>
                             </label>
-                            {{ form.title }}
+                            {{ form.title|add_class:"form-input" }}
                             {% if form.title.errors %}
                                 <ul class="error-list">
                                     {% for error in form.title.errors %}
@@ -221,7 +222,7 @@
                                 <i class="fas fa-message"></i>
                                 Message <span class="text-red-500">*</span>
                             </label>
-                            {{ form.message }}
+                            {{ form.message|add_class:"form-textarea" }}
                             {% if form.message.errors %}
                                 <ul class="error-list">
                                     {% for error in form.message.errors %}
@@ -248,7 +249,7 @@
                                 <i class="fas fa-bullseye"></i>
                                 Target Audience <span class="text-red-500">*</span>
                             </label>
-                            {{ form.target_audience }}
+                            {{ form.target_audience|add_class:"form-select" }}
                             {% if form.target_audience.errors %}
                                 <ul class="error-list">
                                     {% for error in form.target_audience.errors %}
@@ -267,7 +268,7 @@
                                 <i class="fas fa-school"></i>
                                 Target Class
                             </label>
-                            {{ form.target_class }}
+                            {{ form.target_class|add_class:"form-select" }}
                             {% if form.target_class.errors %}
                                 <ul class="error-list">
                                     {% for error in form.target_class.errors %}
@@ -294,7 +295,7 @@
                                 <i class="fas fa-clock"></i>
                                 Expires At (Optional)
                             </label>
-                            {{ form.expires_at }}
+                            {{ form.expires_at|add_class:"form-datetime" }}
                             {% if form.expires_at.errors %}
                                 <ul class="error-list">
                                     {% for error in form.expires_at.errors %}
