@@ -1927,6 +1927,59 @@ def get_admin_exams_context(user, admin_profile):
         'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
     }
 
+@login_required
+@user_passes_test(is_admin)
+def admin_edit_exam(request, exam_id):
+    """Admin edit exam page"""
+    from .models import ExamSchedule
+    from django.shortcuts import get_object_or_404, redirect
+    from django.contrib import messages
+    
+    exam = get_object_or_404(ExamSchedule, id=exam_id)
+    
+    if request.method == 'POST':
+        form_data = request.POST
+        exam.exam_type = form_data.get('exam_type', exam.exam_type)
+        exam.date = form_data.get('date', exam.date)
+        exam.start_time = form_data.get('start_time', exam.start_time)
+        exam.end_time = form_data.get('end_time', exam.end_time)
+        exam.venue = form_data.get('venue', exam.venue)
+        
+        try:
+            exam.save()
+            messages.success(request, f'Exam "{exam.course.name} {exam.exam_type}" has been updated successfully!')
+            return redirect('admin_unified_dashboard', 'exams')
+        except Exception as e:
+            messages.error(request, f'Error updating exam: {str(e)}')
+    
+    context = {
+        'exam': exam,
+        'courses': Course.objects.all(),
+        'exam_types': ExamSchedule.EXAM_TYPE_CHOICES,
+    }
+    
+    # Return a simple response for now - in a real implementation, this would render a form
+    return redirect('admin_unified_dashboard', 'exams')
+
+@login_required
+@user_passes_test(is_admin)
+def admin_delete_exam(request, exam_id):
+    """Admin delete exam"""
+    from .models import ExamSchedule
+    from django.shortcuts import get_object_or_404, redirect
+    from django.contrib import messages
+    
+    exam = get_object_or_404(ExamSchedule, id=exam_id)
+    
+    if request.method == 'POST':
+        exam_name = f"{exam.course.name} {exam.exam_type}"
+        exam.delete()
+        messages.success(request, f'Exam "{exam_name}" has been deleted successfully!')
+        return redirect('admin_unified_dashboard', 'exams')
+    
+    # For GET request, just redirect back to exams page
+    return redirect('admin_unified_dashboard', 'exams')
+
 def get_admin_timetable_context(user, admin_profile):
     """Get admin timetable page context"""
     from .models import TimetableEntry, CourseOffering, StudentClass, FacultyProfile

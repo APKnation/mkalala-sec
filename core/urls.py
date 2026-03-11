@@ -53,6 +53,10 @@ urlpatterns = [
     path('admin/dashboard/load/<str:page>/', views_role_dashboard.load_admin_dashboard_page, name='load_admin_dashboard_page'),
     path('admin/dashboard/notifications', views_role_dashboard.get_admin_notifications, name='admin_dashboard_notifications'),
     
+    # Admin Exam Management URLs
+    path('admin/dashboard/exams/<int:exam_id>/edit/', views_role_dashboard.admin_edit_exam, name='admin_exam_edit'),
+    path('admin/dashboard/exams/<int:exam_id>/delete/', views_role_dashboard.admin_delete_exam, name='admin_exam_delete'),
+    
     path('headmaster/dashboard/<str:page>/', views_role_dashboard.headmaster_unified_dashboard, name='headmaster_unified_dashboard'),
     path('headmaster/dashboard/load/<str:page>/', views_role_dashboard.load_headmaster_dashboard_page, name='load_headmaster_dashboard_page'),
     path('headmaster/dashboard/notifications', views_role_dashboard.get_headmaster_notifications, name='headmaster_dashboard_notifications'),
