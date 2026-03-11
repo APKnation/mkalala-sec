@@ -1931,7 +1931,7 @@ def get_admin_exams_context(user, admin_profile):
 @user_passes_test(is_admin)
 def admin_edit_exam(request, exam_id):
     """Admin edit exam page"""
-    from .models import ExamSchedule
+    from .models import ExamSchedule, Course
     from django.shortcuts import get_object_or_404, redirect
     from django.contrib import messages
     
