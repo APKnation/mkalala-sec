@@ -1932,7 +1932,7 @@ def get_admin_exams_context(user, admin_profile):
 def admin_edit_exam(request, exam_id):
     """Admin edit exam page"""
     from .models import ExamSchedule, Course
-    from django.shortcuts import get_object_or_404, redirect
+    from django.shortcuts import get_object_or_404, redirect, render
     from django.contrib import messages
     
     exam = get_object_or_404(ExamSchedule, id=exam_id)
@@ -1951,6 +1951,7 @@ def admin_edit_exam(request, exam_id):
             return redirect('admin_unified_dashboard', 'exams')
         except Exception as e:
             messages.error(request, f'Error updating exam: {str(e)}')
+            return redirect('admin_unified_dashboard', 'edit-exam', exam_id=exam_id)
     
     context = {
         'exam': exam,
@@ -1958,8 +1959,7 @@ def admin_edit_exam(request, exam_id):
         'exam_types': ExamSchedule.EXAM_TYPE_CHOICES,
     }
     
-    # Return a simple response for now - in a real implementation, this would render a form
-    return redirect('admin_unified_dashboard', 'exams')
+    return render(request, 'core/admin_parts/edit_exam.html', context)
 
 @login_required
 @user_passes_test(is_admin)
