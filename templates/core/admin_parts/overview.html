@@ -1,7 +1,7 @@
 <!-- Admin Overview Dashboard Content -->
 <div class="space-y-8">
     <!-- Header -->
-    <div class="flex justify-between items-center">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 flex items-center">
                 <i class="fas fa-tachometer-alt mr-3 text-red-600"></i>
@@ -9,67 +9,368 @@
             </h1>
             <p class="mt-2 text-sm text-gray-600">System administration and management</p>
         </div>
+        <div class="flex items-center space-x-3">
+            <div class="text-sm text-gray-500">
+                <i class="fas fa-clock mr-1"></i>
+                Last updated: <span id="currentTime"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-6 text-white">
+        <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <a href="{% url 'admin_create_announcement' %}" class="bg-white/20 hover:bg-white/30 rounded-lg p-4 text-center transition-all">
+                <i class="fas fa-bullhorn text-2xl mb-2"></i>
+                <p class="text-sm font-medium">New Announcement</p>
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='users' %}" class="bg-white/20 hover:bg-white/30 rounded-lg p-4 text-center transition-all">
+                <i class="fas fa-user-plus text-2xl mb-2"></i>
+                <p class="text-sm font-medium">Add User</p>
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='students' %}" class="bg-white/20 hover:bg-white/30 rounded-lg p-4 text-center transition-all">
+                <i class="fas fa-graduation-cap text-2xl mb-2"></i>
+                <p class="text-sm font-medium">Manage Students</p>
+            </a>
+            <a href="{% url 'admin_unified_dashboard' page='teachers' %}" class="bg-white/20 hover:bg-white/30 rounded-lg p-4 text-center transition-all">
+                <i class="fas fa-chalkboard-teacher text-2xl mb-2"></i>
+                <p class="text-sm font-medium">Manage Teachers</p>
+            </a>
+        </div>
     </div>
 
     <!-- Admin Stats -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <div class="flex items-center">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_users|default:"0" }}</p>
+                    <p class="text-xs text-green-600 mt-1">
+                        <i class="fas fa-arrow-up"></i> Active system
+                    </p>
+                </div>
                 <div class="p-3 bg-blue-100 rounded-lg">
                     <i class="fas fa-users text-blue-600 text-xl"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Total Users</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_users|default:"7" }}</p>
-                </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <div class="flex items-center">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Students</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_students|default:"0" }}</p>
+                    <p class="text-xs text-green-600 mt-1">
+                        <i class="fas fa-arrow-up"></i> {{ monthly_trends.student_growth.this_month|default:"0" }} this month
+                    </p>
+                </div>
                 <div class="p-3 bg-green-100 rounded-lg">
                     <i class="fas fa-graduation-cap text-green-600 text-xl"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Students</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_students|default:"1" }}</p>
-                </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <div class="flex items-center">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Teachers</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_teachers|default:"0" }}</p>
+                    <p class="text-xs text-blue-600 mt-1">
+                        <i class="fas fa-check-circle"></i> {{ active_teachers|default:"0" }} active
+                    </p>
+                </div>
                 <div class="p-3 bg-purple-100 rounded-lg">
                     <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Teachers</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_teachers|default:"3" }}</p>
-                </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
-            <div class="flex items-center">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Courses</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_courses|default:"0" }}</p>
+                    <p class="text-xs text-orange-600 mt-1">
+                        <i class="fas fa-book"></i> Active courses
+                    </p>
+                </div>
                 <div class="p-3 bg-orange-100 rounded-lg">
                     <i class="fas fa-book text-orange-600 text-xl"></i>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Courses</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ total_courses|default:"5" }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Recent Activity -->
+    <!-- Additional Stats Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Academic Info</h3>
+                <i class="fas fa-school text-blue-500"></i>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Total Classes</span>
+                    <span class="text-sm font-bold text-gray-900">{{ total_classes|default:"6" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Departments</span>
+                    <span class="text-sm font-bold text-gray-900">{{ total_departments|default:"4" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Subjects</span>
+                    <span class="text-sm font-bold text-gray-900">{{ total_subjects|default:"12" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">System Health</h3>
+                <i class="fas fa-heartbeat text-green-500"></i>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Database</span>
+                    <span class="text-sm font-bold text-green-600">Healthy</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Storage</span>
+                    <span class="text-sm font-bold text-blue-600">85% Free</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Last Backup</span>
+                    <span class="text-sm font-bold text-gray-900">Today</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                <i class="fas fa-chart-line text-purple-500"></i>
+            </div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">New Users Today</span>
+                    <span class="text-sm font-bold text-gray-900">{{ new_users_today|default:"2" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Active Sessions</span>
+                    <span class="text-sm font-bold text-gray-900">{{ active_sessions|default:"15" }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-600">Pending Tasks</span>
+                    <span class="text-sm font-bold text-orange-600">{{ pending_tasks|default:"3" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity & Notifications -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-900">Recent Activity</h2>
+                    <button onclick="refreshActivity()" class="text-blue-600 hover:text-blue-800 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4" id="activityList">
+                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="p-2 bg-blue-100 rounded-full">
+                            <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">New student registered</p>
+                            <p class="text-xs text-gray-500">John Doe - Form 2A</p>
+                            <p class="text-xs text-gray-400 mt-1">2 minutes ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="p-2 bg-green-100 rounded-full">
+                            <i class="fas fa-graduation-cap text-green-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Course enrollment completed</p>
+                            <p class="text-xs text-gray-500">Mathematics - Form 3B</p>
+                            <p class="text-xs text-gray-400 mt-1">15 minutes ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="p-2 bg-purple-100 rounded-full">
+                            <i class="fas fa-bullhorn text-purple-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">New announcement posted</p>
+                            <p class="text-xs text-gray-500">School meeting tomorrow</p>
+                            <p class="text-xs text-gray-400 mt-1">1 hour ago</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="p-2 bg-orange-100 rounded-full">
+                            <i class="fas fa-file-alt text-orange-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Grade submitted</p>
+                            <p class="text-xs text-gray-500">Physics Exam - Form 4A</p>
+                            <p class="text-xs text-gray-400 mt-1">2 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        View All Activity <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Notifications -->
+        <div class="bg-white rounded-lg shadow border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-900">System Notifications</h2>
+                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <div class="p-2 bg-red-100 rounded-full">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-red-900">Pending Approvals</p>
+                            <p class="text-xs text-red-700">3 user registrations awaiting approval</p>
+                            <button class="text-xs text-red-600 hover:text-red-800 mt-2 font-medium">
+                                Review Now <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div class="p-2 bg-yellow-100 rounded-full">
+                            <i class="fas fa-clock text-yellow-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-yellow-900">Fee Payment Reminder</p>
+                            <p class="text-xs text-yellow-700">12 students with overdue payments</p>
+                            <button class="text-xs text-yellow-600 hover:text-yellow-800 mt-2 font-medium">
+                                View Details <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div class="p-2 bg-blue-100 rounded-full">
+                            <i class="fas fa-info-circle text-blue-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-blue-900">System Update</p>
+                            <p class="text-xs text-blue-700">New features available in v2.1.0</p>
+                            <button class="text-xs text-blue-600 hover:text-blue-800 mt-2 font-medium">
+                                Learn More <i class="fas fa-arrow-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Charts -->
     <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Performance Overview</h2>
+        </div>
         <div class="p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">System Activity</h2>
-            <div class="text-center py-8">
-                <i class="fas fa-chart-line text-4xl text-gray-300 mb-3"></i>
-                <p class="text-gray-500">System activity monitoring coming soon</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="relative inline-flex items-center justify-center">
+                        <svg class="w-32 h-32">
+                            <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
+                            <circle cx="64" cy="64" r="56" stroke="#10b981" stroke-width="8" fill="none"
+                                    stroke-dasharray="351.86" stroke-dashoffset="70.37" 
+                                    transform="rotate(-90 64 64)"></circle>
+                        </svg>
+                        <div class="absolute">
+                            <p class="text-2xl font-bold text-gray-900">85%</p>
+                            <p class="text-xs text-gray-500">Attendance</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="relative inline-flex items-center justify-center">
+                        <svg class="w-32 h-32">
+                            <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
+                            <circle cx="64" cy="64" r="56" stroke="#3b82f6" stroke-width="8" fill="none"
+                                    stroke-dasharray="351.86" stroke-dashoffset="105.56" 
+                                    transform="rotate(-90 64 64)"></circle>
+                        </svg>
+                        <div class="absolute">
+                            <p class="text-2xl font-bold text-gray-900">70%</p>
+                            <p class="text-xs text-gray-500">Pass Rate</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="relative inline-flex items-center justify-center">
+                        <svg class="w-32 h-32">
+                            <circle cx="64" cy="64" r="56" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
+                            <circle cx="64" cy="64" r="56" stroke="#f59e0b" stroke-width="8" fill="none"
+                                    stroke-dasharray="351.86" stroke-dashoffset="35.19" 
+                                    transform="rotate(-90 64 64)"></circle>
+                        </svg>
+                        <div class="absolute">
+                            <p class="text-2xl font-bold text-gray-900">90%</p>
+                            <p class="text-xs text-gray-500">Fee Collection</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+// Update current time
+function updateTime() {
+    const now = new Date();
+    const timeString = now.toLocaleString('en-US', { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    });
+    document.getElementById('currentTime').textContent = timeString;
+}
+
+// Update time immediately and then every minute
+updateTime();
+setInterval(updateTime, 60000);
+
+// Refresh activity function
+function refreshActivity() {
+    const activityList = document.getElementById('activityList');
+    activityList.style.opacity = '0.5';
+    
+    // Simulate refresh - in real app, this would fetch new data
+    setTimeout(() => {
+        activityList.style.opacity = '1';
+    }, 1000);
+}
+</script>

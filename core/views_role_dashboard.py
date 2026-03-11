@@ -527,7 +527,7 @@ def get_student_overview_context(user, student_profile):
 def get_admin_overview_context(user, admin_profile):
     """Get admin overview page context"""
     from django.utils import timezone
-    from datetime import timedelta
+    from datetime import timedelta, date
     
     # Get current date and date ranges for monthly trends
     today = timezone.now().date()
@@ -555,17 +555,33 @@ def get_admin_overview_context(user, admin_profile):
     # Get teacher statistics for template compatibility
     teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
     
+    # Get additional statistics
+    from core.models import Department, Subject, StudentClass, Announcement, Enrollment, Grade
+    
     context = {
         'total_users': User.objects.count(),
         'total_students': User.objects.filter(role='student').count(),
         'total_teachers': User.objects.filter(role='teacher').count(),
         'total_courses': CourseOffering.objects.count(),
-        'pending_announcements': 3,  # Placeholder
-        'monthly_trends': monthly_trends,  # Add monthly trends for reports template
+        'pending_announcements': Announcement.objects.filter(is_active=False).count(),
+        'monthly_trends': monthly_trends,
         # Add teacher statistics for template compatibility
         'teachers': teachers,
         'total_teachers': teachers.count(),
         'active_teachers': teachers.filter(is_active=True).count(),
+        
+        # New enhanced statistics
+        'total_classes': StudentClass.objects.count(),
+        'total_departments': Department.objects.count(),
+        'total_subjects': Subject.objects.count(),
+        'new_users_today': User.objects.filter(date_joined__date=today).count(),
+        'active_sessions': 15,  # Placeholder - would need session tracking
+        'pending_tasks': Announcement.objects.filter(is_active=False).count() + 3,  # Placeholder
+        
+        # Recent activity data (simplified for now)
+        'recent_enrollments': Enrollment.objects.order_by('-enrollment_date')[:5],
+        'recent_grades': Grade.objects.order_by('-awarded_on')[:5],
+        'recent_announcements': Announcement.objects.order_by('-created_at')[:5],
     }
     
     return context
