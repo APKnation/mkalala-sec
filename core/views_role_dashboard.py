@@ -2018,6 +2018,8 @@ def get_admin_timetable_context(user, admin_profile):
         'course_offerings': course_offerings,
         'classes': classes,
         'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(user__is_active=True).count(),
         'schedule_stats': schedule_stats,
         'total_entries': total_entries,
     }
