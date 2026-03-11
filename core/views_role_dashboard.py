@@ -1867,20 +1867,19 @@ def get_admin_grading_context(user, admin_profile):
 
 def get_admin_exams_context(user, admin_profile):
     """Get admin exams page context"""
-    from .models import Exam, CourseOffering, StudentClass, Grade
+    from .models import ExamSchedule, CourseOffering, StudentClass, Grade
     from django.db.models import Count, Avg
     from django.utils import timezone
     
-    # Get all exams with related data
-    exams = Exam.objects.select_related(
-        'course_offering', 'course_offering__course', 'course_offering__faculty', 
-        'course_offering__faculty__user', 'student_class'
-    ).order_by('-exam_date')
+    # Get all exam schedules with related data
+    exam_schedules = ExamSchedule.objects.select_related(
+        'course', 'course__department'
+    ).order_by('-date')
     
     # Calculate statistics
-    total_exams = exams.count()
-    upcoming_exams = exams.filter(exam_date__gt=timezone.now().date()).count()
-    completed_exams = exams.filter(exam_date__lt=timezone.now().date()).count()
+    total_exams = exam_schedules.count()
+    upcoming_exams = exam_schedules.filter(date__gt=timezone.now().date()).count()
+    completed_exams = exam_schedules.filter(date__lt=timezone.now().date()).count()
     
     # Get recent grades for performance analysis
     recent_grades = Grade.objects.select_related(
@@ -1902,7 +1901,7 @@ def get_admin_exams_context(user, admin_profile):
         'total': total_exams,
         'upcoming': upcoming_exams,
         'completed': completed_exams,
-        'today': exams.filter(exam_date=timezone.now().date()).count(),
+        'today': exam_schedules.filter(date=timezone.now().date()).count(),
     }
     
     # Performance statistics
@@ -1914,7 +1913,7 @@ def get_admin_exams_context(user, admin_profile):
     }
     
     return {
-        'exams': exams[:50],  # Limit to 50 for performance
+        'exams': exam_schedules[:50],  # Limit to 50 for performance
         'recent_grades': recent_grades,
         'course_offerings': course_offerings,
         'classes': classes,
@@ -2213,7 +2212,7 @@ def get_admin_settings_context(user, admin_profile):
 
 def get_admin_reports_context(user, admin_profile):
     """Get admin reports page context"""
-    from .models import StudentProfile, Grade, Fee, Payment, Exam, CourseOffering, Attendance
+    from .models import StudentProfile, Grade, Fee, Payment, ExamSchedule, CourseOffering, Attendance
     from django.db.models import Count, Avg, Sum, Q
     from django.utils import timezone
     from datetime import timedelta
@@ -2271,9 +2270,9 @@ def get_admin_reports_context(user, admin_profile):
         'fee__student__user', 'fee'
     ).order_by('-payment_date')[:10]
     
-    recent_exams = Exam.objects.select_related(
-        'course_offering__course', 'student_class'
-    ).order_by('-exam_date')[:10]
+    recent_exams = ExamSchedule.objects.select_related(
+        'course', 'course__department'
+    ).order_by('-date')[:10]
     
     # Course enrollment statistics
     course_stats = CourseOffering.objects.annotate(
