@@ -1,202 +1,185 @@
 <!-- Admin Edit Exam Content -->
-<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header Section -->
-        <div class="bg-white rounded-2xl shadow-xl border border-purple-100 p-8 mb-8 backdrop-blur-lg">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-full flex items-center justify-center shadow-lg">
-                        <i class="fas fa-edit text-white text-2xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Edit Exam</h1>
-                        <p class="mt-2 text-gray-600 text-lg">Modify exam details and schedule</p>
-                    </div>
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900 flex items-center">
+                <i class="fas fa-edit mr-3 text-purple-600"></i>
+                Edit Exam
+            </h1>
+            <p class="mt-2 text-sm text-slate-600">Modify exam details</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'admin_unified_dashboard' page='exams' %}" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Exams
+            </a>
+        </div>
+    </div>
+
+    <!-- Edit Exam Form -->
+    <div class="bg-white rounded-lg shadow border border-slate-200">
+        <div class="p-6 border-b border-slate-200">
+            <h2 class="text-lg font-semibold text-slate-900">Edit Exam Details</h2>
+        </div>
+        
+        <form method="post" class="p-6 space-y-6">
+            {% csrf_token %}
+            
+            <!-- Basic Information -->
+            <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+                <i class="fas fa-info-circle mr-2 text-purple-500"></i>Basic Information
+            </h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Course Selection -->
+                <div>
+                    <label for="course" class="block text-sm font-medium text-slate-700 mb-2">
+                        Course <span class="text-red-500">*</span>
+                    </label>
+                    <select name="course" id="course" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Select a course</option>
+                        {% for course in courses %}
+                            <option value="{{ course.id }}" {% if exam.course.id == course.id %}selected{% endif %}>{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="flex space-x-3">
-                    <a href="{% url 'admin_unified_dashboard' page='exams' %}" class="bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 flex items-center shadow-lg transform hover:scale-105">
-                        <i class="fas fa-arrow-left mr-2"></i> Back to Exams
+
+                <!-- Exam Type -->
+                <div>
+                    <label for="exam_type" class="block text-sm font-medium text-slate-700 mb-2">
+                        Exam Type <span class="text-red-500">*</span>
+                    </label>
+                    <select name="exam_type" id="exam_type" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        {% for type_choice in exam_types %}
+                            <option value="{{ type_choice.0 }}" {% if exam.exam_type == type_choice.0 %}selected{% endif %}>{{ type_choice.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Schedule Information -->
+            <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+                <i class="fas fa-calendar mr-2 text-purple-500"></i>Schedule Information
+            </h4>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Date -->
+                <div>
+                    <label for="date" class="block text-sm font-medium text-slate-700 mb-2">
+                        Exam Date <span class="text-red-500">*</span>
+                    </label>
+                    <input type="date" name="date" id="date" value="{{ exam.date|date:'Y-m-d' }}" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
+                </div>
+
+                <!-- Start Time -->
+                <div>
+                    <label for="start_time" class="block text-sm font-medium text-slate-700 mb-2">
+                        Start Time <span class="text-red-500">*</span>
+                    </label>
+                    <input type="time" name="start_time" id="start_time" value="{{ exam.start_time|date:'H:i' }}" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
+                </div>
+                
+                <!-- End Time -->
+                <div>
+                    <label for="end_time" class="block text-sm font-medium text-slate-700 mb-2">
+                        End Time <span class="text-red-500">*</span>
+                    </label>
+                    <input type="time" name="end_time" id="end_time" value="{{ exam.end_time|date:'H:i' }}" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent" required>
+                </div>
+            </div>
+
+            <!-- Location Information -->
+            <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
+                <i class="fas fa-map-marker-alt mr-2 text-purple-500"></i>Location Information
+            </h4>
+            
+            <div class="grid grid-cols-1 gap-6">
+                <!-- Venue -->
+                <div>
+                    <label for="venue" class="block text-sm font-medium text-slate-700 mb-2">
+                        Venue <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="venue" id="venue" value="{{ exam.venue }}" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter exam venue" required>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-200">
+                <div>
+                    <a href="{% url 'admin_unified_dashboard' page='exams' %}" class="inline-flex items-center px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                        <i class="fas fa-times mr-2"></i> Cancel
                     </a>
                 </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="confirmDeleteExam({{ exam.id }})" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                        <i class="fas fa-trash mr-2"></i> Delete Exam
+                    </button>
+                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                        <i class="fas fa-save mr-2"></i> Update Exam
+                    </button>
+                </div>
             </div>
+        </form>
+    </div>
+
+    <!-- Current Exam Details -->
+    <div class="bg-white rounded-lg shadow border border-slate-200 mt-8">
+        <div class="p-6 border-b border-slate-200">
+            <h2 class="text-lg font-semibold text-slate-900">Current Exam Details</h2>
         </div>
-
-        <!-- Edit Exam Form -->
-        <div class="bg-white rounded-2xl shadow-xl border border-purple-100 backdrop-blur-lg">
-            <div class="bg-gradient-to-r from-purple-600 to-blue-600 p-6 rounded-t-2xl">
-                <h2 class="text-2xl font-bold text-white flex items-center">
-                    <i class="fas fa-clipboard-list mr-3"></i>
-                    Exam Details
-                </h2>
-            </div>
-            
-            <form method="post" class="p-8 space-y-8">
-                {% csrf_token %}
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Left Column -->
-                    <div class="space-y-6">
-                        <!-- Course Selection -->
-                        <div class="group">
-                            <label for="course" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-book mr-2 text-purple-600"></i>
-                                Course <span class="text-red-500 ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <select name="course" id="course" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
-                                    <option value="">Select a course</option>
-                                    {% for course in courses %}
-                                        <option value="{{ course.id }}" {% if exam.course.id == course.id %}selected{% endif %}>{{ course.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400"></i>
-                                </div>
-                            </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-book text-white text-sm"></i>
                         </div>
-
-                        <!-- Exam Type -->
-                        <div class="group">
-                            <label for="exam_type" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-tag mr-2 text-purple-600"></i>
-                                Exam Type <span class="text-red-500 ml-1">*</span>
-                            </label>
-                            <div class="relative">
-                                <select name="exam_type" id="exam_type" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white">
-                                    {% for type_choice in exam_types %}
-                                        <option value="{{ type_choice.0 }}" {% if exam.exam_type == type_choice.0 %}selected{% endif %}>{{ type_choice.1 }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <i class="fas fa-chevron-down text-gray-400"></i>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Date -->
-                        <div class="group">
-                            <label for="date" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-calendar mr-2 text-purple-600"></i>
-                                Exam Date <span class="text-red-500 ml-1">*</span>
-                            </label>
-                            <input type="date" name="date" id="date" value="{{ exam.date|date:'Y-m-d' }}" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white" required>
-                        </div>
-                    </div>
-
-                    <!-- Right Column -->
-                    <div class="space-y-6">
-                        <!-- Time Fields -->
-                        <div class="space-y-6">
-                            <div class="group">
-                                <label for="start_time" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                    <i class="fas fa-clock mr-2 text-purple-600"></i>
-                                    Start Time <span class="text-red-500 ml-1">*</span>
-                                </label>
-                                <input type="time" name="start_time" id="start_time" value="{{ exam.start_time|date:'H:i' }}" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white" required>
-                            </div>
-                            
-                            <div class="group">
-                                <label for="end_time" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                    <i class="fas fa-clock mr-2 text-purple-600"></i>
-                                    End Time <span class="text-red-500 ml-1">*</span>
-                                </label>
-                                <input type="time" name="end_time" id="end_time" value="{{ exam.end_time|date:'H:i' }}" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white" required>
-                            </div>
-                        </div>
-
-                        <!-- Venue -->
-                        <div class="group">
-                            <label for="venue" class="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-map-marker-alt mr-2 text-purple-600"></i>
-                                Venue <span class="text-red-500 ml-1">*</span>
-                            </label>
-                            <input type="text" name="venue" id="venue" value="{{ exam.venue }}" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 bg-gray-50 hover:bg-white" placeholder="Enter exam venue" required>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Course</p>
+                            <p class="text-base font-semibold text-slate-900">{{ exam.course.name }}</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Form Actions -->
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-6 pt-8 border-t-2 border-gray-200">
-                    <div>
-                        <a href="{% url 'admin_unified_dashboard' page='exams' %}" class="inline-flex items-center px-8 py-4 border-2 border-slate-300 rounded-xl text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105">
-                            <i class="fas fa-times mr-2"></i> Cancel
-                        </a>
-                    </div>
-                    <div class="flex gap-4">
-                        <button type="button" onclick="confirmDeleteExam({{ exam.id }})" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                            <i class="fas fa-trash mr-2"></i> Delete Exam
-                        </button>
-                        <button type="submit" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-xl hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                            <i class="fas fa-save mr-2"></i> Update Exam
-                        </button>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-tag text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Exam Type</p>
+                            <p class="text-base font-semibold text-slate-900">{{ exam.exam_type }}</p>
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
-
-        <!-- Current Exam Details -->
-        <div class="bg-white rounded-2xl shadow-xl border border-purple-100 backdrop-blur-lg mt-8">
-            <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-t-2xl">
-                <h2 class="text-2xl font-bold text-white flex items-center">
-                    <i class="fas fa-info-circle mr-3"></i>
-                    Current Exam Details
-                </h2>
-            </div>
-            <div class="p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-book text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-purple-600">Course</p>
-                                <p class="text-lg font-bold text-purple-900">{{ exam.course.name }}</p>
-                            </div>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-calendar text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Date</p>
+                            <p class="text-base font-semibold text-slate-900">{{ exam.date|date:"M d, Y" }}</p>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-tag text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-blue-600">Exam Type</p>
-                                <p class="text-lg font-bold text-blue-900">{{ exam.exam_type }}</p>
-                            </div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-clock text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Duration</p>
+                            <p class="text-base font-semibold text-slate-900">{{ exam.start_time|date:"H:i" }} - {{ exam.end_time|date:"H:i" }}</p>
                         </div>
                     </div>
-                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-calendar text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-green-600">Date</p>
-                                <p class="text-lg font-bold text-green-900">{{ exam.date|date:"M d, Y" }}</p>
-                            </div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
+                            <i class="fas fa-map-marker-alt text-white text-sm"></i>
                         </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-xl border border-orange-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-orange-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-clock text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-orange-600">Duration</p>
-                                <p class="text-lg font-bold text-orange-900">{{ exam.start_time|date:"H:i" }} - {{ exam.end_time|date:"H:i" }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl border border-red-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-map-marker-alt text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-red-600">Venue</p>
-                                <p class="text-lg font-bold text-red-900">{{ exam.venue }}</p>
-                            </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600">Venue</p>
+                            <p class="text-base font-semibold text-slate-900">{{ exam.venue }}</p>
                         </div>
                     </div>
                 </div>
