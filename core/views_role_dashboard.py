@@ -529,6 +529,9 @@ def get_admin_overview_context(user, admin_profile):
     from django.utils import timezone
     from datetime import timedelta, date
     
+    # Import notification utilities
+    from .notification_utils import get_user_notifications, get_unread_notification_count
+    
     # Get current date and date ranges for monthly trends
     today = timezone.now().date()
     this_month_start = today.replace(day=1)
@@ -558,6 +561,10 @@ def get_admin_overview_context(user, admin_profile):
     # Get additional statistics
     from core.models import Department, Subject, StudentClass, Announcement, Enrollment, Grade
     
+    # Get real notifications
+    notifications = get_user_notifications(user, limit=10)
+    unread_notifications = get_unread_notification_count(user)
+    
     context = {
         'total_users': User.objects.count(),
         'total_students': User.objects.filter(role='student').count(),
@@ -582,6 +589,10 @@ def get_admin_overview_context(user, admin_profile):
         'recent_enrollments': Enrollment.objects.order_by('-enrollment_date')[:5],
         'recent_grades': Grade.objects.order_by('-awarded_on')[:5],
         'recent_announcements': Announcement.objects.order_by('-created_at')[:5],
+        
+        # Real notifications
+        'notifications': notifications,
+        'unread_notifications': unread_notifications,
     }
     
     return context

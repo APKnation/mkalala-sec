@@ -241,50 +241,56 @@
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-gray-900">System Notifications</h2>
-                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full">3</span>
+                    <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full" id="notificationCount">{{ unread_notifications|default:"0" }}</span>
                 </div>
             </div>
             <div class="p-6">
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                        <div class="p-2 bg-red-100 rounded-full">
-                            <i class="fas fa-exclamation-triangle text-red-600 text-sm"></i>
+                <div class="space-y-4" id="notificationsList">
+                    {% if notifications %}
+                        {% for notification in notifications %}
+                        <div class="flex items-start space-x-3 p-3 {% if notification.priority == 'urgent' %}bg-red-50 border border-red-200{% elif notification.priority == 'high' %}bg-orange-50 border border-orange-200{% elif notification.priority == 'medium' %}bg-blue-50 border border-blue-200{% else %}bg-gray-50 border border-gray-200{% endif %} rounded-lg notification-item {% if not notification.is_read %}font-semibold{% endif %}" data-notification-id="{{ notification.id }}">
+                            <div class="p-2 {% if not notification.is_read %}bg-white{% else %}bg-gray-100{% endif %} rounded-full">
+                                <i class="{{ notification.get_icon_class }} text-sm"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm {% if notification.priority == 'urgent' %}text-red-900{% elif notification.priority == 'high' %}text-orange-900{% elif notification.priority == 'medium' %}text-blue-900{% else %}text-gray-900{% endif %}">
+                                    {{ notification.title }}
+                                    {% if not notification.is_read %}<span class="ml-2 inline-block w-2 h-2 bg-blue-600 rounded-full"></span>{% endif %}
+                                </p>
+                                <p class="text-xs {% if notification.priority == 'urgent' %}text-red-700{% elif notification.priority == 'high' %}text-orange-700{% elif notification.priority == 'medium' %}text-blue-700{% else %}text-gray-700{% endif %}">
+                                    {{ notification.message|truncatechars:100 }}
+                                </p>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    {{ notification.created_at|timesince }} ago
+                                    {% if notification.sender %}• {{ notification.sender.get_full_name }}{% endif %}
+                                </p>
+                                {% if not notification.is_read %}
+                                <button onclick="markAsRead({{ notification.id }})" class="text-xs {% if notification.priority == 'urgent' %}text-red-600 hover:text-red-800{% elif notification.priority == 'high' %}text-orange-600 hover:text-orange-800{% elif notification.priority == 'medium' %}text-blue-600 hover:text-blue-800{% else %}text-gray-600 hover:text-gray-800{% endif %} mt-2 font-medium">
+                                    Mark as Read <i class="fas fa-check ml-1"></i>
+                                </button>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-red-900">Pending Approvals</p>
-                            <p class="text-xs text-red-700">3 user registrations awaiting approval</p>
-                            <button class="text-xs text-red-600 hover:text-red-800 mt-2 font-medium">
-                                Review Now <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-8">
+                            <i class="fas fa-bell-slash text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500">No notifications at this time</p>
                         </div>
-                    </div>
-                    
-                    <div class="flex items-start space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <div class="p-2 bg-yellow-100 rounded-full">
-                            <i class="fas fa-clock text-yellow-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-yellow-900">Fee Payment Reminder</p>
-                            <p class="text-xs text-yellow-700">12 students with overdue payments</p>
-                            <button class="text-xs text-yellow-600 hover:text-yellow-800 mt-2 font-medium">
-                                View Details <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-start space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <div class="p-2 bg-blue-100 rounded-full">
-                            <i class="fas fa-info-circle text-blue-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-blue-900">System Update</p>
-                            <p class="text-xs text-blue-700">New features available in v2.1.0</p>
-                            <button class="text-xs text-blue-600 hover:text-blue-800 mt-2 font-medium">
-                                Learn More <i class="fas fa-arrow-right ml-1"></i>
-                            </button>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
+                
+                {% if notifications %}
+                <div class="mt-4 text-center">
+                    <button onclick="loadMoreNotifications()" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Load More <i class="fas fa-arrow-down ml-1"></i>
+                    </button>
+                    <button onclick="markAllAsRead()" class="text-green-600 hover:text-green-800 text-sm font-medium ml-4">
+                        Mark All as Read <i class="fas fa-check-double ml-1"></i>
+                    </button>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -373,4 +379,174 @@ function refreshActivity() {
         activityList.style.opacity = '1';
     }, 1000);
 }
+
+// Notification functions
+function markAsRead(notificationId) {
+    fetch(`/notifications/${notificationId}/mark-read/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove the notification from DOM
+            const notificationElement = document.querySelector(`[data-notification-id="${notificationId}"]`);
+            if (notificationElement) {
+                notificationElement.style.opacity = '0.5';
+                setTimeout(() => {
+                    notificationElement.remove();
+                    updateNotificationCount();
+                }, 300);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error marking notification as read:', error);
+    });
+}
+
+function markAllAsRead() {
+    fetch('/notifications/mark-all-read/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Mark all notifications as read
+            const notifications = document.querySelectorAll('.notification-item');
+            notifications.forEach(notification => {
+                notification.style.opacity = '0.5';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            });
+            
+            // Update count
+            setTimeout(() => {
+                updateNotificationCount();
+            }, 500);
+        }
+    })
+    .catch(error => {
+        console.error('Error marking all notifications as read:', error);
+    });
+}
+
+function loadMoreNotifications() {
+    // In a real implementation, this would load more notifications
+    console.log('Loading more notifications...');
+}
+
+function updateNotificationCount() {
+    const count = document.querySelectorAll('.notification-item').length;
+    const countElement = document.getElementById('notificationCount');
+    if (countElement) {
+        countElement.textContent = count;
+        if (count === 0) {
+            countElement.style.display = 'none';
+        }
+    }
+}
+
+// Auto-refresh notifications every 30 seconds
+function autoRefreshNotifications() {
+    fetch('/notifications/latest/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.notifications && data.notifications.length > 0) {
+            // Update notification list
+            updateNotificationList(data.notifications);
+            updateNotificationCount();
+        }
+    })
+    .catch(error => {
+        console.error('Error refreshing notifications:', error);
+    });
+}
+
+function updateNotificationList(newNotifications) {
+    const notificationsList = document.getElementById('notificationsList');
+    if (!notificationsList) return;
+    
+    // Add new notifications to the top
+    newNotifications.forEach(notification => {
+        const notificationHtml = createNotificationHtml(notification);
+        notificationsList.insertAdjacentHTML('afterbegin', notificationHtml);
+    });
+}
+
+function createNotificationHtml(notification) {
+    const priorityColors = {
+        'urgent': 'bg-red-50 border-red-200 text-red-900 text-red-700',
+        'high': 'bg-orange-50 border-orange-200 text-orange-900 text-orange-700',
+        'medium': 'bg-blue-50 border-blue-200 text-blue-900 text-blue-700',
+        'low': 'bg-gray-50 border-gray-200 text-gray-900 text-gray-700'
+    };
+    
+    const buttonColors = {
+        'urgent': 'text-red-600 hover:text-red-800',
+        'high': 'text-orange-600 hover:text-orange-800',
+        'medium': 'text-blue-600 hover:text-blue-800',
+        'low': 'text-gray-600 hover:text-gray-800'
+    };
+    
+    const colorClass = priorityColors[notification.priority] || priorityColors['medium'];
+    const buttonColorClass = buttonColors[notification.priority] || buttonColors['medium'];
+    
+    return `
+        <div class="flex items-start space-x-3 p-3 ${colorClass} rounded-lg notification-item font-semibold" data-notification-id="${notification.id}">
+            <div class="p-2 bg-white rounded-full">
+                <i class="${notification.icon_class} text-sm"></i>
+            </div>
+            <div class="flex-1">
+                <p class="text-sm">
+                    ${notification.title}
+                    <span class="ml-2 inline-block w-2 h-2 bg-blue-600 rounded-full"></span>
+                </p>
+                <p class="text-xs">
+                    ${notification.message.substring(0, 100)}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">
+                    <i class="fas fa-clock mr-1"></i>
+                    just now
+                    ${notification.sender_name ? '• ' + notification.sender_name : ''}
+                </p>
+                <button onclick="markAsRead(${notification.id})" class="text-xs ${buttonColorClass} mt-2 font-medium">
+                    Mark as Read <i class="fas fa-check ml-1"></i>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Start auto-refresh
+setInterval(autoRefreshNotifications, 30000);
 </script>

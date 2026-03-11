@@ -40,6 +40,9 @@ urlpatterns = [
     # Dashboard URLs
     path('dashboard/', views.RoleBasedDashboardView.as_view(), name='dashboard'),  # Role-based redirect view
     
+    # Notification URLs
+    path('notifications/', include('core.urls_notifications')),
+    
     # Role-Specific Dashboard URLs (put first to be more specific)
     path('student/dashboard/<str:page>/', views_role_dashboard.student_unified_dashboard, name='student_unified_dashboard'),
     path('student/dashboard/load/<str:page>/', views_role_dashboard.load_student_dashboard_page, name='load_student_dashboard_page'),

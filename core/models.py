@@ -790,11 +790,26 @@ class Notification(models.Model):
         ('error', 'Error'),
         ('announcement', 'Announcement'),
         ('reminder', 'Reminder'),
+        ('student_registered', 'Student Registered'),
+        ('message_received', 'Message Received'),
+        ('grade_submitted', 'Grade Submitted'),
+        ('enrollment_completed', 'Enrollment Completed'),
+        ('payment_received', 'Payment Received'),
+        ('leave_request', 'Leave Request'),
+        ('system_update', 'System Update'),
+    ]
+    
+    PRIORITY_LEVELS = [
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+        ('urgent', 'Urgent'),
     ]
     
     title = models.CharField(max_length=200)
     message = models.TextField()
     type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default='info')
+    priority = models.CharField(max_length=10, choices=PRIORITY_LEVELS, default='medium')
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -803,9 +818,20 @@ class Notification(models.Model):
     action_url = models.URLField(blank=True, null=True)
     action_text = models.CharField(max_length=50, blank=True, null=True)
     
+    # Optional related objects for enhanced notifications
+    related_student = models.ForeignKey('StudentProfile', on_delete=models.CASCADE, null=True, blank=True)
+    related_teacher = models.ForeignKey('FacultyProfile', on_delete=models.CASCADE, null=True, blank=True)
+    related_announcement = models.ForeignKey('Announcement', on_delete=models.CASCADE, null=True, blank=True)
+    related_course = models.ForeignKey('CourseOffering', on_delete=models.CASCADE, null=True, blank=True)
+    
     class Meta:
         ordering = ['-created_at']
-        indexes = [models.Index(fields=['recipient', 'is_read'])]
+        indexes = [
+            models.Index(fields=['recipient', 'is_read']),
+            models.Index(fields=['recipient', 'is_read', 'created_at']),
+            models.Index(fields=['type', 'created_at']),
+            models.Index(fields=['priority', 'created_at']),
+        ]
     
     def __str__(self):
         return f"{self.title} - {self.recipient.username}"
@@ -814,6 +840,35 @@ class Notification(models.Model):
         self.is_read = True
         self.read_at = timezone.now()
         self.save()
+    
+    def get_icon_class(self):
+        """Get appropriate icon class based on notification type"""
+        icon_map = {
+            'info': 'fas fa-info-circle text-blue-600',
+            'warning': 'fas fa-exclamation-triangle text-yellow-600',
+            'success': 'fas fa-check-circle text-green-600',
+            'error': 'fas fa-times-circle text-red-600',
+            'announcement': 'fas fa-bullhorn text-purple-600',
+            'reminder': 'fas fa-clock text-orange-600',
+            'student_registered': 'fas fa-user-plus text-blue-600',
+            'message_received': 'fas fa-envelope text-green-600',
+            'grade_submitted': 'fas fa-file-alt text-orange-600',
+            'enrollment_completed': 'fas fa-graduation-cap text-green-600',
+            'payment_received': 'fas fa-money-bill text-green-600',
+            'leave_request': 'fas fa-calendar-times text-yellow-600',
+            'system_update': 'fas fa-info-circle text-blue-600',
+        }
+        return icon_map.get(self.type, 'fas fa-bell text-gray-600')
+    
+    def get_priority_color(self):
+        """Get color based on priority"""
+        color_map = {
+            'low': 'gray',
+            'medium': 'blue',
+            'high': 'orange',
+            'urgent': 'red',
+        }
+        return color_map.get(self.priority, 'gray')
 
 class TimeTable(models.Model):
     DAY_CHOICES = [
