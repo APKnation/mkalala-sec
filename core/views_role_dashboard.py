@@ -108,13 +108,29 @@ def admin_unified_dashboard(request, page='overview'):
     elif page == 'subjects':
         context.update(get_admin_subjects_context(user, admin_profile))
     elif page == 'add-subject':
-        context.update(get_admin_add_subject_context(request, user, admin_profile))
+        context_result = get_admin_add_subject_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'add-class':
-        context.update(get_admin_add_class_context(request, user, admin_profile))
+        context_result = get_admin_add_class_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'edit-class':
-        context.update(get_admin_edit_class_context(request, user, admin_profile))
+        context_result = get_admin_edit_class_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'delete-class':
-        context.update(get_admin_delete_class_context(request, user, admin_profile))
+        context_result = get_admin_delete_class_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'mark-attendance':
         context_result = get_admin_mark_attendance_context(request, user, admin_profile)
         # Handle redirect responses (both redirect and HttpResponse)
@@ -128,11 +144,23 @@ def admin_unified_dashboard(request, page='overview'):
             return context_result
         context.update(context_result)
     elif page == 'view-attendance':
-        context.update(get_admin_view_attendance_context(request, user, admin_profile))
+        context_result = get_admin_view_attendance_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'edit-attendance':
-        context.update(get_admin_edit_attendance_context(request, user, admin_profile))
+        context_result = get_admin_edit_attendance_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'delete-attendance':
-        context.update(get_admin_delete_attendance_context(request, user, admin_profile))
+        context_result = get_admin_delete_attendance_context(request, user, admin_profile)
+        # Handle redirect responses
+        if hasattr(context_result, 'status_code'):
+            return context_result
+        context.update(context_result)
     elif page == 'add-grade':
         context_result = get_admin_add_grade_context(request, user, admin_profile)
         if hasattr(context_result, 'status_code'):
