@@ -164,15 +164,13 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     path('timetable/<int:pk>/edit/', views.admin_timetable_edit, name='admin_timetable_edit'),
     path('timetable/<int:pk>/delete/', views.admin_timetable_delete, name='admin_timetable_delete'),
     
-    # Additional Admin URLs
-    path('admin/timetable/', views.admin_timetable, name='admin_timetable'),
-    path('admin/timetable/<int:pk>/delete/', views.admin_timetable_delete, name='admin_timetable_delete'),
-    path('admin/exams/', views.admin_exams, name='admin_exams'),
-    path('admin/exams/create/', views.admin_exam_create, name='admin_exam_create'),
-    path('admin/library/', views.admin_library, name='admin_library'),
-    path('admin/fees/', views.admin_fees, name='admin_fees'),
-    path('admin/reports/', views.admin_reports, name='admin_reports'),
-    path('admin/settings/', views.admin_settings, name='admin_settings'),
+    # Additional Admin URLs - Redirect to unified dashboard
+    path('admin/exams/', lambda request: redirect('admin_unified_dashboard', 'exams') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_exams'),
+    path('admin/exams/create/', lambda request: redirect('admin_unified_dashboard', 'create-exam') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_exam_create'),
+    path('admin/library/', lambda request: redirect('admin_unified_dashboard', 'library') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_library'),
+    path('admin/fees/', lambda request: redirect('admin_unified_dashboard', 'fees') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_fees'),
+    path('admin/reports/', lambda request: redirect('admin_unified_dashboard', 'reports') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_reports'),
+    path('admin/settings/', lambda request: redirect('admin_unified_dashboard', 'settings') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_settings'),
     path('admin/school-info/edit/', views.admin_school_info_edit, name='admin_school_info_edit'),
     path('admin/school-info/create/', views.admin_school_info_edit, name='admin_school_info_create'),
     path('users/<int:pk>/edit/', views.UserUpdateView.as_view(), name='edit_user'),
