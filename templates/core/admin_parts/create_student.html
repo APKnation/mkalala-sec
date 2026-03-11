@@ -1,13 +1,7 @@
-{% extends "core/admin_unified_dashboard.html" %}
 {% load static %}
 
-{% block title %}Create Student - Mkalala Secondary School{% endblock %}
-{% block mobile_title %}Create Student{% endblock %}
-{% block user_role %}{{ request.user.role|capfirst }}{% endblock %}
-
-{% block main_content %}
+<!-- Header Section -->
 <div class="space-y-8">
-    <!-- Header Section -->
     <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-6 mb-8 shadow-xl">
         <div class="flex items-center justify-between">
             <div class="flex items-center">
@@ -16,7 +10,7 @@
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold">Create New Student</h1>
-                    <p class="text-blue-100">Register a new student in the system</p>
+                    <p class="text-blue-100">Register a new student in system</p>
                 </div>
             </div>
             <div class="text-blue-100">
@@ -358,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show loading for valid forms
             Swal.fire({
                 title: 'Creating Student...',
-                text: 'Please wait while we create the student account.',
+                text: 'Please wait while we create student account.',
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
@@ -402,4 +396,3 @@ button[type="submit"]:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
-{% endblock %}
