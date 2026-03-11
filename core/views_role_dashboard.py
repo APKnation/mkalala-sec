@@ -1921,6 +1921,10 @@ def get_admin_exams_context(user, admin_profile):
         'performance_stats': performance_stats,
         'total_exams': total_exams,
         'upcoming_exams': upcoming_exams,
+        # Add teacher statistics for template compatibility
+        'teachers': User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name'),
+        'total_teachers': User.objects.filter(role='teacher').count(),
+        'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
     }
 
 def get_admin_timetable_context(user, admin_profile):
