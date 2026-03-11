@@ -178,6 +178,8 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_fees_context(user, admin_profile))
     elif page == 'reports':
         context.update(get_admin_reports_context(user, admin_profile))
+    elif page == 'timetable':
+        context.update(get_admin_timetable_context(user, admin_profile))
     elif page == 'users':
         context.update(get_admin_users_context(user, admin_profile))
     elif page == 'create-user':
