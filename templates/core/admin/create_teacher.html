@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show success messages
     successElements.forEach(function(element) {
         var message = element.textContent || element.innerText;
-        if (message.trim()) {
+        if (message && message.trim()) {
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
@@ -31,12 +31,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonColor: '#10b981',
                 timer: 3000,
                 showConfirmButton: true
-            }).then(function() {
+            }).then(function(result) {
                 // Reset form and redirect after success
-                resetForm();
-                setTimeout(function() {
-                    window.location.href = '{% url "admin_unified_dashboard" page="users" %}';
-                }, 1000);
+                if (result.isConfirmed) {
+                    resetForm();
+                    setTimeout(function() {
+                        try {
+                            window.location.href = '{% url "admin_unified_dashboard" page="users" %}';
+                        } catch (e) {
+                            console.error('Redirect error:', e);
+                            // Fallback: reload page
+                            window.location.reload();
+                        }
+                    }, 1000);
+                }
             });
         }
     });
@@ -44,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show error messages
     errorElements.forEach(function(element) {
         var message = element.textContent || element.innerText;
-        if (message.trim()) {
+        if (message && message.trim()) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
@@ -59,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show warning messages
     warningElements.forEach(function(element) {
         var message = element.textContent || element.innerText;
-        if (message.trim()) {
+        if (message && message.trim()) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Warning!',
@@ -74,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show info messages
     infoElements.forEach(function(element) {
         var message = element.textContent || element.innerText;
-        if (message.trim()) {
+        if (message && message.trim()) {
             Swal.fire({
                 icon: 'info',
                 title: 'Information',
@@ -89,14 +97,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to reset form
 function resetForm() {
-    var form = document.querySelector('form');
-    if (form) {
-        form.reset();
-        // Clear any remaining form data
-        var inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(function(input) {
-            input.value = '';
-        });
+    try {
+        var form = document.querySelector('form');
+        if (form) {
+            form.reset();
+            // Clear any remaining form data
+            var inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(function(input) {
+                input.value = '';
+            });
+        }
+    } catch (e) {
+        console.error('Form reset error:', e);
     }
 }
 </script>
