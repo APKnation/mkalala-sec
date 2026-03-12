@@ -32,7 +32,7 @@
             </div>
         </div>
         <div class="p-6">
-            <form method="post" action="{% url 'admin_create_teacher' %}" class="space-y-6">
+            <form method="post" action="{% url 'admin_create_teacher' %}" class="space-y-6" id="teacher-form">
                 {% csrf_token %}
                 
                 <!-- Account Information -->
@@ -195,14 +195,4 @@
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add CSS classes to form fields
-    const formFields = document.querySelectorAll('input, select, textarea');
-    formFields.forEach(function(field) {
-        field.classList.add('w-full', 'border', 'border-slate-300', 'rounded-lg', 'px-3', 'py-2', 'text-sm', 'focus:ring-2', 'focus:ring-purple-500', 'focus:border-transparent');
-    });
-});
-</script>
 {% endblock %}
