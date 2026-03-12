@@ -3,31 +3,90 @@
 
 {% block title %}Create Teacher Account - {{ school_info.name }}{% endblock %}
 
+{% block extra_head %}
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+{% endblock %}
+
 {% block main_content %}
-<!-- Messages -->
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if there are any success messages in the page
+    var successElements = document.querySelectorAll('.alert-success');
+    var errorElements = document.querySelectorAll('.alert-error');
+    var warningElements = document.querySelectorAll('.alert-warning');
+    var infoElements = document.querySelectorAll('.alert-info');
+    
+    // Show success messages
+    successElements.forEach(function(element) {
+        var message = element.textContent || element.innerText;
+        if (message.trim()) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: message.trim(),
+                confirmButtonColor: '#10b981',
+                timer: 3000,
+                showConfirmButton: true
+            });
+        }
+    });
+    
+    // Show error messages
+    errorElements.forEach(function(element) {
+        var message = element.textContent || element.innerText;
+        if (message.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: message.trim(),
+                confirmButtonColor: '#ef4444',
+                timer: 5000,
+                showConfirmButton: true
+            });
+        }
+    });
+    
+    // Show warning messages
+    warningElements.forEach(function(element) {
+        var message = element.textContent || element.innerText;
+        if (message.trim()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning!',
+                text: message.trim(),
+                confirmButtonColor: '#f59e0b',
+                timer: 4000,
+                showConfirmButton: true
+            });
+        }
+    });
+    
+    // Show info messages
+    infoElements.forEach(function(element) {
+        var message = element.textContent || element.innerText;
+        if (message.trim()) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Information',
+                text: message.trim(),
+                confirmButtonColor: '#3b82f6',
+                timer: 4000,
+                showConfirmButton: true
+            });
+        }
+    });
+});
+</script>
+
+<!-- Hidden messages for SweetAlert -->
 {% if messages %}
-<div class="fixed top-4 right-4 z-50 space-y-2">
     {% for message in messages %}
-    <div class="bg-white rounded-lg shadow-lg border-l-4 p-4 max-w-sm w-full {% if message.tags %}border-{{ message.tags }}{% endif %}">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                {% if message.tags == 'success' %}
-                    <i class="fas fa-check-circle text-green-500"></i>
-                {% elif message.tags == 'error' %}
-                    <i class="fas fa-exclamation-circle text-red-500"></i>
-                {% elif message.tags == 'warning' %}
-                    <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                {% else %}
-                    <i class="fas fa-info-circle text-blue-500"></i>
-                {% endif %}
-            </div>
-            <div class="ml-3">
-                <p class="text-sm font-medium text-gray-900">{{ message }}</p>
-            </div>
-        </div>
-    </div>
+        <div class="alert-{{ message.tags }}" style="display: none;">{{ message }}</div>
     {% endfor %}
-</div>
 {% endif %}
 
 <div class="space-y-8">
