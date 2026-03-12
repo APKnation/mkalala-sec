@@ -31,6 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 confirmButtonColor: '#10b981',
                 timer: 3000,
                 showConfirmButton: true
+            }).then(function() {
+                // Reset form and redirect after success
+                resetForm();
+                setTimeout(function() {
+                    window.location.href = '{% url "admin_unified_dashboard" page="users" %}';
+                }, 1000);
             });
         }
     });
@@ -80,6 +86,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Function to reset form
+function resetForm() {
+    var form = document.querySelector('form');
+    if (form) {
+        form.reset();
+        // Clear any remaining form data
+        var inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(function(input) {
+            input.value = '';
+        });
+    }
+}
 </script>
 
 <!-- Hidden messages for SweetAlert -->
