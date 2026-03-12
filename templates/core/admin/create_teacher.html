@@ -4,6 +4,32 @@
 {% block title %}Create Teacher Account - {{ school_info.name }}{% endblock %}
 
 {% block main_content %}
+<!-- Messages -->
+{% if messages %}
+<div class="fixed top-4 right-4 z-50 space-y-2">
+    {% for message in messages %}
+    <div class="bg-white rounded-lg shadow-lg border-l-4 p-4 max-w-sm w-full {% if message.tags %}border-{{ message.tags }}{% endif %}">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                {% if message.tags == 'success' %}
+                    <i class="fas fa-check-circle text-green-500"></i>
+                {% elif message.tags == 'error' %}
+                    <i class="fas fa-exclamation-circle text-red-500"></i>
+                {% elif message.tags == 'warning' %}
+                    <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                {% else %}
+                    <i class="fas fa-info-circle text-blue-500"></i>
+                {% endif %}
+            </div>
+            <div class="ml-3">
+                <p class="text-sm font-medium text-gray-900">{{ message }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="space-y-8">
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -32,7 +58,7 @@
             </div>
         </div>
         <div class="p-6">
-            <form method="post" class="space-y-6">
+            <form method="post" action="{% url 'admin_create_teacher' %}" class="space-y-6">
                 {% csrf_token %}
                 
                 <!-- Account Information -->
