@@ -6,265 +6,216 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800">
-    <!-- Animated Background Elements -->
-    <div class="absolute inset-0">
-        <div class="absolute top-20 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div class="absolute top-40 right-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div class="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-        <div class="absolute bottom-40 right-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-6000"></div>
-    </div>
-    
-    <!-- Floating Shapes -->
-    <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute -top-40 -left-40 w-80 h-80 border border-blue-500/20 rounded-full animate-spin-slow"></div>
-        <div class="absolute -bottom-40 -right-40 w-60 h-60 border border-blue-500/20 rounded-full animate-bounce-slow"></div>
-        <div class="absolute top-1/3 right-1/4 w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full opacity-30 animate-float"></div>
-        <div class="absolute bottom-1/3 left-1/4 w-24 h-24 bg-gradient-to-tr from-blue-300 to-blue-500 rounded-full opacity-30 animate-float animation-delay-2000"></div>
-    </div>
-
-    <!-- Hero Content -->
-    <div class="relative z-10 max-w-7xl mx-auto px-6 text-center">
-        <div class="backdrop-blur-sm bg-white/10 rounded-2xl p-12 shadow-2xl border border-white/20">
-            <div class="mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl mb-8 shadow-lg transform hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-book text-white text-3xl"></i>
-                </div>
-                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
-                    Academic Programs
-                </h1>
-                <p class="text-xl md:text-2xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                    Comprehensive education designed to prepare students for success in the modern world.
-                </p>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row gap-6 justify-center">
-                <a href="{% url 'register' %}" class="px-8 py-4 text-lg font-bold text-white bg-blue-500 rounded-xl shadow-lg hover:bg-blue-600 transform hover:scale-105 transition-all duration-300">
-                    Apply Now
-                </a>
-                <a href="{% url 'public_about' %}" class="px-8 py-4 text-lg font-bold text-blue-800 bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-                    Learn More
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ACADEMIC OVERVIEW SECTION -->
-<section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-blue-800 mb-4">Academic Overview</h2>
-            <p class="text-xl text-blue-600 max-w-3xl mx-auto">Comprehensive curriculum for holistic development</p>
+<section class="relative bg-white min-h-screen flex items-center">
+  <div class="container mx-auto px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      
+      <!-- LEFT CONTENT -->
+      <div class="space-y-8">
+        <div class="space-y-6">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black text-school-black leading-tight">
+            Academic Programs for
+            <span class="text-school-blue">Excellence</span>
+          </h1>
+          <p class="text-lg text-school-gray leading-relaxed max-w-2xl">
+            Mkalala Secondary School offers comprehensive academic programs designed to prepare students for success in higher education and beyond.
+          </p>
         </div>
         
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="{% url 'register' %}" class="bg-school-blue text-white px-8 py-4 font-bold rounded-xl hover:bg-school-black transition">
+            <i class="fas fa-graduation-cap mr-2"></i>
+            Apply Now
+          </a>
+          <a href="{% url 'public_about' %}" class="border-2 border-school-blue text-school-blue px-8 py-4 font-bold rounded-xl hover:bg-school-blue hover:text-white transition">
+            <i class="fas fa-info-circle mr-2"></i>
+            Learn More
+          </a>
+        </div>
+      </div>
+
+      <!-- RIGHT IMAGE -->
+      <div class="relative">
+        <img src="{% static 'images/hero_bg.png' %}" 
+             alt="Academic Programs" 
+             class="rounded-2xl shadow-2xl w-full object-cover hover:scale-105 transition duration-700">
+        <div class="absolute -bottom-6 -right-6 bg-school-blue text-white p-6 rounded-2xl shadow-xl">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-award text-3xl"></i>
+            <div>
+              <p class="text-2xl font-bold">Quality</p>
+              <p class="text-sm">Education</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ACADEMIC OVERVIEW -->
+<section class="py-24 bg-school-light-blue">
+
+    <div class="max-w-7xl mx-auto px-6">
+
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-black text-school-black mb-4">
+                Academic Overview
+            </h2>
+            <p class="text-school-black/70 text-lg">
+                Comprehensive curriculum for holistic development
+            </p>
+        </div>
+
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-bounce">
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center border border-school-light-blue">
+                <div class="w-16 h-16 mx-auto bg-school-blue rounded-xl flex items-center justify-center mb-5">
                     <i class="fas fa-graduation-cap text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">Form 1-4</h3>
-                <p class="text-blue-600">Complete secondary education following national curriculum standards</p>
+                <h3 class="text-lg font-bold text-school-black">Form 1–4</h3>
+                <p class="text-school-black/60 text-sm">Secondary education curriculum</p>
             </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center border border-school-light-blue">
+                <div class="w-16 h-16 mx-auto bg-school-blue rounded-xl flex items-center justify-center mb-5">
                     <i class="fas fa-certificate text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">NECTA Curriculum</h3>
-                <p class="text-blue-600">Aligned with Tanzania National Examination Council requirements</p>
+                <h3 class="text-lg font-bold text-school-black">NECTA</h3>
+                <p class="text-school-black/60 text-sm">National examination standards</p>
             </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-spin">
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center border border-school-light-blue">
+                <div class="w-16 h-16 mx-auto bg-school-blue rounded-xl flex items-center justify-center mb-5">
                     <i class="fas fa-brain text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">Holistic Learning</h3>
-                <p class="text-blue-600">Focus on academic, social, and personal development</p>
+                <h3 class="text-lg font-bold text-school-black">Holistic</h3>
+                <p class="text-school-black/60 text-sm">Academic + character growth</p>
             </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
+
+            <div class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition text-center border border-school-light-blue">
+                <div class="w-16 h-16 mx-auto bg-school-blue rounded-xl flex items-center justify-center mb-5">
                     <i class="fas fa-users text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">Qualified Teachers</h3>
-                <p class="text-blue-600">Experienced educators dedicated to student success</p>
+                <h3 class="text-lg font-bold text-school-black">Teachers</h3>
+                <p class="text-school-black/60 text-sm">Qualified educators</p>
             </div>
+
         </div>
     </div>
 </section>
 
-<!-- CORE SUBJECTS SECTION -->
-<section class="py-24 bg-gradient-to-r from-blue-600 to-blue-800 relative overflow-hidden">
-    <div class="absolute inset-0 bg-black/20"></div>
-    <div class="relative z-10 max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Core Subjects</h2>
-            <p class="text-xl text-blue-100 max-w-3xl mx-auto">Essential subjects studied by all students</p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-float">
-                    <i class="fas fa-calculator text-white text-3xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Mathematics</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    Logical thinking, algebra, geometry, and statistics for analytical development.
-                </p>
-            </div>
-            
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
-                    <i class="fas fa-language text-white text-3xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">English Language</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    Communication skills, grammar, and literature for comprehensive language development.
-                </p>
-            </div>
-            
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-bounce">
-                    <i class="fas fa-dna text-white text-3xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Biology</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    Study of living organisms, life processes, and environmental interactions.
-                </p>
-            </div>
-            
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-spin">
-                    <i class="fas fa-flask text-white text-3xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Chemistry</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    Understanding matter, chemical reactions, and laboratory practical work.
-                </p>
-            </div>
-            
-            <div class="group bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                <div class="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:animate-pulse">
-                    <i class="fas fa-atom text-white text-3xl"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white mb-4 text-center">Physics</h3>
-                <p class="text-blue-100 text-center leading-relaxed">
-                    Principles of energy, motion, and physical science with practical applications.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- OPTIONAL SUBJECTS SECTION -->
-<section class="py-24 bg-white">
+<!-- CORE SUBJECTS -->
+<section class="py-24 bg-school-blue">
+
     <div class="max-w-7xl mx-auto px-6">
+
         <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-blue-800 mb-4">Optional Subjects</h2>
-            <p class="text-xl text-blue-600 max-w-3xl mx-auto">Students can select additional subjects based on interest</p>
+            <h2 class="text-4xl md:text-5xl font-black text-white mb-4">
+                Core Subjects
+            </h2>
+            <p class="text-white/80 text-lg">
+                Essential subjects for all students
+            </p>
         </div>
-        
+
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-8 text-center backdrop-blur">
+                <i class="fas fa-calculator text-white text-3xl mb-4"></i>
+                <h3 class="text-white text-xl font-bold mb-2">Mathematics</h3>
+                <p class="text-white/70">Logical reasoning & problem solving</p>
+            </div>
+
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-8 text-center backdrop-blur">
+                <i class="fas fa-language text-white text-3xl mb-4"></i>
+                <h3 class="text-white text-xl font-bold mb-2">English</h3>
+                <p class="text-white/70">Communication & literature</p>
+            </div>
+
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-8 text-center backdrop-blur">
+                <i class="fas fa-dna text-white text-3xl mb-4"></i>
+                <h3 class="text-white text-xl font-bold mb-2">Biology</h3>
+                <p class="text-white/70">Life sciences & ecosystems</p>
+            </div>
+
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-8 text-center backdrop-blur">
+                <i class="fas fa-flask text-white text-3xl mb-4"></i>
+                <h3 class="text-white text-xl font-bold mb-2">Chemistry</h3>
+                <p class="text-white/70">Matter & reactions</p>
+            </div>
+
+            <div class="bg-white/10 border border-white/20 rounded-2xl p-8 text-center backdrop-blur">
+                <i class="fas fa-atom text-white text-3xl mb-4"></i>
+                <h3 class="text-white text-xl font-bold mb-2">Physics</h3>
+                <p class="text-white/70">Energy & motion</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- OPTIONAL SUBJECTS -->
+<section class="py-24 bg-school-light-blue">
+
+    <div class="max-w-7xl mx-auto px-6 text-center">
+
+        <h2 class="text-4xl font-black text-school-black mb-4">
+            Optional Subjects
+        </h2>
+
+        <p class="text-school-black/70 mb-12">
+            Choose subjects based on your interests
+        </p>
+
         <div class="grid md:grid-cols-4 gap-6">
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-bounce">
-                    <i class="fas fa-landmark text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">History</h3>
-                <p class="text-blue-600 text-sm">Historical events and world civilizations</p>
+
+            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+                <i class="fas fa-landmark text-school-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-school-black">History</h3>
             </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-pulse">
-                    <i class="fas fa-balance-scale text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">Civics</h3>
-                <p class="text-blue-600 text-sm">Government systems and citizenship</p>
+
+            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+                <i class="fas fa-balance-scale text-school-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-school-black">Civics</h3>
             </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-spin">
-                    <i class="fas fa-laptop-code text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">Computer Studies</h3>
-                <p class="text-blue-600 text-sm">Digital literacy and programming</p>
+
+            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+                <i class="fas fa-laptop-code text-school-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-school-black">Computer</h3>
             </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 p-6 text-center">
-                <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:animate-float">
-                    <i class="fas fa-book-open text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-blue-800 mb-2">Literature</h3>
-                <p class="text-blue-600 text-sm">Creative writing and analysis</p>
+
+            <div class="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+                <i class="fas fa-book-open text-school-blue text-3xl mb-3"></i>
+                <h3 class="font-bold text-school-black">Literature</h3>
             </div>
+
         </div>
     </div>
 </section>
 
-<!-- ACADEMIC PERFORMANCE SECTION -->
-<section class="py-24 bg-white">
-<section class="py-24 bg-gradient-to-r from-gray-50 to-blue-50">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Academic Performance</h2>
-            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Our students achieve outstanding results</p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 p-8 text-center">
-                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:animate-pulse">
-                    <div class="text-3xl font-bold text-white">95%</div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Overall Pass Rate</h3>
-                <p class="text-gray-600">Consistent excellence in NECTA examinations</p>
-            </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 p-8 text-center">
-                <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:animate-bounce">
-                    <div class="text-3xl font-bold text-white">85%</div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Division I – III</h3>
-                <p class="text-gray-600">High achievement in upper divisions</p>
-            </div>
-            
-            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 p-8 text-center">
-                <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl group-hover:animate-spin">
-                    <div class="text-3xl font-bold text-white">500+</div>
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-2">Students Enrolled</h3>
-                <p class="text-gray-600">Growing academic community</p>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- CALL TO ACTION -->
-<section class="relative py-24 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 overflow-hidden">
-    <div class="absolute inset-0">
-        <div class="absolute top-0 left-0 w-full h-full bg-black/20"></div>
-        <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white to-transparent"></div>
-    </div>
-    
-    <div class="relative z-10 max-w-4xl mx-auto text-center px-6">
-        <div class="backdrop-blur-sm bg-white/10 rounded-3xl p-16 shadow-2xl border border-white/20">
-            <div class="mb-8">
-                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mb-8 shadow-2xl animate-pulse">
-                    <i class="fas fa-rocket text-white text-4xl"></i>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Start Your Academic Journey</h2>
-                <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                    Join Mkalala Secondary School and build a strong academic future with quality education.
-                </p>
-            </div>
-            
-            <a href="{% url 'register' %}" class="group relative inline-flex items-center justify-center px-12 py-4 text-lg font-bold text-white bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
-                <span class="relative z-10">Apply Now</span>
-                <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <svg class="w-5 h-5 ml-2 relative z-10" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
-        </div>
+<!-- CTA -->
+<section class="py-24 bg-school-black text-center">
+
+    <div class="max-w-4xl mx-auto px-6">
+
+        <h2 class="text-4xl font-black text-white mb-6">
+            Start Your Academic Journey
+        </h2>
+
+        <p class="text-white/70 mb-8">
+            Join Mkalala Secondary School today
+        </p>
+
+        <a href="{% url 'register' %}"
+           class="inline-block px-10 py-4 bg-school-blue text-white font-bold rounded-xl hover:scale-105 transition">
+            Apply Now
+        </a>
+
     </div>
 </section>
 
