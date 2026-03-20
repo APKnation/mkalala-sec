@@ -5,34 +5,37 @@
 
 {% block content %}
 
-<!-- PREMIUM ABOUT HERO -->
-<section class="relative pt-32 pb-20 overflow-hidden bg-slate-50">
-    <!-- Animated Blobs -->
-    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
+<!-- PREMIUM ABOUT HERO (BOLD VERSION) -->
+<section class="relative pt-32 pb-24 overflow-hidden bg-[#1e1b4b]">
+    <!-- Animated Blobs (More Visible) -->
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
+    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+    
+    <!-- Background Patterns -->
+    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
     
     <div class="container mx-auto px-4 relative z-10">
         <div class="max-w-4xl mx-auto text-center space-y-8">
-            <div class="inline-flex items-center space-x-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-indigo-600 font-bold text-sm shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div class="inline-flex items-center space-x-2 px-5 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-indigo-200 font-bold text-sm shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <i class="fas fa-landmark mr-2"></i> Established 2005
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-display font-black text-slate-900 leading-tight tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                Crafting the Next Generation of <span class="text-gradient">Impactful Leaders</span>
+            <h1 class="text-5xl md:text-7xl font-display font-black text-white leading-tight tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+                Crafting the Next Generation of <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 to-purple-400">Impactful Leaders</span>
             </h1>
             
-            <p class="text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-700 delay-200">
+            <p class="text-xl text-indigo-100/80 leading-relaxed max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-700 delay-200">
                 Mkalala Secondary School is more than just an institution—it's a vibrant community where tradition meets the digital future.
             </p>
         </div>
     </div>
 </section>
 
-<!-- OUR STORY - TWO-COLOR SPLIT SECTION -->
+<!-- OUR STORY - HIGH CONTRAST SPLIT -->
 <section class="py-24 relative overflow-hidden">
     <!-- Split Background -->
     <div class="absolute inset-0 flex flex-col lg:flex-row">
-        <div class="w-full lg:w-1/2 bg-indigo-50/50"></div>
+        <div class="w-full lg:w-1/2 bg-[#4338ca]"></div> <!-- Bold Indigo-700 -->
         <div class="w-full lg:w-1/2 bg-white"></div>
     </div>
     
@@ -133,9 +136,13 @@
     </div>
 </section>
 
-<!-- CORE VALUES - INTERACTIVE -->
-<section class="py-24 bg-indigo-50/30">
-    <div class="container mx-auto px-4">
+<!-- CORE VALUES - VIBRANT GRADIENT SECTION -->
+<section class="py-24 bg-gradient-to-br from-indigo-50 via-white to-slate-100 relative">
+    <!-- Animated Color Accents -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full filter blur-3xl"></div>
+    <div class="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full filter blur-3xl"></div>
+    
+    <div class="container mx-auto px-4 relative z-10">
         <div class="text-center max-w-3xl mx-auto mb-20 space-y-4">
             <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm">Built on Standards</h2>
             <h3 class="text-4xl md:text-5xl font-display font-bold text-slate-900">Our Core Principles</h3>
