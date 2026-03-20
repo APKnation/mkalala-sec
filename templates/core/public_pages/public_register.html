@@ -330,100 +330,140 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('multiStepForm');
-    const steps = document.querySelectorAll('.form-step');
-    const stepIndicators = document.querySelectorAll('.step-indicator');
-    const progressBars = document.querySelectorAll('.progress-bar');
-    const nextButtons = document.querySelectorAll('.next-step');
-    const prevButtons = document.querySelectorAll('.prev-step');
+// Immediately hide all steps except the first one
+(function() {
+    'use strict';
     
-    let currentStep = 1;
-    const totalSteps = 4;
+    // Hide all steps immediately when script loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const steps = document.querySelectorAll('.form-step');
+        const stepIndicators = document.querySelectorAll('.step-indicator');
+        const progressBars = document.querySelectorAll('.progress-bar');
+        const nextButtons = document.querySelectorAll('.next-step');
+        const prevButtons = document.querySelectorAll('.prev-step');
+        
+        let currentStep = 1;
+        const totalSteps = 4;
 
-    // Debug: Log initial state
-    console.log('Multi-step form initialized');
-    console.log('Found steps:', steps.length);
-    console.log('Found next buttons:', nextButtons.length);
-    console.log('Found prev buttons:', prevButtons.length);
+        console.log('Multi-step form script loaded');
+        console.log('Found steps:', steps.length);
+        console.log('Found next buttons:', nextButtons.length);
 
-    function showStep(step) {
-        console.log('Showing step:', step);
-        
-        // Hide all steps
-        steps.forEach(s => {
-            s.classList.remove('active');
-            console.log('Hiding step:', s.dataset.step);
-        });
-        
-        stepIndicators.forEach(indicator => indicator.classList.remove('active'));
-        
-        // Show current step
-        const currentStepElement = document.querySelector(`.form-step[data-step="${step}"]`);
-        const currentIndicator = document.querySelector(`.step-indicator[data-step="${step}"]`);
-        
-        if (currentStepElement) {
-            currentStepElement.classList.add('active');
-            console.log('Showing step element:', step);
-        }
-        
-        if (currentIndicator) {
-            currentIndicator.classList.add('active');
-        }
-        
-        // Update progress bars
-        const progress = ((step - 1) / (totalSteps - 1)) * 100;
-        progressBars.forEach(bar => {
-            bar.style.width = progress + '%';
-            if (step > 1) {
-                bar.classList.add('bg-red-500');
-                bar.classList.remove('bg-gray-200');
+        function showStep(step) {
+            console.log('=== Showing step:', step, '===');
+            
+            // Remove active class from all steps
+            steps.forEach(s => {
+                s.classList.remove('active');
+                console.log('Hidden step:', s.dataset.step);
+            });
+            
+            // Remove active from all indicators
+            stepIndicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            // Add active to current step
+            const currentStepElement = document.querySelector(`.form-step[data-step="${step}"]`);
+            const currentIndicator = document.querySelector(`.step-indicator[data-step="${step}"]`);
+            
+            if (currentStepElement) {
+                currentStepElement.classList.add('active');
+                console.log('✓ Active step:', step);
+                
+                // Log buttons in this step
+                const buttonsInStep = currentStepElement.querySelectorAll('button');
+                console.log('Buttons in active step:', buttonsInStep.length);
             } else {
-                bar.classList.remove('bg-red-500');
-                bar.classList.add('bg-gray-200');
+                console.error('Step element not found:', step);
             }
-        });
-        
-        // Mark completed steps
-        for (let i = 1; i < step; i++) {
-            const completedIndicator = document.querySelector(`.step-indicator[data-step="${i}"]`);
-            if (completedIndicator) {
-                completedIndicator.classList.add('completed');
+            
+            if (currentIndicator) {
+                currentIndicator.classList.add('active');
             }
+            
+            // Update progress bars
+            const progress = ((step - 1) / (totalSteps - 1)) * 100;
+            progressBars.forEach(bar => {
+                bar.style.width = progress + '%';
+                if (step > 1) {
+                    bar.classList.add('bg-red-500');
+                    bar.classList.remove('bg-gray-200');
+                } else {
+                    bar.classList.remove('bg-red-500');
+                    bar.classList.add('bg-gray-200');
+                }
+            });
+            
+            // Mark completed steps
+            for (let i = 1; i < step; i++) {
+                const completedIndicator = document.querySelector(`.step-indicator[data-step="${i}"]`);
+                if (completedIndicator) {
+                    completedIndicator.classList.add('completed');
+                }
+            }
+            
+            currentStep = step;
+            
+            // Count visible buttons
+            const visibleButtons = document.querySelectorAll('.form-step.active button');
+            console.log('Visible buttons after step change:', visibleButtons.length);
         }
-        
-        currentStep = step;
-        console.log('Current step set to:', currentStep);
-    }
 
-    // Next step buttons
-    nextButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Next button clicked, current step:', currentStep);
-            if (currentStep < totalSteps) {
-                showStep(currentStep + 1);
-            }
+        // Add event listeners to next buttons
+        nextButtons.forEach((button, index) => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 Next button clicked, current step:', currentStep);
+                
+                if (currentStep < totalSteps) {
+                    showStep(currentStep + 1);
+                } else {
+                    console.log('Already at last step');
+                }
+            });
         });
-    });
 
-    // Previous step buttons
-    prevButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Previous button clicked, current step:', currentStep);
-            if (currentStep > 1) {
-                showStep(currentStep - 1);
-            }
+        // Add event listeners to previous buttons
+        prevButtons.forEach((button, index) => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔘 Previous button clicked, current step:', currentStep);
+                
+                if (currentStep > 1) {
+                    showStep(currentStep - 1);
+                } else {
+                    console.log('Already at first step');
+                }
+            });
         });
-    });
 
-    // Initialize first step
-    setTimeout(() => {
+        // Initialize form immediately
+        console.log('🚀 Initializing multi-step form...');
         showStep(1);
-        console.log('Form initialized with step 1');
-    }, 100);
-});
+        
+        // Double-check after a short delay
+        setTimeout(() => {
+            console.log('🔍 Double-checking form state...');
+            showStep(1);
+            
+            // Final verification
+            const visibleSteps = document.querySelectorAll('.form-step.active');
+            const visibleButtons = document.querySelectorAll('.form-step.active button');
+            console.log('✅ Final verification - Visible steps:', visibleSteps.length, 'Visible buttons:', visibleButtons.length);
+        }, 200);
+    });
+
+    // Also run immediately in case DOMContentLoaded already fired
+    if (document.readyState === 'loading') {
+        // DOM is still loading
+        console.log('DOM is loading, waiting for DOMContentLoaded...');
+    } else {
+        // DOM is already loaded
+        console.log('DOM already loaded, running immediately...');
+        // Trigger the initialization manually if needed
+    }
+})();
 </script>
 
 {% endblock %}
