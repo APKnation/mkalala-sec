@@ -5,72 +5,118 @@
 
 {% block content %}
 
-<!-- MINIMALIST HIGH-IMPACT ABOUT US DESIGN (AESTHETIC IMAGES) -->
-<div style="background-color: #ffffff; color: #000000;" class="pt-32">
-    
-    <!-- Hero Section -->
-    <section class="container mx-auto px-4 lg:px-20 mb-32">
-        <div class="flex flex-col lg:flex-row items-end lg:space-x-12">
-            <div class="w-full lg:w-1/3 mb-10 lg:mb-0">
-                <h1 style="font-style: italic; font-weight: 900;" class="text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter leading-none">
-                    ABOUT <br/> US
+<div class="bg-white text-gray-900 pt-28">
+
+    <!-- HERO SECTION -->
+    <section class="container mx-auto px-6 lg:px-20 mb-24">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Text -->
+            <div>
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6 text-gray-900">
+                    About <span class="text-blue-600">Mkalala</span>
                 </h1>
+                <p class="text-lg text-gray-600 leading-relaxed">
+                    Mkalala Secondary School is committed to providing quality education that empowers students with knowledge, discipline, and life skills for a better future.
+                </p>
             </div>
-            <div class="w-full lg:w-2/3">
-                <div class="aspect-[16/10] overflow-hidden bg-slate-100 border border-black/10">
-                      <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=1400" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="School Hero">
-                </div>
+
+            <!-- Image -->
+            <div class="rounded-2xl overflow-hidden shadow-lg">
+                <img src="{% static 'images/Screenshot from 2026-03-20 18-31-41.png' %}"
+                     class="w-full h-full object-cover hover:scale-105 transition duration-700"
+                     alt="Students learning">
             </div>
+
         </div>
     </section>
 
-    <!-- Intro Text Section -->
-    <section class="container mx-auto px-4 lg:px-20 mb-40">
-        <div class="max-w-2xl ml-auto">
-            <h2 style="font-weight: 900;" class="text-4xl italic mb-6">Mkalala.</h2>
-            <p class="text-lg leading-relaxed text-slate-800 font-medium opacity-80">
-                Mkalala Secondary School was born out of an idea to inject style and energy to education by changing how students learn all over the world. Our founder had a desire to modernize the educational landscape, leaving the stale and the conservative behind.
+    <!-- INTRO SECTION -->
+    <section class="container mx-auto px-6 lg:px-20 mb-24">
+        <div class="max-w-3xl">
+            <h2 class="text-3xl font-bold mb-4 text-blue-600">Who We Are</h2>
+            <p class="text-gray-700 leading-relaxed text-lg">
+                Established with a vision to nurture young minds, Mkalala Secondary School has grown into a center of academic excellence. We aim to inspire students to achieve their full potential through quality teaching, discipline, and innovation.
             </p>
         </div>
     </section>
 
-    <!-- History Section -->
-    <section class="container mx-auto px-4 lg:px-20 mb-40">
-        <div class="flex flex-col lg:flex-row items-center space-y-12 lg:space-y-0 lg:space-x-20">
-            <div class="w-full lg:w-3/5">
-                <div class="aspect-[16/9] overflow-hidden bg-slate-100 border border-black/10">
-                    <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=1400" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="History">
-                </div>
+    <!-- HISTORY -->
+    <section class="container mx-auto px-6 lg:px-20 mb-24">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+            <!-- Image -->
+            <div class="rounded-2xl overflow-hidden shadow-md">
+                <img src="{% static 'images/history.jpg' %}"
+                     class="w-full h-full object-cover hover:scale-105 transition duration-700"
+                     alt="School history">
             </div>
-            <div class="w-full lg:w-2/5 space-y-6">
-                <h3 style="font-weight: 900;" class="text-2xl uppercase tracking-widest">HISTORY OF THE BRAND</h3>
-                <p class="text-base leading-relaxed text-slate-700">
-                    Mkalala first launched in the summer of 2005, in Stockholm and New York simultaneously. Our founder, John Mkalala, had a desire to challenge conventions and an idea to modernize the educational landscape, leaving the stale and the conservative behind.
+
+            <!-- Text -->
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-gray-900">Our History</h3>
+                <p class="text-gray-600 leading-relaxed mb-4">
+                    Since its establishment, Mkalala Secondary School has been dedicated to delivering high-quality education to students from diverse backgrounds.
                 </p>
-                <p class="text-base leading-relaxed text-slate-700">
-                    Today, Mkalala has grown into a fashion and sports brand with a worldwide presence, offering innovative pieces within fashion, golf, ski, tennis, outdoor and more.
+                <p class="text-gray-600 leading-relaxed">
+                    Over the years, the school has built a strong reputation for academic excellence, discipline, and holistic student development.
                 </p>
             </div>
+
         </div>
     </section>
 
-    <!-- Our Promise Section (Styled Correctly) -->
-    <section class="mb-40 text-center">
-        <div class="max-w-5xl mx-auto px-4 lg:px-20 space-y-10">
-            <h3 style="font-weight: 900;" class="text-4xl uppercase tracking-[0.4em] text-black">OUR PROMISE</h3>
-            <div class="w-20 h-1 bg-black mx-auto mb-10"></div> <!-- Geometric Divider -->
-            <p style="letter-spacing: -0.01em;" class="text-xl md:text-2xl leading-[1.6] text-black font-medium opacity-50 max-w-4xl mx-auto">
-                We always leave a mark through the actions we take. By being bold and daring to do things differently, we push limits and redefine how things are done. We first introduced fashion into sports and then fused sports into fashion. It started with passion, but Mkalala is much more than that — it's a connection between cultures, ideas, activities, people and communities. Excellence is at the core of everything we do.
-            </p>
+    <!-- MISSION & VISION -->
+    <section class="bg-gray-50 py-20 mb-24">
+        <div class="container mx-auto px-6 lg:px-20 grid md:grid-cols-2 gap-12">
+            
+            <div class="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition">
+                <h4 class="text-xl font-bold text-blue-600 mb-3">Our Mission</h4>
+                <p class="text-gray-600">
+                    To provide quality education that nurtures intellectual growth, discipline, and creativity in students.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition">
+                <h4 class="text-xl font-bold text-blue-600 mb-3">Our Vision</h4>
+                <p class="text-gray-600">
+                    To be a leading institution in academic excellence and character development in Tanzania.
+                </p>
+            </div>
+
         </div>
     </section>
 
-    <!-- Final Large Landscape Reveal (Symmetric Container) -->
-    <section class="max-w-[2000px] mx-auto overflow-hidden bg-slate-100 mb-20 px-0 lg:px-10">
-        <div class="aspect-[21/9] w-full overflow-hidden border-t border-b border-black/5 bg-black">
-            <img src="https://images.unsplash.com/photo-1517649763962-0c6234278a0b?auto=format&fit=crop&q=80&w=2000" 
-                 class="w-full h-full object-cover grayscale opacity-80 hover:opacity-100 hover:grayscale-0 transition-all duration-[1.5s] ease-in-out cursor-crosshair transform hover:scale-105" 
-                 alt="Mkalala Campus Final Reveal">
+    <!-- CORE VALUES -->
+    <section class="container mx-auto px-6 lg:px-20 mb-24 text-center">
+        <h3 class="text-3xl font-bold mb-10 text-gray-900">Our Core Values</h3>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            
+            <div class="p-6 border rounded-xl hover:shadow-md transition">
+                <h5 class="font-bold text-blue-600 mb-2">Discipline</h5>
+                <p class="text-gray-600 text-sm">We instill strong moral values and self-discipline.</p>
+            </div>
+
+            <div class="p-6 border rounded-xl hover:shadow-md transition">
+                <h5 class="font-bold text-blue-600 mb-2">Excellence</h5>
+                <p class="text-gray-600 text-sm">We strive for the highest standards in academics.</p>
+            </div>
+
+            <div class="p-6 border rounded-xl hover:shadow-md transition">
+                <h5 class="font-bold text-blue-600 mb-2">Integrity</h5>
+                <p class="text-gray-600 text-sm">We promote honesty and accountability.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FINAL IMAGE -->
+    <section class="px-6 lg:px-20 mb-20">
+        <div class="rounded-2xl overflow-hidden shadow-lg">
+            <img src="{% static 'images/Screenshot from 2026-03-20 18-32-18.png' %}"
+                 class="w-full h-[400px] object-cover hover:scale-105 transition duration-700"
+                 alt="School campus">
         </div>
     </section>
 
