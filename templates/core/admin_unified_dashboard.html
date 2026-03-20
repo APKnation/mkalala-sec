@@ -33,11 +33,21 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* School Uniform Color Scheme */
+:root {
+    --school-blue: #1e40af;
+    --school-light-blue: #60a5fa;
+    --school-white: #ffffff;
+    --school-black: #000000;
+    --school-gray: #6b7280;
+    --school-light-gray: #f3f4f6;
+}
+
 /* Active navigation styling */
 .sidebar-item-active {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    color: white;
-    border-left: 4px solid #ef4444;
+    background: linear-gradient(135deg, var(--school-blue) 0%, #2563eb 100%);
+    color: var(--school-white);
+    border-left: 4px solid var(--school-light-blue);
 }
 
 /* Content area styling */
@@ -49,30 +59,125 @@
     display: block;
 }
 
+/* School uniform themed buttons */
+.btn-school-primary {
+    background: linear-gradient(135deg, var(--school-blue) 0%, #2563eb 100%);
+    color: var(--school-white);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-school-primary:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, var(--school-blue) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.btn-school-secondary {
+    background: var(--school-white);
+    color: var(--school-blue);
+    border: 2px solid var(--school-blue);
+    transition: all 0.3s ease;
+}
+
+.btn-school-secondary:hover {
+    background: var(--school-light-blue);
+    color: var(--school-white);
+    transform: translateY(-1px);
+}
+
+/* School uniform cards */
+.card-school {
+    background: var(--school-white);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.card-school:hover {
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.15);
+    transform: translateY(-2px);
+}
+
+/* School uniform headers */
+.header-school {
+    background: linear-gradient(135deg, var(--school-blue) 0%, #2563eb 100%);
+    color: var(--school-white);
+}
+
+/* School uniform sidebar */
+.sidebar-school {
+    background: linear-gradient(180deg, var(--school-blue) 0%, #1e3a8a 100%);
+}
+
+/* School uniform accents */
+.accent-school {
+    color: var(--school-light-blue);
+}
+
+.accent-school-bg {
+    background-color: var(--school-light-blue);
+}
+
+/* School uniform text colors */
+.text-school-blue {
+    color: var(--school-blue);
+}
+
+.text-school-black {
+    color: var(--school-black);
+}
+
+/* School uniform backgrounds */
+.bg-school-light {
+    background-color: var(--school-light-gray);
+}
+
+.bg-school-white {
+    background-color: var(--school-white);
+}
+
+/* School uniform borders */
+.border-school-blue {
+    border-color: var(--school-blue);
+}
+
+/* Override existing purple/red colors with school colors */
+.text-purple-600 { color: var(--school-blue) !important; }
+.bg-purple-600 { background-color: var(--school-blue) !important; }
+.border-purple-600 { border-color: var(--school-blue) !important; }
+.hover\:bg-purple-700:hover { background-color: #1d4ed8 !important; }
+.text-red-500 { color: var(--school-blue) !important; }
+.bg-red-500 { background-color: var(--school-blue) !important; }
+.border-red-500 { border-color: var(--school-blue) !important; }
+</style>
+
 /* Notification badge */
 .notification-badge {
     position: absolute;
     top: -4px;
     right: -4px;
-    background: #ef4444;
-    color: white;
+    background: var(--school-blue);
+    color: var(--school-white);
     border-radius: 50%;
     width: 18px;
     height: 18px;
+    font-size: 10px;
+    font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
+    border: 2px solid var(--school-white);
 }
 
 /* Admin-specific colors */
 .admin-gradient {
-    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    background: linear-gradient(135deg, var(--school-blue) 0%, #2563eb 100%);
 }
 
 .admin-card {
-    border-left: 4px solid #dc2626;
+    border-left: 4px solid var(--school-blue);
 }
 </style>
 {% endblock %}
@@ -412,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminSidebarItems = document.querySelectorAll('.sidebar-item');
     adminSidebarItems.forEach(item => {
         item.addEventListener('mouseenter', function() {
-            this.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+            this.style.backgroundColor = 'rgba(30, 64, 175, 0.1)';
         });
         item.addEventListener('mouseleave', function() {
             if (!this.classList.contains('sidebar-item-active')) {

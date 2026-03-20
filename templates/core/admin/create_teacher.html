@@ -8,26 +8,26 @@
     <!-- Page Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <div class="space-y-1">
-            <h1 class="text-3xl font-display font-bold text-slate-900 leading-none">Create Teacher Account</h1>
-            <p class="text-slate-500 font-medium">Add a new teacher to the system with their account information.</p>
+            <h1 class="text-3xl font-display font-bold text-school-blue leading-none">Create Teacher Account</h1>
+            <p class="text-school-gray font-medium">Add a new teacher to the system with their account information.</p>
         </div>
         <div class="flex items-center space-x-3">
-            <a href="{% url 'admin_unified_dashboard' page='users' %}" class="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors flex items-center">
+            <a href="{% url 'admin_unified_dashboard' page='users' %}" class="btn-school-secondary px-4 py-2 rounded-lg flex items-center">
                 <i class="fas fa-arrow-left mr-2"></i>Back to Users
             </a>
         </div>
     </div>
 
     <!-- Form Card -->
-    <div class="bg-white rounded-lg shadow border border-slate-200">
-        <div class="p-6 border-b border-slate-200">
+    <div class="card-school">
+        <div class="p-6 border-b border-school-light">
             <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 accent-school-bg text-white rounded-xl flex items-center justify-center">
                     <i class="fas fa-chalkboard-teacher text-xl"></i>
                 </div>
                 <div>
-                    <h3 class="font-bold text-slate-900">Teacher Information</h3>
-                    <p class="text-sm text-slate-500">Fill in the details below to create a new teacher account</p>
+                    <h3 class="font-bold text-school-black">Teacher Information</h3>
+                    <p class="text-sm text-school-gray">Fill in the details below to create a new teacher account</p>
                 </div>
             </div>
         </div>
@@ -37,12 +37,12 @@
                 
                 <!-- Account Information -->
                 <div class="space-y-4">
-                    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
-                        <i class="fas fa-user-circle mr-2 text-blue-500"></i>Account Information
+                    <h4 class="text-lg font-semibold text-school-blue border-b border-school-light pb-2 mb-4">
+                        <i class="fas fa-user-circle mr-2 accent-school"></i>Account Information
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Username <span class="text-red-500">*</span>
                             </label>
                             {{ form.username }}
@@ -53,7 +53,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Email <span class="text-red-500">*</span>
                             </label>
                             {{ form.email }}
@@ -67,7 +67,7 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 First Name <span class="text-red-500">*</span>
                             </label>
                             {{ form.first_name }}
@@ -78,7 +78,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Last Name <span class="text-red-500">*</span>
                             </label>
                             {{ form.last_name }}
@@ -92,7 +92,7 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Password <span class="text-red-500">*</span>
                             </label>
                             {{ form.password1 }}
@@ -103,7 +103,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Confirm Password <span class="text-red-500">*</span>
                             </label>
                             {{ form.password2 }}
@@ -118,12 +118,12 @@
 
                 <!-- Professional Information -->
                 <div class="space-y-4">
-                    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
-                        <i class="fas fa-id-badge mr-2 text-purple-500"></i>Professional Information
+                    <h4 class="text-lg font-semibold text-school-blue border-b border-school-light pb-2 mb-4">
+                        <i class="fas fa-id-badge mr-2 accent-school"></i>Professional Information
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.employee_id.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.employee_id.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Employee ID <span class="text-red-500">*</span>
                             </label>
                             {{ form.employee_id }}
@@ -134,7 +134,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.department.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Department <span class="text-red-500">*</span>
                             </label>
                             {{ form.department }}
@@ -149,12 +149,12 @@
 
                 <!-- Contact Information -->
                 <div class="space-y-4">
-                    <h4 class="text-lg font-semibold text-slate-900 border-b border-slate-200 pb-2 mb-4">
-                        <i class="fas fa-address-card mr-2 text-green-500"></i>Contact Information
+                    <h4 class="text-lg font-semibold text-school-blue border-b border-school-light pb-2 mb-4">
+                        <i class="fas fa-address-card mr-2 accent-school"></i>Contact Information
                     </h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Phone Number
                             </label>
                             {{ form.phone }}
@@ -165,7 +165,7 @@
                             {% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-slate-700 mb-2">
+                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-medium text-school-black mb-2">
                                 Address
                             </label>
                             {{ form.address }}
@@ -179,14 +179,14 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-slate-200">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-school-light">
                     <div>
-                        <a href="{% url 'admin_unified_dashboard' page='users' %}" class="inline-flex items-center px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                        <a href="{% url 'admin_unified_dashboard' page='users' %}" class="btn-school-secondary px-6 py-3 rounded-lg flex items-center">
                             <i class="fas fa-times mr-2"></i> Cancel
                         </a>
                     </div>
                     <div>
-                        <button type="submit" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                        <button type="submit" class="btn-school-primary px-6 py-3 rounded-lg flex items-center">
                             <i class="fas fa-user-plus mr-2"></i>Create Teacher Account
                         </button>
                     </div>
