@@ -157,7 +157,7 @@
                 
                 <div class="relative min-h-[400px]">
                 <!-- Step 1: Account Information -->
-                <div class="form-step active" data-step="1">
+                <div class="form-step active" data-step="1" style="display: block !important; opacity: 1 !important; visibility: visible !important; position: relative !important;">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                             <i class="fas fa-user text-red-600"></i>
@@ -196,7 +196,7 @@
                 </div>
 
                 <!-- Step 2: Password Information -->
-                <div class="form-step" data-step="2">
+                <div class="form-step" data-step="2" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                             <i class="fas fa-lock text-red-600"></i>
@@ -228,7 +228,7 @@
                 </div>
 
                 <!-- Step 3: Personal Information -->
-                <div class="form-step" data-step="3">
+                <div class="form-step" data-step="3" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                             <i class="fas fa-id-card text-red-600"></i>
@@ -270,7 +270,7 @@
                 </div>
 
                 <!-- Step 4: Academic Information -->
-                <div class="form-step" data-step="4">
+                <div class="form-step" data-step="4" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                             <i class="fas fa-graduation-cap text-red-600"></i>
@@ -352,21 +352,39 @@
         function showStep(step) {
             console.log('=== Showing step:', step, '===');
             
-            // Remove active class from all steps
+            // Hide all steps with inline styles
             steps.forEach(s => {
                 s.classList.remove('active');
+                // Apply inline styles to hide
+                s.style.display = 'none !important';
+                s.style.opacity = '0 !important';
+                s.style.visibility = 'hidden !important';
+                s.style.position = 'absolute !important';
+                s.style.height = '0 !important';
+                s.style.overflow = 'hidden !important';
+                s.style.pointerEvents = 'none !important';
+                s.style.zIndex = '-1 !important';
                 console.log('Hidden step:', s.dataset.step);
             });
             
             // Remove active from all indicators
             stepIndicators.forEach(indicator => indicator.classList.remove('active'));
             
-            // Add active to current step
+            // Show current step with inline styles
             const currentStepElement = document.querySelector(`.form-step[data-step="${step}"]`);
             const currentIndicator = document.querySelector(`.step-indicator[data-step="${step}"]`);
             
             if (currentStepElement) {
                 currentStepElement.classList.add('active');
+                // Apply inline styles to show
+                currentStepElement.style.display = 'block !important';
+                currentStepElement.style.opacity = '1 !important';
+                currentStepElement.style.visibility = 'visible !important';
+                currentStepElement.style.position = 'relative !important';
+                currentStepElement.style.height = 'auto !important';
+                currentStepElement.style.overflow = 'visible !important';
+                currentStepElement.style.pointerEvents = 'auto !important';
+                currentStepElement.style.zIndex = '1 !important';
                 console.log('✓ Active step:', step);
                 
                 // Log buttons in this step
