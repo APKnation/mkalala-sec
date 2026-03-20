@@ -1,149 +1,411 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Home - Mkalala Secondary School{% endblock %}
+{% block title %}Home — Mkalala Secondary School{% endblock %}
 
 {% block content %}
 
-<section class="relative min-h-[90vh] flex items-center bg-gradient-to-br from-white via-indigo-50 to-white overflow-hidden">
-    <div class="container mx-auto px-6 lg:px-20 py-20">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <div class="space-y-8 animate-fade-in">
-                <span class="inline-block px-4 py-2 bg-indigo-100 text-indigo-700 text-xs font-bold rounded-full uppercase tracking-widest">
-                    Empowering Excellence • Est. 1998
-                </span>
+{# ─── CUSTOM STYLES ─── #}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap');
 
-                <h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 leading-tight">
-                    Your Journey to <br/>
-                    <span class="text-indigo-600 italic">Greatness</span> Starts Here.
-                </h1>
+  .font-display { font-family: 'Playfair Display', Georgia, serif; }
+  .font-body    { font-family: 'DM Sans', system-ui, sans-serif; }
 
-                <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
-                    At Mkalala Secondary School, we don't just teach subjects; we mentor future leaders, innovators, and responsible citizens.
-                </p>
+  /* Grid background texture */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
 
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{% url 'register' %}" class="px-8 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-xl hover:bg-indigo-700 transform hover:-translate-y-1 transition-all text-center">
-                        Enroll for 2026
-                    </a>
-                    <a href="#welcome" class="px-8 py-4 border-2 border-gray-200 text-gray-800 font-bold rounded-xl hover:border-indigo-600 hover:text-indigo-600 transition text-center">
-                        Meet the Principal
-                    </a>
-                </div>
-            </div>
+  /* Scroll indicator animation */
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.4; }
+    50%       { transform: scaleY(0.3); opacity: 0.1; }
+  }
+  .scroll-line { animation: scrollPulse 2s ease-in-out infinite; }
 
-            <div class="relative">
-                <div class="absolute -top-10 -right-10 w-64 h-64 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-                <div class="relative rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-                    <img src="{% static 'images/hero_bg.png' %}" class="w-full h-[550px] object-cover hover:scale-105 transition duration-700">
-                </div>
-            </div>
-        </div>
+  /* Hero text animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up   { animation: fadeUp 0.8s ease forwards; opacity: 0; }
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-250 { animation-delay: 0.25s; }
+  .delay-400 { animation-delay: 0.40s; }
+  .delay-550 { animation-delay: 0.55s; }
+
+  /* Gold border offset frame on principal photo */
+  .img-frame::before {
+    content: '';
+    position: absolute;
+    top: -16px; left: -16px;
+    width: 100%; height: 100%;
+    border: 2px solid rgba(201,168,76,0.45);
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+{# ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ #}
+<section class="relative min-h-screen grid lg:grid-cols-2 bg-[#0d1b2e] overflow-hidden">
+
+  {# Decorative grid lines #}
+  <div class="absolute inset-0 bg-grid pointer-events-none"></div>
+
+  {# ── Left: copy ── #}
+  <div class="relative z-10 flex flex-col justify-center px-8 lg:px-16 xl:px-24 pt-28 pb-20">
+
+    <span class="animate-fade-up flex items-center gap-3 text-[10px] font-medium tracking-[3px] uppercase text-[#c9a84c] mb-7">
+      <span class="block w-8 h-px bg-[#c9a84c]"></span>
+      Empowering Excellence · Est. 1998
+    </span>
+
+    <h1 class="animate-fade-up delay-100 font-display text-5xl md:text-6xl xl:text-7xl font-black leading-[1.05] text-white mb-6">
+      Where Young Minds<br>
+      Become <em class="text-[#c9a84c] not-italic block">Great Leaders.</em>
+    </h1>
+
+    <p class="animate-fade-up delay-250 font-body font-light text-lg text-white/60 leading-relaxed max-w-md mb-12">
+      Since 1998, Mkalala Secondary School has shaped over 2,400 alumni through academic excellence, character, and an unwavering belief in every student's potential.
+    </p>
+
+    <div class="animate-fade-up delay-400 flex flex-wrap gap-4">
+      <a href="{% url 'register' %}"
+         class="px-9 py-4 bg-[#c9a84c] text-[#0d1b2e] text-xs font-medium tracking-widest uppercase rounded-sm hover:bg-[#e8c97a] hover:-translate-y-0.5 transform transition-all duration-200 shadow-lg">
+        Enroll for 2026
+      </a>
+      <a href="#principal"
+         class="px-9 py-4 border border-white/25 text-white text-xs font-light tracking-widest uppercase rounded-sm hover:border-[#c9a84c] hover:text-[#c9a84c] transition-all duration-200">
+        Meet the Principal
+      </a>
     </div>
+
+    {# Scroll indicator #}
+    <div class="absolute bottom-10 left-8 lg:left-16 flex items-center gap-3 text-white/30 text-[10px] tracking-[2px] uppercase">
+      <div class="scroll-line w-px h-12 bg-white/20"></div>
+      Scroll
+    </div>
+  </div>
+
+  {# ── Right: photo ── #}
+  <div class="relative lg:block h-64 lg:h-auto overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80"
+         alt="Students at Mkalala Secondary School"
+         class="absolute inset-0 w-full h-full object-cover brightness-50 saturate-75">
+    {# gradient fade into the navy left panel #}
+    <div class="absolute inset-0 bg-gradient-to-r from-[#0d1b2e] via-transparent to-transparent lg:block hidden"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#0d1b2e] via-transparent to-transparent lg:hidden"></div>
+  </div>
 </section>
 
-<section class="relative z-10 -mt-12">
-    <div class="container mx-auto px-6 lg:px-20">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center border-b-4 border-indigo-600">
-                <div class="text-3xl font-black text-gray-900">98%</div>
-                <div class="text-sm text-gray-500 font-semibold uppercase">Pass Rate</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center border-b-4 border-green-500">
-                <div class="text-3xl font-black text-gray-900">1:25</div>
-                <div class="text-sm text-gray-500 font-semibold uppercase">Teacher Ratio</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center border-b-4 border-yellow-500">
-                <div class="text-3xl font-black text-gray-900">15+</div>
-                <div class="text-sm text-gray-500 font-semibold uppercase">Sports & Clubs</div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-lg text-center border-b-4 border-purple-500">
-                <div class="text-3xl font-black text-gray-900">2k+</div>
-                <div class="text-sm text-gray-500 font-semibold uppercase">Alumni</div>
-            </div>
+{# ═══════════════════════════════════════════════
+   STATS BAR
+═══════════════════════════════════════════════ #}
+<div class="bg-[#c9a84c] grid grid-cols-2 md:grid-cols-4 divide-x divide-[#0d1b2e]/15">
+  {% for stat in stats|default:"" %}{% endfor %}
+  <div class="flex flex-col items-center py-7 px-6 hover:bg-[#0d1b2e]/8 transition-colors cursor-default">
+    <span class="font-display text-4xl font-black text-[#0d1b2e] leading-none">98%</span>
+    <span class="mt-1.5 text-[10px] font-medium tracking-[2px] uppercase text-[#0d1b2e]/60">Pass Rate</span>
+  </div>
+  <div class="flex flex-col items-center py-7 px-6 hover:bg-[#0d1b2e]/8 transition-colors cursor-default">
+    <span class="font-display text-4xl font-black text-[#0d1b2e] leading-none">1:25</span>
+    <span class="mt-1.5 text-[10px] font-medium tracking-[2px] uppercase text-[#0d1b2e]/60">Teacher Ratio</span>
+  </div>
+  <div class="flex flex-col items-center py-7 px-6 hover:bg-[#0d1b2e]/8 transition-colors cursor-default">
+    <span class="font-display text-4xl font-black text-[#0d1b2e] leading-none">15+</span>
+    <span class="mt-1.5 text-[10px] font-medium tracking-[2px] uppercase text-[#0d1b2e]/60">Sports &amp; Clubs</span>
+  </div>
+  <div class="flex flex-col items-center py-7 px-6 hover:bg-[#0d1b2e]/8 transition-colors cursor-default">
+    <span class="font-display text-4xl font-black text-[#0d1b2e] leading-none">2,400+</span>
+    <span class="mt-1.5 text-[10px] font-medium tracking-[2px] uppercase text-[#0d1b2e]/60">Alumni</span>
+  </div>
+</div>
+
+{# ═══════════════════════════════════════════════
+   PRINCIPAL'S MESSAGE
+═══════════════════════════════════════════════ #}
+<section id="principal" class="py-28 bg-[#faf7f2]">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12">
+    <div class="grid lg:grid-cols-[380px_1fr] gap-20 items-center">
+
+      {# Photo with offset gold frame #}
+      <div class="img-frame relative reveal">
+        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80"
+             alt="Mr. John Mkalala — Headmaster"
+             class="relative z-10 w-full aspect-[3/4] object-cover rounded-sm grayscale-[20%]">
+        <div class="absolute -bottom-4 -right-4 z-20 bg-[#c9a84c] text-[#0d1b2e] px-5 py-4 rounded-sm text-center leading-snug">
+          <span class="font-display text-sm font-bold block">Headmaster</span>
+          <span class="font-body text-[10px] tracking-widest uppercase block mt-0.5">since 1998</span>
         </div>
+      </div>
+
+      {# Copy #}
+      <div class="reveal" style="transition-delay:0.15s">
+        <span class="flex items-center gap-3 text-[10px] font-medium tracking-[3px] uppercase text-[#c9a84c] mb-4">
+          <span class="block w-6 h-px bg-[#c9a84c]"></span>
+          From the Headmaster
+        </span>
+
+        <blockquote class="font-display text-2xl md:text-3xl font-bold italic text-[#0d1b2e] leading-snug border-l-[3px] border-[#c9a84c] pl-6 mb-8">
+          "Our mission is to nurture minds that think and hearts that care."
+        </blockquote>
+
+        <p class="font-body font-light text-base text-[#3d4f6a] leading-[1.9] mb-4">
+          Welcome to Mkalala Secondary School. Since our founding, we have remained committed to providing an education that balances academic rigour with character building. We believe every student carries a unique gift — and our role as educators and mentors is to build an environment where that gift can flourish.
+        </p>
+        <p class="font-body font-light text-base text-[#3d4f6a] leading-[1.9] mb-8">
+          Our students do not merely learn subjects; they are prepared for life. They graduate as thinkers, creators, and responsible citizens ready to lead Tanzania and the world forward.
+        </p>
+
+        <div>
+          <p class="font-display text-xl font-bold text-[#0d1b2e]">Mr. John Mkalala</p>
+          <p class="font-body text-[11px] tracking-[2px] uppercase text-[#c9a84c] mt-1">Headmaster &amp; Founder</p>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<section id="welcome" class="py-24 bg-white">
-    <div class="container mx-auto px-6 lg:px-20">
-        <div class="flex flex-col md:flex-row items-center gap-12">
-            <div class="w-full md:w-1/3">
-                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400" class="rounded-2xl shadow-2xl grayscale hover:grayscale-0 transition duration-500">
-            </div>
-            <div class="w-full md:w-2/3 space-y-6">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">"Our mission is to nurture minds that think and hearts that care."</h2>
-                <p class="text-gray-600 text-lg leading-relaxed">
-                    Welcome to Mkalala Secondary School. Since our founding, we have remained committed to providing an education that balances academic rigor with character building. We believe every student has a unique gift, and our role is to provide the environment where that gift can flourish.
-                </p>
-                <div>
-                    <h4 class="font-bold text-gray-900">Mr. John Mkalala</h4>
-                    <p class="text-indigo-600 font-medium">Headmaster & Visionary</p>
-                </div>
-            </div>
-        </div>
+{# ═══════════════════════════════════════════════
+   THE MKALALA EDGE — PILLARS
+═══════════════════════════════════════════════ #}
+<section class="py-28 bg-[#0d1b2e]">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12">
+
+    <div class="mb-16 reveal">
+      <span class="flex items-center gap-3 text-[10px] font-medium tracking-[3px] uppercase text-[#c9a84c] mb-4">
+        <span class="block w-6 h-px bg-[#c9a84c]"></span>
+        The Mkalala Edge
+      </span>
+      <h2 class="font-display text-4xl md:text-5xl font-black text-white leading-tight">
+        What sets us apart
+      </h2>
     </div>
+
+    <div class="grid md:grid-cols-3 gap-px bg-white/5">
+
+      {# Pillar 1 #}
+      <div class="reveal bg-[#162035] p-12 hover:bg-[#1e2f50] transition-colors duration-300 group">
+        <div class="font-display text-6xl font-black text-[#c9a84c]/10 leading-none mb-5">01</div>
+        <div class="w-12 h-12 border border-[#c9a84c]/30 rounded-sm flex items-center justify-center mb-6
+                    group-hover:border-[#c9a84c]/70 transition-colors">
+          <svg class="w-5 h-5 text-[#c9a84c]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Holistic Learning</h3>
+        <p class="font-body font-light text-sm text-white/45 leading-relaxed">
+          We develop critical thinking, problem-solving, and emotional intelligence alongside academics — shaping whole people, not just exam candidates.
+        </p>
+      </div>
+
+      {# Pillar 2 #}
+      <div class="reveal bg-[#162035] p-12 hover:bg-[#1e2f50] transition-colors duration-300 group" style="transition-delay:0.1s">
+        <div class="font-display text-6xl font-black text-[#c9a84c]/10 leading-none mb-5">02</div>
+        <div class="w-12 h-12 border border-[#c9a84c]/30 rounded-sm flex items-center justify-center mb-6
+                    group-hover:border-[#c9a84c]/70 transition-colors">
+          <svg class="w-5 h-5 text-[#c9a84c]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Mentorship Culture</h3>
+        <p class="font-body font-light text-sm text-white/45 leading-relaxed">
+          With a 1:25 teacher ratio, every student receives personal attention. Our staff are mentors who know each child's strengths, struggles, and aspirations.
+        </p>
+      </div>
+
+      {# Pillar 3 #}
+      <div class="reveal bg-[#162035] p-12 hover:bg-[#1e2f50] transition-colors duration-300 group" style="transition-delay:0.2s">
+        <div class="font-display text-6xl font-black text-[#c9a84c]/10 leading-none mb-5">03</div>
+        <div class="w-12 h-12 border border-[#c9a84c]/30 rounded-sm flex items-center justify-center mb-6
+                    group-hover:border-[#c9a84c]/70 transition-colors">
+          <svg class="w-5 h-5 text-[#c9a84c]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="font-display text-xl font-bold text-white mb-3">Proven Results</h3>
+        <p class="font-body font-light text-sm text-white/45 leading-relaxed">
+          98% national pass rate, consistent top-10 regional rankings, and alumni at East Africa's leading universities. Our track record speaks for itself.
+        </p>
+      </div>
+
+    </div>
+  </div>
 </section>
 
-<section class="py-24 bg-gray-50">
-    <div class="container mx-auto px-6 lg:px-20">
-        <div class="text-center max-w-2xl mx-auto mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 italic">The Mkalala Edge</h2>
-            <p class="text-gray-600">What makes our learning environment different from the rest.</p>
-        </div>
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="bg-white p-10 rounded-3xl shadow-sm hover:shadow-2xl transition group">
-                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition">
-                    <svg class="w-8 h-8 text-indigo-600 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                </div>
-                <h4 class="font-bold text-xl text-gray-900 mb-2">Holistic Learning</h4>
-                <p class="text-gray-500">Going beyond textbooks to develop critical thinking and problem-solving skills.</p>
-            </div>
-            </div>
+{# ═══════════════════════════════════════════════
+   SCHOOL LIFE & NEWS
+═══════════════════════════════════════════════ #}
+<section class="py-28 bg-white">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12">
+
+    <div class="flex items-end justify-between mb-14 reveal">
+      <div>
+        <span class="flex items-center gap-3 text-[10px] font-medium tracking-[3px] uppercase text-[#c9a84c] mb-4">
+          <span class="block w-6 h-px bg-[#c9a84c]"></span>
+          School Life
+        </span>
+        <h2 class="font-display text-4xl md:text-5xl font-black text-[#0d1b2e] leading-tight">
+          Latest Updates
+        </h2>
+      </div>
+      <a href="#" class="hidden md:flex items-center gap-2 text-[11px] tracking-[1.5px] uppercase text-[#c9a84c] border-b border-[#c9a84c] pb-0.5 hover:opacity-70 transition-opacity">
+        View all news →
+      </a>
     </div>
+
+    <div class="grid md:grid-cols-3 gap-px bg-gray-100">
+
+      {# Card 1 #}
+      <article class="reveal group bg-white overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 z-10">
+        <div class="relative h-56 overflow-hidden">
+          <img src="{% static 'images/science_fair.png' %}"
+               alt="Science Fair 2026"
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute top-4 left-4 bg-[#c9a84c] text-[#0d1b2e] text-[9px] font-medium tracking-[2px] uppercase px-3 py-1.5">
+            Event
+          </div>
+        </div>
+        <div class="p-7">
+          <p class="font-body text-[10px] tracking-[1.5px] uppercase text-gray-400 mb-2">March 12, 2026</p>
+          <h3 class="font-display text-lg font-bold text-[#0d1b2e] leading-snug mb-3 group-hover:text-[#c9a84c] transition-colors">
+            Science Fair 2026: The Future of AI
+          </h3>
+          <p class="font-body font-light text-sm text-gray-500 leading-relaxed line-clamp-2">
+            Students showcased extraordinary projects — from renewable energy to automated farm bots — drawing admiration from national judges.
+          </p>
+        </div>
+      </article>
+
+      {# Card 2 #}
+      <article class="reveal bg-white overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 z-10 group" style="transition-delay:0.1s">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=700&q=80"
+               alt="Regional Athletics"
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute top-4 left-4 bg-[#0d1b2e] text-white text-[9px] font-medium tracking-[2px] uppercase px-3 py-1.5">
+            Sports
+          </div>
+        </div>
+        <div class="p-7">
+          <p class="font-body text-[10px] tracking-[1.5px] uppercase text-gray-400 mb-2">February 28, 2026</p>
+          <h3 class="font-display text-lg font-bold text-[#0d1b2e] leading-snug mb-3 group-hover:text-[#c9a84c] transition-colors">
+            Regional Athletics Champions — Again
+          </h3>
+          <p class="font-body font-light text-sm text-gray-500 leading-relaxed line-clamp-2">
+            For the third consecutive year, Mkalala takes first place in the Dar es Salaam Regional Athletics Championships with 14 gold medals.
+          </p>
+        </div>
+      </article>
+
+      {# Card 3 #}
+      <article class="reveal bg-white overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 z-10 group" style="transition-delay:0.2s">
+        <div class="relative h-56 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=700&q=80"
+               alt="Admissions Open"
+               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+          <div class="absolute top-4 left-4 bg-green-600 text-white text-[9px] font-medium tracking-[2px] uppercase px-3 py-1.5">
+            Admissions
+          </div>
+        </div>
+        <div class="p-7">
+          <p class="font-body text-[10px] tracking-[1.5px] uppercase text-gray-400 mb-2">January 15, 2026</p>
+          <h3 class="font-display text-lg font-bold text-[#0d1b2e] leading-snug mb-3 group-hover:text-[#c9a84c] transition-colors">
+            2026 Admissions Now Open
+          </h3>
+          <p class="font-body font-light text-sm text-gray-500 leading-relaxed line-clamp-2">
+            Applications for Form One 2026 are now open. Early applicants receive priority interviews and scholarship consideration. Deadline: April 30, 2026.
+          </p>
+        </div>
+      </article>
+
+    </div>
+  </div>
 </section>
 
-<section class="py-24 bg-white">
-    <div class="container mx-auto px-6 lg:px-20">
-        <div class="flex justify-between items-end mb-12">
-            <div>
-                <h2 class="text-4xl font-bold text-gray-900">School Life & Updates</h2>
-                <p class="text-gray-500 mt-2">Catch up with the latest happenings at Mkalala.</p>
-            </div>
-            <a href="#" class="hidden md:block px-6 py-2 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg hover:bg-indigo-600 hover:text-white transition">Read All News</a>
-        </div>
+{# ═══════════════════════════════════════════════
+   ALUMNI TESTIMONIAL
+═══════════════════════════════════════════════ #}
+<section class="py-24 bg-[#0d1b2e] overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6 lg:px-12">
+    <div class="grid lg:grid-cols-[200px_1fr] gap-16 items-center">
 
-        <div class="grid md:grid-cols-3 gap-8">
-            <div class="group cursor-pointer">
-                <div class="relative overflow-hidden rounded-2xl mb-4">
-                    <img src="{% static 'images/science_fair.png' %}" class="h-64 w-full object-cover group-hover:scale-110 transition duration-500">
-                    <div class="absolute top-4 left-4 bg-white px-3 py-1 rounded-md text-xs font-bold text-indigo-600 shadow-sm">EVENT</div>
-                </div>
-                <h4 class="font-bold text-xl group-hover:text-indigo-600 transition">Science Fair 2026: The Future of AI</h4>
-                <p class="text-gray-500 mt-2 line-clamp-2">Our students showcased projects ranging from renewable energy to automated farm bots...</p>
-            </div>
-            </div>
+      <div class="reveal">
+        <span class="flex items-center gap-3 text-[10px] font-medium tracking-[3px] uppercase text-[#c9a84c] mb-4">
+          <span class="block w-6 h-px bg-[#c9a84c]"></span>
+          Alumni Voice
+        </span>
+        <p class="font-display text-[120px] md:text-[160px] font-black text-[#c9a84c]/8 leading-none select-none -mb-10">"</p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.15s">
+        <blockquote class="font-display text-2xl md:text-3xl font-bold italic text-white leading-relaxed mb-8">
+          Mkalala didn't just give me an education. It gave me a worldview, a work ethic, and the confidence to pursue medicine at the University of Dar es Salaam. I owe my career to this school.
+        </blockquote>
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#c9a84c] to-[#e8c97a] flex items-center justify-center font-display text-base font-bold text-[#0d1b2e] flex-shrink-0">
+            AN
+          </div>
+          <div>
+            <p class="font-body font-medium text-white text-sm">Dr. Amina Nyerere</p>
+            <p class="font-body text-[10px] tracking-[1.5px] uppercase text-[#c9a84c] mt-0.5">Class of 2014 · Paediatric Surgeon</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </section>
 
-<section class="py-20 bg-indigo-900 relative overflow-hidden">
-    <div class="absolute inset-0 opacity-10">
-        <svg class="h-full w-full" fill="none" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0 100 L100 0 L100 100 Z" fill="white" />
-        </svg>
+{# ═══════════════════════════════════════════════
+   CTA — ADMISSIONS
+═══════════════════════════════════════════════ #}
+<section class="py-28 bg-[#c9a84c]">
+  <div class="max-w-3xl mx-auto px-6 text-center reveal">
+    <h2 class="font-display text-4xl md:text-6xl font-black text-[#0d1b2e] leading-tight mb-6">
+      Join our community.<br>Shape your future.
+    </h2>
+    <p class="font-body font-light text-lg text-[#0d1b2e]/65 leading-relaxed mb-12 max-w-xl mx-auto">
+      Admissions are open for the 2026 academic year. A limited number of places remain — take the first step today.
+    </p>
+    <div class="flex flex-wrap gap-4 justify-center">
+      <a href="{% url 'register' %}"
+         class="px-12 py-5 bg-[#0d1b2e] text-white text-xs font-medium tracking-widest uppercase rounded-sm hover:bg-[#162035] hover:-translate-y-0.5 transform transition-all duration-200 shadow-xl">
+        Start Application
+      </a>
+      <a href="#"
+         class="px-12 py-5 border-[1.5px] border-[#0d1b2e] text-[#0d1b2e] text-xs font-light tracking-widest uppercase rounded-sm hover:bg-[#0d1b2e]/8 transition-all duration-200">
+        Download Prospectus
+      </a>
     </div>
-    <div class="container mx-auto px-6 text-center relative z-10">
-        <h2 class="text-4xl font-bold text-white mb-6">Ready to join our community?</h2>
-        <p class="text-indigo-200 mb-10 text-lg max-w-2xl mx-auto">Admissions are currently open for the 2026 academic year. Download our prospectus or visit our campus today.</p>
-        <div class="flex flex-wrap justify-center gap-4">
-            <a href="{% url 'register' %}" class="px-10 py-4 bg-white text-indigo-900 font-black rounded-xl hover:bg-indigo-100 transition shadow-2xl">
-                Start Application
-            </a>
-            <button class="px-10 py-4 border-2 border-white text-white font-bold rounded-xl hover:bg-white hover:text-indigo-900 transition">
-                Contact Admissions
-            </button>
-        </div>
-    </div>
+  </div>
 </section>
+
+{# ─── SCROLL REVEAL SCRIPT ─── #}
+<script>
+(function () {
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+</script>
 
 {% endblock %}
