@@ -6,254 +6,145 @@
 {% block content %}
 
 <!-- ================= HERO SECTION ================= -->
-<section class="relative min-h-screen grid lg:grid-cols-2 bg-school-light-blue overflow-hidden">
+<section class="relative bg-white overflow-hidden">
+  <div class="container mx-auto px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
+      
+      <!-- LEFT CONTENT -->
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-school-black leading-tight">
+            Empowering Education for
+            <span class="text-school-blue">Future Leaders</span>
+          </h1>
+          <p class="text-lg text-school-gray leading-relaxed max-w-2xl">
+            Mkalala Secondary School provides quality education with a focus on academic excellence, character development, and preparing students for success in the modern world.
+          </p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="{% url 'register' %}" class="btn-school-primary px-8 py-4 text-center">
+            <i class="fas fa-graduation-cap mr-2"></i>
+            Enroll Now
+          </a>
+          <a href="{% url 'public_about' %}" class="btn-school-secondary px-8 py-4 text-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            Learn More
+          </a>
+        </div>
+      </div>
 
-  <!-- Background grid -->
-  <div class="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
-
-  <!-- LEFT CONTENT -->
-  <div class="relative z-10 flex flex-col justify-center px-8 lg:px-20 xl:px-28 pt-28 pb-20">
-
-    <span class="flex items-center gap-3 text-[10px] font-bold tracking-[3px] uppercase text-school-blue mb-8">
-      <span class="w-10 h-px bg-school-blue"></span>
-      Excellence • Discipline • Future
-    </span>
-
-    <h1 class="font-display text-5xl md:text-6xl xl:text-7xl font-black leading-tight text-school-black mb-6">
-      Shaping Future Leaders<br>
-      Through <span class="text-school-blue">Quality Education</span>
-    </h1>
-
-    <p class="text-school-gray text-lg max-w-xl leading-relaxed mb-10">
-      Mkalala Secondary School is committed to academic excellence, discipline, and innovation — empowering students to succeed in a changing world.
-    </p>
-
-    <div class="flex flex-wrap gap-4">
-      <a href="{% url 'register' %}"
-         class="btn-school-primary px-10 py-4 font-bold tracking-widest uppercase text-xs hover:scale-105 transition">
-        Enroll Now
-      </a>
-
-      <a href="#principal"
-         class="px-10 py-4 border border-school-blue text-school-blue text-xs tracking-widest uppercase hover:bg-school-blue hover:text-white transition">
-        Meet Leadership
-      </a>
-    </div>
-  </div>
-
-  <!-- RIGHT IMAGE -->
-  <div class="relative h-[60vh] lg:h-auto">
-    <img src="{% static 'images/hero_bg.png' %}"
-         class="absolute inset-0 w-full h-full object-cover brightness-75 hover:scale-105 transition duration-700"
-         alt="School Campus">
-
-    <div class="absolute inset-0 bg-gradient-to-l from-[#0d1b2e] via-transparent to-transparent"></div>
-  </div>
-</section>
-
-
-<!-- ================= STATS ================= -->
-<section class="bg-[#0d1b2e] border-t border-white/10">
-  <div class="grid grid-cols-2 md:grid-cols-4 text-center">
-
-    <div class="py-8 hover:bg-[#13233a] transition">
-      <h2 class="text-4xl font-black text-white">98%</h2>
-      <p class="text-[#bae6fd] text-xs uppercase tracking-widest mt-2">Pass Rate</p>
-    </div>
-
-    <div class="py-8 hover:bg-[#13233a] transition">
-      <h2 class="text-4xl font-black text-white">1:25</h2>
-      <p class="text-[#bae6fd] text-xs uppercase tracking-widest mt-2">Teacher Ratio</p>
-    </div>
-
-    <div class="py-8 hover:bg-[#13233a] transition">
-      <h2 class="text-4xl font-black text-white">15+</h2>
-      <p class="text-[#bae6fd] text-xs uppercase tracking-widest mt-2">Clubs & Sports</p>
-    </div>
-
-    <div class="py-8 hover:bg-[#13233a] transition">
-      <h2 class="text-4xl font-black text-white">2400+</h2>
-      <p class="text-[#bae6fd] text-xs uppercase tracking-widest mt-2">Alumni</p>
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ================= PRINCIPAL ================= -->
-<section id="principal" class="py-28 bg-[#f4f8fc]">
-
-  <div class="max-w-6xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-16 items-center">
-
-    <!-- IMAGE -->
-    <div class="relative group">
-      <img src="{% static 'images/Screenshot from 2026-03-20 18-27-19.png' %}"
-           class="w-full rounded-lg shadow-xl object-cover hover:scale-105 transition duration-500"
-           alt="Headmaster">
-
-      <div class="absolute bottom-4 right-4 bg-[#0d1b2e] text-white px-5 py-3 rounded">
-        <p class="text-xs uppercase tracking-widest text-[#bae6fd]">Headmaster</p>
-        <p class="font-bold">Since 1998</p>
+      <!-- RIGHT IMAGE -->
+      <div class="relative">
+        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop" 
+             alt="Students Learning" 
+             class="rounded-2xl shadow-2xl w-full">
+        <div class="absolute -bottom-6 -right-6 bg-school-blue text-white p-6 rounded-2xl shadow-xl">
+          <div class="flex items-center space-x-3">
+            <i class="fas fa-award text-3xl"></i>
+            <div>
+              <p class="text-2xl font-bold">25+ Years</p>
+              <p class="text-sm">of Excellence</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- TEXT -->
-    <div>
-      <h2 class="text-sm uppercase tracking-[4px] text-[#0d1b2e] mb-4 font-bold">
-        From Leadership
+<!-- ================= STATS SECTION ================= -->
+<section class="py-20 bg-school-light">
+  <div class="container mx-auto px-6 lg:px-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      
+      <div class="space-y-2">
+        <div class="text-4xl font-bold text-school-blue">98%</div>
+        <div class="text-sm text-school-gray font-medium">Pass Rate</div>
+      </div>
+      
+      <div class="space-y-2">
+        <div class="text-4xl font-bold text-school-blue">1,200+</div>
+        <div class="text-sm text-school-gray font-medium">Students</div>
+      </div>
+      
+      <div class="space-y-2">
+        <div class="text-4xl font-bold text-school-blue">45+</div>
+        <div class="text-sm text-school-gray font-medium">Teachers</div>
+      </div>
+      
+      <div class="space-y-2">
+        <div class="text-4xl font-bold text-school-blue">15+</div>
+        <div class="text-sm text-school-gray font-medium">Clubs & Sports</div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURES SECTION ================= -->
+<section class="py-20 bg-white">
+  <div class="container mx-auto px-6 lg:px-8">
+    
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-school-black mb-4">
+        Why Choose Mkalala Secondary School
       </h2>
-
-      <h3 class="text-3xl font-black text-[#0d1b2e] mb-6 leading-snug">
-        Education is not just learning — it is transformation.
-      </h3>
-
-      <p class="text-gray-600 leading-relaxed mb-6">
-        At Mkalala Secondary School, we believe education builds character, discipline, and purpose. Our mission is to prepare students not only for exams but for life.
+      <p class="text-lg text-school-gray max-w-3xl mx-auto">
+        We provide a comprehensive educational experience that prepares students for academic success and personal growth.
       </p>
-
-      <p class="text-gray-600 leading-relaxed mb-8">
-        We nurture responsibility, creativity, and leadership in every learner so they can contribute meaningfully to society.
-      </p>
-
-      <p class="font-bold text-[#0d1b2e]">Mr. John Mkalala</p>
-      <p class="text-xs uppercase tracking-widest text-gray-500">Headmaster & Founder</p>
     </div>
-
-  </div>
-</section>
-
-
-<!-- ================= FEATURES ================= -->
-<section class="py-28 bg-[#0d1b2e]">
-
-  <div class="max-w-6xl mx-auto px-6 lg:px-12">
-
-    <h2 class="text-white text-4xl font-black mb-14">
-      What Makes Us Different
-    </h2>
-
-    <div class="grid md:grid-cols-3 gap-6">
-
-      <div class="bg-[#13233a] p-10 rounded-lg hover:bg-[#1a2d4a] transition">
-        <h3 class="text-[#bae6fd] text-2xl font-bold mb-3">Holistic Learning</h3>
-        <p class="text-white/80 text-sm leading-relaxed">
-          We develop both academic excellence and life skills for complete student growth.
-        </p>
-      </div>
-
-      <div class="bg-[#13233a] p-10 rounded-lg hover:bg-[#1a2d4a] transition">
-        <h3 class="text-[#bae6fd] text-2xl font-bold mb-3">Mentorship</h3>
-        <p class="text-white/80 text-sm leading-relaxed">
-          Teachers guide students closely with personal attention and care.
-        </p>
-      </div>
-
-      <div class="bg-[#13233a] p-10 rounded-lg hover:bg-[#1a2d4a] transition">
-        <h3 class="text-[#bae6fd] text-2xl font-bold mb-3">Proven Results</h3>
-        <p class="text-white/80 text-sm leading-relaxed">
-          Consistent top performance with outstanding national results.
-        </p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ================= NEWS ================= -->
-<section class="py-28 bg-white">
-
-  <div class="max-w-6xl mx-auto px-6 lg:px-12">
-
-    <h2 class="text-4xl font-black text-[#0d1b2e] mb-12">
-      Latest School Updates
-    </h2>
 
     <div class="grid md:grid-cols-3 gap-8">
-
-      <!-- CARD -->
-      <div class="group overflow-hidden rounded-lg shadow hover:shadow-2xl transition">
-        <img src="{% static 'images/science_fair.png' %}"
-             class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
-
-        <div class="p-6">
-          <p class="text-xs text-gray-400 uppercase tracking-widest">Event</p>
-          <h3 class="font-bold text-lg text-[#0d1b2e] mt-2 group-hover:text-[#bae6fd]">
-            Science Fair 2026
-          </h3>
-          <p class="text-sm text-gray-500 mt-2">
-            Students showcased innovation in AI and engineering.
-          </p>
+      
+      <div class="text-center space-y-4 p-8 rounded-2xl hover:bg-school-light transition-colors">
+        <div class="w-16 h-16 bg-school-blue text-white rounded-full flex items-center justify-center mx-auto">
+          <i class="fas fa-book text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-school-black">Academic Excellence</h3>
+        <p class="text-school-gray">
+          Rigorous curriculum with experienced teachers dedicated to student success and achievement.
+        </p>
       </div>
 
-      <div class="group overflow-hidden rounded-lg shadow hover:shadow-2xl transition">
-        <img src="{% static 'images/Screenshot from 2026-03-20 18-30-13.png' %}"
-             class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
-
-        <div class="p-6">
-          <p class="text-xs text-gray-400 uppercase tracking-widest">Sports</p>
-          <h3 class="font-bold text-lg text-[#0d1b2e] mt-2 group-hover:text-[#bae6fd]">
-            Regional Champions
-          </h3>
-          <p class="text-sm text-gray-500 mt-2">
-            14 gold medals in athletics competition.
-          </p>
+      <div class="text-center space-y-4 p-8 rounded-2xl hover:bg-school-light transition-colors">
+        <div class="w-16 h-16 bg-school-blue text-white rounded-full flex items-center justify-center mx-auto">
+          <i class="fas fa-users text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-school-black">Character Development</h3>
+        <p class="text-school-gray">
+          Building strong moral values, leadership skills, and responsible citizenship in every student.
+        </p>
       </div>
 
-      <div class="group overflow-hidden rounded-lg shadow hover:shadow-2xl transition">
-        <img src="{% static 'images/Screenshot from 2026-03-20 18-31-21.png' %}"
-             class="h-52 w-full object-cover group-hover:scale-105 transition duration-500">
-
-        <div class="p-6">
-          <p class="text-xs text-gray-400 uppercase tracking-widest">Admissions</p>
-          <h3 class="font-bold text-lg text-[#0d1b2e] mt-2 group-hover:text-[#bae6fd]">
-            Admissions Open
-          </h3>
-          <p class="text-sm text-gray-500 mt-2">
-            Apply now for 2026 intake.
-          </p>
+      <div class="text-center space-y-4 p-8 rounded-2xl hover:bg-school-light transition-colors">
+        <div class="w-16 h-16 bg-school-blue text-white rounded-full flex items-center justify-center mx-auto">
+          <i class="fas fa-running text-2xl"></i>
         </div>
+        <h3 class="text-xl font-bold text-school-black">Sports & Activities</h3>
+        <p class="text-school-gray">
+          Diverse extracurricular programs promoting physical health, teamwork, and personal interests.
+        </p>
       </div>
 
     </div>
   </div>
 </section>
 
-
-<!-- ================= CTA ================= -->
-<section class="py-28 bg-[#bae6fd] text-[#0d1b2e] text-center">
-
-  <div class="max-w-3xl mx-auto px-6">
-
-    <h2 class="text-5xl font-black mb-6">
-      Join Mkalala Today
+<!-- ================= CTA SECTION ================= -->
+<section class="py-20 bg-school-blue text-white">
+  <div class="container mx-auto px-6 lg:px-8 text-center">
+    <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">
+      Ready to Join Our Community?
     </h2>
-
-    <p class="text-lg mb-10 text-[#0d1b2e]/90">
-      Build your future with a school that values excellence and discipline.
+    <p class="text-xl mb-8 max-w-2xl mx-auto opacity-90">
+      Take the first step towards a bright future. Applications for the 2026 academic year are now open.
     </p>
-
-    <a href="{% url 'register' %}"
-       class="px-12 py-5 bg-[#0d1b2e] text-white uppercase tracking-widest text-sm font-bold hover:bg-black transition">
+    <a href="{% url 'register' %}" class="btn-school-secondary bg-white text-school-blue hover:bg-school-light hover:text-school-blue px-8 py-4">
+      <i class="fas fa-paper-plane mr-2"></i>
       Apply Now
     </a>
-
   </div>
 </section>
-
-<!-- ================= SCRIPT ================= -->
-<script>
-(function () {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) e.target.classList.add('visible');
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-})();
-</script>
 
 {% endblock %}
