@@ -36,7 +36,7 @@
 
       <!-- RIGHT IMAGE -->
       <div class="relative">
-        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop" 
+        <img src="{% static 'images/hero_main.jpg' %}" 
              alt="Students Learning" 
              class="rounded-2xl shadow-2xl w-full">
         <div class="absolute -bottom-6 -right-6 bg-school-blue text-white p-6 rounded-2xl shadow-xl">
@@ -126,6 +126,73 @@
           Diverse extracurricular programs promoting physical health, teamwork, and personal interests.
         </p>
       </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= NEWS & EVENTS SECTION ================= -->
+<section class="py-20 bg-school-light">
+  <div class="container mx-auto px-6 lg:px-8">
+    
+    <div class="text-center mb-16">
+      <h2 class="text-3xl md:text-4xl font-display font-bold text-school-black mb-4">
+        Latest News & Events
+      </h2>
+      <p class="text-lg text-school-gray max-w-3xl mx-auto">
+        Stay updated with the latest happenings at Mkalala Secondary School.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <article class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <img src="{% static 'images/news_science.jpg' %}" 
+             alt="Science Exhibition" 
+             class="w-full h-48 object-cover">
+        <div class="p-6">
+          <span class="text-xs font-bold text-school-blue uppercase tracking-wider">Academics</span>
+          <h3 class="text-xl font-bold text-school-black mt-2 mb-3">Science Exhibition 2026</h3>
+          <p class="text-school-gray text-sm leading-relaxed">
+            Our annual science exhibition showcased innovative projects from students across all grade levels.
+          </p>
+          <a href="#" class="inline-flex items-center text-school-blue font-medium mt-4 hover:text-school-blue/80">
+            Read More <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <img src="{% static 'images/news_sports.jpg' %}" 
+             alt="Sports Competition" 
+             class="w-full h-48 object-cover">
+        <div class="p-6">
+          <span class="text-xs font-bold text-school-blue uppercase tracking-wider">Sports</span>
+          <h3 class="text-xl font-bold text-school-black mt-2 mb-3">Regional Sports Championship</h3>
+          <p class="text-school-gray text-sm leading-relaxed">
+            Our basketball team secured first place in the regional tournament, bringing home the championship trophy.
+          </p>
+          <a href="#" class="inline-flex items-center text-school-blue font-medium mt-4 hover:text-school-blue/80">
+            Read More <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+        <img src="{% static 'images/news_admissions.jpg' %}" 
+             alt="Admissions Open" 
+             class="w-full h-48 object-cover">
+        <div class="p-6">
+          <span class="text-xs font-bold text-school-blue uppercase tracking-wider">Announcements</span>
+          <h3 class="text-xl font-bold text-school-black mt-2 mb-3">2026 Admissions Now Open</h3>
+          <p class="text-school-gray text-sm leading-relaxed">
+            Applications for the 2026 academic year are now being accepted. Limited slots available.
+          </p>
+          <a href="{% url 'register' %}" class="inline-flex items-center text-school-blue font-medium mt-4 hover:text-school-blue/80">
+            Apply Now <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+        </div>
+      </article>
 
     </div>
   </div>
