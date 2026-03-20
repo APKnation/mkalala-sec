@@ -158,8 +158,19 @@
             animation-delay: 4s;
         }
         
-        .animation-delay-6000 {
-            animation-delay: 6s;
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .animate-marquee {
+            display: flex;
+            animation: marquee 30s linear infinite;
+        }
+        
+        .pause-on-hover:hover {
+            animation-play-state: paused;
         }
     </style>
     {% block extra_head %}{% endblock %}

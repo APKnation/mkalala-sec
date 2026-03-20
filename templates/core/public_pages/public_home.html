@@ -99,8 +99,18 @@
 </section>
 
 <!-- PILLARS / FEATURES SECTION -->
-<section class="py-24 bg-white relative">
-    <div class="container mx-auto px-4">
+<section class="py-24 bg-white relative overflow-hidden">
+    <!-- Background patterns -->
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-5">
+        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="0.5"/>
+            </pattern>
+            <rect width="100" height="100" fill="url(#grid)" />
+        </svg>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
         <div class="text-center max-w-3xl mx-auto mb-16">
             <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Why Choose Us</h2>
             <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900 mb-6">Building a Foundation for Continuous Excellence</h3>
@@ -223,54 +233,167 @@
 </section>
 
 <!-- TESTIMONIALS SECTION -->
-<section class="py-24 bg-white">
+<section class="py-24 bg-white relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
     <div class="container mx-auto px-4">
-        <div class="max-w-2xl mb-16">
-            <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Student Voices</h2>
-            <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900">What Our Community Says</h3>
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div class="max-w-2xl">
+                <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Student Voices</h2>
+                <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900">What Our Community Says</h3>
+            </div>
+            <div class="flex space-x-2">
+                <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
         </div>
         
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card-premium p-8 relative">
+            <div class="card-premium p-8 relative group">
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-indigo-50 rounded-full -z-10 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
                 <i class="fas fa-quote-left text-indigo-100 text-6xl absolute top-6 right-8"></i>
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://i.pravatar.cc/100?u=4" class="w-14 h-14 rounded-full border-2 border-indigo-100" alt="Avatar">
+                    <img src="https://i.pravatar.cc/100?u=4" class="w-14 h-14 rounded-full border-2 border-indigo-100 ring-4 ring-indigo-50" alt="Avatar">
                     <div>
                         <h5 class="font-bold text-slate-900">Sarah Johnson</h5>
                         <p class="text-xs text-slate-500">Student, Form 4</p>
                     </div>
                 </div>
-                <p class="text-slate-600 italic leading-relaxed">
+                <p class="text-slate-600 italic leading-relaxed relative z-10">
                     "The science program here is amazing. The labs are better than anything I've seen elsewhere, and the teachers truly care about our success."
                 </p>
+                <div class="flex text-amber-400 mt-6 space-x-1">
+                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                </div>
             </div>
             
-            <div class="card-premium p-8 relative">
-                <i class="fas fa-quote-left text-indigo-100 text-6xl absolute top-6 right-8"></i>
+            <div class="card-premium p-8 relative group">
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-blue-50 rounded-full -z-10 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                <i class="fas fa-quote-left text-blue-100 text-6xl absolute top-6 right-8"></i>
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://i.pravatar.cc/100?u=5" class="w-14 h-14 rounded-full border-2 border-indigo-100" alt="Avatar">
+                    <img src="https://i.pravatar.cc/100?u=5" class="w-14 h-14 rounded-full border-2 border-blue-100 ring-4 ring-blue-50" alt="Avatar">
                     <div>
                         <h5 class="font-bold text-slate-900">David M.</h5>
                         <p class="text-xs text-slate-500">Alumnus, Class of 2023</p>
                     </div>
                 </div>
-                <p class="text-slate-600 italic leading-relaxed">
+                <p class="text-slate-600 italic leading-relaxed relative z-10">
                     "Mkalala Sec gave me the confidence to pursue engineering. The leadership skills I learned here are still helping me in university today."
                 </p>
+                <div class="flex text-amber-400 mt-6 space-x-1">
+                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                </div>
             </div>
             
-            <div class="card-premium p-8 relative">
-                <i class="fas fa-quote-left text-indigo-100 text-6xl absolute top-6 right-8"></i>
+            <div class="card-premium p-8 relative group">
+                <div class="absolute -top-4 -right-4 w-24 h-24 bg-green-50 rounded-full -z-10 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                <i class="fas fa-quote-left text-green-100 text-6xl absolute top-6 right-8"></i>
                 <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://i.pravatar.cc/100?u=6" class="w-14 h-14 rounded-full border-2 border-indigo-100" alt="Avatar">
+                    <img src="https://i.pravatar.cc/100?u=6" class="w-14 h-14 rounded-full border-2 border-green-100 ring-4 ring-green-50" alt="Avatar">
                     <div>
                         <h5 class="font-bold text-slate-900">Robert Chen</h5>
                         <p class="text-xs text-slate-500">Parent</p>
                     </div>
                 </div>
-                <p class="text-slate-600 italic leading-relaxed">
+                <p class="text-slate-600 italic leading-relaxed relative z-10">
                     "As a parent, I am impressed by the communication and the focus on character. My son has grown so much in just one year."
                 </p>
+                <div class="flex text-amber-400 mt-6 space-x-1">
+                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CAMPUS LIFE GALLERY -->
+<section class="py-24 bg-slate-900 overflow-hidden">
+    <div class="container mx-auto px-4 mb-16">
+        <div class="text-center max-w-3xl mx-auto">
+            <h2 class="text-blue-400 font-bold tracking-widest uppercase text-sm mb-4">Life at Mkalala</h2>
+            <h3 class="text-3xl md:text-5xl font-display font-bold text-white mb-6">A Vibrant Community of Learning</h3>
+        </div>
+    </div>
+    
+    <div class="flex space-x-6 animate-marquee pause-on-hover px-4">
+        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+        </div>
+        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1544717297-fa154daaf762?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+        </div>
+        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+        </div>
+        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+        </div>
+        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+        </div>
+    </div>
+</section>
+
+<!-- LATEST NEWS & EVENTS -->
+<section class="py-24 bg-white relative">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+            <div class="max-w-2xl">
+                <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Stay Updated</h2>
+                <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900">Latest News & Events</h3>
+            </div>
+            <a href="#" class="text-indigo-600 font-bold flex items-center hover:translate-x-2 transition-transform">
+                Read all articles <i class="fas fa-arrow-right ml-2 text-sm"></i>
+            </a>
+        </div>
+        
+        <div class="grid lg:grid-cols-3 gap-12">
+            <!-- News 1 -->
+            <div class="group cursor-pointer">
+                <div class="relative rounded-3xl overflow-hidden mb-6 aspect-video">
+                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="News">
+                    <div class="absolute top-4 left-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Announcement</div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center text-slate-400 text-xs font-medium uppercase tracking-wider">
+                        <i class="far fa-calendar-alt mr-2"></i> March 15, 2026
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Inter-School Science Fair 2026 Participation</h4>
+                    <p class="text-slate-500 line-clamp-2">Our students will be showcasing their innovative water purification projects at the regional fair next month.</p>
+                </div>
+            </div>
+            
+            <!-- News 2 -->
+            <div class="group cursor-pointer">
+                <div class="relative rounded-3xl overflow-hidden mb-6 aspect-video">
+                    <img src="https://images.unsplash.com/photo-1544717297-fa154daaf762?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="News">
+                    <div class="absolute top-4 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Sports</div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center text-slate-400 text-xs font-medium uppercase tracking-wider">
+                        <i class="far fa-calendar-alt mr-2"></i> March 10, 2026
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Annual Sports Day Highlights & Winners</h4>
+                    <p class="text-slate-500 line-clamp-2">Success across all events! Congratulations to the Blue House for taking the overall championship trophy.</p>
+                </div>
+            </div>
+            
+            <!-- News 3 -->
+            <div class="group cursor-pointer">
+                <div class="relative rounded-3xl overflow-hidden mb-6 aspect-video">
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="News">
+                    <div class="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Campus Life</div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center text-slate-400 text-xs font-medium uppercase tracking-wider">
+                        <i class="far fa-calendar-alt mr-2"></i> March 05, 2026
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">New Digital Library Resources Now Available</h4>
+                    <p class="text-slate-500 line-clamp-2">Access over 5,000 new e-books and research journals directly from our student portal starting today.</p>
+                </div>
             </div>
         </div>
     </div>
