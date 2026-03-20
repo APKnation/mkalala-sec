@@ -3,6 +3,38 @@
 
 {% block title %}Register - Mkalala Secondary School{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Form field styling for Django forms */
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="tel"],
+.register-form input[type="password"],
+.register-form input[type="date"],
+.register-form select {
+    width: 100%;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.register-form input:focus,
+.register-form select:focus {
+    background: white;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.register-form input::placeholder {
+    color: #9ca3af;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
@@ -39,7 +71,7 @@
             {% endif %}
 
             <!-- Registration Form -->
-            <form method="post" class="space-y-6">
+            <form method="post" class="space-y-6 register-form">
                 {% csrf_token %}
 
                 <!-- Account Information -->
@@ -53,28 +85,24 @@
                     
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                            <input type="text" name="first_name" required
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Enter first name">
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                            <input type="text" name="last_name" required
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Enter last name">
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
-                            <input type="text" name="username" required
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Choose username">
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.username.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                            <input type="email" name="email" required
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Enter email">
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -90,16 +118,14 @@
                     
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                            <input type="password" name="password1" required
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Create password">
+                            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.password1.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
-                            <input type="password" name="password2" required
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Confirm password">
+                            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.password2.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -115,31 +141,24 @@
                     
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                            <input type="tel" name="phone"
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Enter phone number">
+                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
-                            <input type="date" name="date_of_birth"
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none">
+                            <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
+                            {{ form.date_of_birth }}
+                            {% if form.date_of_birth.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
                         </div>
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
-                            <input type="text" name="address"
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Enter address">
+                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.address.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-                            <select name="gender"
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none">
-                                <option value="">Select Gender</option>
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                                <option value="O">Other</option>
-                            </select>
+                            <label for="{{ form.gender.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                            {{ form.gender }}
+                            {% if form.gender.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.gender.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                 </div>
@@ -155,16 +174,14 @@
                     
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Previous School</label>
-                            <input type="text" name="previous_school"
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Previous school name">
+                            <label for="{{ form.previous_school.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Previous School</label>
+                            {{ form.previous_school }}
+                            {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.previous_school.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Birth Certificate Number</label>
-                            <input type="text" name="birth_certificate_number"
-                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
-                                placeholder="Birth certificate number">
+                            <label for="{{ form.birth_certificate_number.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Birth Certificate Number</label>
+                            {{ form.birth_certificate_number }}
+                            {% if form.birth_certificate_number.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.birth_certificate_number.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
                 </div>
