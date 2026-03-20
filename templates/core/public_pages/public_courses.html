@@ -6,11 +6,12 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="relative bg-gradient-to-br from-white via-blue-50 to-white min-h-screen flex items-center">
-  <div class="container mx-auto px-6 lg:px-8 text-center">
+<section class="w-full relative bg-gradient-to-br from-white via-blue-50 to-white py-24 lg:py-32">
+
+  <div class="w-full px-6 sm:px-10 lg:px-20">
 
     <!-- CONTENT -->
-    <div class="max-w-4xl mx-auto space-y-8">
+    <div class="max-w-6xl mx-auto text-center space-y-10">
 
       <!-- Title -->
       <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-school-black leading-tight">
@@ -18,51 +19,56 @@
       </h1>
 
       <!-- Description -->
-      <p class="text-xl md:text-2xl text-gray-600 leading-relaxed">
+      <p class="text-xl md:text-2xl text-gray-600 leading-relaxed max-w-5xl mx-auto">
         At Mkalala Secondary School, we offer a balanced curriculum designed to build knowledge, skills, and creativity.
         Our subjects prepare students for national examinations, higher education, and real-world challenges.
       </p>
 
-      <!-- Subject Highlights -->
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-16 text-left">
+    </div>
 
-        <div class="bg-white p-10 rounded-3xl shadow-xl border-2 border-school-light-blue hover:shadow-2xl hover:scale-105 transition-all duration-300">
-          <div class="w-16 h-16 bg-school-blue rounded-2xl flex items-center justify-center mb-6">
-            <i class="fas fa-flask text-white text-2xl"></i>
-          </div>
-          <h3 class="font-black text-school-blue text-2xl mb-4">Science Subjects</h3>
-          <p class="text-gray-700 text-lg leading-relaxed">
-            Physics, Chemistry, Biology, and Basic Mathematics for analytical thinking and problem solving.
-          </p>
+    <!-- SUBJECT CARDS (FULL WIDTH GRID AREA) -->
+    <div class="max-w-7xl mx-auto mt-20 grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
+
+      <!-- Card 1 -->
+      <div class="bg-white p-10 rounded-3xl shadow-xl border-2 border-school-light-blue hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <div class="w-16 h-16 bg-school-blue rounded-2xl flex items-center justify-center mb-6">
+          <i class="fas fa-flask text-white text-2xl"></i>
         </div>
-
-        <div class="bg-white p-10 rounded-3xl shadow-xl border-2 border-school-light-blue hover:shadow-2xl hover:scale-105 transition-all duration-300">
-          <div class="w-16 h-16 bg-school-blue rounded-2xl flex items-center justify-center mb-6">
-            <i class="fas fa-book text-white text-2xl"></i>
-          </div>
-          <h3 class="font-black text-school-blue text-2xl mb-4">Arts & Humanities</h3>
-          <p class="text-gray-700 text-lg leading-relaxed">
-            History, Geography, English, Kiswahili, and Civics to develop communication and understanding of society.
-          </p>
-        </div>
-
-        <div class="bg-white p-10 rounded-3xl shadow-xl border-2 border-school-light-blue hover:shadow-2xl hover:scale-105 transition-all duration-300">
-          <div class="w-16 h-16 bg-school-blue rounded-2xl flex items-center justify-center mb-6">
-            <i class="fas fa-chart-line text-white text-2xl"></i>
-          </div>
-          <h3 class="font-black text-school-blue text-2xl mb-4">Commercial Studies</h3>
-          <p class="text-gray-700 text-lg leading-relaxed">
-            Bookkeeping, Commerce, and Basic Economics to build business and financial literacy skills.
-          </p>
-        </div>
-
+        <h3 class="font-black text-school-blue text-2xl mb-4">Science Subjects</h3>
+        <p class="text-gray-700 text-lg leading-relaxed">
+          Physics, Chemistry, Biology, and Basic Mathematics for analytical thinking and problem solving.
+        </p>
       </div>
 
-      <!-- Bottom Message -->
-      <p class="text-gray-500 text-sm mt-10">
+      <!-- Card 2 -->
+      <div class="bg-white p-10 rounded-3xl shadow-xl border-2 border-school-light-blue hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <div class="w-16 h-16 bg-school-blue rounded-2xl flex items-center justify-center mb-6">
+          <i class="fas fa-book text-white text-2xl"></i>
+        </div>
+        <h3 class="font-black text-school-blue text-2xl mb-4">Arts & Humanities</h3>
+        <p class="text-gray-700 text-lg leading-relaxed">
+          History, Geography, English, Kiswahili, and Civics to develop communication and understanding of society.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="bg-white p-10 rounded-3xl shadow-xl border-2 border-school-light-blue hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
+        <div class="w-16 h-16 bg-school-blue rounded-2xl flex items-center justify-center mb-6">
+          <i class="fas fa-chart-line text-white text-2xl"></i>
+        </div>
+        <h3 class="font-black text-school-blue text-2xl mb-4">Commercial Studies</h3>
+        <p class="text-gray-700 text-lg leading-relaxed">
+          Bookkeeping, Commerce, and Basic Economics to build business and financial literacy skills.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Bottom Message -->
+    <div class="max-w-4xl mx-auto text-center mt-20">
+      <p class="text-gray-500 text-base">
         Our curriculum follows national education standards while focusing on excellence, discipline, and innovation.
       </p>
-
     </div>
 
   </div>
@@ -89,7 +95,7 @@
                 <div class="w-16 h-16 mx-auto bg-school-blue rounded-xl flex items-center justify-center mb-5">
                     <i class="fas fa-graduation-cap text-white text-2xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-school-black">Form 1–4</h3>
+                <h3 class="text-lg font-bold text-school-black">Form 1-4</h3>
                 <p class="text-school-black/60 text-sm">Secondary education curriculum</p>
             </div>
 
