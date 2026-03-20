@@ -11,84 +11,100 @@
 
 <!-- NEW ADVANCED HERO SECTION -->
 <section class="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden bg-slate-50">
-    <!-- Decorative Elements -->
+    <!-- Animated Decorative Elements -->
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    
     <div class="hero-glow top-[-10%] left-[-10%]"></div>
     <div class="hero-glow bottom-[-10%] right-[-10%]"></div>
     
     <div class="container mx-auto px-4 md:px-6 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
             <!-- Hero Text -->
-            <div class="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
+            <div class="space-y-10 animate-in fade-in slide-in-from-left-8 duration-1000">
                 <div class="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-indigo-600 font-semibold text-sm">
                     <span class="relative flex h-2 w-2">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
                     </span>
-                    <span>Admissions Open for 2026</span>
+                    <span>Revolutionizing Education Management</span>
                 </div>
                 
-                <h1 class="text-4xl md:text-5xl lg:text-7xl font-display font-extrabold text-slate-900 leading-[1.1]">
-                    Empowering the <br/>
-                    <span class="text-gradient">Leaders of Tomorrow</span>
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-black text-slate-900 leading-[1.05] tracking-tight">
+                    Where Tradition <br/>
+                    Meets <span class="text-gradient">Digital Genius</span>
                 </h1>
                 
                 <p class="text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed">
-                    Mkalala Secondary School blending traditional values with modern innovation to provide a world-class education for every student.
+                    Mkalala Secondary School provides a state-of-the-art educational ecosystem designed to foster academic excellence, character building, and digital literacy.
                 </p>
+
+                <!-- Core Objectives Chips -->
+                <div class="flex flex-wrap gap-4 pt-2">
+                    <div class="flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <i class="fas fa-microchip text-indigo-500"></i>
+                        <span class="text-sm font-bold text-slate-700">Digital-First</span>
+                    </div>
+                    <div class="flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <i class="fas fa-shield-halved text-blue-500"></i>
+                        <span class="text-sm font-bold text-slate-700">Secure Mgmt</span>
+                    </div>
+                    <div class="flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
+                        <i class="fas fa-chart-line text-green-500"></i>
+                        <span class="text-sm font-bold text-slate-700">Result Driven</span>
+                    </div>
+                </div>
                 
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{% url 'register' %}" class="btn-glow-primary btn-shimmer text-center py-4 px-8 text-lg font-bold rounded-2xl">
-                        Apply Now <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                <div class="flex flex-col sm:flex-row gap-5 pt-4">
+                    <a href="{% url 'register' %}" class="btn-glow-primary btn-shimmer text-center py-5 px-10 text-lg font-bold rounded-2xl shadow-xl shadow-indigo-600/20">
+                        Start Admission <i class="fas fa-arrow-right ml-2 text-sm"></i>
                     </a>
-                    <a href="{% url 'public_about' %}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold py-4 px-8 rounded-2xl transition-all duration-300 text-center flex items-center justify-center">
+                    <a href="{% url 'public_about' %}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold py-5 px-10 rounded-2xl transition-all duration-300 text-center flex items-center justify-center shadow-lg shadow-slate-200/50">
                         <i class="fas fa-play-circle mr-3 text-indigo-500 text-xl"></i>
-                        Virtual Tour
+                        The Mkalala Way
                     </a>
                 </div>
                 
-                <div class="flex items-center space-x-6 pt-4">
+                <div class="flex items-center space-x-6 pt-6 border-t border-slate-200">
                     <div class="flex -space-x-3">
                         <img src="https://i.pravatar.cc/100?u=1" class="w-12 h-12 rounded-full border-4 border-white shadow-sm" alt="Student">
                         <img src="https://i.pravatar.cc/100?u=2" class="w-12 h-12 rounded-full border-4 border-white shadow-sm" alt="Student">
                         <img src="https://i.pravatar.cc/100?u=3" class="w-12 h-12 rounded-full border-4 border-white shadow-sm" alt="Student">
-                        <div class="w-12 h-12 rounded-full bg-indigo-600 border-4 border-white flex items-center justify-center text-white text-xs font-bold shadow-sm">+2k</div>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-slate-900">2,000+ Success Stories</p>
-                        <div class="flex text-amber-400 text-xs">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                            <span class="text-slate-500 ml-2 font-medium">4.9/5 Rating</span>
-                        </div>
+                        <p class="text-sm font-bold text-slate-900">JOIN 2,000+ SUCCESSFUL STUDENTS</p>
+                        <p class="text-xs text-slate-500 font-medium tracking-wide uppercase">Official School Management Portal</p>
                     </div>
                 </div>
             </div>
             
             <!-- Hero Image/Visual -->
             <div class="relative animate-in fade-in zoom-in-95 duration-1000 delay-300">
-                <div class="absolute -inset-4 bg-indigo-500/10 rounded-[3rem] blur-3xl"></div>
-                <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+                <div class="absolute -inset-10 bg-indigo-500/10 rounded-[4rem] blur-[80px]"></div>
+                <div class="relative rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border-[12px] border-white ring-1 ring-slate-100">
                     <img src="{% static 'images/hero_bg.png' %}" alt="School Campus" class="w-full h-auto">
-                    <!-- Overlays -->
-                    <div class="absolute top-6 left-6 glass-card p-4 rounded-2xl shadow-lg border border-white/50 animate-bounce-slow">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-                                <i class="fas fa-check"></i>
+                    <!-- Dynamic Overlays -->
+                    <div class="absolute top-10 left-10 glass-card p-5 rounded-3xl shadow-2xl border border-white/60 animate-bounce-slow">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/40">
+                                <i class="fas fa-check-double"></i>
                             </div>
                             <div>
-                                <p class="text-xs font-bold text-slate-600 uppercase">Success Rate</p>
-                                <p class="text-lg font-black text-slate-900">98.5%</p>
+                                <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Pass Rate</p>
+                                <p class="text-2xl font-black text-slate-900 leading-none">98.5%</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="absolute bottom-6 right-6 glass-card p-4 rounded-2xl shadow-lg border border-white/50 hover-lift">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white">
-                                <i class="fas fa-trophy"></i>
+                    <div class="absolute bottom-10 right-10 glass-card p-5 rounded-3xl shadow-2xl border border-white/60 hover-lift transform transition-all hover:scale-105">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/40">
+                                <i class="fas fa-award"></i>
                             </div>
                             <div>
-                                <p class="text-xs font-bold text-slate-600 uppercase">National Award</p>
-                                <p class="text-sm font-bold text-slate-900">Best Academic Institution</p>
+                                <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Academic Rank</p>
+                                <p class="text-lg font-black text-slate-900 leading-none">Top 1% National</p>
                             </div>
                         </div>
                     </div>
