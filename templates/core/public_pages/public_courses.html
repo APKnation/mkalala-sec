@@ -6,50 +6,56 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="relative bg-white min-h-screen flex items-center">
-  <div class="container mx-auto px-6 lg:px-8">
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
-      
-      <!-- LEFT CONTENT -->
-      <div class="space-y-8">
-        <div class="space-y-6">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black text-school-black leading-tight">
-            Academic Programs for
-            <span class="text-school-blue">Excellence</span>
-          </h1>
-          <p class="text-lg text-school-gray leading-relaxed max-w-2xl">
-            Mkalala Secondary School offers comprehensive academic programs designed to prepare students for success in higher education and beyond.
+<section class="relative bg-gradient-to-br from-white via-blue-50 to-white min-h-screen flex items-center">
+  <div class="container mx-auto px-6 lg:px-8 text-center">
+
+    <!-- CONTENT -->
+    <div class="max-w-4xl mx-auto space-y-8">
+
+      <!-- Title -->
+      <h1 class="text-5xl md:text-6xl lg:text-7xl font-black text-school-black leading-tight">
+        Academic <span class="text-school-blue">Subjects</span>
+      </h1>
+
+      <!-- Description -->
+      <p class="text-xl md:text-2xl text-gray-600 leading-relaxed">
+        At Mkalala Secondary School, we offer a balanced curriculum designed to build knowledge, skills, and creativity.
+        Our subjects prepare students for national examinations, higher education, and real-world challenges.
+      </p>
+
+      <!-- Subject Highlights -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10 text-left">
+
+        <div class="bg-white p-6 rounded-2xl shadow-md border hover:shadow-lg transition">
+          <h3 class="font-bold text-school-blue text-lg mb-2">Science Subjects</h3>
+          <p class="text-gray-600 text-sm">
+            Physics, Chemistry, Biology, and Basic Mathematics for analytical thinking and problem solving.
           </p>
         </div>
-        
-        <div class="flex flex-col sm:flex-row gap-4">
-          <a href="{% url 'register' %}" class="bg-school-blue text-white px-8 py-4 font-bold rounded-xl hover:bg-school-black transition">
-            <i class="fas fa-graduation-cap mr-2"></i>
-            Apply Now
-          </a>
-          <a href="{% url 'public_about' %}" class="border-2 border-school-blue text-school-blue px-8 py-4 font-bold rounded-xl hover:bg-school-blue hover:text-white transition">
-            <i class="fas fa-info-circle mr-2"></i>
-            Learn More
-          </a>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md border hover:shadow-lg transition">
+          <h3 class="font-bold text-school-blue text-lg mb-2">Arts & Humanities</h3>
+          <p class="text-gray-600 text-sm">
+            History, Geography, English, Kiswahili, and Civics to develop communication and understanding of society.
+          </p>
         </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-md border hover:shadow-lg transition">
+          <h3 class="font-bold text-school-blue text-lg mb-2">Commercial Studies</h3>
+          <p class="text-gray-600 text-sm">
+            Bookkeeping, Commerce, and Basic Economics to build business and financial literacy skills.
+          </p>
+        </div>
+
       </div>
 
-      <!-- RIGHT IMAGE -->
-      <div class="relative">
-        <img src="{% static 'images/hero_bg.png' %}" 
-             alt="Academic Programs" 
-             class="rounded-2xl shadow-2xl w-full object-cover hover:scale-105 transition duration-700">
-        <div class="absolute -bottom-6 -right-6 bg-school-blue text-white p-6 rounded-2xl shadow-xl">
-          <div class="flex items-center space-x-3">
-            <i class="fas fa-award text-3xl"></i>
-            <div>
-              <p class="text-2xl font-bold">Quality</p>
-              <p class="text-sm">Education</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Bottom Message -->
+      <p class="text-gray-500 text-sm mt-10">
+        Our curriculum follows national education standards while focusing on excellence, discipline, and innovation.
+      </p>
+
     </div>
+
   </div>
 </section>
 
