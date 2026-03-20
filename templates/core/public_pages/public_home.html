@@ -1,448 +1,115 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Home - Mkalala Secondary School | Excellence in Education{% endblock %}
-
-{% block extra_head %}
-
-{% endblock %}
+{% block title %}Home - Mkalala Secondary School{% endblock %}
 
 {% block content %}
 
-<!-- NEW ADVANCED HERO SECTION -->
-<section class="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden bg-slate-50">
-    <!-- Animated Decorative Elements -->
-    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-    
-    <div class="hero-glow top-[-10%] left-[-10%]"></div>
-    <div class="hero-glow bottom-[-10%] right-[-10%]"></div>
-    
-    <div class="container mx-auto px-4 md:px-6 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
-            <!-- Hero Text -->
-            <div class="space-y-10 animate-in fade-in slide-in-from-left-8 duration-1000">
-                <div class="inline-flex items-center space-x-2 px-4 py-2 bg-indigo-50 border border-indigo-100 rounded-full text-indigo-600 font-semibold text-sm">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                    </span>
-                    <span>Revolutionizing Education Management</span>
-                </div>
-                
-                <h1 class="text-5xl md:text-6xl lg:text-7xl font-display font-black text-slate-900 leading-[1.05] tracking-tight">
-                    Where Tradition <br/>
-                    Meets <span class="text-gradient">Digital Genius</span>
-                </h1>
-                
-                <p class="text-lg md:text-xl text-slate-600 max-w-xl leading-relaxed">
-                    Mkalala Secondary School provides a state-of-the-art educational ecosystem designed to foster academic excellence, character building, and digital literacy.
-                </p>
-
-                <!-- Core Objectives Chips -->
-                <div class="flex flex-wrap gap-4 pt-2">
-                    <div class="flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                        <i class="fas fa-microchip text-indigo-500"></i>
-                        <span class="text-sm font-bold text-slate-700">Digital-First</span>
-                    </div>
-                    <div class="flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                        <i class="fas fa-shield-halved text-blue-500"></i>
-                        <span class="text-sm font-bold text-slate-700">Secure Mgmt</span>
-                    </div>
-                    <div class="flex items-center space-x-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100">
-                        <i class="fas fa-chart-line text-green-500"></i>
-                        <span class="text-sm font-bold text-slate-700">Result Driven</span>
-                    </div>
-                </div>
-                
-                <div class="flex flex-col sm:flex-row gap-5 pt-4">
-                    <a href="{% url 'register' %}" class="btn-glow-primary btn-shimmer text-center py-5 px-10 text-lg font-bold rounded-2xl shadow-xl shadow-indigo-600/20">
-                        Start Admission <i class="fas fa-arrow-right ml-2 text-sm"></i>
-                    </a>
-                    <a href="{% url 'public_about' %}" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold py-5 px-10 rounded-2xl transition-all duration-300 text-center flex items-center justify-center shadow-lg shadow-slate-200/50">
-                        <i class="fas fa-play-circle mr-3 text-indigo-500 text-xl"></i>
-                        The Mkalala Way
-                    </a>
-                </div>
-                
-                <div class="flex items-center space-x-6 pt-6 border-t border-slate-200">
-                    <div class="flex -space-x-3">
-                        <img src="https://i.pravatar.cc/100?u=1" class="w-12 h-12 rounded-full border-4 border-white shadow-sm" alt="Student">
-                        <img src="https://i.pravatar.cc/100?u=2" class="w-12 h-12 rounded-full border-4 border-white shadow-sm" alt="Student">
-                        <img src="https://i.pravatar.cc/100?u=3" class="w-12 h-12 rounded-full border-4 border-white shadow-sm" alt="Student">
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold text-slate-900">JOIN 2,000+ SUCCESSFUL STUDENTS</p>
-                        <p class="text-xs text-slate-500 font-medium tracking-wide uppercase">Official School Management Portal</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Hero Image/Visual -->
-            <div class="relative animate-in fade-in zoom-in-95 duration-1000 delay-300">
-                <div class="absolute -inset-10 bg-indigo-500/10 rounded-[4rem] blur-[80px]"></div>
-                <div class="relative rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] border-[12px] border-white ring-1 ring-slate-100">
-                    <img src="{% static 'images/hero_bg.png' %}" alt="School Campus" class="w-full h-auto">
-                    <!-- Dynamic Overlays -->
-                    <div class="absolute top-10 left-10 glass-card p-5 rounded-3xl shadow-2xl border border-white/60 animate-bounce-slow">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-12 h-12 bg-green-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-green-500/40">
-                                <i class="fas fa-check-double"></i>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Pass Rate</p>
-                                <p class="text-2xl font-black text-slate-900 leading-none">98.5%</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="absolute bottom-10 right-10 glass-card p-5 rounded-3xl shadow-2xl border border-white/60 hover-lift transform transition-all hover:scale-105">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/40">
-                                <i class="fas fa-award"></i>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Academic Rank</p>
-                                <p class="text-lg font-black text-slate-900 leading-none">Top 1% National</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- PILLARS / FEATURES SECTION -->
-<section class="py-24 bg-white relative overflow-hidden">
-    <!-- Background patterns -->
-    <div class="absolute top-0 left-0 w-full h-full pointer-events-none opacity-5">
+<!-- NEW MINIMALIST HERO SECTION (Inspired by Screenshot) -->
+<section style="background-color: #5e7d95;" class="relative pt-32 pb-24 md:pt-48 md:pb-40 overflow-hidden">
+    <!-- Decorative Wave/Line -->
+    <div class="absolute inset-0 opacity-10">
         <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="0.5"/>
-            </pattern>
-            <rect width="100" height="100" fill="url(#grid)" />
+            <path d="M0 50 Q 25 25, 50 50 T 100 50" stroke="white" fill="transparent" stroke-width="0.5"/>
         </svg>
     </div>
-    
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Why Choose Us</h2>
-            <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900 mb-6">Building a Foundation for Continuous Excellence</h3>
-            <p class="text-slate-600 text-lg">We provide an environment where students can discover their passions and achieve their full potential.</p>
-        </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Pillar 1 -->
-            <div class="card-premium p-8 group hover:border-indigo-200">
-                <div class="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                    <i class="fas fa-graduation-cap text-2xl"></i>
-                </div>
-                <h4 class="text-xl font-bold text-slate-900 mb-4">Academic Brilliance</h4>
-                <p class="text-slate-600 mb-6 leading-relaxed">Our curriculum is designed to challenge and inspire students, preparing them for top universities.</p>
-                <a href="#" class="text-indigo-600 font-bold inline-flex items-center group-hover:translate-x-2 transition-transform">
-                    Learn more <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                </a>
-            </div>
-            
-            <!-- Pillar 2 -->
-            <div class="card-premium p-8 group hover:border-blue-200">
-                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                    <i class="fas fa-microscope text-2xl"></i>
-                </div>
-                <h4 class="text-xl font-bold text-slate-900 mb-4">Modern Innovation</h4>
-                <p class="text-slate-600 mb-6 leading-relaxed">State-of-the-art laboratories and digital learning platforms integrated into every subject.</p>
-                <a href="#" class="text-blue-600 font-bold inline-flex items-center group-hover:translate-x-2 transition-transform">
-                    Learn more <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                </a>
-            </div>
-            
-            <!-- Pillar 3 -->
-            <div class="card-premium p-8 group hover:border-green-200">
-                <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
-                    <i class="fas fa-users-viewfinder text-2xl"></i>
-                </div>
-                <h4 class="text-xl font-bold text-slate-900 mb-4">Character First</h4>
-                <p class="text-slate-600 mb-6 leading-relaxed">We focus on developing leadership skills, ethics, and community responsibility in all students.</p>
-                <a href="#" class="text-green-600 font-bold inline-flex items-center group-hover:translate-x-2 transition-transform">
-                    Learn more <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                </a>
-            </div>
-            
-            <!-- Pillar 4 -->
-            <div class="card-premium p-8 group hover:border-purple-200">
-                <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
-                    <i class="fas fa-palette text-2xl"></i>
-                </div>
-                <h4 class="text-xl font-bold text-slate-900 mb-4">Global Discovery</h4>
-                <p class="text-slate-600 mb-6 leading-relaxed">Exposure to diverse arts, sports, and international exchange programs for well-rounded growth.</p>
-                <a href="#" class="text-purple-600 font-bold inline-flex items-center group-hover:translate-x-2 transition-transform">
-                    Learn more <i class="fas fa-chevron-right ml-2 text-xs"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
 
-<!-- PROGRAMS SHOWCASE -->
-<section class="py-24 bg-slate-50">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div class="max-w-2xl">
-                <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Our Curriculum</h2>
-                <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900">Academic Excellence Across Disciplines</h3>
-            </div>
-            <a href="{% url 'public_courses' %}" class="btn-glow-secondary font-bold whitespace-nowrap">View All Subjects</a>
-        </div>
-        
-        <div class="grid lg:grid-cols-3 gap-8">
-            <!-- Program 1 -->
-            <div class="group relative rounded-[2rem] overflow-hidden bg-white shadow-xl hover-lift">
-                <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=800" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700" alt="Science">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
-                <div class="absolute bottom-0 left-0 w-full p-8">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white mb-4">
-                        <i class="fas fa-atom text-xl"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold text-white mb-2">Science & Research</h4>
-                    <p class="text-slate-300 mb-6">Physics, Chemistry, and Biology taught through hands-on experimentation.</p>
-                    <a href="#" class="text-white font-semibold flex items-center group-hover:translate-x-2 transition-transform">
-                        Explore <i class="fas fa-arrow-right ml-2 text-sm"></i>
+    <div class="container mx-auto px-4 lg:px-20 relative z-10">
+        <div class="flex flex-col lg:flex-row items-center justify-between">
+            <!-- Left: Text Content -->
+            <div class="w-full lg:w-1/2 text-white space-y-10">
+                <h1 style="line-height: 1.15;" class="text-5xl md:text-7xl font-display font-bold max-w-lg">
+                    We Craft Future <br/> Creative Leaders
+                </h1>
+                <p class="text-xl text-white/80 max-w-md leading-relaxed">
+                    Developing innovative minds through academic excellence, moral integrity, and digital literacy. Join the next generation of global pioneers.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-5 pt-5">
+                    <a href="{% url 'register' %}" style="background-color: #f7a14e;" class="px-10 py-4 rounded-md text-white font-bold text-lg shadow-xl hover:shadow-orange-500/20 active:scale-95 transition-all text-center">
+                        Get Started
+                    </a>
+                    <a href="{% url 'public_about' %}" style="border: 2px solid rgba(255,255,255,0.3);" class="px-10 py-4 rounded-md text-white font-bold text-lg hover:bg-white/10 active:scale-95 transition-all text-center">
+                        Our Story
                     </a>
                 </div>
             </div>
-            
-            <!-- Program 2 -->
-            <div class="group relative rounded-[2rem] overflow-hidden bg-white shadow-xl hover-lift">
-                <img src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=800" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700" alt="Arts">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
-                <div class="absolute bottom-0 left-0 w-full p-8">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white mb-4">
-                        <i class="fas fa-masks-theater text-xl"></i>
+
+            <!-- Right: Floating School Imagery -->
+            <div class="w-full lg:w-1/2 mt-20 lg:mt-0 relative flex justify-center">
+                <div class="relative group">
+                    <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1200" 
+                         class="w-full max-w-md rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] transform hover:-translate-y-4 transition-transform duration-700" 
+                         alt="Academic Excellence">
+                    <!-- Subtle Glass Card Overlay as decoration -->
+                    <div class="absolute -bottom-10 -left-10 p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl hidden md:block animate-float">
+                        <div class="flex items-center space-x-3 text-white">
+                            <i class="fas fa-certificate text-orange-400"></i>
+                            <span class="font-bold">Top NECTA Performer</span>
+                        </div>
                     </div>
-                    <h4 class="text-2xl font-bold text-white mb-2">Arts & Humanities</h4>
-                    <p class="text-slate-300 mb-6">Fostering critical thinking through literature, history, and creative arts.</p>
-                    <a href="#" class="text-white font-semibold flex items-center group-hover:translate-x-2 transition-transform">
-                        Explore <i class="fas fa-arrow-right ml-2 text-sm"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Program 3 -->
-            <div class="group relative rounded-[2rem] overflow-hidden bg-white shadow-xl hover-lift">
-                <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800" class="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-700" alt="ICT">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
-                <div class="absolute bottom-0 left-0 w-full p-8">
-                    <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center text-white mb-4">
-                        <i class="fas fa-code text-xl"></i>
-                    </div>
-                    <h4 class="text-2xl font-bold text-white mb-2">Digital Technology</h4>
-                    <p class="text-slate-300 mb-6">Mastering computer science and digital literacy for the future economy.</p>
-                    <a href="#" class="text-white font-semibold flex items-center group-hover:translate-x-2 transition-transform">
-                        Explore <i class="fas fa-arrow-right ml-2 text-sm"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- TESTIMONIALS SECTION -->
-<section class="py-24 bg-white relative overflow-hidden">
-    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div class="max-w-2xl">
-                <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Student Voices</h2>
-                <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900">What Our Community Says</h3>
-            </div>
-            <div class="flex space-x-2">
-                <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <button class="w-12 h-12 rounded-full border border-slate-200 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
+<!-- BENEFITS SECTION (Inspired by Screenshot) -->
+<section style="background-color: #ffffff;" class="py-32">
+    <div class="container mx-auto px-4 lg:px-20">
+        <div class="text-center max-w-3xl mx-auto space-y-6 mb-24">
+            <h2 style="color: #0f172a;" class="text-4xl md:text-5xl font-display font-bold">Benefits For You</h2>
+            <p class="text-lg text-slate-500 font-medium">
+                Our curriculum is designed to push limits and redefine how education is shared between learners and communities.
+            </p>
         </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div class="card-premium p-8 relative group">
-                <div class="absolute -top-4 -right-4 w-24 h-24 bg-indigo-50 rounded-full -z-10 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
-                <i class="fas fa-quote-left text-indigo-100 text-6xl absolute top-6 right-8"></i>
-                <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://i.pravatar.cc/100?u=4" class="w-14 h-14 rounded-full border-2 border-indigo-100 ring-4 ring-indigo-50" alt="Avatar">
-                    <div>
-                        <h5 class="font-bold text-slate-900">Sarah Johnson</h5>
-                        <p class="text-xs text-slate-500">Student, Form 4</p>
-                    </div>
+
+        <div class="grid md:grid-cols-3 gap-16">
+            <!-- Feature 1 -->
+            <div class="text-center space-y-8 group">
+                <div style="background-color: #e6f7f5;" class="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-teal-500 transition-transform group-hover:scale-110">
+                    <i class="fas fa-star text-2xl"></i>
                 </div>
-                <p class="text-slate-600 italic leading-relaxed relative z-10">
-                    "The science program here is amazing. The labs are better than anything I've seen elsewhere, and the teachers truly care about our success."
-                </p>
-                <div class="flex text-amber-400 mt-6 space-x-1">
-                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                <div class="space-y-4">
+                    <h4 style="color: #0f172a;" class="text-2xl font-bold">Quality Education</h4>
+                    <p class="text-slate-500 leading-relaxed font-medium">
+                        Focused on high standards and rigorous character development for every student.
+                    </p>
                 </div>
             </div>
-            
-            <div class="card-premium p-8 relative group">
-                <div class="absolute -top-4 -right-4 w-24 h-24 bg-blue-50 rounded-full -z-10 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
-                <i class="fas fa-quote-left text-blue-100 text-6xl absolute top-6 right-8"></i>
-                <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://i.pravatar.cc/100?u=5" class="w-14 h-14 rounded-full border-2 border-blue-100 ring-4 ring-blue-50" alt="Avatar">
-                    <div>
-                        <h5 class="font-bold text-slate-900">David M.</h5>
-                        <p class="text-xs text-slate-500">Alumnus, Class of 2023</p>
-                    </div>
+
+            <!-- Feature 2 -->
+            <div class="text-center space-y-8 group">
+                <div style="background-color: #e6f7f5;" class="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-teal-500 transition-transform group-hover:scale-110">
+                    <i class="fas fa-location-dot text-2xl"></i>
                 </div>
-                <p class="text-slate-600 italic leading-relaxed relative z-10">
-                    "Mkalala Sec gave me the confidence to pursue engineering. The leadership skills I learned here are still helping me in university today."
-                </p>
-                <div class="flex text-amber-400 mt-6 space-x-1">
-                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                <div class="space-y-4">
+                    <h4 style="color: #0f172a;" class="text-2xl font-bold">Modern Campus</h4>
+                    <p class="text-slate-500 leading-relaxed font-medium">
+                        World-class facilities integrated with the latest digital learning technologies.
+                    </p>
                 </div>
             </div>
-            
-            <div class="card-premium p-8 relative group">
-                <div class="absolute -top-4 -right-4 w-24 h-24 bg-green-50 rounded-full -z-10 group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
-                <i class="fas fa-quote-left text-green-100 text-6xl absolute top-6 right-8"></i>
-                <div class="flex items-center space-x-4 mb-6">
-                    <img src="https://i.pravatar.cc/100?u=6" class="w-14 h-14 rounded-full border-2 border-green-100 ring-4 ring-green-50" alt="Avatar">
-                    <div>
-                        <h5 class="font-bold text-slate-900">Robert Chen</h5>
-                        <p class="text-xs text-slate-500">Parent</p>
-                    </div>
+
+            <!-- Feature 3 -->
+            <div class="text-center space-y-8 group">
+                <div style="background-color: #e6f7f5;" class="w-20 h-20 rounded-3xl mx-auto flex items-center justify-center text-teal-500 transition-transform group-hover:scale-110">
+                    <i class="fas fa-headset text-2xl"></i>
                 </div>
-                <p class="text-slate-600 italic leading-relaxed relative z-10">
-                    "As a parent, I am impressed by the communication and the focus on character. My son has grown so much in just one year."
-                </p>
-                <div class="flex text-amber-400 mt-6 space-x-1">
-                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                <div class="space-y-4">
+                    <h4 style="color: #0f172a;" class="text-2xl font-bold">24/7 Support</h4>
+                    <p class="text-slate-500 leading-relaxed font-medium">
+                        Dedicated mentorship and counselor services available round the clock.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CAMPUS LIFE GALLERY -->
-<section class="py-24 bg-slate-900 overflow-hidden">
-    <div class="container mx-auto px-4 mb-16">
-        <div class="text-center max-w-3xl mx-auto">
-            <h2 class="text-blue-400 font-bold tracking-widest uppercase text-sm mb-4">Life at Mkalala</h2>
-            <h3 class="text-3xl md:text-5xl font-display font-bold text-white mb-6">A Vibrant Community of Learning</h3>
-        </div>
-    </div>
-    
-    <div class="flex space-x-6 animate-marquee pause-on-hover px-4">
-        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
-        </div>
-        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1544717297-fa154daaf762?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
-        </div>
-        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
-        </div>
-        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
-        </div>
-        <div class="flex-none w-80 h-96 rounded-3xl overflow-hidden shadow-2xl">
-            <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
-        </div>
-    </div>
-</section>
-
-<!-- LATEST NEWS & EVENTS -->
-<section class="py-24 bg-white relative">
-    <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div class="max-w-2xl">
-                <h2 class="text-indigo-600 font-bold tracking-widest uppercase text-sm mb-4">Stay Updated</h2>
-                <h3 class="text-3xl md:text-5xl font-display font-bold text-slate-900">Latest News & Events</h3>
-            </div>
-            <a href="#" class="text-indigo-600 font-bold flex items-center hover:translate-x-2 transition-transform">
-                Read all articles <i class="fas fa-arrow-right ml-2 text-sm"></i>
-            </a>
-        </div>
-        
-        <div class="grid lg:grid-cols-3 gap-12">
-            <!-- News 1 -->
-            <div class="group cursor-pointer">
-                <div class="relative rounded-3xl overflow-hidden mb-6 aspect-video">
-                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="News">
-                    <div class="absolute top-4 left-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Announcement</div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex items-center text-slate-400 text-xs font-medium uppercase tracking-wider">
-                        <i class="far fa-calendar-alt mr-2"></i> March 15, 2026
-                    </div>
-                    <h4 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Inter-School Science Fair 2026 Participation</h4>
-                    <p class="text-slate-500 line-clamp-2">Our students will be showcasing their innovative water purification projects at the regional fair next month.</p>
-                </div>
-            </div>
-            
-            <!-- News 2 -->
-            <div class="group cursor-pointer">
-                <div class="relative rounded-3xl overflow-hidden mb-6 aspect-video">
-                    <img src="https://images.unsplash.com/photo-1517649763962-0c6234278a0b?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="News">
-                    <div class="absolute top-4 left-4 bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Sports</div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex items-center text-slate-400 text-xs font-medium uppercase tracking-wider">
-                        <i class="far fa-calendar-alt mr-2"></i> March 10, 2026
-                    </div>
-                    <h4 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Annual Sports Day Highlights & Winners</h4>
-                    <p class="text-slate-500 line-clamp-2">Success across all events! Congratulations to the Blue House for taking the overall championship trophy.</p>
-                </div>
-            </div>
-            
-            <!-- News 3 -->
-            <div class="group cursor-pointer">
-                <div class="relative rounded-3xl overflow-hidden mb-6 aspect-video">
-                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="News">
-                    <div class="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase">Campus Life</div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex items-center text-slate-400 text-xs font-medium uppercase tracking-wider">
-                        <i class="far fa-calendar-alt mr-2"></i> March 05, 2026
-                    </div>
-                    <h4 class="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">New Digital Library Resources Now Available</h4>
-                    <p class="text-slate-500 line-clamp-2">Access over 5,000 new e-books and research journals directly from our student portal starting today.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- CALL TO ACTION - NEW ADVANCED -->
-<section class="py-24 relative overflow-hidden bg-[#1e1b4b]" style="background-color: #1e1b4b;">
-    <div class="absolute inset-0 bg-[#1e1b4b]">
-        <img src="https://images.unsplash.com/photo-1541339907198-e08759dfc3ef?auto=format&fit=crop&q=60&w=1600" class="w-full h-full object-cover opacity-20" alt="BG">
-        <div class="absolute inset-0 bg-indigo-900/80 backdrop-blur-sm"></div>
-    </div>
-    
-    <div class="container mx-auto px-4 relative z-10 text-center max-w-4xl">
-        <div class="inline-flex items-center justify-center w-24 h-24 bg-white/10 backdrop-blur-lg rounded-3xl mb-8 border border-white/20 shadow-2xl animate-float">
-            <i class="fas fa-paper-plane text-white text-4xl"></i>
-        </div>
-        <h2 class="text-4xl md:text-6xl font-display font-bold text-white mb-8">Ready to Shape Your Future?</h2>
-        <p class="text-xl md:text-2xl text-slate-100 mb-12 max-w-2xl mx-auto leading-relaxed opacity-90">
-            Join a community of high-achievers. Enrollment is now open for the next academic semester. Don't miss your chance!
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-6 justify-center">
-            <a href="{% url 'register' %}" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xl font-bold py-5 px-10 rounded-2xl shadow-2xl transition-all duration-300 transform hover:scale-110 btn-shimmer">
-                Start Admission Process
-            </a>
-            <a href="{% url 'public_contact' %}" class="bg-white/10 backdrop-blur-md border border-white/30 text-white hover:bg-slate-100 hover:text-indigo-900 text-xl font-bold py-5 px-10 rounded-2xl shadow-xl transition-all duration-300">
-                Contact Admissions
-            </a>
-        </div>
-        
-        <p class="mt-12 text-slate-300 font-medium">
-            <i class="fas fa-info-circle mr-2"></i> Only 15 seats left in Form 1 for 2026.
-        </p>
+<!-- Final Large Landscape Reveal (Symmetric Container) -->
+<section class="max-w-[2000px] mx-auto overflow-hidden bg-white mb-20 px-4 lg:px-20">
+    <div class="aspect-[21/9] w-full overflow-hidden rounded-3xl border border-slate-100 shadow-2xl">
+        <img src="https://images.unsplash.com/photo-1541339907198-e08756ebafe3?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover">
     </div>
 </section>
 
