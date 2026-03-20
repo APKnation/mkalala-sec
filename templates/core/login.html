@@ -1,162 +1,124 @@
 {% extends "core/base.html" %}
 {% load static %}
 
-{% block title %}Login | Mkalala Secondary School{% endblock %}
+{% block title %}Sign In - Mkalala Secondary School{% endblock %}
 
 {% block content %}
 
-<!-- HERO SECTION -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 px-4 sm:px-6 lg:px-8">
-    <!-- Animated Background Elements -->
-    <div class="absolute inset-0">
-        <div class="absolute top-20 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div class="absolute top-40 right-20 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div class="absolute bottom-20 left-1/2 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-        <div class="absolute top-1/3 right-1/4 w-32 h-32 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full opacity-30 animate-float"></div>
-        <div class="absolute bottom-1/3 left-1/4 w-24 h-24 bg-gradient-to-tr from-blue-300 to-blue-500 rounded-full opacity-30 animate-float animation-delay-2000"></div>
-    </div>
-
-    <!-- Login Content -->
-    <div class="relative z-10 max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="backdrop-blur-sm bg-white/10 rounded-2xl p-6 sm:p-8 md:p-12 lg:p-16 shadow-2xl border border-white/20">
-            <!-- Logo -->
-            <div class="text-center mb-6 sm:mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-blue-700 rounded-2xl mb-6 sm:mb-8 shadow-lg transform hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-graduation-cap text-white text-2xl sm:text-3xl"></i>
+<div class="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
+    <!-- Background Animated Blobs -->
+    <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+    <div class="absolute top-0 -right-4 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-5xl mx-auto flex flex-col lg:flex-row bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-slate-100">
+            <!-- Left Side: Visual/Branding -->
+            <div class="lg:w-1/2 relative hidden lg:block">
+                <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1200" alt="Login" class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-900/90 via-indigo-600/50 to-purple-500/30"></div>
+                
+                <div class="absolute inset-0 p-16 flex flex-col justify-between text-white">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-2xl"></i>
+                        </div>
+                        <span class="text-2xl font-display font-black tracking-tight">MKALALA</span>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <h2 class="text-5xl font-display font-bold leading-tight">Empowering <br/><span class="text-indigo-300">Great Minds.</span></h2>
+                        <p class="text-lg text-indigo-100/80 leading-relaxed max-w-sm">
+                            Join a community of thousands of students and teachers shaping the future through excellence and innovation.
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="flex -space-x-3">
+                            <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-white/30" alt="User">
+                            <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-white/30" alt="User">
+                            <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-white/30" alt="User">
+                        </div>
+                        <span class="text-sm font-bold text-indigo-200">TRUSTED BY 2k+ USERS</span>
+                    </div>
                 </div>
-                <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6">
-                    Welcome Back
-                </h1>
-                <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-blue-100 mb-6 sm:mb-8 max-w-3xl mx-auto">
-                    Sign in to access your account
-                </p>
             </div>
-
-            <!-- Messages -->
-            {% if messages %}
-              <div class="mb-6 sm:mb-8 space-y-3 sm:space-y-4">
-                {% for message in messages %}
-                  <div class="p-3 sm:p-4 rounded-lg text-sm border
-                  {% if message.tags == 'error' %}
-                  bg-red-50 text-red-700 border-red-200
-                  {% else %}
-                  bg-blue-50 text-blue-700 border-blue-200
-                  {% endif %}">
-                    {{ message }}
-                  </div>
-                {% endfor %}
-              </div>
-            {% endif %}
-
-            <!-- Login Form -->
-            <form method="post" class="space-y-4 sm:space-y-6">
-              {% csrf_token %}
-
-              <!-- Username -->
-              <div>
-                <label class="block text-sm sm:text-base font-semibold text-blue-100 mb-2">
-                  Username
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4 pointer-events-none">
-                    <i class="fas fa-user text-blue-300 text-sm sm:text-base"></i>
-                  </div>
-                  <input type="text"
-                         name="username"
-                         required
-                         class="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-3 sm:py-4 border border-blue-300/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/10 backdrop-blur-sm text-white placeholder-blue-200 shadow-sm"
-                         placeholder="Enter your username">
+            
+            <!-- Right Side: Login Form -->
+            <div class="lg:w-1/2 p-8 sm:p-12 md:p-16 lg:p-20 flex flex-col justify-center">
+                <div class="space-y-10">
+                    <div class="space-y-4">
+                        <h3 class="text-4xl font-display font-black text-slate-900">Sign In</h3>
+                        <p class="text-slate-500 font-medium">Please enter your credentials to access your portal.</p>
+                    </div>
+                    
+                    <!-- Messages -->
+                    {% if messages %}
+                        <div class="space-y-3">
+                            {% for message in messages %}
+                                <div class="p-4 rounded-2xl flex items-center space-x-3 {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-indigo-50 text-indigo-700 border border-indigo-100{% endif %}">
+                                    <i class="fas {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                                    <span class="text-sm font-bold">{{ message }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <form method="post" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div class="space-y-6">
+                            <!-- Username -->
+                            <div class="space-y-2">
+                                <label class="text-sm font-bold text-slate-700 ml-1">Username</label>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-slate-400">
+                                        <i class="fas fa-user-circle text-xl"></i>
+                                    </div>
+                                    <input type="text" name="username" required
+                                           class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-5 py-4 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 transition-all outline-none text-slate-900 font-medium"
+                                           placeholder="e.g. jdoe_admin">
+                                </div>
+                            </div>
+                            
+                            <!-- Password -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-sm font-bold text-slate-700 ml-1">Password</label>
+                                    <a href="#" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors">Forgot Password?</a>
+                                </div>
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-colors group-focus-within:text-indigo-600 text-slate-400">
+                                        <i class="fas fa-lock text-xl"></i>
+                                    </div>
+                                    <input type="password" name="password" required
+                                           class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl pl-12 pr-5 py-4 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/5 transition-all outline-none text-slate-900 font-medium"
+                                           placeholder="••••••••">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3 ml-1">
+                            <input type="checkbox" id="remember" class="w-5 h-5 rounded-lg border-2 border-slate-200 text-indigo-600 focus:ring-indigo-600 transition-all cursor-pointer">
+                            <label for="remember" class="text-sm font-bold text-slate-500 cursor-pointer select-none">Remember this device</label>
+                        </div>
+                        
+                        <button type="submit" class="w-full btn-glow-primary py-5 rounded-2xl text-lg font-black tracking-wide shadow-xl shadow-indigo-600/20 group transform transition-all hover:scale-[1.02]">
+                            Sign Into Portal
+                            <i class="fas fa-arrow-right-to-bracket ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </form>
+                    
+                    <div class="text-center pt-4">
+                        <p class="text-slate-500 font-medium">
+                            First time here? 
+                            <a href="{% url 'register' %}" class="text-indigo-600 font-black hover:underline decoration-2 underline-offset-4 ml-1">Create an account</a>
+                        </p>
+                    </div>
                 </div>
-              </div>
-
-              <!-- Password -->
-              <div>
-                <label class="block text-sm sm:text-base font-semibold text-blue-100 mb-2">
-                  Password
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-4 pointer-events-none">
-                    <i class="fas fa-lock text-blue-300 text-sm sm:text-base"></i>
-                  </div>
-                  <input type="password"
-                         name="password"
-                         required
-                         class="w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-3 sm:py-4 border border-blue-300/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/10 backdrop-blur-sm text-white placeholder-blue-200 shadow-sm"
-                         placeholder="Enter your password">
-                </div>
-              </div>
-
-              <!-- Remember -->
-              <div class="flex items-center justify-between">
-                <label class="flex items-center text-sm sm:text-base text-blue-100">
-                  <input type="checkbox"
-                         class="mr-2 sm:mr-3 rounded border-blue-300/50 text-blue-300 focus:ring-2 focus:ring-blue-500">
-                  Remember me
-                </label>
-                <a href="#" class="text-sm sm:text-base text-blue-100 hover:text-white transition-colors duration-200">
-                  Forgot password?
-                </a>
-              </div>
-
-              <!-- Button -->
-              <button type="submit"
-                      class="w-full py-3 sm:py-4 rounded-xl text-base sm:text-lg font-bold text-white bg-blue-500 hover:bg-blue-600 transform hover:scale-105 transition-all duration-300 shadow-lg">
-                Sign In
-              </button>
-            </form>
-
-            <!-- Register -->
-            <div class="mt-6 sm:mt-8 text-center">
-              <p class="text-sm sm:text-base text-blue-100">
-                Don't have an account?
-                <a href="{% url 'register' %}" class="text-blue-200 font-semibold hover:text-white transition-colors duration-200">
-                  Sign up
-                </a>
-              </p>
             </div>
         </div>
     </div>
-</section>
-
-<style>
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-}
-
-@keyframes spin-slow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-@keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-    animation: float 6s ease-in-out infinite;
-}
-
-.animate-spin-slow {
-    animation: spin-slow 20s linear infinite;
-}
-
-.animate-bounce-slow {
-    animation: bounce-slow 3s ease-in-out infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-
-.animation-delay-6000 {
-    animation-delay: 6s;
-}
-</style>
+</div>
 
 {% endblock %}
