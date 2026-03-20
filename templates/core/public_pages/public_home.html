@@ -106,7 +106,7 @@
 
   {# ── Right: photo ── #}
   <div class="relative lg:block h-64 lg:h-auto overflow-hidden">
-    <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80"
+    <img src="{% static 'images/hero_prestigious.jpg' %}"
          alt="Students at Mkalala Secondary School"
          class="absolute inset-0 w-full h-full object-cover brightness-50 saturate-75">
     {# gradient fade into the navy left panel #}
@@ -147,7 +147,7 @@
 
       {# Photo with offset gold frame #}
       <div class="img-frame relative reveal">
-        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=600&q=80"
+        <img src="{% static 'images/headmaster.jpg' %}"
              alt="Mr. John Mkalala — Headmaster"
              class="relative z-10 w-full aspect-[3/4] object-cover rounded-sm grayscale-[20%]">
         <div class="absolute -bottom-4 -right-4 z-20 bg-[#c9a84c] text-[#0d1b2e] px-5 py-4 rounded-sm text-center leading-snug">
@@ -297,7 +297,7 @@
       {# Card 2 #}
       <article class="reveal bg-white overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 z-10 group" style="transition-delay:0.1s">
         <div class="relative h-56 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?auto=format&fit=crop&w=700&q=80"
+          <img src="{% static 'images/news_athletics.jpg' %}"
                alt="Regional Athletics"
                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
           <div class="absolute top-4 left-4 bg-[#0d1b2e] text-white text-[9px] font-medium tracking-[2px] uppercase px-3 py-1.5">
@@ -318,7 +318,7 @@
       {# Card 3 #}
       <article class="reveal bg-white overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 z-10 group" style="transition-delay:0.2s">
         <div class="relative h-56 overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=700&q=80"
+          <img src="{% static 'images/news_admissions.jpg' %}"
                alt="Admissions Open"
                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
           <div class="absolute top-4 left-4 bg-green-600 text-white text-[9px] font-medium tracking-[2px] uppercase px-3 py-1.5">
