@@ -5,20 +5,20 @@
 
 {% block content %}
 
-<div class="bg-white text-school-black pt-28">
+<div class="text-school-black pt-28">
 
-<!-- ================= HERO ================= -->
-<section class="container mx-auto px-6 lg:px-20 mb-28">
+<!-- ================= HERO (WHITE) ================= -->
+<section class="bg-white container mx-auto px-6 lg:px-20 py-24 lg:py-32 mb-28">
 
-    <div class="grid md:grid-cols-2 gap-14 items-center">
+    <div class="grid md:grid-cols-2 gap-14 items-center min-h-[550px]">
 
-        <!-- TEXT -->
+        <!-- LEFT CONTENT -->
         <div class="space-y-6">
-            <span class="text-xs font-bold tracking-[3px] uppercase text-school-blue">
+            <span class="text-lg md:text-xl font-bold tracking-[3px] uppercase text-school-blue">
                 About Our School
             </span>
 
-            <h1 class="text-5xl md:text-6xl font-black leading-tight text-school-black">
+            <h1 class="text-5xl md:text-6xl font-black leading-tight">
                 Building a Future Through
                 <span class="text-school-blue">Education</span>
             </h1>
@@ -28,56 +28,148 @@
             </p>
         </div>
 
-        <!-- IMAGE -->
-        <div class="relative">
-            <img src="{% static 'images/hero_main.jpg' %}"
-                 class="rounded-2xl shadow-xl hover:scale-105 transition duration-700"
-                 alt="About School">
+        <!-- RIGHT IMAGE CARD -->
+        <div class="relative group">
 
-            <div class="absolute -bottom-5 -right-5 bg-school-blue text-white px-6 py-4 rounded-xl shadow-lg">
-                <p class="text-xs uppercase tracking-widest text-white/80">Since</p>
-                <p class="text-xl font-bold">1998</p>
+            <div class="relative overflow-hidden rounded-3xl shadow-2xl border-2 border-school-light-blue bg-white">
+                
+                <img src="{% static 'images/Screenshot from 2026-03-20 18-28-43.png' %}"
+                     class="w-full h-[520px] object-cover group-hover:scale-105 transition duration-700">
+
+                <!-- lighter overlay for clearer image -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent"></div>
             </div>
+
+            <!-- floating badge -->
+            <div class="absolute -bottom-6 -right-6 bg-school-blue text-white px-6 py-4 rounded-xl shadow-2xl border border-white/20">
+                <p class="text-xs uppercase tracking-widest text-white/80">Campus Life</p>
+                <p class="text-sm font-bold">Active Learning</p>
+            </div>
+
         </div>
 
     </div>
 </section>
 
+<!-- ================= WHO WE ARE (LIGHT BLUE) ================= -->
+<section class="relative bg-school-light-blue py-24 mb-28 overflow-hidden">
 
-<!-- ================= WHO WE ARE ================= -->
-<section class="container mx-auto px-6 lg:px-20 mb-28">
+  <!-- Background decoration -->
+  <div class="absolute -top-16 -left-16 w-72 h-72 bg-white/40 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-16 -right-16 w-72 h-72 bg-school-blue/20 rounded-full blur-3xl"></div>
 
-    <div class="max-w-3xl">
-        <h2 class="text-3xl font-black text-school-black mb-4">
-            Who We Are
+  <div class="container mx-auto px-6 lg:px-20 relative z-10">
+
+    <div class="grid md:grid-cols-2 gap-14 items-center">
+
+      <!-- TEXT CONTENT -->
+      <div>
+    <span class="text-2xl md:text-3xl italic font-medium tracking-[3px] uppercase text-school-red border-l-4 border-school-blue pl-3">
+  Who We Are
+</span>
+
+        <h2 class="text-4xl md:text-5xl font-black mt-4 mb-6 leading-tight">
+          Shaping Future Leaders Through 
+          <span class="text-school-blue">Quality Education</span>
         </h2>
 
-        <p class="text-school-black/70 text-lg leading-relaxed">
-            Established with a vision to nurture young minds, Mkalala Secondary School has grown into a center of academic excellence. We inspire students through quality teaching, discipline, and innovation.
+        <p class="text-school-black/70 text-lg leading-relaxed mb-6">
+          Mkalala Secondary School was established with a clear vision — to nurture young minds 
+          into confident, responsible, and capable individuals. Over the years, we have grown into 
+          a respected institution known for academic excellence, discipline, and strong moral values.
         </p>
+
+        <p class="text-school-black/70 text-lg leading-relaxed mb-8">
+          Our learning environment encourages curiosity, critical thinking, and innovation. With 
+          dedicated teachers, modern teaching approaches, and a supportive community, we prepare 
+          students not only for examinations but for life beyond the classroom.
+        </p>
+
+        <!-- Highlights -->
+        <div class="grid grid-cols-2 gap-6">
+
+          <div class="bg-white/70 backdrop-blur-md p-5 rounded-xl shadow-sm">
+            <h4 class="text-2xl font-black text-school-blue">10+</h4>
+            <p class="text-sm text-school-black/70">Years of Excellence</p>
+          </div>
+
+          <div class="bg-white/70 backdrop-blur-md p-5 rounded-xl shadow-sm">
+            <h4 class="text-2xl font-black text-school-blue">1000+</h4>
+            <p class="text-sm text-school-black/70">Students Enrolled</p>
+          </div>
+
+          <div class="bg-white/70 backdrop-blur-md p-5 rounded-xl shadow-sm">
+            <h4 class="text-2xl font-black text-school-blue">50+</h4>
+            <p class="text-sm text-school-black/70">Qualified Teachers</p>
+          </div>
+
+          <div class="bg-white/70 backdrop-blur-md p-5 rounded-xl shadow-sm">
+            <h4 class="text-2xl font-black text-school-blue">95%</h4>
+            <p class="text-sm text-school-black/70">Pass Rate</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SIDE CARD / FEATURE -->
+      <div class="relative">
+
+        <div class="bg-white p-10 rounded-3xl shadow-xl border border-school-light-blue">
+
+          <h3 class="text-2xl font-black text-school-blue mb-4">
+            Why Choose Us?
+          </h3>
+
+          <ul class="space-y-4 text-school-black/70">
+
+            <li class="flex items-start gap-3">
+              <span class="text-school-blue font-bold">✓</span>
+              Strong academic performance and results
+            </li>
+
+            <li class="flex items-start gap-3">
+              <span class="text-school-blue font-bold">✓</span>
+              Emphasis on discipline and character development
+            </li>
+
+            <li class="flex items-start gap-3">
+              <span class="text-school-blue font-bold">✓</span>
+              Supportive and experienced teaching staff
+            </li>
+
+            <li class="flex items-start gap-3">
+              <span class="text-school-blue font-bold">✓</span>
+              Safe and engaging learning environment
+            </li>
+
+            <li class="flex items-start gap-3">
+              <span class="text-school-blue font-bold">✓</span>
+              Focus on leadership and life skills
+            </li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
     </div>
 
+  </div>
 </section>
 
-
-<!-- ================= HISTORY ================= -->
-<section class="bg-school-light-blue py-24 mb-28">
+<!-- ================= HISTORY (WHITE) ================= -->
+<section class="bg-white py-24 mb-28">
 
     <div class="container mx-auto px-6 lg:px-20 grid md:grid-cols-2 gap-14 items-center">
 
-        <!-- IMAGE -->
-        <div class="order-2 md:order-1">
+        <div>
             <img src="{% static 'images/history.jpg' %}"
-                 class="rounded-2xl shadow-lg hover:scale-105 transition duration-700"
-                 alt="History">
+                 class="rounded-2xl shadow-lg hover:scale-105 transition duration-700">
         </div>
 
-        <!-- TEXT -->
-        <div class="order-1 md:order-2 space-y-5">
-
-            <h3 class="text-3xl font-black text-school-black">
-                Our History
-            </h3>
+        <div class="space-y-5">
+            <h3 class="text-3xl font-black">Our History</h3>
 
             <p class="text-school-black/70 leading-relaxed">
                 Since its establishment, Mkalala Secondary School has been dedicated to delivering high-quality education to students from diverse backgrounds.
@@ -86,96 +178,126 @@
             <p class="text-school-black/70 leading-relaxed">
                 Over the years, the school has built a strong reputation for academic excellence, discipline, and holistic development.
             </p>
-
         </div>
 
     </div>
 </section>
 
+<!-- ================= MISSION & VISION (BLUE) ================= -->
+<section class="bg-school-blue text-white py-24 mb-28">
 
-<!-- ================= MISSION & VISION ================= -->
-<section class="container mx-auto px-6 lg:px-20 mb-28">
+  <div class="container mx-auto px-6 lg:px-20">
+
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <h2 class="text-3xl md:text-4xl font-black mb-4">
+        Our Mission & Vision
+      </h2>
+      <p class="text-white/80">
+        Guiding principles that shape our commitment to excellence and student success.
+      </p>
+    </div>
 
     <div class="grid md:grid-cols-2 gap-10">
 
-        <div class="bg-white border border-school-light-blue p-10 rounded-2xl hover:shadow-xl transition">
-            <h4 class="text-xl font-bold text-school-blue mb-3">Our Mission</h4>
-            <p class="text-school-black/70">
-                To provide quality education that nurtures intellectual growth, discipline, and creativity.
-            </p>
-        </div>
-
-        <div class="bg-white border border-school-light-blue p-10 rounded-2xl hover:shadow-xl transition">
-            <h4 class="text-xl font-bold text-school-blue mb-3">Our Vision</h4>
-            <p class="text-school-black/70">
-                To be a leading institution in academic excellence and character development in Tanzania.
-            </p>
-        </div>
-
-    </div>
-</section>
-
-
-<!-- ================= CORE VALUES ================= -->
-<section class="bg-school-light-blue py-24 mb-20">
-
-    <div class="container mx-auto px-6 lg:px-20 text-center">
-
-        <h3 class="text-4xl font-black text-school-black mb-4">
-            Our Core Values
-        </h3>
-
-        <p class="text-school-black/70 max-w-2xl mx-auto mb-14">
-            Principles that guide our students toward excellence and leadership.
+      <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/20 hover:bg-white/20 transition">
+        <h4 class="text-xl font-bold mb-3">Our Mission</h4>
+        <p class="text-white/80">
+          To provide quality education that nurtures intellectual growth, discipline, and innovation.
         </p>
+      </div>
 
-        <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/20 hover:bg-white/20 transition">
+        <h4 class="text-xl font-bold mb-3">Our Vision</h4>
+        <p class="text-white/80">
+          To become a leading secondary school in Tanzania recognized for excellence and character development.
+        </p>
+      </div>
 
-            <!-- CARD -->
-            <div class="bg-white p-8 rounded-2xl border hover:bg-school-blue hover:text-white transition group">
-                <h5 class="font-bold text-lg mb-3 group-hover:text-white">Discipline</h5>
-                <p class="text-school-black/70 group-hover:text-white/90 text-sm">
-                    We instill strong moral values and self-control in students.
-                </p>
-            </div>
-
-            <div class="bg-white p-8 rounded-2xl border hover:bg-school-blue hover:text-white transition group">
-                <h5 class="font-bold text-lg mb-3 group-hover:text-white">Excellence</h5>
-                <p class="text-school-black/70 group-hover:text-white/90 text-sm">
-                    We aim for the highest academic and personal standards.
-                </p>
-            </div>
-
-            <div class="bg-white p-8 rounded-2xl border hover:bg-school-blue hover:text-white transition group">
-                <h5 class="font-bold text-lg mb-3 group-hover:text-white">Integrity</h5>
-                <p class="text-school-black/70 group-hover:text-white/90 text-sm">
-                    We promote honesty, responsibility, and ethical behavior.
-                </p>
-            </div>
-
-        </div>
     </div>
+  </div>
 </section>
 
+<!-- ================= CORE VALUES (WHITE) ================= -->
+<section class="bg-white py-24 mb-28">
 
-<!-- ================= FINAL IMAGE ================= -->
-<section class="max-w-4xl mx-auto px-6 mb-20">
+  <div class="container mx-auto px-6 lg:px-20 text-center">
 
-    <div class="relative rounded-2xl overflow-hidden shadow-xl group">
+    <h3 class="text-4xl md:text-5xl font-black mb-4">
+      Our Core Values
+    </h3>
 
-        <img src="{% static 'images/Screenshot from 2026-03-20 18-32-18.png' %}"
-             class="w-full h-[260px] object-cover group-hover:scale-105 transition duration-700"
-             alt="Campus">
+    <p class="text-school-black/60 max-w-2xl mx-auto mb-16">
+      The foundation of our school culture—shaping responsible and high-achieving students.
+    </p>
 
-        <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-center">
-            <div class="text-white">
-                <h4 class="text-2xl font-bold">A Place to Learn & Grow</h4>
-                <p class="text-sm text-white/80 mt-1">Shaping tomorrow’s leaders</p>
+    <div class="grid md:grid-cols-3 gap-10">
+
+      <!-- CARD -->
+      <div class="group flex flex-col justify-between text-left bg-white p-10 rounded-3xl border border-school-light-blue 
+                  shadow-sm hover:bg-school-blue hover:text-white hover:shadow-2xl hover:-translate-y-3 transition duration-300 min-h-[260px]">
+
+        <div>
+          <h5 class="font-black text-2xl mb-4">Discipline</h5>
+          <p class="text-sm leading-relaxed opacity-80">
+            We instill strong moral values and responsibility to help students succeed in life.
+          </p>
+        </div>
+
+        <div class="mt-8 h-1 w-12 bg-school-blue rounded-full group-hover:bg-white group-hover:w-20 transition-all"></div>
+      </div>
+
+      <!-- CARD -->
+      <div class="group flex flex-col justify-between text-left bg-white p-10 rounded-3xl border border-school-light-blue 
+                  shadow-sm hover:bg-school-blue hover:text-white hover:shadow-2xl hover:-translate-y-3 transition duration-300 min-h-[260px]">
+
+        <div>
+          <h5 class="font-black text-2xl mb-4">Excellence</h5>
+          <p class="text-sm leading-relaxed opacity-80">
+            We strive for the highest academic and personal standards in all areas.
+          </p>
+        </div>
+
+        <div class="mt-8 h-1 w-12 bg-school-blue rounded-full group-hover:bg-white group-hover:w-20 transition-all"></div>
+      </div>
+
+      <!-- CARD -->
+      <div class="group flex flex-col justify-between text-left bg-white p-10 rounded-3xl border border-school-light-blue 
+                  shadow-sm hover:bg-school-blue hover:text-white hover:shadow-2xl hover:-translate-y-3 transition duration-300 min-h-[260px]">
+
+        <div>
+          <h5 class="font-black text-2xl mb-4">Integrity</h5>
+          <p class="text-sm leading-relaxed opacity-80">
+            We promote honesty, accountability, and ethical behavior in all aspects of life.
+          </p>
+        </div>
+
+        <div class="mt-8 h-1 w-12 bg-school-blue rounded-full group-hover:bg-white group-hover:w-20 transition-all"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL SECTION (BLACK) ================= -->
+<section class="relative bg-school-light-blue py-24 mb-28 overflow-hidden">
+
+    <div class="max-w-4xl mx-auto px-6">
+
+        <div class="relative rounded-2xl overflow-hidden shadow-xl group">
+
+            <img src="{% static 'images/Screenshot from 2026-03-20 18-32-18.png' %}"
+                 class="w-full h-[260px] object-cover group-hover:scale-105 transition duration-700">
+
+            <div class="absolute inset-0 bg-black/60 flex items-center justify-center text-center">
+                <div class="text-white">
+                    <h4 class="text-2xl font-bold">A Place to Learn & Grow</h4>
+                    <p class="text-sm text-white/80 mt-1">Shaping tomorrow’s leaders</p>
+                </div>
             </div>
+
         </div>
 
     </div>
-
 </section>
 
 </div>
