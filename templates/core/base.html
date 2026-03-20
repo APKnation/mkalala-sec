@@ -21,6 +21,13 @@
         :root {
             --font-display: 'Outfit', sans-serif;
             --font-body: 'Plus Jakarta Sans', sans-serif;
+            /* School Uniform Color Scheme */
+            --school-blue: #1e40af;
+            --school-light-blue: #60a5fa;
+            --school-white: #ffffff;
+            --school-black: #000000;
+            --school-gray: #6b7280;
+            --school-light-gray: #f3f4f6;
         }
         
         body {
@@ -33,8 +40,8 @@
         /* Modern Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #f8fafc; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: var(--school-blue); border-radius: 10px; border: 2px solid #f8fafc; }
+        ::-webkit-scrollbar-thumb:hover { background: #1d4ed8; }
 
         /* Premium Utility Classes */
         .navbar-glass {
@@ -47,6 +54,63 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
         }
+        
+        /* School Uniform Button Classes */
+        .btn-school-primary {
+            background: linear-gradient(135deg, var(--school-blue) 0%, #2563eb 100%);
+            color: var(--school-white);
+            border: none;
+            transition: all 0.3s ease;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-school-primary:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, var(--school-blue) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-school-secondary {
+            background: var(--school-white);
+            color: var(--school-blue);
+            border: 2px solid var(--school-blue);
+            transition: all 0.3s ease;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-school-secondary:hover {
+            background: var(--school-light-blue);
+            color: var(--school-white);
+            transform: translateY(-1px);
+        }
+
+        /* School Uniform Text Classes */
+        .text-school-blue { color: var(--school-blue) !important; }
+        .text-school-light-blue { color: var(--school-light-blue) !important; }
+        .text-school-black { color: var(--school-black) !important; }
+        .bg-school-blue { background-color: var(--school-blue) !important; }
+        .bg-school-light-blue { background-color: var(--school-light-blue) !important; }
+        .bg-school-light { background-color: var(--school-light-gray) !important; }
+        .border-school-blue { border-color: var(--school-blue) !important; }
+
+        /* Override existing colors */
+        .text-purple-600 { color: var(--school-blue) !important; }
+        .bg-purple-600 { background-color: var(--school-blue) !important; }
+        .border-purple-600 { border-color: var(--school-blue) !important; }
+        .hover\:bg-purple-700:hover { background-color: #1d4ed8 !important; }
+        .text-indigo-600 { color: var(--school-blue) !important; }
+        .bg-indigo-600 { background-color: var(--school-blue) !important; }
+        .hover\:bg-indigo-700:hover { background-color: #1d4ed8 !important; }
         
         .btn-glow-primary {
             background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);

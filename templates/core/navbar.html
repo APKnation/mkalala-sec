@@ -4,10 +4,10 @@
     <div class="flex justify-between items-center h-20">
       <div class="flex items-center">
         <a href="{% url 'public_home' %}" class="flex items-center space-x-3 group">
-          <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-300">
+          <div class="w-10 h-10 bg-school-blue rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-300">
             <i class="fas fa-graduation-cap text-xl"></i>
           </div>
-          <span class="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">Mkalala Sec</span>
+          <span class="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-school-blue to-school-light-blue">Mkalala Sec</span>
         </a>
       </div>
       
@@ -17,22 +17,22 @@
         <a href="{% url 'public_courses' %}" class="nav-link">Subjects</a>
         <a href="{% url 'public_contact' %}" class="nav-link">Contact</a>
         
-        <div class="h-6 w-px bg-slate-200 mx-2"></div>
+        <div class="h-6 w-px bg-school-light mx-2"></div>
         
         {% if user.is_authenticated %}
-          <a href="{% url 'dashboard' %}" class="btn-glow-primary ml-4">
+          <a href="{% url 'dashboard' %}" class="btn-school-primary ml-4">
             <i class="fas fa-th-large mr-2"></i>Dashboard
           </a>
-          <a href="{% url 'logout' %}" class="text-slate-500 hover:text-red-600 font-medium px-4 py-2 transition-colors">Logout</a>
+          <a href="{% url 'logout' %}" class="text-school-gray hover:text-school-blue font-medium px-4 py-2 transition-colors">Logout</a>
         {% else %}
           <a href="{% url 'login' %}" class="nav-link">Sign In</a>
-          <a href="{% url 'register' %}" class="btn-glow-primary ml-4">Get Started</a>
+          <a href="{% url 'register' %}" class="btn-school-primary ml-4">Get Started</a>
         {% endif %}
       </div>
       
       <!-- Mobile menu button -->
       <div class="md:hidden flex items-center">
-        <button id="mobile-menu-button" class="text-slate-600 hover:text-blue-600 focus:outline-none p-2 rounded-lg hover:bg-slate-100 transition-colors">
+        <button id="mobile-menu-button" class="text-school-gray hover:text-school-blue focus:outline-none p-2 rounded-lg hover:bg-school-light transition-colors">
           <i class="fas fa-bars text-xl"></i>
         </button>
       </div>
@@ -40,17 +40,17 @@
   </div>
   
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-slate-100 bg-white/95 backdrop-blur-lg animate-in fade-in slide-in-from-top-4 duration-300">
+  <div id="mobile-menu" class="hidden md:hidden border-t border-school-light bg-white/95 backdrop-blur-lg animate-in fade-in slide-in-from-top-4 duration-300">
     <div class="px-4 pt-2 pb-6 space-y-1">
-      <a href="{% url 'public_home' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600">Home</a>
-      <a href="{% url 'public_about' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600">About</a>
-      <a href="{% url 'public_courses' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600">Subjects</a>
+      <a href="{% url 'public_home' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-school-gray hover:bg-school-light hover:text-school-blue">Home</a>
+      <a href="{% url 'public_about' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-school-gray hover:bg-school-light hover:text-school-blue">About</a>
+      <a href="{% url 'public_courses' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-school-gray hover:bg-school-light hover:text-school-blue">Subjects</a>
       {% if user.is_authenticated %}
-        <a href="{% url 'dashboard' %}" class="block px-4 py-3 bg-blue-600 text-white rounded-xl text-base font-medium shadow-lg shadow-blue-600/30 mt-4">Dashboard</a>
-        <a href="{% url 'logout' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-red-600 hover:bg-red-50 mt-2">Logout</a>
+        <a href="{% url 'dashboard' %}" class="block px-4 py-3 bg-school-blue text-white rounded-xl text-base font-medium shadow-lg shadow-blue-600/30 mt-4">Dashboard</a>
+        <a href="{% url 'logout' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-school-blue hover:bg-school-light mt-2">Logout</a>
       {% else %}
-        <a href="{% url 'login' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-slate-700 hover:bg-blue-50">Sign In</a>
-        <a href="{% url 'register' %}" class="block px-4 py-3 bg-blue-600 text-white rounded-xl text-base font-medium shadow-lg shadow-blue-600/30 mt-4">Get Started</a>
+        <a href="{% url 'login' %}" class="block px-4 py-3 rounded-xl text-base font-medium text-school-gray hover:bg-school-light hover:text-school-blue">Sign In</a>
+        <a href="{% url 'register' %}" class="block px-4 py-3 bg-school-blue text-white rounded-xl text-base font-medium shadow-lg shadow-blue-600/30 mt-4">Get Started</a>
       {% endif %}
     </div>
   </div>
