@@ -6,28 +6,28 @@
 {% block content %}
 
 <!-- ================= HERO SECTION ================= -->
-<section class="relative bg-white">
+<section class="relative bg-school-blue text-white">
   <div class="container mx-auto px-6 lg:px-8">
     <div class="grid lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
       
       <!-- LEFT CONTENT -->
       <div class="space-y-8">
         <div class="space-y-6">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-school-black leading-tight">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold leading-tight">
             Empowering Education for
-            <span class="text-school-blue">Future Leaders</span>
+            <span class="text-school-light-blue">Future Leaders</span>
           </h1>
-          <p class="text-lg text-school-gray leading-relaxed max-w-2xl">
+          <p class="text-lg opacity-90 leading-relaxed max-w-2xl">
             Mkalala Secondary School provides quality education with a focus on academic excellence, character development, and preparing students for success in the modern world.
           </p>
         </div>
         
         <div class="flex flex-col sm:flex-row gap-4">
-          <a href="{% url 'register' %}" class="btn-school-primary px-8 py-4 text-center">
+          <a href="{% url 'register' %}" class="bg-white text-school-blue px-8 py-4 text-center font-bold rounded-xl hover:bg-school-light transition">
             <i class="fas fa-graduation-cap mr-2"></i>
             Enroll Now
           </a>
-          <a href="{% url 'public_about' %}" class="btn-school-secondary px-8 py-4 text-center">
+          <a href="{% url 'public_about' %}" class="bg-school-light-blue text-white px-8 py-4 text-center font-bold rounded-xl hover:bg-white hover:text-school-blue transition">
             <i class="fas fa-info-circle mr-2"></i>
             Learn More
           </a>
@@ -39,12 +39,12 @@
         <img src="{% static 'images/hero_main.jpg' %}" 
              alt="Students Learning" 
              class="rounded-2xl shadow-2xl w-full">
-        <div class="absolute -bottom-6 -right-6 bg-school-blue text-white p-6 rounded-2xl shadow-xl">
+        <div class="absolute -bottom-6 -right-6 bg-white text-school-black p-6 rounded-2xl shadow-xl">
           <div class="flex items-center space-x-3">
-            <i class="fas fa-award text-3xl"></i>
+            <i class="fas fa-award text-3xl text-school-blue"></i>
             <div>
-              <p class="text-2xl font-bold">25+ Years</p>
-              <p class="text-sm">of Excellence</p>
+              <p class="text-2xl font-bold text-school-black">25+ Years</p>
+              <p class="text-sm text-school-gray">of Excellence</p>
             </div>
           </div>
         </div>
@@ -54,28 +54,28 @@
 </section>
 
 <!-- ================= STATS SECTION ================= -->
-<section class="py-20 bg-school-light">
+<section class="py-20 bg-school-light-blue">
   <div class="container mx-auto px-6 lg:px-8">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
       
       <div class="space-y-2">
-        <div class="text-4xl font-bold text-school-blue">98%</div>
-        <div class="text-sm text-school-gray font-medium">Pass Rate</div>
+        <div class="text-4xl font-bold text-white">98%</div>
+        <div class="text-sm font-medium opacity-90">Pass Rate</div>
       </div>
       
       <div class="space-y-2">
-        <div class="text-4xl font-bold text-school-blue">1,200+</div>
-        <div class="text-sm text-school-gray font-medium">Students</div>
+        <div class="text-4xl font-bold text-white">1,200+</div>
+        <div class="text-sm font-medium opacity-90">Students</div>
       </div>
       
       <div class="space-y-2">
-        <div class="text-4xl font-bold text-school-blue">45+</div>
-        <div class="text-sm text-school-gray font-medium">Teachers</div>
+        <div class="text-4xl font-bold text-white">45+</div>
+        <div class="text-sm font-medium opacity-90">Teachers</div>
       </div>
       
       <div class="space-y-2">
-        <div class="text-4xl font-bold text-school-blue">15+</div>
-        <div class="text-sm text-school-gray font-medium">Clubs & Sports</div>
+        <div class="text-4xl font-bold text-white">15+</div>
+        <div class="text-sm font-medium opacity-90">Clubs & Sports</div>
       </div>
       
     </div>
