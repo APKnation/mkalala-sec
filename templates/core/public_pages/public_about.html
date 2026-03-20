@@ -5,185 +5,71 @@
 
 {% block content %}
 
-<!-- EXTREME UI: BOLD ABOUT HERO -->
-<section style="background-color: #0f172a; color: white;" class="relative pt-40 pb-32 overflow-hidden">
-    <!-- Sophisticated Color Blends (Inline Gradients) -->
-    <div style="background: radial-gradient(circle, rgba(79, 70, 229, 0.4) 0%, transparent 60%);" class="absolute top-0 right-0 w-[800px] h-[800px] -mr-40 -mt-40 blur-[100px] animate-blob"></div>
-    <div style="background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 60%);" class="absolute bottom-0 left-0 w-[800px] h-[800px] -ml-40 -mb-40 blur-[100px] animate-blob animation-delay-2000"></div>
+<!-- MINIMALIST HIGH-IMPACT ABOUT US DESIGN -->
+<div style="background-color: #ffffff; color: #000000;" class="pt-32">
     
-    <!-- Geometric Pattern Overlay -->
-    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
-    
-    <div class="container mx-auto px-4 relative z-10 text-center">
-        <div class="max-w-4xl mx-auto space-y-12">
-            <!-- Glass Chip -->
-            <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" class="inline-flex items-center space-x-3 px-6 py-3 rounded-full shadow-2xl backdrop-blur-3xl">
-                <div style="background-color: #6366f1;" class="w-2.5 h-2.5 rounded-full animate-pulse shadow-[0_0_15px_rgba(99,102,241,1)]"></div>
-                <span style="color: #c7d2fe;" class="text-xs font-black uppercase tracking-[0.3em]">Established 2005</span>
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 lg:px-20 mb-32">
+        <div class="flex flex-col lg:flex-row items-end lg:space-x-12">
+            <div class="w-full lg:w-1/3 mb-10 lg:mb-0">
+                <h1 style="font-style: italic; font-weight: 900;" class="text-6xl md:text-8xl lg:text-9xl uppercase tracking-tighter leading-none">
+                    ABOUT <br/> US
+                </h1>
             </div>
-            
-            <h1 style="line-height: 1.15;" class="text-6xl md:text-8xl font-display font-black tracking-tight animate-in fade-in slide-in-from-bottom-12 duration-1000">
-                Defining the <br/>
-                <span style="color: #818cf8; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Future of Excellence</span>
-            </h1>
-            
-            <p style="color: rgba(226, 232, 240, 0.85);" class="text-xl md:text-2xl leading-relaxed max-w-3xl mx-auto font-medium opacity-90 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-200">
-                Mkalala Secondary School is a sanctuary of academic rigor and digital innovation, where we cultivate the leaders of the next generation.
+            <div class="w-full lg:w-2/3">
+                <div class="aspect-[16/10] overflow-hidden bg-slate-100 rounded-sm">
+                    <img src="https://images.unsplash.com/photo-1544717297-fa154daaf762?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="School Hero">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Intro Text Section -->
+    <section class="container mx-auto px-4 lg:px-20 mb-40">
+        <div class="max-w-2xl ml-auto">
+            <h2 style="font-weight: 900;" class="text-4xl italic mb-6">Mkalala.</h2>
+            <p class="text-lg leading-relaxed text-slate-800 font-medium opacity-80">
+                Mkalala Secondary School was born out of an idea to inject style and innovation into education by changing how students learn both in and out of the classroom. Since 2005, we have continued to bridge our worlds of tradition and technology with excellence, offering sophisticated, modern, and high-performance education for a digital-first lifestyle.
             </p>
-            
-            <!-- Mouse Scroll Icon -->
-            <div class="pt-8">
-                <div class="w-6 h-10 border-2 border-white/20 rounded-full mx-auto flex justify-center p-1">
-                    <div class="w-1 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
-                </div>
-            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- THE MKALALA STORY: HIGH-END MODULAR UI -->
-<section style="background-color: #ffffff;" class="py-32 relative overflow-hidden">
-    <div class="container mx-auto px-4">
-        <div class="grid lg:grid-cols-2 gap-24 items-center">
-            <!-- Left Side: Visual Composition -->
-            <div class="relative group">
-                <!-- Decorative Frame Dropshadow -->
-                <div style="background: rgba(99, 102, 241, 0.08);" class="absolute -inset-10 rounded-[4rem] group-hover:rotate-1 transition-transform duration-700"></div>
-                
-                <div class="relative rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] ring-1 ring-slate-100">
-                    <img src="https://images.unsplash.com/photo-1544717297-fa154daaf762?auto=format&fit=crop&q=80&w=1400" alt="MKALALA STORY" class="w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000">
-                    
-                    <!-- Floating High-Contrast Quote Card -->
-                    <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px);" class="absolute bottom-10 left-10 right-10 p-10 rounded-[2.5rem] shadow-2xl border border-white/50 animate-float translate-y-4">
-                        <div class="flex items-center space-x-4 mb-4">
-                            <div style="background-color: #4f46e5;" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/30">
-                                <i class="fas fa-quote-left text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 style="color: #0f172a;" class="text-2xl font-black">Our Motto</h4>
-                                <div style="background-color: #ef4444;" class="w-8 h-1 rounded-full mt-1"></div>
-                            </div>
-                        </div>
-                        <p style="color: #475569;" class="text-xl italic font-semibold leading-relaxed">"To the Stars Through Hard Work"</p>
-                    </div>
+    <!-- History Section -->
+    <section class="container mx-auto px-4 lg:px-20 mb-40">
+        <div class="flex flex-col lg:flex-row items-center space-y-12 lg:space-y-0 lg:space-x-20">
+            <div class="w-full lg:w-3/5">
+                <div class="aspect-[16/9] overflow-hidden bg-slate-100 rounded-sm shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1400" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="History">
                 </div>
             </div>
-            
-            <!-- Right Side: Narrative Text -->
-            <div class="space-y-12">
-                <div class="space-y-6">
-                    <div style="display: inline-block; background-color: #eff6ff; border: 1px solid #dbeafe;" class="px-5 py-2 rounded-xl">
-                        <span style="color: #3b82f6;" class="text-xs font-black uppercase tracking-[0.3em]">The Legacy</span>
-                    </div>
-                    <h2 style="color: #0f172a; line-height: 1.25;" class="text-5xl md:text-6xl font-display font-bold">Innovation Since <br/><span style="color: #4f46e5;">the Very Beginning.</span></h2>
-                    <p style="color: #64748b;" class="text-xl leading-relaxed font-medium">
-                        For over 20 years, Mkalala has stood as a bastion of quality education in Tanzania. We specialize in transforming students into world-class thinkers through a blend of strong character and high-performing digital education.
-                    </p>
-                    <p style="color: #64748b;" class="text-xl leading-relaxed font-medium">
-                        Our campus is a futuristic learning environment where cutting-edge software meets centuries-old academic wisdom.
-                    </p>
-                </div>
-                
-                <div class="grid sm:grid-cols-2 gap-8">
-                    <div style="background-color: #f8fafc;" class="p-8 rounded-[2rem] border border-slate-100 group hover:border-indigo-500 transition-colors">
-                        <div style="background-color: #0d9488;" class="w-12 h-12 rounded-xl flex items-center justify-center text-white mb-6 shadow-xl shadow-teal-500/20">
-                            <i class="fas fa-microchip"></i>
-                        </div>
-                        <h4 style="color: #0f172a;" class="text-xl font-bold mb-2">Smart Campus</h4>
-                        <p style="color: #94a3b8;" class="text-sm font-bold">Automated student management and high-tech labs.</p>
-                    </div>
-                    
-                    <div style="background-color: #f8fafc;" class="p-8 rounded-[2rem] border border-slate-100 group hover:border-indigo-500 transition-colors">
-                        <div style="background-color: #4f46e5;" class="w-12 h-12 rounded-xl flex items-center justify-center text-white mb-6 shadow-xl shadow-indigo-500/20">
-                            <i class="fas fa-users-gear"></i>
-                        </div>
-                        <h4 style="color: #0f172a;" class="text-xl font-bold mb-2">Top Faculty</h4>
-                        <p style="color: #94a3b8;" class="text-sm font-bold">Mentors who are leaders in their respective fields.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- MISSION & VISION: DUAL-TONE INTENSITY -->
-<section style="background-color: #1e1b4b;" class="py-32 relative overflow-hidden">
-    <!-- Center Glow -->
-    <div style="background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 60%);" class="absolute inset-0 pointer-events-none"></div>
-    
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="grid lg:grid-cols-2 gap-12">
-            <!-- Mission -->
-            <div style="background-color: #4f46e5; transform: rotate(-1deg);" class="p-16 rounded-[4rem] group hover:rotate-0 hover:scale-[1.02] transition-all duration-500 shadow-2xl hover:shadow-indigo-500/40">
-                <div style="background-color: rgba(255,255,255,0.15);" class="w-20 h-20 rounded-3xl flex items-center justify-center text-white border border-white/30 mb-10 backdrop-blur-md">
-                    <i class="fas fa-crosshairs text-3xl"></i>
-                </div>
-                <h3 class="text-5xl font-display font-black text-white mb-8">Our Mission</h3>
-                <p style="color: #e0e7ff;" class="text-[1.35rem] leading-[1.8] font-bold opacity-90">
-                    To integrate world-class academic standards with the digital literacy required to produce ethical and innovative global leaders.
+            <div class="w-full lg:w-2/5 space-y-6">
+                <h3 style="font-weight: 900;" class="text-2xl uppercase tracking-widest">HISTORY OF THE SCHOOL</h3>
+                <p class="text-base leading-relaxed text-slate-700">
+                    Mkalala first launched in the summer of 2005, in Iringa and Tanzania simultaneously. Our founder had a desire to challenge conventions and an idea to modernize the educational landscape, leaving the stale and the conservative behind.
                 </p>
-            </div>
-            
-            <!-- Vision -->
-            <div style="background-color: #020617; border: 2px solid #3730a3; transform: rotate(1deg);" class="p-16 rounded-[4rem] group hover:rotate-0 hover:scale-[1.02] transition-all duration-500 shadow-2xl ring-1 ring-white/10">
-                <div style="background-color: #4f46e5;" class="w-20 h-20 rounded-3xl flex items-center justify-center text-white mb-10 shadow-2xl shadow-indigo-600/30">
-                    <i class="fas fa-eye text-3xl"></i>
-                </div>
-                <h3 class="text-5xl font-display font-black text-white mb-8">Our Vision</h3>
-                <p style="color: #94a3b8;" class="text-[1.35rem] leading-[1.8] font-bold">
-                    To become the premier beacon of academic excellence in East Africa, known for producing character-driven innovators.
+                <p class="text-base leading-relaxed text-slate-700">
+                    Today, Mkalala has grown into a premier education brand with a nationwide presence, offering innovative pieces within STEM, Arts, Athletics, and more.
                 </p>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CORE STANDARDS: VIBRANT COLOR MIXTURE -->
-<section style="background-color: #f8fafc;" class="py-32">
-    <div class="container mx-auto px-4">
-        <div class="text-center max-w-4xl mx-auto space-y-4 mb-24">
-            <span style="color: #4f46e5;" class="text-xs font-black uppercase tracking-[0.4em]">The Mkalala DNA</span>
-            <h2 style="color: #0f172a;" class="text-5xl md:text-6xl font-display font-bold">Our Founding Core Standards</h2>
+    <!-- Our Promise Section -->
+    <section class="container mx-auto px-4 lg:px-20 mb-40 text-center">
+        <div class="max-w-4xl mx-auto space-y-8">
+            <h3 style="font-weight: 900;" class="text-3xl uppercase tracking-widest">OUR PROMISE</h3>
+            <p class="text-lg leading-relaxed text-slate-800 font-medium">
+                We always leave a mark through the actions we take. By being bold and daring to do things differently, we push limits and redefine how knowledge is shared. We first introduced fashion into sports and then fused education into technology. It started with passion, but the bridge is much more than that — it's a connection between learners, educators, parents, and communities. Excellence is at the core of everything we do.
+            </p>
         </div>
-        
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Card 1: Blue -->
-            <div style="background-color: #ffffff;" class="p-12 rounded-[3rem] shadow-2xl shadow-indigo-500/5 group hover:bg-[#3b82f6] transition-all duration-500 border border-slate-100">
-                <div style="background-color: #dbeafe;" class="w-16 h-16 rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:bg-white transition-all transform group-hover:rotate-12">
-                    <i class="fas fa-graduation-cap text-2xl"></i>
-                </div>
-                <h4 style="color: #0f172a;" class="text-2xl font-black mb-4 group-hover:text-white transition-colors">Academic Rigor</h4>
-                <p style="color: #64748b;" class="text-lg font-bold group-hover:text-white/80 transition-colors leading-relaxed">High standards for every student.</p>
-            </div>
-            
-            <!-- Card 2: Green -->
-            <div style="background-color: #ffffff;" class="p-12 rounded-[3rem] shadow-2xl shadow-indigo-500/5 group hover:bg-[#10b981] transition-all duration-500 border border-slate-100">
-                <div style="background-color: #d1fae5;" class="w-16 h-16 rounded-2xl flex items-center justify-center text-green-600 mb-8 group-hover:bg-white transition-all transform group-hover:rotate-12">
-                    <i class="fas fa-user-shield text-2xl"></i>
-                </div>
-                <h4 style="color: #0f172a;" class="text-2xl font-black mb-4 group-hover:text-white transition-colors">Integrity</h4>
-                <p style="color: #64748b;" class="text-lg font-bold group-hover:text-white/80 transition-colors leading-relaxed">Honesty in every single action.</p>
-            </div>
-            
-            <!-- Card 3: Orange -->
-            <div style="background-color: #ffffff;" class="p-12 rounded-[3rem] shadow-2xl shadow-indigo-500/5 group hover:bg-[#f59e0b] transition-all duration-500 border border-slate-100">
-                <div style="background-color: #fef3c7;" class="w-16 h-16 rounded-2xl flex items-center justify-center text-amber-600 mb-8 group-hover:bg-white transition-all transform group-hover:rotate-12">
-                    <i class="fas fa-microchip text-2xl"></i>
-                </div>
-                <h4 style="color: #0f172a;" class="text-2xl font-black mb-4 group-hover:text-white transition-colors">Innovation</h4>
-                <p style="color: #64748b;" class="text-lg font-bold group-hover:text-white/80 transition-colors leading-relaxed">Leading the tech curriculum.</p>
-            </div>
-            
-            <!-- Card 4: Purple -->
-            <div style="background-color: #ffffff;" class="p-12 rounded-[3rem] shadow-2xl shadow-indigo-500/5 group hover:bg-[#8b5cf6] transition-all duration-500 border border-slate-100">
-                <div style="background-color: #ede9fe;" class="w-16 h-16 rounded-2xl flex items-center justify-center text-purple-600 mb-8 group-hover:bg-white transition-all transform group-hover:rotate-12">
-                    <i class="fas fa-globe-africa text-2xl"></i>
-                </div>
-                <h4 style="color: #0f172a;" class="text-2xl font-black mb-4 group-hover:text-white transition-colors">Diversity</h4>
-                <p style="color: #64748b;" class="text-lg font-bold group-hover:text-white/80 transition-colors leading-relaxed">Unified international voices.</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Final Large Landscape -->
+    <section class="w-full h-[60vh] lg:h-[80vh] overflow-hidden bg-slate-100 mb-20 relative">
+        <img src="https://images.unsplash.com/photo-1517649763962-0c6234278a0b?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover grayscale opacity-90 transition-all duration-1000 hover:scale-105" alt="Campus">
+        <div class="absolute inset-0 bg-black/5"></div>
+    </section>
+
+</div>
 
 {% endblock %}
