@@ -36,23 +36,44 @@
 /* Multi-stage form styles */
 .form-step {
     display: none !important;
-    opacity: 0;
-    visibility: hidden;
-    position: absolute;
-    width: 100%;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    width: 100% !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
 }
 
 .form-step.active {
     display: block !important;
-    opacity: 1;
-    visibility: visible;
-    position: relative;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative !important;
+    height: auto !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    z-index: 1 !important;
     animation: fadeIn 0.3s ease-in;
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hide all buttons in inactive steps */
+.form-step:not(.active) button {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.form-step.active button {
+    display: inline-flex !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
 }
 
 .step-indicator {
@@ -320,14 +341,35 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
     const totalSteps = 4;
 
+    // Debug: Log initial state
+    console.log('Multi-step form initialized');
+    console.log('Found steps:', steps.length);
+    console.log('Found next buttons:', nextButtons.length);
+    console.log('Found prev buttons:', prevButtons.length);
+
     function showStep(step) {
+        console.log('Showing step:', step);
+        
         // Hide all steps
-        steps.forEach(s => s.classList.remove('active'));
+        steps.forEach(s => {
+            s.classList.remove('active');
+            console.log('Hiding step:', s.dataset.step);
+        });
+        
         stepIndicators.forEach(indicator => indicator.classList.remove('active'));
         
         // Show current step
-        document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
-        document.querySelector(`.step-indicator[data-step="${step}"]`).classList.add('active');
+        const currentStepElement = document.querySelector(`.form-step[data-step="${step}"]`);
+        const currentIndicator = document.querySelector(`.step-indicator[data-step="${step}"]`);
+        
+        if (currentStepElement) {
+            currentStepElement.classList.add('active');
+            console.log('Showing step element:', step);
+        }
+        
+        if (currentIndicator) {
+            currentIndicator.classList.add('active');
+        }
         
         // Update progress bars
         const progress = ((step - 1) / (totalSteps - 1)) * 100;
@@ -344,15 +386,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Mark completed steps
         for (let i = 1; i < step; i++) {
-            document.querySelector(`.step-indicator[data-step="${i}"]`).classList.add('completed');
+            const completedIndicator = document.querySelector(`.step-indicator[data-step="${i}"]`);
+            if (completedIndicator) {
+                completedIndicator.classList.add('completed');
+            }
         }
         
         currentStep = step;
+        console.log('Current step set to:', currentStep);
     }
 
     // Next step buttons
     nextButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Next button clicked, current step:', currentStep);
             if (currentStep < totalSteps) {
                 showStep(currentStep + 1);
             }
@@ -361,7 +409,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Previous step buttons
     prevButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Previous button clicked, current step:', currentStep);
             if (currentStep > 1) {
                 showStep(currentStep - 1);
             }
@@ -369,7 +419,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialize first step
-    showStep(1);
+    setTimeout(() => {
+        showStep(1);
+        console.log('Form initialized with step 1');
+    }, 100);
 });
 </script>
 
