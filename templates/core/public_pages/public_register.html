@@ -5,123 +5,136 @@
 
 {% block content %}
 
-<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
 
-    <div class="w-full max-w-4xl flex flex-col md:flex-row bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div class="w-full max-w-2xl">
 
-        <!-- LEFT SIDE (FORM) -->
-        <div class="w-full md:w-1/2 p-10 bg-white">
-
-            <!-- Logo -->
-            <div class="mb-8">
-                <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-600/30">
-                    <i class="fas fa-user-plus text-white text-2xl"></i>
-                </div>
-                <h1 class="mt-4 text-2xl font-bold text-gray-800">Mkalala Secondary</h1>
-                <p class="text-gray-500 text-sm">Create Your Account</p>
+        <!-- Logo and Header -->
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-gradient-to-br from-red-600 to-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-red-600/30 mb-6">
+                <i class="fas fa-user-plus text-white text-3xl"></i>
             </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+            <p class="text-gray-600">Join Mkalala Secondary School community</p>
+        </div>
 
-            <!-- Title -->
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">Sign Up</h2>
-                <p class="text-gray-500 text-sm mt-1">Join our school community</p>
-            </div>
+        <!-- Register Card -->
+        <div class="bg-white rounded-3xl shadow-xl p-8 md:p-10">
 
             <!-- Messages -->
             {% if messages %}
             <div class="space-y-3 mb-6">
                 {% for message in messages %}
-                <div class="p-3 rounded-lg text-sm font-medium
+                <div class="p-4 rounded-xl text-sm font-medium flex items-center space-x-3
                     {% if message.tags == 'error' %}
-                        bg-red-50 text-red-600
+                        bg-red-50 text-red-600 border border-red-200
                     {% else %}
-                        bg-green-50 text-green-600
+                        bg-green-50 text-green-600 border border-green-200
                     {% endif %}">
-                    {{ message }}
+                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
+                    <span>{{ message }}</span>
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
 
-            <!-- Form -->
-            <form method="post" class="space-y-4">
+            <!-- Registration Form -->
+            <form method="post" class="space-y-6">
                 {% csrf_token %}
 
-                <!-- Account Info -->
+                <!-- Account Information -->
                 <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-3">Account Information</h3>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-user text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Account Information</h3>
+                    </div>
+                    
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">First Name</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
                             <input type="text" name="first_name" required
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="First Name">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Enter first name">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Last Name</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
                             <input type="text" name="last_name" required
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Last Name">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Enter last name">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Username</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
                             <input type="text" name="username" required
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Username">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Choose username">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Email</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
                             <input type="email" name="email" required
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Email Address">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Enter email">
                         </div>
                     </div>
                 </div>
 
-                <!-- Password Info -->
+                <!-- Password Information -->
                 <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-3">Password</h3>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-lock text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Password</h3>
+                    </div>
+                    
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Password</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
                             <input type="password" name="password1" required
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Password">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Create password">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Confirm Password</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
                             <input type="password" name="password2" required
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Confirm Password">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Confirm password">
                         </div>
                     </div>
                 </div>
 
-                <!-- Personal Info -->
+                <!-- Personal Information -->
                 <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-3">Personal Information</h3>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-id-card text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Personal Information</h3>
+                    </div>
+                    
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Phone</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
                             <input type="tel" name="phone"
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Phone Number">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Enter phone number">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Date of Birth</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
                             <input type="date" name="date_of_birth"
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none">
                         </div>
                         <div class="md:col-span-2">
-                            <label class="text-sm font-semibold text-gray-600">Address</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
                             <input type="text" name="address"
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Address">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Enter address">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Gender</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
                             <select name="gender"
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none">
                                 <option value="">Select Gender</option>
                                 <option value="M">Male</option>
                                 <option value="F">Female</option>
@@ -131,36 +144,44 @@
                     </div>
                 </div>
 
-                <!-- Academic Info -->
+                <!-- Academic Information -->
                 <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-700 mb-3">Academic Background</h3>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-800">Academic Background</h3>
+                    </div>
+                    
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Previous School</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Previous School</label>
                             <input type="text" name="previous_school"
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Previous School">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Previous school name">
                         </div>
                         <div>
-                            <label class="text-sm font-semibold text-gray-600">Birth Certificate</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Birth Certificate Number</label>
                             <input type="text" name="birth_certificate_number"
-                                class="w-full mt-2 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-red-400"
-                                placeholder="Birth Certificate Number">
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
+                                placeholder="Birth certificate number">
                         </div>
                     </div>
                 </div>
 
-                <!-- Button -->
-                <button type="submit"
-                    class="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-3 rounded-full font-bold transition shadow-lg shadow-red-600/30">
-                    Create Account
-                </button>
+                <!-- Submit Button -->
+                <div class="pt-6">
+                    <button type="submit"
+                        class="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-4 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-xl transform hover:scale-[1.02]">
+                        Create Account
+                    </button>
+                </div>
 
                 <!-- Sign In Link -->
-                <div class="text-center mt-6">
+                <div class="text-center pt-4 border-t border-gray-200">
                     <p class="text-sm text-gray-600">
                         Already have an account? 
-                        <a href="{% url 'login' %}" class="font-semibold text-red-500 hover:text-red-600 transition-colors">
+                        <a href="{% url 'login' %}" class="font-semibold text-red-600 hover:text-red-700 transition-colors">
                             Sign In
                         </a>
                     </p>
@@ -170,47 +191,13 @@
 
         </div>
 
-        <!-- RIGHT SIDE (WELCOME PANEL) -->
-        <div class="w-full md:w-1/2 bg-gradient-to-br from-red-600 via-red-500 to-pink-600 text-white flex flex-col justify-center items-center p-10 text-center">
-
-            <h2 class="text-3xl font-bold mb-3">Welcome to Register</h2>
-            <p class="text-white/90 mb-6">Join our community of learners</p>
-            
-            <div class="space-y-4 mb-8">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-graduation-cap text-white text-lg"></i>
-                    </div>
-                    <div class="text-left">
-                        <h3 class="font-bold">Quality Education</h3>
-                        <p class="text-white/80 text-sm">Excellence in learning</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-users text-white text-lg"></i>
-                    </div>
-                    <div class="text-left">
-                        <h3 class="font-bold">Join Community</h3>
-                        <p class="text-white/80 text-sm">Connect with peers</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-award text-white text-lg"></i>
-                    </div>
-                    <div class="text-left">
-                        <h3 class="font-bold">Achieve Goals</h3>
-                        <p class="text-white/80 text-sm">Reach your potential</p>
-                    </div>
-                </div>
-            </div>
-
-            <a href="{% url 'public_about' %}"
-               class="border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-red-600 transition-all duration-300 shadow-lg">
-                Learn More
-            </a>
-
+        <!-- Footer Info -->
+        <div class="text-center mt-8">
+            <p class="text-gray-500 text-sm">
+                By creating an account, you agree to our 
+                <a href="#" class="text-red-600 hover:text-red-700 font-medium">Terms</a> and 
+                <a href="#" class="text-red-600 hover:text-red-700 font-medium">Privacy Policy</a>
+            </p>
         </div>
 
     </div>
