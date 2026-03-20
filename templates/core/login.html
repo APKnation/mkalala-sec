@@ -6,116 +6,158 @@
 {% block content %}
 
 <div class="min-h-screen flex items-center justify-center bg-school-light relative overflow-hidden">
-    <!-- Background Animated Blobs -->
-    <div class="absolute top-0 -left-4 w-72 h-72 bg-school-light-blue rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-    <div class="absolute top-0 -right-4 w-72 h-72 bg-school-blue rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-school-light rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
-    
+
+    <!-- Background Blobs -->
+    <div class="absolute top-0 -left-4 w-72 h-72 bg-school-light-blue rounded-full blur-3xl opacity-30 animate-blob"></div>
+    <div class="absolute top-0 -right-4 w-72 h-72 bg-school-blue rounded-full blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-school-light rounded-full blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+
     <div class="container mx-auto px-4 relative z-10">
-        <div class="max-w-5xl mx-auto flex flex-col lg:flex-row bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden border border-school-light">
-            <!-- Left Side: Visual/Branding -->
+
+        <div class="max-w-5xl mx-auto flex flex-col lg:flex-row bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-school-light">
+
+            <!-- LEFT SIDE -->
             <div class="lg:w-1/2 relative hidden lg:block">
-                <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1200" alt="Login" class="absolute inset-0 w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-tr from-school-blue/90 via-school-blue/50 to-school-light-blue/30"></div>
-                
+
+                <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1200"
+                     class="absolute inset-0 w-full h-full object-cover">
+
+                <div class="absolute inset-0 bg-gradient-to-tr from-school-blue/90 via-school-blue/60 to-school-light-blue/40"></div>
+
                 <div class="absolute inset-0 p-16 flex flex-col justify-between text-white">
+
                     <div class="flex items-center space-x-3">
                         <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center">
-                            <i class="fas fa-graduation-cap text-2xl"></i>
+                            <i class="fas fa-graduation-cap text-white text-2xl"></i>
                         </div>
-                        <span class="text-2xl font-display font-black tracking-tight">MKALALA</span>
+                        <span class="text-2xl font-black tracking-tight">MKALALA</span>
                     </div>
-                    
+
                     <div class="space-y-6">
-                        <h2 class="text-5xl font-display font-bold leading-tight">Empowering <br/><span class="text-school-light-blue">Great Minds.</span></h2>
-                        <p class="text-lg text-indigo-100/80 leading-relaxed max-w-sm">
-                            Join a community of thousands of students and teachers shaping the future through excellence and innovation.
+                        <h2 class="text-5xl font-bold leading-tight">
+                            Empowering <br/>
+                            <span class="text-school-light-blue">Great Minds.</span>
+                        </h2>
+
+                        <p class="text-white/80 text-lg leading-relaxed max-w-sm">
+                            Join a community of thousands shaping the future through excellence and innovation.
                         </p>
                     </div>
-                    
+
                     <div class="flex items-center space-x-4">
                         <div class="flex -space-x-3">
-                            <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-white/30" alt="User">
-                            <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-white/30" alt="User">
-                            <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-white/30" alt="User">
+                            <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-white/30">
+                            <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-white/30">
+                            <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-white/30">
                         </div>
-                        <span class="text-sm font-bold text-indigo-200">TRUSTED BY 2k+ USERS</span>
+                        <span class="text-sm font-bold text-white/80">TRUSTED BY 2k+ USERS</span>
                     </div>
+
                 </div>
             </div>
-            
-            <!-- Right Side: Login Form -->
-            <div class="lg:w-1/2 p-8 sm:p-12 md:p-16 lg:p-20 flex flex-col justify-center">
+
+            <!-- RIGHT SIDE -->
+            <div class="lg:w-1/2 p-10 sm:p-12 md:p-16 flex flex-col justify-center">
+
                 <div class="space-y-10">
-                    <div class="space-y-4">
-                        <h3 class="text-4xl font-display font-black text-school-black">Sign In</h3>
-                        <p class="text-school-gray font-medium">Please enter your credentials to access your portal.</p>
-                    </div>
-                    
-                    <!-- Messages -->
-                    {% if messages %}
-                        <div class="space-y-3">
-                            {% for message in messages %}
-                                <div class="p-4 rounded-2xl flex items-center space-x-3 {% if message.tags == 'error' %}bg-red-50 text-red-700 border border-red-100{% else %}bg-school-light text-school-blue border border-school-blue{% endif %}">
-                                    <i class="fas {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
-                                    <span class="text-sm font-bold">{{ message }}</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    
-                    <form method="post" action="{% url 'login' %}" class="space-y-8">
-                        {% csrf_token %}
-                        <div class="space-y-6">
-                            <!-- Username -->
-                            <div class="space-y-2">
-                                <label class="text-sm font-bold text-school-black ml-1">Username</label>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-colors group-focus-within:text-school-blue text-school-gray">
-                                        <i class="fas fa-user-circle text-xl"></i>
-                                    </div>
-                                    <input type="text" name="username" required
-                                           class="w-full bg-school-light border-2 border-school-light rounded-2xl pl-12 pr-5 py-4 focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/5 transition-all outline-none text-school-black font-medium"
-                                           placeholder="e.g. jdoe_admin">
-                                </div>
-                            </div>
-                            
-                            <!-- Password -->
-                            <div class="space-y-2">
-                                <div class="flex justify-between items-center">
-                                    <label class="text-sm font-bold text-school-black ml-1">Password</label>
-                                    <a href="#" class="text-xs font-bold text-school-blue hover:text-school-blue transition-colors">Forgot Password?</a>
-                                </div>
-                                <div class="relative group">
-                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none transition-colors group-focus-within:text-school-blue text-school-gray">
-                                        <i class="fas fa-lock text-xl"></i>
-                                    </div>
-                                    <input type="password" name="password" required
-                                           class="w-full bg-school-light border-2 border-school-light rounded-2xl pl-12 pr-5 py-4 focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/5 transition-all outline-none text-school-black font-medium"
-                                           placeholder="••••••••">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-3 ml-1">
-                            <input type="checkbox" id="remember" class="w-5 h-5 rounded-lg border-2 border-school-light text-school-blue focus:ring-school-blue transition-all cursor-pointer">
-                            <label for="remember" class="text-sm font-bold text-school-gray cursor-pointer select-none">Remember this device</label>
-                        </div>
-                        
-                        <button type="submit" class="w-full btn-school-primary py-5 rounded-2xl text-lg font-black tracking-wide shadow-xl shadow-school-blue/20 group transform transition-all hover:scale-[1.02]">
-                            Sign Into Portal
-                            <i class="fas fa-arrow-right-to-bracket ml-2 group-hover:translate-x-1 transition-transform"></i>
-                        </button>
-                    </form>
-                    
-                    <div class="text-center pt-4">
-                        <p class="text-school-gray font-medium">
-                            First time here? 
-                            <a href="{% url 'register' %}" class="text-school-blue font-black hover:underline decoration-2 underline-offset-4 ml-1">Create an account</a>
+
+                    <div>
+                        <h3 class="text-4xl font-black text-school-black">Sign In</h3>
+                        <p class="text-school-blue/70 font-medium mt-2">
+                            Enter your credentials to access your portal.
                         </p>
                     </div>
+
+                    <!-- Messages -->
+                    {% if messages %}
+                    <div class="space-y-3">
+                        {% for message in messages %}
+                        <div class="p-4 rounded-2xl flex items-center space-x-3
+                            {% if message.tags == 'error' %}
+                                bg-red-50 text-red-600 border border-red-200
+                            {% else %}
+                                bg-school-light text-school-blue border border-school-blue/20
+                            {% endif %}">
+                            <i class="fas {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                            <span class="text-sm font-bold">{{ message }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'login' %}" class="space-y-8">
+                        {% csrf_token %}
+
+                        <!-- Username -->
+                        <div>
+                            <label class="text-sm font-bold text-school-blue ml-1">Username</label>
+
+                            <div class="relative group mt-2">
+
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center text-school-blue">
+                                    <i class="fas fa-user-circle text-xl"></i>
+                                </div>
+
+                                <input type="text" name="username" required
+                                       class="w-full bg-school-light border-2 border-school-light rounded-2xl pl-12 pr-5 py-4
+                                              focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/10
+                                              transition-all outline-none text-school-black font-medium"
+                                       placeholder="e.g. jdoe_admin">
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-school-blue ml-1">Password</label>
+                                <a href="#" class="text-xs font-bold text-school-blue hover:underline">
+                                    Forgot Password?
+                                </a>
+                            </div>
+
+                            <div class="relative group mt-2">
+
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center text-school-blue">
+                                    <i class="fas fa-lock text-xl"></i>
+                                </div>
+
+                                <input type="password" name="password" required
+                                       class="w-full bg-school-light border-2 border-school-light rounded-2xl pl-12 pr-5 py-4
+                                              focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/10
+                                              transition-all outline-none text-school-black font-medium"
+                                       placeholder="••••••••">
+                            </div>
+                        </div>
+
+                        <!-- Remember -->
+                        <div class="flex items-center space-x-3 ml-1">
+                            <input type="checkbox" class="w-5 h-5 rounded border-2 border-school-blue text-school-blue">
+                            <label class="text-sm font-bold text-school-blue">Remember this device</label>
+                        </div>
+
+                        <!-- Button -->
+                        <button type="submit"
+                                class="w-full py-5 rounded-2xl text-lg font-black bg-school-blue text-white
+                                       shadow-xl shadow-school-blue/20 hover:scale-[1.02] transition-all">
+                            Sign Into Portal
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+
+                    </form>
+
+                    <div class="text-center">
+                        <p class="text-school-blue/70 font-medium">
+                            First time here?
+                            <a href="{% url 'register' %}" class="text-school-blue font-black hover:underline ml-1">
+                                Create an account
+                            </a>
+                        </p>
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
     </div>
 </div>
