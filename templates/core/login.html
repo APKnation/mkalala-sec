@@ -5,161 +5,282 @@
 
 {% block content %}
 
-<div class="min-h-screen flex items-center justify-center bg-school-light relative overflow-hidden">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-school-blue to-slate-900 relative overflow-hidden">
 
-    <!-- Background Blobs -->
-    <div class="absolute top-0 -left-4 w-72 h-72 bg-school-light-blue rounded-full blur-3xl opacity-30 animate-blob"></div>
-    <div class="absolute top-0 -right-4 w-72 h-72 bg-school-blue rounded-full blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-school-light rounded-full blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+    <!-- Advanced Background Effects -->
+    <div class="absolute inset-0">
+        <!-- Animated Grid Pattern -->
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjAiIGZpbGw9Im5vbmUiLz48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiLz48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiLz48L2RlZnM+PC9zdmc+')] opacity-5"></div>
+        
+        <!-- Floating Orbs -->
+        <div class="absolute top-20 left-20 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute top-40 right-32 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-float animation-delay-2000"></div>
+        <div class="absolute bottom-32 left-1/3 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl animate-float animation-delay-4000"></div>
+        
+        <!-- Particle Effects -->
+        <div class="absolute inset-0">
+            <div class="particles"></div>
+        </div>
+    </div>
 
-    <div class="container mx-auto px-4 relative z-10">
+    <div class="container mx-auto px-4 relative z-20">
 
-        <div class="max-w-5xl mx-auto flex flex-col lg:flex-row bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-school-light">
+        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row bg-white/10 backdrop-blur-xl rounded-[3rem] shadow-2xl overflow-hidden border border-white/20">
 
-            <!-- LEFT SIDE -->
-            <div class="lg:w-1/2 relative hidden lg:block">
+            <!-- LEFT SIDE - ADVANCED BRANDING -->
+            <div class="lg:w-1/2 relative hidden lg:block overflow-hidden">
 
-                <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1200"
-                     class="absolute inset-0 w-full h-full object-cover">
+                <!-- Dynamic Background -->
+                <div class="absolute inset-0 bg-gradient-to-br from-school-blue via-blue-600 to-indigo-700"></div>
+                
+                <!-- Geometric Patterns -->
+                <div class="absolute inset-0 opacity-10">
+                    <div class="absolute top-10 left-10 w-32 h-32 border-2 border-white/30 rotate-45"></div>
+                    <div class="absolute bottom-20 right-16 w-24 h-24 border-2 border-white/30 rotate-12"></div>
+                    <div class="absolute top-1/2 left-1/3 w-16 h-16 border-2 border-white/30 -rotate-45"></div>
+                </div>
 
-                <div class="absolute inset-0 bg-gradient-to-tr from-school-blue/90 via-school-blue/60 to-school-light-blue/40"></div>
+                <div class="absolute inset-0 p-16 flex flex-col justify-between text-white relative z-10">
 
-                <div class="absolute inset-0 p-16 flex flex-col justify-between text-white">
-
-                    <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center">
-                            <i class="fas fa-graduation-cap text-white text-2xl"></i>
-                        </div>
-                        <span class="text-2xl font-black tracking-tight">MKALALA</span>
-                    </div>
-
+                    <!-- Top Section -->
                     <div class="space-y-6">
-                        <h2 class="text-5xl font-bold leading-tight">
-                            Empowering <br/>
-                            <span class="text-school-light-blue">Great Minds.</span>
-                        </h2>
-
-                        <p class="text-white/80 text-lg leading-relaxed max-w-sm">
-                            Join a community of thousands shaping the future through excellence and innovation.
-                        </p>
-                    </div>
-
-                    <div class="flex items-center space-x-4">
-                        <div class="flex -space-x-3">
-                            <img src="https://i.pravatar.cc/100?u=1" class="w-10 h-10 rounded-full border-2 border-white/30">
-                            <img src="https://i.pravatar.cc/100?u=2" class="w-10 h-10 rounded-full border-2 border-white/30">
-                            <img src="https://i.pravatar.cc/100?u=3" class="w-10 h-10 rounded-full border-2 border-white/30">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center border border-white/30 shadow-2xl">
+                                <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                            </div>
+                            <div>
+                                <span class="text-3xl font-black tracking-tight">MKALALA</span>
+                                <p class="text-sm text-white/80 font-medium">SECONDARY SCHOOL</p>
+                            </div>
                         </div>
-                        <span class="text-sm font-bold text-white/80">TRUSTED BY 2k+ USERS</span>
+
+                        <div class="space-y-4">
+                            <h2 class="text-6xl font-black leading-tight">
+                                Welcome Back to
+                                <span class="text-cyan-300">Excellence</span>
+                            </h2>
+                            <p class="text-xl text-white/90 leading-relaxed max-w-md">
+                                Access your personalized learning portal and continue your journey toward academic success.
+                            </p>
+                        </div>
                     </div>
 
+                    <!-- Bottom Section -->
+                    <div class="space-y-6">
+                        <!-- Stats -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-black text-cyan-300">2K+</div>
+                                <div class="text-xs text-white/70 uppercase tracking-wider">Students</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-black text-cyan-300">98%</div>
+                                <div class="text-xs text-white/70 uppercase tracking-wider">Success</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-black text-cyan-300">50+</div>
+                                <div class="text-xs text-white/70 uppercase tracking-wider">Teachers</div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial -->
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex -space-x-2">
+                                    <img src="https://i.pravatar.cc/100?u=1" class="w-8 h-8 rounded-full border-2 border-white/40" alt="User">
+                                    <img src="https://i.pravatar.cc/100?u=2" class="w-8 h-8 rounded-full border-2 border-white/40" alt="User">
+                                    <img src="https://i.pravatar.cc/100?u=3" class="w-8 h-8 rounded-full border-2 border-white/40" alt="User">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="text-sm font-medium text-white">Join 2,000+ students</div>
+                                    <div class="text-xs text-white/70">Trusted educational platform</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- RIGHT SIDE -->
-            <div class="lg:w-1/2 p-10 sm:p-12 md:p-16 flex flex-col justify-center">
+            <!-- RIGHT SIDE - ADVANCED FORM -->
+            <div class="lg:w-1/2 p-12 sm:p-16 flex flex-col justify-center bg-white/5 backdrop-blur-sm">
 
-                <div class="space-y-10">
+                <div class="max-w-md mx-auto w-full space-y-8">
 
-                    <div>
-                        <h3 class="text-4xl font-black text-school-black">Sign In</h3>
-                        <p class="text-school-blue/70 font-medium mt-2">
-                            Enter your credentials to access your portal.
-                        </p>
+                    <!-- Header -->
+                    <div class="text-center space-y-3">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-school-blue to-cyan-500 rounded-2xl shadow-lg">
+                            <i class="fas fa-user-shield text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-4xl font-black text-school-black">Sign In</h3>
+                            <p class="text-school-blue/70 font-medium">Enter your credentials to access your portal</p>
+                        </div>
                     </div>
 
                     <!-- Messages -->
                     {% if messages %}
                     <div class="space-y-3">
                         {% for message in messages %}
-                        <div class="p-4 rounded-2xl flex items-center space-x-3
+                        <div class="p-4 rounded-2xl flex items-center space-x-3 backdrop-blur-sm
                             {% if message.tags == 'error' %}
-                                bg-red-50 text-red-600 border border-red-200
+                                bg-red-500/10 text-red-600 border border-red-200/50
                             {% else %}
-                                bg-school-light text-school-blue border border-school-blue/20
+                                bg-green-500/10 text-green-600 border border-green-200/50
                             {% endif %}">
-                            <i class="fas {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
                             <span class="text-sm font-bold">{{ message }}</span>
                         </div>
                         {% endfor %}
                     </div>
                     {% endif %}
 
-                    <form method="post" action="{% url 'login' %}" class="space-y-8">
+                    <!-- Advanced Form -->
+                    <form method="post" action="{% url 'login' %}" class="space-y-6">
                         {% csrf_token %}
 
-                        <!-- Username -->
-                        <div>
-                            <label class="text-sm font-bold text-school-blue ml-1">Username</label>
-
-                            <div class="relative group mt-2">
-
-                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center text-school-blue">
-                                    <i class="fas fa-user-circle text-xl"></i>
+                        <!-- Username Field -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-bold text-school-blue uppercase tracking-wider">Username</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center text-school-blue/60 group-focus-within:text-school-blue transition-colors">
+                                    <i class="fas fa-user text-xl"></i>
                                 </div>
-
                                 <input type="text" name="username" required
-                                       class="w-full bg-school-light border-2 border-school-light rounded-2xl pl-12 pr-5 py-4
-                                              focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/10
-                                              transition-all outline-none text-school-black font-medium"
-                                       placeholder="e.g. jdoe_admin">
+                                       class="w-full bg-white/80 backdrop-blur-sm border-2 border-white/20 rounded-2xl pl-12 pr-5 py-4 
+                                              focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/20 
+                                              transition-all outline-none text-school-black font-medium placeholder:text-school-black/40
+                                              hover:bg-white/90"
+                                       placeholder="Enter your username">
                             </div>
                         </div>
 
-                        <!-- Password -->
-                        <div>
+                        <!-- Password Field -->
+                        <div class="space-y-2">
                             <div class="flex justify-between items-center">
-                                <label class="text-sm font-bold text-school-blue ml-1">Password</label>
-                                <a href="#" class="text-xs font-bold text-school-blue hover:underline">
+                                <label class="text-sm font-bold text-school-blue uppercase tracking-wider">Password</label>
+                                <a href="#" class="text-xs font-bold text-school-blue hover:text-cyan-500 transition-colors">
                                     Forgot Password?
                                 </a>
                             </div>
-
-                            <div class="relative group mt-2">
-
-                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center text-school-blue">
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-5 flex items-center text-school-blue/60 group-focus-within:text-school-blue transition-colors">
                                     <i class="fas fa-lock text-xl"></i>
                                 </div>
-
                                 <input type="password" name="password" required
-                                       class="w-full bg-school-light border-2 border-school-light rounded-2xl pl-12 pr-5 py-4
-                                              focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/10
-                                              transition-all outline-none text-school-black font-medium"
-                                       placeholder="••••••••">
+                                       class="w-full bg-white/80 backdrop-blur-sm border-2 border-white/20 rounded-2xl pl-12 pr-12 py-4 
+                                              focus:bg-white focus:border-school-blue focus:ring-4 focus:ring-school-blue/20 
+                                              transition-all outline-none text-school-black font-medium placeholder:text-school-black/40
+                                              hover:bg-white/90"
+                                       placeholder="Enter your password">
+                                <button type="button" class="absolute inset-y-0 right-0 pr-5 flex items-center text-school-blue/60 hover:text-school-blue transition-colors"
+                                        onclick="togglePassword(this)">
+                                    <i class="fas fa-eye text-xl"></i>
+                                </button>
                             </div>
                         </div>
 
-                        <!-- Remember -->
-                        <div class="flex items-center space-x-3 ml-1">
-                            <input type="checkbox" class="w-5 h-5 rounded border-2 border-school-blue text-school-blue">
-                            <label class="text-sm font-bold text-school-blue">Remember this device</label>
+                        <!-- Advanced Options -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <label class="flex items-center space-x-3 cursor-pointer">
+                                    <input type="checkbox" class="w-5 h-5 rounded-lg border-2 border-school-blue text-school-blue focus:ring-school-blue">
+                                    <span class="text-sm font-bold text-school-blue">Remember this device</span>
+                                </label>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span class="text-xs text-green-600 font-medium">Secure</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- Button -->
+                        <!-- Submit Button -->
                         <button type="submit"
-                                class="w-full py-5 rounded-2xl text-lg font-black bg-school-blue text-white
-                                       shadow-xl shadow-school-blue/20 hover:scale-[1.02] transition-all">
-                            Sign Into Portal
-                            <i class="fas fa-arrow-right ml-2"></i>
+                                class="w-full py-5 rounded-2xl text-lg font-black bg-gradient-to-r from-school-blue to-cyan-500 text-white
+                                       shadow-2xl shadow-school-blue/30 hover:shadow-cyan-500/30 
+                                       transform transition-all hover:scale-[1.02] hover:-translate-y-1
+                                       relative overflow-hidden group">
+                            <span class="relative z-10 flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt mr-3"></i>
+                                Sign Into Portal
+                                <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                            </span>
+                            <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </button>
-
                     </form>
 
-                    <div class="text-center">
+                    <!-- Footer Links -->
+                    <div class="text-center space-y-4 pt-6 border-t border-white/20">
                         <p class="text-school-blue/70 font-medium">
-                            First time here?
-                            <a href="{% url 'register' %}" class="text-school-blue font-black hover:underline ml-1">
-                                Create an account
+                            New to Mkalala Secondary School?
+                            <a href="{% url 'register' %}" class="text-school-blue font-black hover:text-cyan-500 transition-colors ml-1">
+                                Create your account
                             </a>
                         </p>
+                        
+                        <!-- Quick Links -->
+                        <div class="flex justify-center space-x-6 text-xs">
+                            <a href="#" class="text-school-blue/60 hover:text-school-blue transition-colors">Help Center</a>
+                            <a href="#" class="text-school-blue/60 hover:text-school-blue transition-colors">Privacy</a>
+                            <a href="#" class="text-school-blue/60 hover:text-school-blue transition-colors">Terms</a>
+                        </div>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     </div>
 </div>
+
+<!-- Advanced CSS -->
+<style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        25% { transform: translateY(-20px) rotate(1deg); }
+        75% { transform: translateY(10px) rotate(-1deg); }
+    }
+    
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+    
+    .particles::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+            radial-gradient(circle at 20% 80%, white 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, white 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, white 0%, transparent 50%);
+        opacity: 0.03;
+    }
+</style>
+
+<!-- Password Toggle Script -->
+<script>
+function togglePassword(button) {
+    const input = button.previousElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
 
 {% endblock %}
