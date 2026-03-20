@@ -35,11 +35,18 @@
 
 /* Multi-stage form styles */
 .form-step {
-    display: none;
+    display: none !important;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 100%;
 }
 
 .form-step.active {
-    display: block;
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+    position: relative;
     animation: fadeIn 0.3s ease-in;
 }
 
@@ -126,7 +133,8 @@
             <!-- Multi-Stage Registration Form -->
             <form method="post" class="register-form" id="multiStepForm">
                 {% csrf_token %}
-
+                
+                <div class="relative min-h-[400px]">
                 <!-- Step 1: Account Information -->
                 <div class="form-step active" data-step="1">
                     <div class="flex items-center space-x-3 mb-6">
@@ -270,6 +278,7 @@
                             Create Account <i class="fas fa-check ml-2"></i>
                         </button>
                     </div>
+                </div>
                 </div>
 
             </form>
