@@ -1,69 +1,89 @@
-<footer class="bg-white border-t border-slate-200 pt-16 pb-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-      <!-- School Info -->
-      <div class="col-span-1 md:col-span-1">
-        <div class="flex items-center space-x-3 mb-6">
-          <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-md">
-            <i class="fas fa-graduation-cap text-sm"></i>
-          </div>
-          <span class="text-xl font-display font-bold text-slate-900">Mkalala Sec</span>
+{% load static %}
+<footer class="bg-indigo-950 text-white pt-24 pb-12 relative overflow-hidden">
+    <!-- Background Accents -->
+    <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
+    <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full filter blur-[100px] pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full filter blur-[100px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+            <!-- Brand Column -->
+            <div class="space-y-8 col-span-1 lg:col-span-1">
+                <div class="flex items-center space-x-3 group cursor-pointer">
+                    <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-600/20 group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fas fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="text-2xl font-display font-black tracking-tight block">MKALALA</span>
+                        <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">Secondary School</span>
+                    </div>
+                </div>
+                <p class="text-indigo-100/60 leading-relaxed text-lg font-medium">
+                    Where tradition meets the digital future. We empower students to become the innovative leaders of tomorrow.
+                </p>
+                <!-- Social Icons -->
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 bg-white/5 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-indigo-200 hover:text-white transition-all duration-300 border border-white/10">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-indigo-200 hover:text-white transition-all duration-300 border border-white/10">
+                        <i class="fab fa-x-twitter"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-indigo-200 hover:text-white transition-all duration-300 border border-white/10">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 bg-white/5 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-indigo-200 hover:text-white transition-all duration-300 border border-white/10">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Access -->
+            <div>
+                <h4 class="text-lg font-bold text-white mb-8 border-l-4 border-indigo-600 pl-4">Quick Access</h4>
+                <ul class="space-y-4">
+                    <li><a href="{% url 'public_home' %}" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Home Page</a></li>
+                    <li><a href="{% url 'public_about' %}" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Our History</a></li>
+                    <li><a href="{% url 'public_courses' %}" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Study Programs</a></li>
+                    <li><a href="{% url 'public_contact' %}" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Reach Support</a></li>
+                </ul>
+            </div>
+
+            <!-- Portal Links -->
+            <div>
+                <h4 class="text-lg font-bold text-white mb-8 border-l-4 border-indigo-600 pl-4">School Portal</h4>
+                <ul class="space-y-4">
+                    <li><a href="{% url 'login' %}" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Student Login</a></li>
+                    <li><a href="#" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> NECTA Results</a></li>
+                    <li><a href="#" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Fee Payments</a></li>
+                    <li><a href="{% url 'register' %}" class="text-indigo-100/60 hover:text-indigo-400 transition-colors duration-300 font-medium flex items-center group"><span class="w-2 h-2 bg-indigo-600 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span> Join Community</a></li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="bg-white/5 p-8 rounded-[2rem] border border-white/10">
+                <h4 class="text-xl font-bold text-white mb-4">Stay In The Loop</h4>
+                <p class="text-indigo-100/60 text-sm mb-6 font-medium">Get the latest school news and events directly in your inbox.</p>
+                <form class="space-y-3">
+                    <input type="email" placeholder="Enter your email" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-indigo-300/50 focus:bg-white/20 focus:ring-2 focus:ring-indigo-600 outline-none transition-all">
+                    <button class="w-full bg-indigo-600 hover:bg-indigo-500 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-indigo-600/20 active:scale-95">Subscribe Now</button>
+                </form>
+            </div>
         </div>
-        <p class="text-slate-500 leading-relaxed">
-          Excellence in Education, Building Tomorrow's Leaders. Providing quality secondary education in Tanzania.
-        </p>
-      </div>
-      
-      <!-- Quick Links -->
-      <div>
-        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6">Quick Links</h4>
-        <ul class="space-y-4">
-          <li><a href="{% url 'public_about' %}" class="text-slate-500 hover:text-blue-600 transition-colors">Our History</a></li>
-          <li><a href="{% url 'public_admissions' %}" class="text-slate-500 hover:text-blue-600 transition-colors">Admissions</a></li>
-          <li><a href="{% url 'public_courses' %}" class="text-slate-500 hover:text-blue-600 transition-colors">Academic Programs</a></li>
-          <li><a href="#" class="text-slate-500 hover:text-blue-600 transition-colors">School Calendar</a></li>
-        </ul>
-      </div>
-      
-      <!-- Resources -->
-      <div>
-        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6">Resources</h4>
-        <ul class="space-y-4">
-          <li><a href="#" class="text-slate-500 hover:text-blue-600 transition-colors">Student Portal</a></li>
-          <li><a href="#" class="text-slate-500 hover:text-blue-600 transition-colors">NECTA Results</a></li>
-          <li><a href="#" class="text-slate-500 hover:text-blue-600 transition-colors">Digital Library</a></li>
-          <li><a href="{% url 'public_contact' %}" class="text-slate-500 hover:text-blue-600 transition-colors">Support Center</a></li>
-        </ul>
-      </div>
-      
-      <!-- Contact -->
-      <div>
-        <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6">Contact Us</h4>
-        <ul class="space-y-4">
-          <li class="flex items-start space-x-3">
-            <i class="fas fa-map-marker-alt text-blue-600 mt-1"></i>
-            <span class="text-slate-500">Iringa Municipal, Tanzania</span>
-          </li>
-          <li class="flex items-center space-x-3">
-            <i class="fas fa-phone-alt text-blue-600"></i>
-            <span class="text-slate-500">+255 123 456 789</span>
-          </li>
-          <li class="flex items-center space-x-3">
-            <i class="fas fa-envelope text-blue-600"></i>
-            <span class="text-slate-500">info@mkalala.ac.tz</span>
-          </li>
-        </ul>
-      </div>
+
+        <!-- Bottom Copyright -->
+        <div class="pt-12 border-t border-white/10 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 text-indigo-100/40 text-sm font-medium">
+            <div class="flex flex-col md:flex-row md:items-center md:space-x-8 space-y-2 md:space-y-0 text-center md:text-left">
+                <span>&copy; 2026 Mkalala Secondary School.</span>
+                <div class="space-x-4">
+                    <a href="#" class="hover:text-indigo-400 transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-indigo-400 transition-colors">Terms of Service</a>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span>System Online v2.4</span>
+            </div>
+        </div>
     </div>
-    
-    <div class="pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-slate-500 text-sm">
-      <p>&copy; 2026 Mkalala Secondary School. All rights reserved.</p>
-      <div class="flex space-x-6">
-        <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-facebook-f"></i></a>
-        <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-twitter"></i></a>
-        <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-linkedin-in"></i></a>
-      </div>
-    </div>
-  </div>
 </footer>
