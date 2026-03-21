@@ -135,10 +135,10 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     path('teachers/<int:pk>/edit/', views.admin_teacher_edit, name='admin_teacher_edit'),
     path('teachers/<int:pk>/delete/', views.admin_teacher_delete, name='admin_teacher_delete'),
     
-    # Admin User Creation URLs
-    path('admin/create/student/', views_admin.admin_create_student, name='admin_create_student'),
-    path('admin/create/teacher/', views_admin.admin_create_teacher, name='admin_create_teacher'),
-    path('admin/create/headmaster/', views_admin.admin_create_headmaster, name='admin_create_headmaster'),
+    # Admin User Creation URLs - Redirect to unified dashboard
+    path('admin/create/student/', lambda request: redirect(f'/admin/dashboard/create-user/?role=student') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_create_student'),
+    path('admin/create/teacher/', lambda request: redirect(f'/admin/dashboard/create-user/?role=teacher') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_create_teacher'),
+    path('admin/create/headmaster/', lambda request: redirect(f'/admin/dashboard/create-user/?role=headmaster') if request.user.is_authenticated and request.user.role == 'admin' else redirect('login'), name='admin_create_headmaster'),
     
     # Headmaster User Creation URLs
     path('headmaster/create/student/', views_admin.headmaster_create_student, name='headmaster_create_student'),
