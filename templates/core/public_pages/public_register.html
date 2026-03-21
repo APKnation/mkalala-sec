@@ -103,17 +103,72 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Hide all buttons in inactive steps */
-.form-step:not(.active) button {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+/* Enhanced button styling - Complete Red Theme */
+.register-form button {
+    background: linear-gradient(135deg, #dc2626, #b91c1c, #ef4444) !important;
+    color: white !important;
+    border: 2px solid #dc2626 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
 }
 
-.form-step.active button {
-    display: inline-flex !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
+.register-form button:hover {
+    background: linear-gradient(135deg, #b91c1c, #991b1b, #dc2626) !important;
+    border-color: #b91c1c !important;
+    color: white !important;
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4) !important;
+}
+
+.register-form button:active {
+    background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
+    transform: translateY(0) scale(0.98) !important;
+    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important;
+}
+
+/* Previous button - White text on red */
+.register-form .prev-step {
+    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+}
+
+.register-form .prev-step:hover {
+    background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
+    border-color: #b91c1c !important;
+    color: white !important;
+}
+
+/* Next button - Enhanced red */
+.register-form .next-step {
+    background: linear-gradient(135deg, #dc2626, #b91c1c, #ef4444) !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+    font-weight: 800 !important;
+}
+
+.register-form .next-step:hover {
+    background: linear-gradient(135deg, #b91c1c, #991b1b, #dc2626) !important;
+    border-color: #b91c1c !important;
+    color: white !important;
+}
+
+/* Submit button - Final red */
+.register-form button[type="submit"] {
+    background: linear-gradient(135deg, #dc2626, #b91c1c, #991b1b) !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+    font-weight: 900 !important;
+    font-size: 16px !important;
+}
+
+.register-form button[type="submit"]:hover {
+    background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
+    border-color: #991b1b !important;
+    color: white !important;
 }
 
 .step-indicator {
@@ -229,7 +284,7 @@
                     </div>
 
                     <div class="flex justify-end mt-6">
-                        <button type="button" class="next-step bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30">
+                        <button type="button" class="next-step px-8 py-3 rounded-xl transition-all duration-300">
                             Next Step <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
@@ -266,11 +321,11 @@
                     </div>
 
                     <div class="flex justify-between mt-8 space-x-4">
-                        <button type="button" class="prev-step bg-white border-2 border-gray-300 hover:border-red-500 hover:bg-red-50 text-gray-700 hover:text-red-600 px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center">
+                        <button type="button" class="prev-step px-6 py-3 rounded-xl transition-all duration-300 flex items-center">
                             <i class="fas fa-arrow-left mr-2"></i>
                             Previous Step
                         </button>
-                        <button type="button" class="next-step bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-xl transform hover:scale-105 flex items-center">
+                        <button type="button" class="next-step px-8 py-3 rounded-xl transition-all duration-300 flex items-center">
                             Next Step
                             <i class="fas fa-arrow-right ml-2"></i>
                         </button>
@@ -309,12 +364,14 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-6">
-                        <button type="button" class="prev-step bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold transition-all duration-300">
-                            <i class="fas fa-arrow-left mr-2"></i> Previous
+                    <div class="flex justify-between mt-6 space-x-4">
+                        <button type="button" class="prev-step px-6 py-3 rounded-xl transition-all duration-300 flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Previous
                         </button>
-                        <button type="button" class="next-step bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30">
-                            Next Step <i class="fas fa-arrow-right ml-2"></i>
+                        <button type="button" class="next-step px-8 py-3 rounded-xl transition-all duration-300 flex items-center">
+                            Next Step
+                            <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
                 </div>
@@ -341,11 +398,12 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-6">
-                        <button type="button" class="prev-step bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold transition-all duration-300">
-                            <i class="fas fa-arrow-left mr-2"></i> Previous
+                    <div class="flex justify-between mt-6 space-x-4">
+                        <button type="button" class="prev-step px-6 py-3 rounded-xl transition-all duration-300 flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Previous
                         </button>
-                        <button type="submit" class="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30">
+                        <button type="submit" class="px-8 py-3 rounded-xl transition-all duration-300 flex items-center">
                             Create Account <i class="fas fa-check ml-2"></i>
                         </button>
                     </div>
