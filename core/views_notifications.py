@@ -11,26 +11,39 @@ import json
 @login_required
 def notification_list(request):
     """API view to get user notifications"""
-    notifications = get_user_notifications(request.user, limit=20)
-    
-    notification_data = []
-    for notification in notifications:
-        notification_data.append({
-            'id': notification.id,
-            'title': notification.title,
-            'message': notification.message,
-            'priority': notification.priority,
-            'is_read': notification.is_read,
-            'created_at': notification.created_at.isoformat(),
-            'sender_name': notification.sender.get_full_name() if notification.sender else None,
-            'icon_class': notification.get_icon_class(),
+    try:
+        notifications = get_user_notifications(request.user, limit=20)
+        
+        notification_data = []
+        for notification in notifications:
+            try:
+                notification_data.append({
+                    'id': notification.id,
+                    'title': notification.title,
+                    'message': notification.message,
+                    'priority': notification.priority,
+                    'is_read': notification.is_read,
+                    'created_at': notification.created_at.isoformat(),
+                    'sender_name': notification.sender.get_full_name() if notification.sender else None,
+                    'icon_class': notification.get_icon_class() if hasattr(notification, 'get_icon_class') else 'fas fa-info-circle text-blue-600',
+                })
+            except Exception as e:
+                print(f"Error processing notification {notification.id}: {e}")
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'notifications': notification_data,
+            'unread_count': get_unread_notification_count(request.user)
         })
     
-    return JsonResponse({
-        'success': True,
-        'notifications': notification_data,
-        'unread_count': get_unread_notification_count(request.user)
-    })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'notifications': [],
+            'unread_count': 0
+        }, status=500)
 
 
 @login_required
@@ -70,36 +83,57 @@ def mark_all_notifications_read(request):
 @login_required
 def latest_notifications(request):
     """API view to get latest notifications for auto-refresh"""
-    # Get notifications from the last 30 seconds
-    thirty_seconds_ago = timezone.now() - timezone.timedelta(seconds=30)
-    notifications = get_user_notifications(request.user, limit=5)
-    recent_notifications = notifications.filter(created_at__gte=thirty_seconds_ago)
-    
-    notification_data = []
-    for notification in recent_notifications:
-        notification_data.append({
-            'id': notification.id,
-            'title': notification.title,
-            'message': notification.message,
-            'priority': notification.priority,
-            'is_read': notification.is_read,
-            'created_at': notification.created_at.isoformat(),
-            'sender_name': notification.sender.get_full_name() if notification.sender else None,
-            'icon_class': notification.get_icon_class(),
+    try:
+        # Get notifications from the last 30 seconds
+        thirty_seconds_ago = timezone.now() - timezone.timedelta(seconds=30)
+        notifications = get_user_notifications(request.user, limit=5)
+        recent_notifications = notifications.filter(created_at__gte=thirty_seconds_ago)
+        
+        notification_data = []
+        for notification in recent_notifications:
+            try:
+                notification_data.append({
+                    'id': notification.id,
+                    'title': notification.title,
+                    'message': notification.message,
+                    'priority': notification.priority,
+                    'is_read': notification.is_read,
+                    'created_at': notification.created_at.isoformat(),
+                    'sender_name': notification.sender.get_full_name() if notification.sender else None,
+                    'icon_class': notification.get_icon_class() if hasattr(notification, 'get_icon_class') else 'fas fa-info-circle text-blue-600',
+                })
+            except Exception as e:
+                # Skip problematic notification but continue processing others
+                print(f"Error processing notification {notification.id}: {e}")
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'notifications': notification_data,
+            'unread_count': get_unread_notification_count(request.user)
         })
     
-    return JsonResponse({
-        'success': True,
-        'notifications': notification_data,
-        'unread_count': get_unread_notification_count(request.user)
-    })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'notifications': [],
+            'unread_count': 0
+        }, status=500)
 
 
 @login_required
 def notification_count(request):
     """API view to get unread notification count"""
-    count = get_unread_notification_count(request.user)
-    return JsonResponse({
-        'success': True,
-        'count': count
-    })
+    try:
+        count = get_unread_notification_count(request.user)
+        return JsonResponse({
+            'success': True,
+            'count': count
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'count': 0
+        }, status=500)
