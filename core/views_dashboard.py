@@ -22,11 +22,19 @@ def unified_dashboard(request, page='overview'):
     Unified dashboard view that handles all dashboard pages
     """
     user = request.user
+    # Get unread messages count for all pages
+    try:
+        from .models import Message
+        unread_messages = Message.objects.filter(recipient=user, is_read=False).count()
+    except:
+        unread_messages = 0
+    
     context = {
         'user': user,
         'current_page': page,
         'page_title': get_page_title(page),
         'user_role_display': get_user_role_display(user),
+        'unread_messages': unread_messages,
     }
     
     # Add page-specific context
@@ -281,10 +289,26 @@ def get_announcements_context(user):
 
 def get_messages_context(user):
     """Get messages page context"""
-    return {
-        'messages': [],  # Will be implemented
-        'unread_count': 0
-    }
+    try:
+        from .models import Message
+        
+        # Get sent and received messages
+        sent_messages = Message.objects.filter(sender=user).order_by('-sent_at')
+        received_messages = Message.objects.filter(recipient=user).order_by('-sent_at')
+        unread_count = received_messages.filter(is_read=False).count()
+        
+        return {
+            'messages': list(received_messages)[:20],  # Recent received messages
+            'sent_messages': list(sent_messages)[:10],  # Recent sent messages
+            'unread_count': unread_count
+        }
+    except Exception as e:
+        print(f"Error getting messages context: {e}")
+        return {
+            'messages': [],
+            'sent_messages': [],
+            'unread_count': 0
+        }
 
 def get_courses_context(user):
     """Get courses page context"""
