@@ -1,6 +1,5 @@
-from django.contrib.auth.models import User
 from django.utils import timezone
-from .models import Notification, StudentProfile, FacultyProfile, Announcement, CourseOffering
+from .models import User, Notification, StudentProfile, FacultyProfile, Announcement, CourseOffering
 
 
 def create_notification(recipient, notification_type, title, message, 

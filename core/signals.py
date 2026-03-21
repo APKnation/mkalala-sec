@@ -1,7 +1,6 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.contrib.auth.models import User
-from .models import StudentProfile, Announcement, Message, Grade, Enrollment, Payment, LeaveRequest
+from .models import User, StudentProfile, Announcement, Message, Grade, Enrollment, Payment, LeaveRequest
 from .notification_utils import (
     notify_student_registered,
     notify_announcement_posted,
