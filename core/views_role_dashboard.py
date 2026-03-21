@@ -2009,11 +2009,11 @@ def admin_delete_exam(request, exam_id):
 
 def get_admin_timetable_context(user, admin_profile):
     """Get admin timetable page context"""
-    from .models import TimetableEntry, CourseOffering, StudentClass, FacultyProfile
+    from .models import TimeTable, CourseOffering, StudentClass, FacultyProfile
     from django.db.models import Count
     
     # Get all timetable entries with related data
-    timetable_entries = TimetableEntry.objects.select_related(
+    timetable_entries = TimeTable.objects.select_related(
         'course_offering', 'course_offering__course', 'course_offering__faculty', 
         'course_offering__faculty__user', 'student_class'
     ).order_by('day', 'start_time')
