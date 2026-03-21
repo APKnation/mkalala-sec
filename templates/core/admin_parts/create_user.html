@@ -116,6 +116,9 @@
                         <button type="reset" class="inline-flex items-center px-6 py-3 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
                             <i class="fas fa-undo mr-2"></i> Reset
                         </button>
+                        <button type="button" onclick="saveDraft()" class="inline-flex items-center px-6 py-3 border border-orange-300 rounded-lg text-orange-700 bg-orange-50 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors">
+                            <i class="fas fa-save mr-2"></i> Save Draft
+                        </button>
                         <button type="submit" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 ease-in-out bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/25 before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-white/20 before:to-transparent before:opacity-0 hover:before:opacity-100 after:absolute after:inset-0 after:rounded-xl after:bg-gradient-to-r after:from-transparent after:to-white/20 after:opacity-0 hover:after:opacity-100">
                             <span class="relative z-10 flex items-center">
                                 <i class="fas fa-user-plus mr-3 text-lg group-hover:rotate-12 transition-transform duration-300"></i>
@@ -275,6 +278,98 @@
                 });
             });
         }
+    });
+    
+    // Save Draft Function
+    window.saveDraft = function() {
+        const form = document.getElementById('createUserForm');
+        if (!form) return;
+        
+        // Collect form data
+        const formData = new FormData(form);
+        const draftData = {};
+        
+        // Store all form fields
+        for (let [key, value] of formData.entries()) {
+            draftData[key] = value;
+        }
+        
+        // Add metadata
+        draftData.role = '{{ selected_role }}';
+        draftData.timestamp = new Date().toISOString();
+        draftData.url = window.location.href;
+        
+        // Save to localStorage
+        const draftKey = `user_draft_{{ selected_role }}_${Date.now()}`;
+        localStorage.setItem(draftKey, JSON.stringify(draftData));
+        
+        // Show success message
+        Swal.fire({
+            icon: 'success',
+            title: 'Draft Saved!',
+            text: 'Your form data has been saved. You can continue later.',
+            confirmButtonColor: '#10b981',
+            timer: 3000,
+            showConfirmButton: false
+        });
+        
+        // Optional: Show saved drafts count
+        updateDraftsCount();
+    };
+    
+    // Update drafts count function
+    window.updateDraftsCount = function() {
+        const drafts = Object.keys(localStorage).filter(key => key.startsWith('user_draft_'));
+        console.log(`Saved drafts: ${drafts.length}`);
+    };
+    
+    // Load draft function (optional enhancement)
+    window.loadDraft = function() {
+        const drafts = Object.keys(localStorage).filter(key => key.startsWith('user_draft_{{ selected_role }}_'));
+        if (drafts.length > 0) {
+            const latestDraft = drafts[drafts.length - 1];
+            const draftData = JSON.parse(localStorage.getItem(latestDraft));
+            
+            Swal.fire({
+                title: 'Load Saved Draft?',
+                text: `Found a draft from ${new Date(draftData.timestamp).toLocaleString()}`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Load Draft',
+                cancelButtonText: 'Start Fresh'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Populate form with draft data
+                    const form = document.getElementById('createUserForm');
+                    Object.keys(draftData).forEach(key => {
+                        if (key !== 'timestamp' && key !== 'url' && key !== 'role') {
+                            const input = form.querySelector(`[name="${key}"]`);
+                            if (input) {
+                                input.value = draftData[key];
+                            }
+                        }
+                    });
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Draft Loaded!',
+                        text: 'Your form has been populated with saved data.',
+                        confirmButtonColor: '#10b981',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    };
+    
+    // Check for drafts on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateDraftsCount();
+        // Optional: Auto-load latest draft if exists
+        // loadDraft();
     });
 })();
 </script>
