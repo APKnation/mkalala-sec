@@ -113,18 +113,42 @@
     justify-content: center !important;
     background: linear-gradient(135deg, #dc2626, #b91c1c, #ef4444) !important;
     color: white !important;
-    border: 2px solid #dc2626 !important;
-    font-weight: 700 !important;
+    border: 3px solid #dc2626 !important;
+    font-weight: 800 !important;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     transition: all 0.3s ease !important;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
-    padding: 12px 24px !important;
-    border-radius: 12px !important;
-    font-size: 14px !important;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4) !important;
+    padding: 16px 32px !important;
+    border-radius: 16px !important;
+    font-size: 15px !important;
     cursor: pointer !important;
     text-decoration: none !important;
-    min-width: 120px !important;
+    min-width: 150px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.register-form button::before,
+.register-form .prev-step::before,
+.register-form .next-step::before,
+.register-form button[type="submit"]::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+    transition: left 0.5s ease !important;
+}
+
+.register-form button:hover::before,
+.register-form .prev-step:hover::before,
+.register-form .next-step:hover::before,
+.register-form button[type="submit"]:hover::before {
+    left: 100% !important;
 }
 
 .register-form button:hover,
@@ -132,21 +156,23 @@
     background: linear-gradient(135deg, #b91c1c, #991b1b, #dc2626) !important;
     border-color: #b91c1c !important;
     color: white !important;
-    transform: translateY(-2px) scale(1.05) !important;
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4) !important;
+    transform: translateY(-3px) scale(1.08) !important;
+    box-shadow: 0 12px 35px rgba(220, 38, 38, 0.5) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 .register-form button:active {
     background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
-    transform: translateY(0) scale(0.98) !important;
-    box-shadow: 0 2px 10px rgba(220, 38, 38, 0.3) !important;
+    transform: translateY(-1px) scale(1.02) !important;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4) !important;
 }
 
-/* Previous button - White text on red */
+/* Previous button - Enhanced Red */
 .register-form .prev-step {
     background: linear-gradient(135deg, #dc2626, #ef4444) !important;
     border-color: #dc2626 !important;
     color: white !important;
+    font-weight: 700 !important;
 }
 
 .register-form .prev-step:hover,
@@ -154,15 +180,17 @@
     background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
     border-color: #b91c1c !important;
     color: white !important;
+    box-shadow: 0 12px 35px rgba(220, 38, 38, 0.5) !important;
 }
 
-/* Next button - Success Green Theme */
+/* Next button - Enhanced Success Green */
 .register-form .next-step {
     background: linear-gradient(135deg, #10b981, #059669, #34d399) !important;
     border-color: #10b981 !important;
     color: white !important;
-    font-weight: 800 !important;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
+    font-weight: 900 !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
 .register-form .next-step:hover,
@@ -170,24 +198,28 @@
     background: linear-gradient(135deg, #059669, #047857, #10b981) !important;
     border-color: #059669 !important;
     color: white !important;
-    transform: translateY(-2px) scale(1.05) !important;
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+    transform: translateY(-3px) scale(1.08) !important;
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.5) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 .register-form .next-step:active {
     background: linear-gradient(135deg, #047857, #065f46, #059669) !important;
-    transform: translateY(0) scale(0.98) !important;
-    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3) !important;
+    transform: translateY(-1px) scale(1.02) !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
 }
 
-/* Submit button - Final red */
+/* Submit button - Enhanced Final Red */
 .register-form button[type="submit"] {
     background: linear-gradient(135deg, #dc2626, #b91c1c, #991b1b) !important;
     border-color: #dc2626 !important;
     color: white !important;
     font-weight: 900 !important;
     font-size: 16px !important;
-    padding: 14px 32px !important;
+    padding: 18px 36px !important;
+    min-width: 180px !important;
+    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
 }
 
 .register-form button[type="submit"]:hover,
@@ -195,6 +227,9 @@
     background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
     border-color: #991b1b !important;
     color: white !important;
+    transform: translateY(-3px) scale(1.08) !important;
+    box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Force button visibility */
