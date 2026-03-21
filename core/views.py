@@ -718,7 +718,8 @@ def teacher_message_compose(request):
                         subject=subject,
                         body=body
                     )
-                messages.success(request, f'Message sent to all {recipients.count()} students!')
+                student_count = recipients.count()
+                messages.success(request, 'Message sent to all {} students!'.format(student_count))
                 return redirect('teacher_dashboard')
                 
             elif recipient_value == 'my_classes':
@@ -735,7 +736,8 @@ def teacher_message_compose(request):
                         subject=subject,
                         body=body
                     )
-                messages.success(request, f'Message sent to {recipients.count()} students in your classes!')
+                class_student_count = recipients.count()
+                messages.success(request, 'Message sent to {} students in your classes!'.format(class_student_count))
                 return redirect('teacher_dashboard')
                 
             elif recipient_value == 'all_faculty':
@@ -747,7 +749,8 @@ def teacher_message_compose(request):
                         subject=subject,
                         body=body
                     )
-                messages.success(request, f'Message sent to all {recipients.count()} faculty members!')
+                faculty_count = recipients.count()
+                messages.success(request, 'Message sent to {} faculty members!'.format(faculty_count))
                 return redirect('teacher_dashboard')
                 
             elif recipient_value == 'admin':
@@ -759,7 +762,8 @@ def teacher_message_compose(request):
                         subject=subject,
                         body=body
                     )
-                messages.success(request, f'Message sent to {recipients.count()} administrators!')
+                admin_count = recipients.count()
+                messages.success(request, 'Message sent to {} administrators!'.format(admin_count))
                 return redirect('teacher_dashboard')
                 
             elif recipient_value == 'headmaster':
@@ -771,7 +775,8 @@ def teacher_message_compose(request):
                         subject=subject,
                         body=body
                     )
-                messages.success(request, f'Message sent to {recipients.count()} headmasters!')
+                headmaster_count = recipients.count()
+                messages.success(request, 'Message sent to {} headmasters!'.format(headmaster_count))
                 return redirect('teacher_dashboard')
             
             # Handle individual username
