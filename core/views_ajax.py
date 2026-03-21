@@ -47,10 +47,6 @@ def ajax_student_edit(request, student_id):
             student.father_name = data['father_name']
         if 'mother_name' in data:
             student.mother_name = data['mother_name']
-        if 'guardian_name' in data:
-            student.guardian_name = data['guardian_name']
-        if 'guardian_phone' in data:
-            student.guardian_phone = data['guardian_phone']
         
         # Update department
         if 'department' in data and data['department']:
@@ -74,8 +70,6 @@ def ajax_student_edit(request, student_id):
                 'department_id': student.department.id if student.department else '',
                 'father_name': student.father_name,
                 'mother_name': student.mother_name,
-                'guardian_name': student.guardian_name,
-                'guardian_phone': student.guardian_phone,
                 'is_active': student.user.is_active,
             }
         })
@@ -118,8 +112,6 @@ def ajax_student_detail(request, student_id):
                 'department_id': student.department.id if student.department else '',
                 'father_name': student.father_name,
                 'mother_name': student.mother_name,
-                'guardian_name': student.guardian_name,
-                'guardian_phone': student.guardian_phone,
                 'is_active': student.user.is_active,
                 'date_joined': student.user.date_joined.strftime('%Y-%m-%d') if student.user.date_joined else '',
             }

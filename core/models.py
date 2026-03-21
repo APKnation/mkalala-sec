@@ -152,6 +152,8 @@ class StudentProfile(models.Model):
     # Personal information fields
     date_of_birth = models.DateField(null=True, blank=True, help_text="Student's date of birth")
     gender = models.CharField(max_length=1, choices=[('M', 'Male'), ('F', 'Female')], null=True, blank=True, help_text="Student's gender")
+    father_name = models.CharField(max_length=MAX_NAME_LENGTH, blank=True, null=True, help_text="Father's full name")
+    mother_name = models.CharField(max_length=MAX_NAME_LENGTH, blank=True, null=True, help_text="Mother's full name")
     
     # Tanzania O-level specific fields
     necta_exam_number = models.CharField(max_length=20, blank=True, null=True, help_text="NECTA examination number")
