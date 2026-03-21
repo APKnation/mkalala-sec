@@ -10,6 +10,50 @@
             <p class="mt-2 text-sm text-gray-600">Generate and manage school reports</p>
         </div>
         <div class="flex space-x-3">
+            <!-- Report Filters -->
+            <div class="flex items-center space-x-2">
+                <!-- Date Range Filter -->
+                <select id="dateRange" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all" {% if current_filters.date_range == 'all' %}selected{% endif %}>All Time</option>
+                    <option value="today" {% if current_filters.date_range == 'today' %}selected{% endif %}>Today</option>
+                    <option value="week" {% if current_filters.date_range == 'week' %}selected{% endif %}>This Week</option>
+                    <option value="month" {% if current_filters.date_range == 'month' %}selected{% endif %}>This Month</option>
+                    <option value="quarter" {% if current_filters.date_range == 'quarter' %}selected{% endif %}>This Quarter</option>
+                    <option value="year" {% if current_filters.date_range == 'year' %}selected{% endif %}>This Year</option>
+                    <option value="custom" {% if current_filters.date_range == 'custom' %}selected{% endif %}>Custom Range</option>
+                </select>
+                
+                <!-- Department Filter -->
+                <select id="departmentFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all" {% if current_filters.department == 'all' %}selected{% endif %}>All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}" {% if current_filters.department == dept.id|stringformat:"s" %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <!-- Form Level Filter -->
+                <select id="formFilter" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all" {% if current_filters.form == 'all' %}selected{% endif %}>All Forms</option>
+                    <option value="1" {% if current_filters.form == '1' %}selected{% endif %}>Form 1</option>
+                    <option value="2" {% if current_filters.form == '2' %}selected{% endif %}>Form 2</option>
+                    <option value="3" {% if current_filters.form == '3' %}selected{% endif %}>Form 3</option>
+                    <option value="4" {% if current_filters.form == '4' %}selected{% endif %}>Form 4</option>
+                </select>
+                
+                <!-- Report Type Filter -->
+                <select id="reportType" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all" {% if current_filters.report_type == 'all' %}selected{% endif %}>All Reports</option>
+                    <option value="academic" {% if current_filters.report_type == 'academic' %}selected{% endif %}>Academic</option>
+                    <option value="financial" {% if current_filters.report_type == 'financial' %}selected{% endif %}>Financial</option>
+                    <option value="attendance" {% if current_filters.report_type == 'attendance' %}selected{% endif %}>Attendance</option>
+                    <option value="exam" {% if current_filters.report_type == 'exam' %}selected{% endif %}>Examination</option>
+                    <option value="student" {% if current_filters.report_type == 'student' %}selected{% endif %}>Student</option>
+                </select>
+            </div>
+            
+            <button onclick="applyFilters()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                <i class="fas fa-filter mr-2"></i> Apply Filters
+            </button>
             <button onclick="generateReport()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center">
                 <i class="fas fa-file-export mr-2"></i> Generate Report
             </button>
@@ -320,31 +364,120 @@
 
 <script>
 function generateReport() {
-    alert('Report generation feature coming soon!');
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    const reportType = document.getElementById('reportType').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form,
+        report_type: reportType
+    });
+    
+    window.location.href = `/admin/reports/generate/?${params.toString()}`;
 }
 
 function exportReports() {
-    window.location.href = '/admin/reports/export/';
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    const reportType = document.getElementById('reportType').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form,
+        report_type: reportType,
+        export: 'true'
+    });
+    
+    window.location.href = `/admin/reports/export/?${params.toString()}`;
+}
+
+function applyFilters() {
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    const reportType = document.getElementById('reportType').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form,
+        report_type: reportType
+    });
+    
+    window.location.href = `/admin/reports/?${params.toString()}`;
 }
 
 function generateStudentReport() {
-    window.location.href = '/admin/reports/student/';
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form
+    });
+    
+    window.location.href = `/admin/reports/student/?${params.toString()}`;
 }
 
 function generateAcademicReport() {
-    window.location.href = '/admin/reports/academic/';
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form
+    });
+    
+    window.location.href = `/admin/reports/academic/?${params.toString()}`;
 }
 
 function generateFinancialReport() {
-    window.location.href = '/admin/reports/financial/';
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department
+    });
+    
+    window.location.href = `/admin/reports/financial/?${params.toString()}`;
 }
 
 function generateAttendanceReport() {
-    window.location.href = '/admin/reports/attendance/';
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form
+    });
+    
+    window.location.href = `/admin/reports/attendance/?${params.toString()}`;
 }
 
 function generateExamReport() {
-    window.location.href = '/admin/reports/exam/';
+    const dateRange = document.getElementById('dateRange').value;
+    const department = document.getElementById('departmentFilter').value;
+    const form = document.getElementById('formFilter').value;
+    
+    const params = new URLSearchParams({
+        date_range: dateRange,
+        department: department,
+        form: form
+    });
+    
+    window.location.href = `/admin/reports/exam/?${params.toString()}`;
 }
 
 function generateCustomReport() {

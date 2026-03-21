@@ -5420,10 +5420,68 @@ def admin_fee_delete(request, pk):
 @user_passes_test(is_admin)
 def admin_reports(request):
     """Admin reports with institutional metrics"""
-    from django.db.models import Sum
-    total_students = User.objects.filter(role='student').count()
+    from django.db.models import Sum, Q
+    from .models import Department, StudentProfile
+    
+    # Get filter parameters
+    date_range = request.GET.get('date_range', 'all')
+    department_id = request.GET.get('department', 'all')
+    form_level = request.GET.get('form', 'all')
+    report_type = request.GET.get('report_type', 'all')
+    
+    # Base queryset with filters
+    student_queryset = StudentProfile.objects.all()
+    
+    # Apply filters
+    if department_id != 'all':
+        student_queryset = student_queryset.filter(department_id=department_id)
+    
+    if form_level != 'all':
+        student_queryset = student_queryset.filter(current_form=form_level)
+    
+    # Date filtering
+    if date_range == 'today':
+        from django.utils import timezone
+        student_queryset = student_queryset.filter(user__date_joined__date=timezone.now().date())
+    elif date_range == 'week':
+        from django.utils import timezone
+        week_ago = timezone.now() - timezone.timedelta(days=7)
+        student_queryset = student_queryset.filter(user__date_joined__gte=week_ago)
+    elif date_range == 'month':
+        from django.utils import timezone
+        month_ago = timezone.now() - timezone.timedelta(days=30)
+        student_queryset = student_queryset.filter(user__date_joined__gte=month_ago)
+    elif date_range == 'quarter':
+        from django.utils import timezone
+        quarter_ago = timezone.now() - timezone.timedelta(days=90)
+        student_queryset = student_queryset.filter(user__date_joined__gte=quarter_ago)
+    elif date_range == 'year':
+        from django.utils import timezone
+        year_ago = timezone.now() - timezone.timedelta(days=365)
+        student_queryset = student_queryset.filter(user__date_joined__gte=year_ago)
+    
+    # Calculate metrics
+    total_students = student_queryset.count()
     total_teachers = User.objects.filter(role='teacher').count()
-    revenue_month = Fee.objects.filter(is_paid=True, paid_date__month=timezone.now().month).aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Fee calculations with filters
+    fee_queryset = Fee.objects.all()
+    if date_range != 'all':
+        if date_range == 'today':
+            fee_queryset = fee_queryset.filter(paid_date__date=timezone.now().date())
+        elif date_range == 'week':
+            fee_queryset = fee_queryset.filter(paid_date__gte=timezone.now() - timezone.timedelta(days=7))
+        elif date_range == 'month':
+            fee_queryset = fee_queryset.filter(paid_date__gte=timezone.now() - timezone.timedelta(days=30))
+        elif date_range == 'quarter':
+            fee_queryset = fee_queryset.filter(paid_date__gte=timezone.now() - timezone.timedelta(days=90))
+        elif date_range == 'year':
+            fee_queryset = fee_queryset.filter(paid_date__gte=timezone.now() - timezone.timedelta(days=365))
+    
+    revenue_month = fee_queryset.filter(is_paid=True).aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Get departments for filter dropdown
+    departments = Department.objects.all()
     
     context = {
         'title': 'System Reports',
@@ -5431,7 +5489,14 @@ def admin_reports(request):
         'total_students': total_students,
         'total_teachers': total_teachers,
         'revenue_month': revenue_month,
-        'staff_engagement': 92, # Placeholder for now
+        'staff_engagement': 92,  # Placeholder for now
+        'departments': departments,
+        'current_filters': {
+            'date_range': date_range,
+            'department': department_id,
+            'form': form_level,
+            'report_type': report_type
+        }
     }
     return render(request, 'core/admin_management/admin_reports.html', context)
 
