@@ -2028,8 +2028,8 @@ def get_admin_timetable_context(user, admin_profile):
     # Get classes for dropdown
     classes = StudentClass.objects.all().order_by('form_level', 'name')
     
-    # Get teachers for dropdown
-    teachers = FacultyProfile.objects.select_related('user').order_by('user__first_name', 'user__last_name')
+    # Get teachers for dropdown (as User objects for template compatibility)
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
     
     # Schedule statistics
     schedule_stats = {
@@ -2046,7 +2046,7 @@ def get_admin_timetable_context(user, admin_profile):
         'classes': classes,
         'teachers': teachers,
         'total_teachers': teachers.count(),
-        'active_teachers': teachers.filter(user__is_active=True).count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
         'schedule_stats': schedule_stats,
         'total_entries': total_entries,
     }

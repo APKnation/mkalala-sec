@@ -37,7 +37,17 @@
                             <i class="fas fa-user-circle text-2xl"></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold truncate">{{ user.get_full_name|default:user.username }}</p>
+                            {% if user %}
+                                {% if user.get_full_name %}
+                                    <p class="text-sm font-bold truncate">{{ user.get_full_name }}</p>
+                                {% elif user.username %}
+                                    <p class="text-sm font-bold truncate">{{ user.username }}</p>
+                                {% else %}
+                                    <p class="text-sm font-bold truncate">User</p>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-sm font-bold truncate">Guest</p>
+                            {% endif %}
                             <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">{% block user_role %}{% endblock %}</p>
                         </div>
                     </div>
