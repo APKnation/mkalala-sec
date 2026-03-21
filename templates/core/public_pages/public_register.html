@@ -49,11 +49,17 @@
 }
 
 /* Enhanced form field styling */
-.form-input {
+.register-form input[type="text"],
+.register-form input[type="email"],
+.register-form input[type="tel"],
+.register-form input[type="password"],
+.register-form input[type="date"],
+.register-form select {
     @apply w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none text-base;
 }
 
-.form-input:focus {
+.register-form input:focus,
+.register-form select:focus {
     @apply transform -translate-y-1 shadow-lg;
 }
 
@@ -159,7 +165,7 @@
                                 <i class="fas fa-user text-red-500 mr-2"></i>
                                 First Name
                             </label>
-                            {{ form.first_name|attr:"class:form-input" }}
+                            {{ form.first_name }}
                             {% if form.first_name.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.first_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -167,7 +173,7 @@
                                 <i class="fas fa-user text-red-500 mr-2"></i>
                                 Last Name
                             </label>
-                            {{ form.last_name|attr:"class:form-input" }}
+                            {{ form.last_name }}
                             {% if form.last_name.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.last_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -175,7 +181,7 @@
                                 <i class="fas fa-at text-red-500 mr-2"></i>
                                 Username
                             </label>
-                            {{ form.username|attr:"class:form-input" }}
+                            {{ form.username }}
                             {% if form.username.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.username.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -183,7 +189,7 @@
                                 <i class="fas fa-envelope text-red-500 mr-2"></i>
                                 Email Address
                             </label>
-                            {{ form.email|attr:"class:form-input" }}
+                            {{ form.email }}
                             {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.email.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
@@ -210,7 +216,7 @@
                                 <i class="fas fa-lock text-red-500 mr-2"></i>
                                 Password
                             </label>
-                            {{ form.password1|attr:"class:form-input" }}
+                            {{ form.password1 }}
                             {% if form.password1.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password1.errors.0 }}</p>{% endif %}
                             <p class="text-xs text-gray-500 mt-2">Use at least 8 characters with letters and numbers</p>
                         </div>
@@ -219,7 +225,7 @@
                                 <i class="fas fa-check-circle text-red-500 mr-2"></i>
                                 Confirm Password
                             </label>
-                            {{ form.password2|attr:"class:form-input" }}
+                            {{ form.password2 }}
                             {% if form.password2.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password2.errors.0 }}</p>{% endif %}
                             <p class="text-xs text-gray-500 mt-2">Re-enter your password to confirm</p>
                         </div>
@@ -252,7 +258,7 @@
                                 <i class="fas fa-phone text-red-500 mr-2"></i>
                                 Phone Number
                             </label>
-                            {{ form.phone|attr:"class:form-input" }}
+                            {{ form.phone }}
                             {% if form.phone.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.phone.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -260,7 +266,7 @@
                                 <i class="fas fa-calendar text-red-500 mr-2"></i>
                                 Date of Birth
                             </label>
-                            {{ form.date_of_birth|attr:"class:form-input" }}
+                            {{ form.date_of_birth }}
                             {% if form.date_of_birth.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -268,7 +274,7 @@
                                 <i class="fas fa-home text-red-500 mr-2"></i>
                                 Address
                             </label>
-                            {{ form.address|attr:"class:form-input" }}
+                            {{ form.address }}
                             {% if form.address.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.address.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -276,7 +282,7 @@
                                 <i class="fas fa-user text-red-500 mr-2"></i>
                                 Gender
                             </label>
-                            {{ form.gender|attr:"class:form-input" }}
+                            {{ form.gender }}
                             {% if form.gender.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.gender.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
@@ -308,7 +314,7 @@
                                 <i class="fas fa-school text-red-500 mr-2"></i>
                                 Previous School
                             </label>
-                            {{ form.previous_school|attr:"class:form-input" }}
+                            {{ form.previous_school }}
                             {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.previous_school.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
@@ -316,7 +322,7 @@
                                 <i class="fas fa-certificate text-red-500 mr-2"></i>
                                 Birth Certificate Number
                             </label>
-                            {{ form.birth_certificate_number|attr:"class:form-input" }}
+                            {{ form.birth_certificate_number }}
                             {% if form.birth_certificate_number.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.birth_certificate_number.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
