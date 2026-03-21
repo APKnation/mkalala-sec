@@ -13,11 +13,11 @@
 .register-form input[type="date"],
 .register-form select {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 16px;
     background: #f9fafb;
-    border: 1px solid #e5e7eb;
+    border: 2px solid #e5e7eb;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 15px;
     transition: all 0.3s ease;
     outline: none;
 }
@@ -26,11 +26,51 @@
 .register-form select:focus {
     background: white;
     border-color: #ef4444;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+    transform: translateY(-1px);
 }
 
 .register-form input::placeholder {
     color: #9ca3af;
+}
+
+/* Enhanced password field styling */
+.register-form input[type="password"] {
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(to right, #fef2f2, #ffffff);
+    border-color: #fecaca;
+}
+
+.register-form input[type="password"]:focus {
+    border-color: #dc2626;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+}
+
+/* Password step specific styling */
+.form-step[data-step="2"] {
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+    border-radius: 16px;
+    padding: 20px;
+    margin: -20px;
+}
+
+.form-step[data-step="2"] .space-y-4 > div {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #fecaca;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-step[data-step="2"] label {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 14px;
 }
 
 /* Multi-stage form styles */
@@ -206,23 +246,33 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-lock text-red-500 mr-2"></i>
+                                Password
+                            </label>
                             {{ form.password1 }}
-                            {% if form.password1.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.password1.errors.0 }}</p>{% endif %}
+                            {% if form.password1.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password1.errors.0 }}</p>{% endif %}
+                            <p class="text-xs text-gray-500 mt-2">Use at least 8 characters with letters and numbers</p>
                         </div>
                         <div>
-                            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-check-circle text-red-500 mr-2"></i>
+                                Confirm Password
+                            </label>
                             {{ form.password2 }}
-                            {% if form.password2.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.password2.errors.0 }}</p>{% endif %}
+                            {% if form.password2.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password2.errors.0 }}</p>{% endif %}
+                            <p class="text-xs text-gray-500 mt-2">Re-enter your password to confirm</p>
                         </div>
                     </div>
 
-                    <div class="flex justify-between mt-6">
-                        <button type="button" class="prev-step bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold transition-all duration-300">
-                            <i class="fas fa-arrow-left mr-2"></i> Previous
+                    <div class="flex justify-between mt-8 space-x-4">
+                        <button type="button" class="prev-step bg-white border-2 border-gray-300 hover:border-red-500 hover:bg-red-50 text-gray-700 hover:text-red-600 px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            Previous Step
                         </button>
-                        <button type="button" class="next-step bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-6 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30">
-                            Next Step <i class="fas fa-arrow-right ml-2"></i>
+                        <button type="button" class="next-step bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white px-8 py-3 rounded-xl font-bold transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-xl transform hover:scale-105 flex items-center">
+                            Next Step
+                            <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
                 </div>
