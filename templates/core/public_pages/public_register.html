@@ -5,75 +5,7 @@
 
 {% block extra_css %}
 <style>
-/* Form field styling for Django forms */
-.register-form input[type="text"],
-.register-form input[type="email"],
-.register-form input[type="tel"],
-.register-form input[type="password"],
-.register-form input[type="date"],
-.register-form select {
-    width: 100%;
-    padding: 14px 16px;
-    background: #f9fafb;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    outline: none;
-}
-
-.register-form input:focus,
-.register-form select:focus {
-    background: white;
-    border-color: #ef4444;
-    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
-    transform: translateY(-1px);
-}
-
-.register-form input::placeholder {
-    color: #9ca3af;
-}
-
-/* Enhanced password field styling */
-.register-form input[type="password"] {
-    font-size: 16px;
-    letter-spacing: 0.5px;
-    background: linear-gradient(to right, #fef2f2, #ffffff);
-    border-color: #fecaca;
-}
-
-.register-form input[type="password"]:focus {
-    border-color: #dc2626;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
-}
-
-/* Password step specific styling */
-.form-step[data-step="2"] {
-    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
-    border-radius: 16px;
-    padding: 20px;
-    margin: -20px;
-}
-
-.form-step[data-step="2"] .space-y-4 > div {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #fecaca;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.form-step[data-step="2"] label {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 700;
-    font-size: 14px;
-}
-
-/* Multi-stage form styles */
+/* Multi-stage form styles - Using Tailwind CSS base */
 .form-step {
     display: none !important;
     opacity: 0 !important;
@@ -103,167 +35,52 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Enhanced button styling - Complete Red Theme */
-.register-form button,
-.register-form .prev-step,
-.register-form .next-step,
-.register-form button[type="submit"] {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #dc2626, #b91c1c, #ef4444) !important;
-    color: white !important;
-    border: 3px solid #dc2626 !important;
-    font-weight: 800 !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4) !important;
-    padding: 16px 32px !important;
-    border-radius: 16px !important;
-    font-size: 15px !important;
-    cursor: pointer !important;
-    text-decoration: none !important;
-    min-width: 150px !important;
-    position: relative !important;
-    overflow: hidden !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+/* Button styling using Tailwind classes */
+.btn-red {
+    @apply bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold text-uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border-2 border-red-600;
 }
 
-.register-form button::before,
-.register-form .prev-step::before,
-.register-form .next-step::before,
-.register-form button[type="submit"]::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: -100% !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
-    transition: left 0.5s ease !important;
+.btn-green {
+    @apply bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-bold text-uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border-2 border-green-600;
 }
 
-.register-form button:hover::before,
-.register-form .prev-step:hover::before,
-.register-form .next-step:hover::before,
-.register-form button[type="submit"]:hover::before {
-    left: 100% !important;
+.btn-red-large {
+    @apply bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-black text-uppercase tracking-wide transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 border-2 border-red-600 text-lg;
 }
 
-.register-form button:hover,
-.register-form button:focus {
-    background: linear-gradient(135deg, #b91c1c, #991b1b, #dc2626) !important;
-    border-color: #b91c1c !important;
-    color: white !important;
-    transform: translateY(-3px) scale(1.08) !important;
-    box-shadow: 0 12px 35px rgba(220, 38, 38, 0.5) !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+/* Enhanced form field styling */
+.form-input {
+    @apply w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none text-base;
 }
 
-.register-form button:active {
-    background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
-    transform: translateY(-1px) scale(1.02) !important;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4) !important;
+.form-input:focus {
+    @apply transform -translate-y-1 shadow-lg;
 }
 
-/* Previous button - Enhanced Red */
-.register-form .prev-step {
-    background: linear-gradient(135deg, #dc2626, #ef4444) !important;
-    border-color: #dc2626 !important;
-    color: white !important;
-    font-weight: 700 !important;
+/* Password step specific styling */
+.password-step {
+    @apply bg-gradient-to-br from-red-50 to-white rounded-2xl p-6 -m-6;
 }
 
-.register-form .prev-step:hover,
-.register-form .prev-step:focus {
-    background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
-    border-color: #b91c1c !important;
-    color: white !important;
-    box-shadow: 0 12px 35px rgba(220, 38, 38, 0.5) !important;
+.password-field {
+    @apply bg-white p-5 rounded-xl border border-red-200 shadow-sm;
 }
 
-/* Next button - Enhanced Success Green */
-.register-form .next-step {
-    background: linear-gradient(135deg, #10b981, #059669, #34d399) !important;
-    border-color: #10b981 !important;
-    color: white !important;
-    font-weight: 900 !important;
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4) !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-}
-
-.register-form .next-step:hover,
-.register-form .next-step:focus {
-    background: linear-gradient(135deg, #059669, #047857, #10b981) !important;
-    border-color: #059669 !important;
-    color: white !important;
-    transform: translateY(-3px) scale(1.08) !important;
-    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.5) !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
-}
-
-.register-form .next-step:active {
-    background: linear-gradient(135deg, #047857, #065f46, #059669) !important;
-    transform: translateY(-1px) scale(1.02) !important;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4) !important;
-}
-
-/* Submit button - Enhanced Final Red */
-.register-form button[type="submit"] {
-    background: linear-gradient(135deg, #dc2626, #b91c1c, #991b1b) !important;
-    border-color: #dc2626 !important;
-    color: white !important;
-    font-weight: 900 !important;
-    font-size: 16px !important;
-    padding: 18px 36px !important;
-    min-width: 180px !important;
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5) !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
-}
-
-.register-form button[type="submit"]:hover,
-.register-form button[type="submit"]:focus {
-    background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
-    border-color: #991b1b !important;
-    color: white !important;
-    transform: translateY(-3px) scale(1.08) !important;
-    box-shadow: 0 15px 40px rgba(220, 38, 38, 0.6) !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* Force button visibility */
-.form-step.active button {
-    visibility: visible !important;
-    display: inline-flex !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-}
-
-.form-step:not(.active) button {
-    visibility: hidden !important;
-    display: none !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
+/* Progress indicators */
 .step-indicator {
-    transition: all 0.3s ease;
+    @apply transition-all duration-300;
 }
 
 .step-indicator.active {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
-    color: white;
-    transform: scale(1.1);
+    @apply bg-gradient-to-r from-red-600 to-red-500 text-white transform scale-110;
 }
 
 .step-indicator.completed {
-    background: #10b981;
-    color: white;
+    @apply bg-green-500 text-white;
 }
 
 .progress-bar {
-    transition: width 0.3s ease;
+    @apply transition-all duration-300;
 }
 </style>
 {% endblock %}
@@ -338,36 +155,48 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-user text-red-500 mr-2"></i>
+                                First Name
+                            </label>
+                            {{ form.first_name|attr:"class:form-input" }}
+                            {% if form.first_name.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.first_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-user text-red-500 mr-2"></i>
+                                Last Name
+                            </label>
+                            {{ form.last_name|attr:"class:form-input" }}
+                            {% if form.last_name.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.last_name.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Username</label>
-                            {{ form.username }}
-                            {% if form.username.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.username.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-at text-red-500 mr-2"></i>
+                                Username
+                            </label>
+                            {{ form.username|attr:"class:form-input" }}
+                            {% if form.username.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.username.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                            {{ form.email }}
-                            {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-envelope text-red-500 mr-2"></i>
+                                Email Address
+                            </label>
+                            {{ form.email|attr:"class:form-input" }}
+                            {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.email.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
 
                     <div class="flex justify-end mt-6">
-                        <button type="button" class="next-step px-8 py-3 rounded-xl transition-all duration-300">
+                        <button type="button" class="next-step btn-green px-8 py-4 rounded-xl flex items-center">
                             Next Step <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Step 2: Password Information -->
-                <div class="form-step" data-step="2" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
+                <div class="form-step password-step" data-step="2" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
                     <div class="flex items-center space-x-3 mb-6">
                         <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                             <i class="fas fa-lock text-red-600"></i>
@@ -376,32 +205,32 @@
                     </div>
                     
                     <div class="space-y-4">
-                        <div>
+                        <div class="password-field">
                             <label for="{{ form.password1.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
                                 <i class="fas fa-lock text-red-500 mr-2"></i>
                                 Password
                             </label>
-                            {{ form.password1 }}
+                            {{ form.password1|attr:"class:form-input" }}
                             {% if form.password1.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password1.errors.0 }}</p>{% endif %}
                             <p class="text-xs text-gray-500 mt-2">Use at least 8 characters with letters and numbers</p>
                         </div>
-                        <div>
+                        <div class="password-field">
                             <label for="{{ form.password2.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
                                 <i class="fas fa-check-circle text-red-500 mr-2"></i>
                                 Confirm Password
                             </label>
-                            {{ form.password2 }}
+                            {{ form.password2|attr:"class:form-input" }}
                             {% if form.password2.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password2.errors.0 }}</p>{% endif %}
                             <p class="text-xs text-gray-500 mt-2">Re-enter your password to confirm</p>
                         </div>
                     </div>
 
                     <div class="flex justify-between mt-8 space-x-4">
-                        <button type="button" class="prev-step px-6 py-3 rounded-xl transition-all duration-300 flex items-center">
+                        <button type="button" class="prev-step btn-red px-6 py-4 rounded-xl flex items-center">
                             <i class="fas fa-arrow-left mr-2"></i>
                             Previous Step
                         </button>
-                        <button type="button" class="next-step px-8 py-3 rounded-xl transition-all duration-300 flex items-center">
+                        <button type="button" class="next-step btn-green px-8 py-4 rounded-xl flex items-center">
                             Next Step
                             <i class="fas fa-arrow-right ml-2"></i>
                         </button>
@@ -419,33 +248,45 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
-                            {{ form.phone }}
-                            {% if form.phone.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-phone text-red-500 mr-2"></i>
+                                Phone Number
+                            </label>
+                            {{ form.phone|attr:"class:form-input" }}
+                            {% if form.phone.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.phone.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Date of Birth</label>
-                            {{ form.date_of_birth }}
-                            {% if form.date_of_birth.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-calendar text-red-500 mr-2"></i>
+                                Date of Birth
+                            </label>
+                            {{ form.date_of_birth|attr:"class:form-input" }}
+                            {% if form.date_of_birth.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
-                            {{ form.address }}
-                            {% if form.address.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.address.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-home text-red-500 mr-2"></i>
+                                Address
+                            </label>
+                            {{ form.address|attr:"class:form-input" }}
+                            {% if form.address.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.address.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.gender.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-                            {{ form.gender }}
-                            {% if form.gender.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.gender.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.gender.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-user text-red-500 mr-2"></i>
+                                Gender
+                            </label>
+                            {{ form.gender|attr:"class:form-input" }}
+                            {% if form.gender.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.gender.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
 
                     <div class="flex justify-between mt-6 space-x-4">
-                        <button type="button" class="prev-step px-6 py-3 rounded-xl transition-all duration-300 flex items-center">
+                        <button type="button" class="prev-step btn-red px-6 py-4 rounded-xl flex items-center">
                             <i class="fas fa-arrow-left mr-2"></i>
                             Previous
                         </button>
-                        <button type="button" class="next-step px-8 py-3 rounded-xl transition-all duration-300 flex items-center">
+                        <button type="button" class="next-step btn-green px-8 py-4 rounded-xl flex items-center">
                             Next Step
                             <i class="fas fa-arrow-right ml-2"></i>
                         </button>
@@ -463,23 +304,29 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label for="{{ form.previous_school.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Previous School</label>
-                            {{ form.previous_school }}
-                            {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.previous_school.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.previous_school.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-school text-red-500 mr-2"></i>
+                                Previous School
+                            </label>
+                            {{ form.previous_school|attr:"class:form-input" }}
+                            {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.previous_school.errors.0 }}</p>{% endif %}
                         </div>
                         <div>
-                            <label for="{{ form.birth_certificate_number.id_for_label }}" class="block text-sm font-semibold text-gray-700 mb-2">Birth Certificate Number</label>
-                            {{ form.birth_certificate_number }}
-                            {% if form.birth_certificate_number.errors %}<p class="text-xs font-bold text-red-500 mt-1">{{ form.birth_certificate_number.errors.0 }}</p>{% endif %}
+                            <label for="{{ form.birth_certificate_number.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
+                                <i class="fas fa-certificate text-red-500 mr-2"></i>
+                                Birth Certificate Number
+                            </label>
+                            {{ form.birth_certificate_number|attr:"class:form-input" }}
+                            {% if form.birth_certificate_number.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.birth_certificate_number.errors.0 }}</p>{% endif %}
                         </div>
                     </div>
 
                     <div class="flex justify-between mt-6 space-x-4">
-                        <button type="button" class="prev-step px-6 py-3 rounded-xl transition-all duration-300 flex items-center">
+                        <button type="button" class="prev-step btn-red px-6 py-4 rounded-xl flex items-center">
                             <i class="fas fa-arrow-left mr-2"></i>
                             Previous
                         </button>
-                        <button type="submit" class="px-8 py-3 rounded-xl transition-all duration-300 flex items-center">
+                        <button type="submit" class="btn-red-large px-10 py-4 rounded-xl flex items-center">
                             Create Account <i class="fas fa-check ml-2"></i>
                         </button>
                     </div>
