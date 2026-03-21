@@ -101,6 +101,14 @@
     <span class="notification-badge">{{ unread_messages }}</span>
     {% endif %}
 </a>
+<a href="{% url 'teacher_students' %}" data-page="students" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-users"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'unified_dashboard' page='announcements' %}" data-page="announcements" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
 <a href="{% url 'unified_dashboard' page='fees' %}" data-page="fees" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-dollar-sign"></i>
     <span>Fees</span>

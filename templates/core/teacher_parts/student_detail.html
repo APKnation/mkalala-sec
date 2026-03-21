@@ -1,0 +1,240 @@
+{% extends "core/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}{{ student.user.get_full_name|default:student.user.username }} | Mkalala Sec{% endblock %}
+{% block mobile_title %}Student Details{% endblock %}
+
+{% block user_role %}Teacher{% endblock %}
+
+{% block extra_head %}
+<style>
+.detail-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.course-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.read-only-notice {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border-left: 4px solid #f59e0b;
+}
+</style>
+{% endblock %}
+
+{% block sidebar_nav %}
+<!-- Teacher Navigation -->
+<a href="{% url 'unified_dashboard' page='overview' %}" data-page="overview" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-th-large"></i>
+    <span>Dashboard</span>
+</a>
+<a href="{% url 'unified_dashboard' page='courses' %}" data-page="courses" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-book"></i>
+    <span>Courses</span>
+</a>
+<a href="{% url 'unified_dashboard' page='messages' %}" data-page="messages" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-envelope"></i>
+    <span>Messages</span>
+    {% if unread_messages > 0 %}
+    <span class="notification-badge">{{ unread_messages }}</span>
+    {% endif %}
+</a>
+<a href="{% url 'teacher_students' %}" data-page="students" class="sidebar-item text-slate-400 font-sans bg-blue-600 text-white">
+    <i class="fas fa-users"></i>
+    <span>Students</span>
+</a>
+<a href="{% url 'unified_dashboard' page='announcements' %}" data-page="announcements" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-bullhorn"></i>
+    <span>Announcements</span>
+</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="space-y-8">
+    <!-- Read-Only Notice -->
+    <div class="read-only-notice rounded-lg p-4 mb-8">
+        <div class="flex items-center">
+            <i class="fas fa-info-circle text-yellow-600 text-xl mr-3"></i>
+            <div>
+                <h3 class="text-lg font-semibold text-yellow-800">Read-Only Access</h3>
+                <p class="text-yellow-700">You can view student information but cannot modify or delete student records.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Header -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 mb-8">
+        <div class="detail-card p-6 text-white">
+            <div class="flex items-center space-x-6">
+                <!-- Student Avatar -->
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                    {% if student.user.get_full_name %}
+                        {{ student.user.get_full_name|first|upper }}
+                    {% else %}
+                        {{ student.user.username|first|upper }}
+                    {% endif %}
+                </div>
+                
+                <!-- Student Basic Info -->
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">
+                        {{ student.user.get_full_name|default:student.user.username }}
+                    </h1>
+                    
+                    {% if student.admission_number %}
+                        <p class="text-blue-100">Admission Number: {{ student.admission_number }}</p>
+                    {% endif %}
+                    
+                    <div class="flex items-center space-x-6 mt-4">
+                        {% if student.date_of_birth %}
+                            <span class="course-badge">
+                                <i class="fas fa-birthday mr-2"></i>
+                                {{ student.date_of_birth|date:"F j, Y" }}
+                            </span>
+                        {% endif %}
+                        
+                        {% if student.gender %}
+                            <span class="course-badge">
+                                <i class="fas fa-{{ student.user|yesno:'male,female' }} mr-2"></i>
+                                {{ student.gender|title }}
+                            </span>
+                        {% endif %}
+                        
+                        {% if student.current_form %}
+                            <span class="course-badge">
+                                <i class="fas fa-graduation-cap mr-2"></i>
+                                Form {{ student.current_form }}
+                            </span>
+                        {% endif %}
+                        
+                        {% if student.department %}
+                            <span class="course-badge">
+                                <i class="fas fa-building mr-2"></i>
+                                {{ student.department.name }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 mb-8">
+        <div class="p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Contact Information</h2>
+            
+            <div class="info-grid">
+                <div class="info-item rounded-lg p-4">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-envelope text-blue-600 mr-2"></i>
+                        Email Address
+                    </h3>
+                    <p class="text-gray-900">{{ student.user.email|default:"Not provided" }}</p>
+                </div>
+                
+                <div class="info-item rounded-lg p-4">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-phone text-green-600 mr-2"></i>
+                        Phone Number
+                    </h3>
+                    <p class="text-gray-900">{{ student.phone_number|default:"Not provided" }}</p>
+                </div>
+                
+                {% if student.address %}
+                <div class="info-item rounded-lg p-4 md:col-span-2">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-2">
+                        <i class="fas fa-home text-purple-600 mr-2"></i>
+                        Address
+                    </h3>
+                    <p class="text-gray-900">{{ student.address }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Information -->
+    <div class="bg-white rounded-lg shadow border border-gray-200 mb-8">
+        <div class="p-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-6">Academic Information</h2>
+            
+            {% if enrollments %}
+                <div class="space-y-4">
+                    {% for enrollment in enrollments %}
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900">
+                                    {{ enrollment.course_offering.course.name }}
+                                </h3>
+                                <p class="text-sm text-gray-600">
+                                    {{ enrollment.course_offering.course.code }} • {{ enrollment.course_offering.semester.name }}
+                                </p>
+                            </div>
+                            <span class="course-badge">
+                                <i class="fas fa-book-open mr-2"></i>
+                                {{ enrollment.course_offering.course.credits }} Credits
+                            </span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-gray-600">
+                                    <i class="fas fa-chalkboard-teacher mr-2 text-blue-600"></i>
+                                    Instructor: {{ enrollment.course_offering.faculty.user.get_full_name|default:enrollment.course_offering.faculty.user.username }}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">
+                                    <i class="fas fa-clock mr-2 text-green-600"></i>
+                                    Schedule: {{ enrollment.course_offering.schedule|default:"Not specified" }}
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">
+                                    <i class="fas fa-door-open mr-2 text-purple-600"></i>
+                                    Room: {{ enrollment.course_offering.room|default:"Not specified" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-8">
+                    <i class="fas fa-book text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Course Enrollments</h3>
+                    <p class="text-gray-500">This student is not currently enrolled in any of your courses.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-center space-x-4 mt-8">
+        <a href="{% url 'teacher_students' %}" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to Students
+        </a>
+    </div>
+</div>
+{% endblock %}

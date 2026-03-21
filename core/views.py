@@ -589,7 +589,103 @@ def teacher_dashboard(request):
 # Teacher Assignment Creation
 @login_required
 @user_passes_test(is_faculty)
-def teacher_assignment_create(request):
+def teacher_students(request):
+    """Teacher view to see student details (read-only)"""
+    try:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    
+    # Get students from teacher's courses
+    from .models import CourseOffering, Enrollment
+    course_offerings = CourseOffering.objects.filter(faculty=faculty_profile)
+    enrollments = Enrollment.objects.filter(course_offering__in=course_offerings).select_related('student', 'student__user', 'course_offering__course')
+    
+    # Get filter parameters
+    search_query = request.GET.get('search', '')
+    form_filter = request.GET.get('form', '')
+    department_filter = request.GET.get('department', '')
+    
+    # Apply filters
+    if search_query:
+        enrollments = enrollments.filter(
+            Q(student__user__first_name__icontains=search_query) |
+            Q(student__user__last_name__icontains=search_query) |
+            Q(student__user__username__icontains=search_query)
+        )
+    
+    if form_filter:
+        enrollments = enrollments.filter(student__current_form=form_filter)
+    
+    if department_filter:
+        enrollments = enrollments.filter(student__department__id=department_filter)
+    
+    # Get unique students
+    students = []
+    seen_students = set()
+    for enrollment in enrollments:
+        if enrollment.student.user.id not in seen_students:
+            students.append(enrollment.student)
+            seen_students.add(enrollment.student.user.id)
+    
+    # Get departments for filter dropdown
+    from .models import Department
+    departments = Department.objects.all()
+    
+    context = {
+        'title': 'Student Details',
+        'students': students,
+        'departments': departments,
+        'current_search': search_query,
+        'current_form': form_filter,
+        'current_department': department_filter,
+        'school_info': get_school_info(),
+    }
+    return render(request, 'core/teacher_parts/student_list.html', context)
+
+@login_required
+@user_passes_test(is_faculty)
+def teacher_student_detail(request, student_id):
+    """Teacher view to see detailed student information (read-only)"""
+    try:
+        faculty_profile = request.user.faculty_profile
+    except FacultyProfile.DoesNotExist:
+        messages.error(request, 'Faculty profile not found.')
+        return redirect('teacher_dashboard')
+    
+    # Check if teacher has access to this student
+    from .models import StudentProfile, CourseOffering, Enrollment
+    try:
+        student = StudentProfile.objects.get(user_id=student_id)
+        
+        # Verify teacher teaches this student
+        has_access = Enrollment.objects.filter(
+            student=student,
+            course_offering__faculty=faculty_profile
+        ).exists()
+        
+        if not has_access:
+            messages.error(request, 'You do not have access to view this student\'s details.')
+            return redirect('teacher_students')
+        
+        # Get student's courses with this teacher
+        enrollments = Enrollment.objects.filter(
+            student=student,
+            course_offering__faculty=faculty_profile
+        ).select_related('course_offering__course', 'course_offering__semester')
+        
+        context = {
+            'title': f'Student Details - {student.user.get_full_name()}',
+            'student': student,
+            'enrollments': enrollments,
+            'school_info': get_school_info(),
+        }
+        return render(request, 'core/teacher_parts/student_detail.html', context)
+        
+    except StudentProfile.DoesNotExist:
+        messages.error(request, 'Student not found.')
+        return redirect('teacher_students')
     """Create new assignment for teacher's courses"""
     try:
         faculty_profile = request.user.faculty_profile
