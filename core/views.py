@@ -704,11 +704,38 @@ def teacher_message_compose(request):
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
-            message = form.save(commit=False)
-            message.sender = faculty_profile.user
-            message.save()
-            messages.success(request, 'Message sent successfully!')
-            return redirect('teacher_dashboard')
+            recipient_value = form.cleaned_data['recipient']
+            
+            # Handle special recipient values
+            if recipient_value in ['all_students', 'my_classes', 'all_faculty']:
+                # For now, show a message that bulk messaging is not implemented
+                messages.info(request, f'Bulk messaging to {recipient_value.replace("_", " ")} is not yet implemented. Please enter individual usernames.')
+                return render(request, 'core/teacher_parts/message_compose.html', {
+                    'form': form,
+                    'title': 'Compose Message',
+                    'user': request.user,
+                    'role': 'Teacher',
+                })
+            
+            # Try to get the recipient user
+            try:
+                recipient_user = User.objects.get(username=recipient_value)
+                
+                # Create message manually since we're not using form.save()
+                message = Message.objects.create(
+                    sender=faculty_profile.user,
+                    recipient=recipient_user,
+                    subject=form.cleaned_data['subject'],
+                    body=form.cleaned_data['body']
+                )
+                
+                messages.success(request, 'Message sent successfully!')
+                return redirect('teacher_dashboard')
+                
+            except User.DoesNotExist:
+                messages.error(request, f'User "{recipient_value}" not found. Please enter a valid username.')
+            except Exception as e:
+                messages.error(request, f'Error sending message: {str(e)}')
     else:
         form = MessageForm()
     

@@ -951,13 +951,17 @@ class MaterialUploadForm(forms.ModelForm):
         }
 
 class MessageForm(forms.ModelForm):
+    recipient = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+            'placeholder': 'Enter username or use quick recipients below'
+        })
+    )
+    
     class Meta:
         model = Message
-        fields = ['recipient', 'subject', 'body']
+        fields = []  # We handle all fields manually
         widgets = {
-            'recipient': forms.Select(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-            }),
             'subject': forms.TextInput(attrs={
                 'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
             }),
@@ -966,6 +970,19 @@ class MessageForm(forms.ModelForm):
                 'rows': 4
             }),
         }
+    
+    subject = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
+        })
+    )
+    
+    body = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
+            'rows': 4
+        })
+    )
 
 class ForumTopicForm(forms.ModelForm):
     class Meta:

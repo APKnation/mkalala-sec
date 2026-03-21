@@ -110,29 +110,14 @@
 
             <!-- Message Content -->
             <div class="space-y-2">
-                <label for="{{ form.message.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
+                <label for="{{ form.body.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
                         Message <span class="text-red-500">*</span>
                     </label>
                     <div class="relative group">
-                        {{ form.message }}
-                        {% if form.message.errors %}
-                            <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.message.errors.0 }}</p>
+                        {{ form.body }}
+                        {% if form.body.errors %}
+                            <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.body.errors.0 }}</p>
                         {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Attachment -->
-            <div class="space-y-2">
-                <label for="{{ form.attachment.id_for_label }}" class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] block">
-                        Attachment (Optional)
-                    </label>
-                    <div class="relative group">
-                        {{ form.attachment }}
-                        {% if form.attachment.errors %}
-                            <p class="text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight">{{ form.attachment.errors.0 }}</p>
-                        {% endif %}
-                        <p class="text-xs text-slate-400 mt-1">Attach files, documents, or images to your message.</p>
                     </div>
                 </div>
             </div>
