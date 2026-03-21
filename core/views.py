@@ -794,6 +794,11 @@ def teacher_message_compose(request):
                     messages.error(request, f'User "{recipient_value}" not found. Please enter a valid username.')
                 except Exception as e:
                     messages.error(request, f'Error sending message: {str(e)}')
+        else:
+            # Add form errors for debugging
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field.title()}: {error}')
     else:
         form = MessageForm()
     

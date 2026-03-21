@@ -952,6 +952,7 @@ class MaterialUploadForm(forms.ModelForm):
 
 class MessageForm(forms.ModelForm):
     recipient = forms.CharField(
+        required=True,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
             'placeholder': 'Enter username OR use quick recipients below (all_students, my_classes, admin, headmaster, all_faculty)'
@@ -972,12 +973,15 @@ class MessageForm(forms.ModelForm):
         }
     
     subject = forms.CharField(
+        required=True,
+        max_length=200,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
         })
     )
     
     body = forms.CharField(
+        required=True,
         widget=forms.Textarea(attrs={
             'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
             'rows': 4
