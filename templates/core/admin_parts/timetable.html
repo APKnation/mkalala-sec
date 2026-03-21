@@ -62,8 +62,8 @@
                     <i class="fas fa-users text-orange-600 text-xl"></i>
                 </div>
                 <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600">Classes</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ schedule_stats.unique_classes }}</p>
+                    <p class="text-sm font-medium text-gray-600">Rooms</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ schedule_stats.unique_rooms }}</p>
                 </div>
             </div>
         </div>
@@ -114,7 +114,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teacher</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course Code</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -146,7 +146,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ entry.student_class.name }}
+                            {{ entry.course_offering.course.code }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ entry.room|default:"TBA" }}
