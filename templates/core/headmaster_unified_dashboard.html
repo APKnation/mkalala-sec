@@ -148,13 +148,9 @@
     <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Account</h3>
 </div>
 
-<a href="{% url 'headmaster_unified_dashboard' page='profile' %}" data-page="profile" class="sidebar-item text-slate-400 font-sans mt-auto">
+<a href="{% url 'unified_dashboard' page='profile' %}" data-page="profile" class="sidebar-item text-slate-400 font-sans mt-auto">
     <i class="fas fa-user-cog"></i>
     <span>Profile Settings</span>
-</a>
-<a href="{% url 'logout' %}" class="sidebar-item text-slate-400 font-sans">
-    <i class="fas fa-sign-out-alt"></i>
-    <span>Sign Out</span>
 </a>
 {% endblock %}
 
