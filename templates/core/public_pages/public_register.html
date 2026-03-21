@@ -104,7 +104,13 @@
 }
 
 /* Enhanced button styling - Complete Red Theme */
-.register-form button {
+.register-form button,
+.register-form .prev-step,
+.register-form .next-step,
+.register-form button[type="submit"] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     background: linear-gradient(135deg, #dc2626, #b91c1c, #ef4444) !important;
     color: white !important;
     border: 2px solid #dc2626 !important;
@@ -113,9 +119,16 @@
     letter-spacing: 0.5px;
     transition: all 0.3s ease !important;
     box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3) !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    min-width: 120px !important;
 }
 
-.register-form button:hover {
+.register-form button:hover,
+.register-form button:focus {
     background: linear-gradient(135deg, #b91c1c, #991b1b, #dc2626) !important;
     border-color: #b91c1c !important;
     color: white !important;
@@ -136,7 +149,8 @@
     color: white !important;
 }
 
-.register-form .prev-step:hover {
+.register-form .prev-step:hover,
+.register-form .prev-step:focus {
     background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
     border-color: #b91c1c !important;
     color: white !important;
@@ -151,7 +165,8 @@
     box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
 }
 
-.register-form .next-step:hover {
+.register-form .next-step:hover,
+.register-form .next-step:focus {
     background: linear-gradient(135deg, #059669, #047857, #10b981) !important;
     border-color: #059669 !important;
     color: white !important;
@@ -172,12 +187,29 @@
     color: white !important;
     font-weight: 900 !important;
     font-size: 16px !important;
+    padding: 14px 32px !important;
 }
 
-.register-form button[type="submit"]:hover {
+.register-form button[type="submit"]:hover,
+.register-form button[type="submit"]:focus {
     background: linear-gradient(135deg, #991b1b, #7f1d1d, #b91c1c) !important;
     border-color: #991b1b !important;
     color: white !important;
+}
+
+/* Force button visibility */
+.form-step.active button {
+    visibility: visible !important;
+    display: inline-flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.form-step:not(.active) button {
+    visibility: hidden !important;
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .step-indicator {
