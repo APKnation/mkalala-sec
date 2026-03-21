@@ -172,6 +172,8 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_grading_context(user, admin_profile))
     elif page == 'exams':
         context.update(get_admin_exams_context(user, admin_profile))
+    elif page == 'create-exam':
+        context.update(get_admin_exams_context(user, admin_profile))
     elif page == 'announcements':
         context.update(get_admin_announcements_context(user, admin_profile))
     elif page == 'fees':

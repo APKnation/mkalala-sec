@@ -435,6 +435,11 @@
     {% include 'core/admin_parts/edit_exam.html' %}
 </div>
 
+<!-- Create Exam Section -->
+<div id="create-exam-section" class="content-section {% if current_page == 'create-exam' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/create_exam.html' %}
+</div>
+
 <!-- Timetable Section -->
 <div id="timetable-section" class="content-section {% if current_page == 'timetable' %}active{% endif %} page-content">
     {% include 'core/admin_parts/timetable.html' %}
