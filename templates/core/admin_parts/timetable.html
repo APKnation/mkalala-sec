@@ -134,16 +134,20 @@
                             {{ entry.course_offering.course.name }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <div class="flex items-center">
-                                <div class="h-6 w-6 flex-shrink-0">
-                                    <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
-                                        <span class="text-xs font-medium text-gray-600">{{ entry.course_offering.faculty.user.get_full_name|first|upper }}</span>
+                            {% if entry.course_offering.faculty and entry.course_offering.faculty.user %}
+                                <div class="flex items-center">
+                                    <div class="h-6 w-6 flex-shrink-0">
+                                        <div class="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center">
+                                            <span class="text-xs font-medium text-gray-600">{{ entry.course_offering.faculty.user.get_full_name|default:entry.course_offering.faculty.user.username|first|upper }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-2">
+                                        <div class="text-sm font-medium text-gray-900">{{ entry.course_offering.faculty.user.get_full_name|default:entry.course_offering.faculty.user.username }}</div>
                                     </div>
                                 </div>
-                                <div class="ml-2">
-                                    <div class="text-sm font-medium text-gray-900">{{ entry.course_offering.faculty.user.get_full_name }}</div>
-                                </div>
-                            </div>
+                            {% else %}
+                                <span class="text-gray-500">Not Assigned</span>
+                            {% endif %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ entry.course_offering.course.code }}
