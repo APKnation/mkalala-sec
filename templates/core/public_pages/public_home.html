@@ -5,85 +5,59 @@
 
 {% block content %}
 
-<!-- ================= HERO SECTION ================= -->
-<section class="relative bg-gradient-to-br from-lightblue via-blue-50 to-white text-school-black overflow-hidden">
-  <!-- Background Pattern -->
-  <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjAiIGZpbGw9Im5vbmUiLz48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9Im5vbmUiLz48cmVjdCB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9Im5vbmUiLz48L2RlZnM+PC9zdmc+')] opacity-5"></div>
-  
-  <!-- Floating Elements -->
-  <div class="absolute top-10 left-10 w-20 h-20 bg-lightblue/10 rounded-full blur-3xl animate-pulse"></div>
-  <div class="absolute bottom-20 right-10 w-32 h-32 bg-blue-300/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-  <div class="absolute top-1/2 right-1/4 w-24 h-24 bg-white/20 rounded-full blur-2xl animate-pulse delay-500"></div>
+<!-- ================= HERO (LIGHT BLUE DOMINANT) ================= -->
+<section class="relative bg-school-light-blue text-school-black overflow-hidden">
 
-  <div class="container mx-auto px-6 lg:px-8 relative z-10">
-    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh] py-20">
+  <div class="container mx-auto px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-16">
 
       <!-- LEFT CONTENT -->
-      <div class="space-y-8 animate-fade-in">
+      <div class="space-y-8">
 
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-lightblue/20">
-          <h2 class="text-3xl font-bold tracking-[3px] uppercase text-lightblue mb-4 bg-gradient-to-r from-lightblue to-blue-600 bg-clip-text text-transparent">
-            mkalala secondary school
-          </h2>
+        <div>
+  <h2 class="text-4xl font-bold tracking-[3px] uppercase text-school-blue">
+    mkalala secondary school
+  </h2>
 
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black leading-tight mb-6">
-            Empowering Students for a
-            <span class="text-school-blue bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Brighter Future</span>
-          </h1>
+  <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black leading-tight mt-6">
+    Empowering Students for a
+    <span class="text-school-blue">Brighter Future</span>
+  </h1>
 
-          <div class="space-y-4">
-            <p class="text-lg text-school-black/80 leading-relaxed">
-              At Mkalala Secondary School, we are committed to nurturing well-rounded students through quality education, strong moral values, and practical skills. 
-              Our dedicated teachers create a supportive learning environment that inspires academic excellence, critical thinking, and leadership, preparing students 
-              to succeed in higher education and life beyond the classroom.
-            </p>
+  <p class="text-lg text-school-black/70 leading-relaxed mt-6 max-w-2xl">
+    At Mkalala Secondary School, we are committed to nurturing well-rounded students through quality education, strong moral values, and practical skills. 
+    Our dedicated teachers create a supportive learning environment that inspires academic excellence, critical thinking, and leadership, preparing students 
+    to succeed in higher education and life beyond the classroom.
+  </p>
 
-            <p class="text-lg text-school-black/80 leading-relaxed italic">
-              We believe every student has the potential to achieve greatness — and we guide them every step of the way.
-            </p>
-          </div>
-        </div>
+  <p class="text-lg text-school-black/70 leading-relaxed mt-4 max-w-2xl">
+    We believe every student has the potential to achieve greatness — and we guide them every step of the way.
+  </p>
+</div>
 
         <div class="flex flex-col sm:flex-row gap-4">
           <a href="{% url 'register' %}"
-             class="group relative bg-gradient-to-r from-school-blue to-blue-600 text-white px-8 py-4 font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:scale-105 shadow-xl shadow-blue-500/30">
-            <span class="relative z-10 flex items-center">
-              <i class="fas fa-graduation-cap mr-2 group-hover:rotate-12 transition-transform duration-300"></i>
-              Enroll Now
-            </span>
-            <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+             class="bg-school-blue text-white px-8 py-4 font-bold rounded-xl hover:bg-school-black transition">
+            Enroll Now
           </a>
 
           <a href="{% url 'public_about' %}"
-             class="group relative border-2 border-school-blue text-school-blue px-8 py-4 font-bold rounded-xl hover:bg-gradient-to-r hover:from-school-blue hover:to-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105 shadow-lg">
-            <span class="flex items-center">
-              <i class="fas fa-info-circle mr-2 group-hover:rotate-12 transition-transform duration-300"></i>
-              Learn More
-            </span>
+             class="border-2 border-school-blue text-school-blue px-8 py-4 font-bold rounded-xl hover:bg-school-blue hover:text-white transition">
+            Learn More
           </a>
         </div>
       </div>
 
       <!-- RIGHT IMAGE -->
-      <div class="relative group">
-        <div class="absolute inset-0 bg-gradient-to-br from-lightblue/20 to-blue-600/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+      <div class="relative">
         <img src="{% static 'images/hero_bg.png' %}"
-             class="relative z-10 rounded-2xl shadow-2xl w-full object-cover transform transition-all duration-700 hover:scale-105 hover:rotate-1 group-hover:shadow-3xl"
-             alt="Students at Mkalala Secondary School">
-        
-        <!-- Image Overlay Effects -->
-        <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+             class="rounded-2xl shadow-2xl w-full object-cover hover:scale-105 transition duration-700"
+             alt="Students">
+
+  
       </div>
 
     </div>
-  </div>
-  
-  <!-- Bottom Wave -->
-  <div class="absolute bottom-0 left-0 right-0">
-    <svg class="w-full h-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
-      <path d="M0,60 C300,120 600,0 1200,60 L1200,120 L0,120 Z" fill="white" opacity="0.3"/>
-      <path d="M0,80 C300,100 600,60 1200,80 L1200,120 L0,120 Z" fill="white"/>
-    </svg>
   </div>
 </section>
 
