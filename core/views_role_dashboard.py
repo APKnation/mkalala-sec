@@ -2192,6 +2192,8 @@ def admin_delete_announcement(request, announcement_id):
 
 def get_admin_announcements_context(user, admin_profile):
     """Get admin announcements page context"""
+    from .forms import AnnouncementForm
+    
     announcements = Announcement.objects.all().order_by('-created_at')
     classes = StudentClass.objects.all().order_by('name')
     
@@ -2201,6 +2203,7 @@ def get_admin_announcements_context(user, admin_profile):
         'active_announcements': announcements.filter(is_active=True).count(),
         'pending_announcements': announcements.filter(is_active=False).count(),
         'classes': classes,  # Add classes for edit modal
+        'form': AnnouncementForm(user=user),  # Add form for creation modal
         # Add teacher statistics for template compatibility
         'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
         'total_teachers': User.objects.filter(role='teacher').count(),
@@ -2211,6 +2214,7 @@ def get_admin_fees_context(user, admin_profile):
     """Get admin fees page context"""
     from .models import Fee, StudentProfile, Payment
     from django.db.models import Sum, Q
+    from django.utils import timezone
     
     # Get all fee records with related student data
     fee_records = Fee.objects.select_related('student', 'student__user').order_by('-due_date')
@@ -2218,7 +2222,7 @@ def get_admin_fees_context(user, admin_profile):
     # Calculate statistics
     total_fees = fee_records.aggregate(total=Sum('amount'))['total'] or 0
     collected_amount = Payment.objects.aggregate(total=Sum('amount'))['total'] or 0
-    pending_fees = fee_records.filter(status='pending').aggregate(total=Sum('amount'))['total'] or 0
+    pending_fees = fee_records.filter(is_paid=False).aggregate(total=Sum('amount'))['total'] or 0
     
     # Get recent payments
     recent_payments = Payment.objects.select_related('fee', 'fee__student', 'fee__student__user').order_by('-payment_date')[:10]
@@ -2226,9 +2230,9 @@ def get_admin_fees_context(user, admin_profile):
     # Fee statistics by status
     fee_stats = {
         'total': fee_records.count(),
-        'paid': fee_records.filter(status='paid').count(),
-        'pending': fee_records.filter(status='pending').count(),
-        'overdue': fee_records.filter(status='overdue').count(),
+        'paid': fee_records.filter(is_paid=True).count(),
+        'pending': fee_records.filter(is_paid=False).count(),
+        'overdue': fee_records.filter(is_paid=False, due_date__lt=timezone.now().date()).count(),
     }
     
     return {
@@ -2239,6 +2243,10 @@ def get_admin_fees_context(user, admin_profile):
         'pending_fees': pending_fees,
         'fee_stats': fee_stats,
         'total_students': StudentProfile.objects.count(),
+        # Add teacher statistics for template compatibility
+        'teachers': User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name'),
+        'total_teachers': User.objects.filter(role='teacher').count(),
+        'active_teachers': User.objects.filter(role='teacher', is_active=True).count(),
     }
 
 def get_admin_library_context(user, admin_profile):
