@@ -5,15 +5,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.utils import timezone
 from django.db.models import Q, Count, Avg
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.utils import timezone
 from django.contrib import messages
-from django.core.paginator import Paginator
-
-from .models import (
-    User, StudentProfile, FacultyProfile, Announcement, 
-    Attendance, StudentClass, CourseOffering, Enrollment, Grade
-)
 from .utils import is_student, is_faculty, is_admin
 from .forms import AnnouncementForm, AttendanceForm
+from .models import (
+    User, StudentProfile, FacultyProfile, Announcement, 
+    Attendance, StudentClass, CourseOffering, Enrollment, Grade, Message
+)
 import json
 
 @login_required
@@ -417,3 +419,37 @@ class MarkAttendanceAjaxView(DashboardAjaxView):
             'message': 'Attendance marked successfully!',
             'reload': True
         })
+
+@login_required
+@require_http_methods(["POST"])
+def mark_message_read(request, message_id):
+    """Mark a received message as read"""
+    try:
+        message = get_object_or_404(Message, id=message_id, recipient=request.user)
+        message.is_read = True
+        message.save()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_http_methods(["POST"])
+def delete_received_message(request, message_id):
+    """Delete a received message"""
+    try:
+        message = get_object_or_404(Message, id=message_id, recipient=request.user)
+        message.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_http_methods(["POST"])
+def delete_sent_message(request, message_id):
+    """Delete a sent message"""
+    try:
+        message = get_object_or_404(Message, id=message_id, sender=request.user)
+        message.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})

@@ -66,6 +66,11 @@ urlpatterns = [
     path('dashboard/load/<str:page>/', views_dashboard.load_dashboard_page, name='load_dashboard_page'),
     path('dashboard/notifications/', views_dashboard.get_notifications, name='dashboard_notifications'),
     
+    # Message management URLs
+    path('dashboard/messages/mark-read/<int:message_id>/', views_dashboard.mark_message_read, name='dashboard_mark_message_read'),
+    path('dashboard/messages/delete/<int:message_id>/', views_dashboard.delete_received_message, name='dashboard_delete_received_message'),
+    path('dashboard/messages/delete-sent/<int:message_id>/', views_dashboard.delete_sent_message, name='dashboard_delete_sent_message'),
+    
     # Legacy Dashboard URLs (keep for compatibility)
     path('dashboard/student/', views.StudentDashboardView.as_view(), name='student_dashboard'),
     path('dashboard/teacher/', views.teacher_dashboard, name='teacher_dashboard'),
