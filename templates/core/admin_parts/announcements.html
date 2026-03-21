@@ -536,26 +536,29 @@
 <!-- JavaScript for modal and form handling -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+// Make modal functions globally accessible
+function showCreateAnnouncementModal() {
+    document.getElementById('createAnnouncementModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function hideCreateAnnouncementModal() {
+    document.getElementById('createAnnouncementModal').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+function showEditAnnouncementModal() {
+    document.getElementById('editAnnouncementModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function hideEditAnnouncementModal() {
+    document.getElementById('editAnnouncementModal').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
 (function() {
     'use strict';
-    
-    // Show/hide create announcement modal
-    function showCreateAnnouncementModal() {
-        document.getElementById('createAnnouncementModal').classList.remove('hidden');
-    }
-    
-    function hideCreateAnnouncementModal() {
-        document.getElementById('createAnnouncementModal').classList.add('hidden');
-    }
-    
-    // Show/hide edit announcement modal
-    function showEditAnnouncementModal() {
-        document.getElementById('editAnnouncementModal').classList.remove('hidden');
-    }
-    
-    function hideEditAnnouncementModal() {
-        document.getElementById('editAnnouncementModal').classList.add('hidden');
-    }
     
     // Show target class field when audience is "Class" (for both create and edit)
     document.addEventListener('DOMContentLoaded', function() {
@@ -563,6 +566,40 @@
         const targetClassField = document.getElementById('targetClassField');
         const editAudienceField = document.querySelector('select[name="edit_target_audience"]');
         const editTargetClassField = document.getElementById('editTargetClassField');
+        
+        // Click outside to close modals
+        const createModal = document.getElementById('createAnnouncementModal');
+        const editModal = document.getElementById('editAnnouncementModal');
+        
+        // Create modal click outside to close
+        if (createModal) {
+            createModal.addEventListener('click', function(e) {
+                if (e.target === createModal) {
+                    hideCreateAnnouncementModal();
+                }
+            });
+        }
+        
+        // Edit modal click outside to close
+        if (editModal) {
+            editModal.addEventListener('click', function(e) {
+                if (e.target === editModal) {
+                    hideEditAnnouncementModal();
+                }
+            });
+        }
+        
+        // ESC key to close modals
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (!createModal.classList.contains('hidden')) {
+                    hideCreateAnnouncementModal();
+                }
+                if (!editModal.classList.contains('hidden')) {
+                    hideEditAnnouncementModal();
+                }
+            }
+        });
         
         if (audienceField && targetClassField) {
             audienceField.addEventListener('change', function() {
