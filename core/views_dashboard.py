@@ -37,6 +37,7 @@ def unified_dashboard(request, page='overview'):
         'page_title': get_page_title(page),
         'user_role_display': get_user_role_display(user),
         'unread_messages': unread_messages,
+        'django_messages': messages.get_messages(request),  # Separate Django messages from Message objects
     }
     
     # Add page-specific context
