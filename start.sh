@@ -1,20 +1,20 @@
 #!/bin/bash
 
-# Railway deployment script with explicit Python
+# Railway deployment script with Python 3.10
 echo "Starting deployment..."
 
-# Use Python3 explicitly
-python3 --version
-pip3 --version
+# Use Python explicitly
+python --version
+pip --version
 
 # Install requirements
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 # Run migrations
-python3 manage.py migrate --noinput
+python manage.py migrate --noinput
 
 # Collect static files
-python3 manage.py collectstatic --noinput
+python manage.py collectstatic --noinput
 
 # Start the application
 exec gunicorn school_management.wsgi:application --bind 0.0.0.0:$PORT --workers 3
