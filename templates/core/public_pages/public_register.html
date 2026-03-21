@@ -356,14 +356,7 @@
             steps.forEach(s => {
                 s.classList.remove('active');
                 // Apply inline styles to hide
-                s.style.display = 'none !important';
-                s.style.opacity = '0 !important';
-                s.style.visibility = 'hidden !important';
-                s.style.position = 'absolute !important';
-                s.style.height = '0 !important';
-                s.style.overflow = 'hidden !important';
-                s.style.pointerEvents = 'none !important';
-                s.style.zIndex = '-1 !important';
+                s.setAttribute('style', 'display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;');
                 console.log('Hidden step:', s.dataset.step);
             });
             
@@ -376,20 +369,29 @@
             
             if (currentStepElement) {
                 currentStepElement.classList.add('active');
-                // Apply inline styles to show
-                currentStepElement.style.display = 'block !important';
-                currentStepElement.style.opacity = '1 !important';
-                currentStepElement.style.visibility = 'visible !important';
-                currentStepElement.style.position = 'relative !important';
-                currentStepElement.style.height = 'auto !important';
-                currentStepElement.style.overflow = 'visible !important';
-                currentStepElement.style.pointerEvents = 'auto !important';
-                currentStepElement.style.zIndex = '1 !important';
+                // Apply inline styles to show - remove all hiding properties
+                currentStepElement.setAttribute('style', 'display: block !important; opacity: 1 !important; visibility: visible !important; position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; pointer-events: auto !important; z-index: 1 !important;');
                 console.log('✓ Active step:', step);
                 
                 // Log buttons in this step
                 const buttonsInStep = currentStepElement.querySelectorAll('button');
                 console.log('Buttons in active step:', buttonsInStep.length);
+                
+                // Make sure buttons in active step are visible
+                buttonsInStep.forEach(button => {
+                    button.setAttribute('style', 'display: inline-flex !important; visibility: visible !important; pointer-events: auto !important;');
+                });
+                
+                // Hide buttons in inactive steps
+                steps.forEach(s => {
+                    if (s !== currentStepElement) {
+                        const buttons = s.querySelectorAll('button');
+                        buttons.forEach(button => {
+                            button.setAttribute('style', 'display: none !important; visibility: hidden !important; pointer-events: none !important;');
+                        });
+                    }
+                });
+                
             } else {
                 console.error('Step element not found:', step);
             }
@@ -424,6 +426,15 @@
             // Count visible buttons
             const visibleButtons = document.querySelectorAll('.form-step.active button');
             console.log('Visible buttons after step change:', visibleButtons.length);
+            
+            // Debug: Log the actual style of the active step
+            setTimeout(() => {
+                const activeStep = document.querySelector('.form-step.active');
+                if (activeStep) {
+                    console.log('Active step computed style:', window.getComputedStyle(activeStep).display);
+                    console.log('Active step style attribute:', activeStep.getAttribute('style'));
+                }
+            }, 100);
         }
 
         // Add event listeners to next buttons
