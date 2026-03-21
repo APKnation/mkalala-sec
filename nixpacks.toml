@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["python3", "python311Packages.pip", "gcc", "libpq-dev"]
+
+[phases.install]
+cmds = [
+    "python -m pip install --upgrade pip",
+    "pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = [
+    "python manage.py collectstatic --noinput"
+]
+
+[start]
+cmd = "gunicorn school_management.wsgi:application --bind 0.0.0.0:$PORT --workers 3"
