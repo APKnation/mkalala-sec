@@ -950,27 +950,15 @@ class MaterialUploadForm(forms.ModelForm):
             }),
         }
 
-class MessageForm(forms.ModelForm):
+class MessageForm(forms.Form):
     recipient = forms.CharField(
         required=True,
+        max_length=100,
         widget=forms.TextInput(attrs={
             'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
             'placeholder': 'Enter username OR use quick recipients below (all_students, my_classes, admin, headmaster, all_faculty)'
         })
     )
-    
-    class Meta:
-        model = Message
-        fields = []  # We handle all fields manually
-        widgets = {
-            'subject': forms.TextInput(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'
-            }),
-            'body': forms.Textarea(attrs={
-                'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
-                'rows': 4
-            }),
-        }
     
     subject = forms.CharField(
         required=True,
