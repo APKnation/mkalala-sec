@@ -2,6 +2,13 @@
 builder = "nixpacks"
 
 [deploy]
-startCommand = "gunicorn school_management.wsgi:application --bind 0.0.0.0:$PORT --workers 3"
+startCommand = "./start.sh"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+
+[deploy.healthcheck]
+path = "/"
+port = $PORT
+checkInterval = 30
+timeout = 10
+retries = 3
