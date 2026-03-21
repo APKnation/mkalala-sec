@@ -110,15 +110,74 @@ label {
                     <div class="form-step" data-step="2">
                         <h3 class="text-lg font-bold mb-6">Password</h3>
 
-                        <div>
-                            <label>Password</label>
-                            {{ form.password1 }}
+                        <!-- Enhanced Password Field -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Password <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                {{ form.password1 }}
+                                <button type="button" 
+                                        onclick="togglePassword('password1')"
+                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                                    <i id="password1-toggle" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <!-- Password Strength Indicator -->
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs text-gray-600">Password Strength</span>
+                                    <span id="strength-text" class="text-xs font-medium">Weak</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="strength-bar" class="h-2 rounded-full transition-all duration-300 w-1/4 bg-red-500"></div>
+                                </div>
+                            </div>
+                            <!-- Password Requirements -->
+                            <div class="mt-2 text-xs text-gray-600 space-y-1">
+                                <div id="req-length" class="flex items-center">
+                                    <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                                    At least 8 characters
+                                </div>
+                                <div id="req-uppercase" class="flex items-center">
+                                    <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                                    One uppercase letter
+                                </div>
+                                <div id="req-lowercase" class="flex items-center">
+                                    <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                                    One lowercase letter
+                                </div>
+                                <div id="req-number" class="flex items-center">
+                                    <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                                    One number
+                                </div>
+                                <div id="req-special" class="flex items-center">
+                                    <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                                    One special character
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- 🔥 FIX: spacing added here -->
-                        <div class="mt-6">
-                            <label>Confirm Password</label>
-                            {{ form.password2 }}
+                        <!-- Enhanced Confirm Password Field -->
+                        <div class="mt-6 space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Confirm Password <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                {{ form.password2 }}
+                                <button type="button" 
+                                        onclick="togglePassword('password2')"
+                                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                                    <i id="password2-toggle" class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <!-- Password Match Indicator -->
+                            <div id="password-match" class="mt-2 text-xs hidden">
+                                <div class="flex items-center">
+                                    <i id="match-icon" class="fas fa-times-circle mr-2"></i>
+                                    <span id="match-text">Passwords do not match</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="flex justify-between mt-6">
@@ -226,6 +285,8 @@ document.addEventListener("DOMContentLoaded", function () {
         currentStep = step;
     }
 
+
+    
     document.querySelectorAll(".next-step").forEach(btn => {
         btn.addEventListener("click", () => {
             if (currentStep < 4) showStep(currentStep + 1);
@@ -238,8 +299,148 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    showStep(1);
-});
-</script>
 
+    showStep(1);
+    
+    // Password Field Functionality
+    initializePasswordFields();
+});
+
+// Password Toggle Function
+function togglePassword(fieldId) {
+    const passwordField = document.getElementById(fieldId);
+    const toggleIcon = document.getElementById(fieldId + '-toggle');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+    }
+}
+
+// Password Strength Checker
+function checkPasswordStrength(password) {
+    let strength = 0;
+    const requirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    };
+    
+    // Update requirement indicators
+    updateRequirement('req-length', requirements.length);
+    updateRequirement('req-uppercase', requirements.uppercase);
+    updateRequirement('req-lowercase', requirements.lowercase);
+    updateRequirement('req-number', requirements.number);
+    updateRequirement('req-special', requirements.special);
+    
+    // Calculate strength
+    Object.values(requirements).forEach(met => {
+        if (met) strength++;
+    });
+    
+    // Update strength bar
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthText = document.getElementById('strength-text');
+    
+    strengthBar.className = 'h-2 rounded-full transition-all duration-300';
+    
+    if (strength <= 2) {
+        strengthBar.classList.add('w-1/4', 'bg-red-500');
+        strengthText.textContent = 'Weak';
+        strengthText.className = 'text-xs font-medium text-red-500';
+    } else if (strength <= 3) {
+        strengthBar.classList.add('w-2/4', 'bg-yellow-500');
+        strengthText.textContent = 'Fair';
+        strengthText.className = 'text-xs font-medium text-yellow-500';
+    } else if (strength <= 4) {
+        strengthBar.classList.add('w-3/4', 'bg-blue-500');
+        strengthText.textContent = 'Good';
+        strengthText.className = 'text-xs font-medium text-blue-500';
+    } else {
+        strengthBar.classList.add('w-full', 'bg-green-500');
+        strengthText.textContent = 'Strong';
+        strengthText.className = 'text-xs font-medium text-green-500';
+    }
+    
+    return strength;
+}
+
+// Update Requirement Indicator
+function updateRequirement(reqId, met) {
+    const element = document.getElementById(reqId);
+    const icon = element.querySelector('i');
+    
+    if (met) {
+        icon.classList.remove('fa-times-circle', 'text-red-500');
+        icon.classList.add('fa-check-circle', 'text-green-500');
+    } else {
+        icon.classList.remove('fa-check-circle', 'text-green-500');
+        icon.classList.add('fa-times-circle', 'text-red-500');
+    }
+}
+
+// Check Password Match
+function checkPasswordMatch() {
+    const password1 = document.getElementById('password1').value;
+    const password2 = document.getElementById('password2').value;
+    const matchDiv = document.getElementById('password-match');
+    const matchIcon = document.getElementById('match-icon');
+    const matchText = document.getElementById('match-text');
+    
+    if (password2.length > 0) {
+        matchDiv.classList.remove('hidden');
+        
+        if (password1 === password2) {
+            matchIcon.classList.remove('fa-times-circle', 'text-red-500');
+            matchIcon.classList.add('fa-check-circle', 'text-green-500');
+            matchText.textContent = 'Passwords match';
+            matchText.className = 'text-green-500';
+            return true;
+        } else {
+            matchIcon.classList.remove('fa-check-circle', 'text-green-500');
+            matchIcon.classList.add('fa-times-circle', 'text-red-500');
+            matchText.textContent = 'Passwords do not match';
+            matchText.className = 'text-red-500';
+            return false;
+        }
+    } else {
+        matchDiv.classList.add('hidden');
+        return false;
+    }
+}
+
+// Initialize Password Fields
+function initializePasswordFields() {
+    const password1Field = document.getElementById('password1');
+    const password2Field = document.getElementById('password2');
+    
+    // Add password strength checking
+    if (password1Field) {
+        password1Field.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            checkPasswordMatch();
+        });
+        
+        // Add proper styling classes to password fields
+        password1Field.classList.add('w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:border-transparent', 'pr-12');
+    }
+    
+    // Add password match checking
+    if (password2Field) {
+        password2Field.addEventListener('input', function() {
+            checkPasswordMatch();
+        });
+        
+        // Add proper styling classes to password fields
+        password2Field.classList.add('w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-lg', 'focus:ring-2', 'focus:ring-blue-500', 'focus:border-transparent', 'pr-12');
+    }
+}
+</script>
 {% endblock %}
