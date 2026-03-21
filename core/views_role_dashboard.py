@@ -2036,7 +2036,7 @@ def get_admin_timetable_context(user, admin_profile):
         'total_entries': total_entries,
         'unique_courses': timetable_entries.values('course_offering__course').distinct().count(),
         'unique_teachers': timetable_entries.values('course_offering__faculty').distinct().count(),
-        'unique_classes': timetable_entries.values('student_class').distinct().count(),
+        'unique_rooms': timetable_entries.values('room').distinct().count(),
     }
     
     return {
