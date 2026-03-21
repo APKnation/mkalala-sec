@@ -5,88 +5,71 @@
 
 {% block extra_css %}
 <style>
-/* Multi-stage form styles - Using Tailwind CSS base */
+/* STRICT STEP HIDING (like your original working version) */
 .form-step {
     display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    position: absolute !important;
-    width: 100% !important;
-    height: 0 !important;
-    overflow: hidden !important;
-    pointer-events: none !important;
-    z-index: -1 !important;
 }
 
 .form-step.active {
     display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: relative !important;
-    height: auto !important;
-    overflow: visible !important;
-    pointer-events: auto !important;
-    z-index: 1 !important;
-    animation: fadeIn 0.3s ease-in;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Progress indicator */
+.step-indicator.active {
+    background: linear-gradient(to right, #dc2626, #ef4444);
+    color: white;
+    transform: scale(1.1);
 }
 
-/* Button styling using Tailwind classes */
-.btn-red {
-    @apply bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-bold text-uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border-2 border-red-600;
+.step-indicator.completed {
+    background-color: #22c55e;
+    color: white;
 }
 
-.btn-green {
-    @apply bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-bold text-uppercase tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border-2 border-green-600;
-}
-
-.btn-red-large {
-    @apply bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-black text-uppercase tracking-wide transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 border-2 border-red-600 text-lg;
-}
-
-/* Enhanced form field styling */
+/* Form field styling with spacing and rounded corners */
 .register-form input[type="text"],
 .register-form input[type="email"],
 .register-form input[type="tel"],
 .register-form input[type="password"],
 .register-form input[type="date"],
 .register-form select {
-    @apply w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none text-base;
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    outline: none;
 }
 
 .register-form input:focus,
 .register-form select:focus {
-    @apply transform -translate-y-1 shadow-lg;
+    background: white;
+    border-color: #ef4444;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15);
+    transform: translateY(-1px);
 }
 
-/* Password step specific styling */
-.password-step {
-    @apply bg-gradient-to-br from-red-50 to-white rounded-2xl p-6 -m-6;
+.register-form input::placeholder {
+    color: #9ca3af;
 }
 
-.password-field {
-    @apply bg-white p-5 rounded-xl border border-red-200 shadow-sm;
+/* Form field labels with spacing */
+.register-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
 }
 
-/* Progress indicators */
-.step-indicator {
-    @apply transition-all duration-300;
-}
-
-.step-indicator.active {
-    @apply bg-gradient-to-r from-red-600 to-red-500 text-white transform scale-110;
-}
-
-.step-indicator.completed {
-    @apply bg-green-500 text-white;
-}
-
-.progress-bar {
-    @apply transition-all duration-300;
+/* Error messages with spacing */
+.register-form .error {
+    color: #ef4444;
+    font-size: 14px;
+    margin-top: 4px;
+    margin-bottom: 12px;
 }
 </style>
 {% endblock %}
@@ -97,439 +80,173 @@
 
     <div class="w-full max-w-2xl">
 
-        <!-- Logo and Header -->
+        <!-- HEADER -->
         <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-red-600/30 mb-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-red-600 to-red-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-4">
                 <i class="fas fa-user-plus text-white text-2xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-gray-900 mb-1">Create Account</h1>
-            <p class="text-gray-600 text-sm">Join Mkalala Secondary School community</p>
+            <h1 class="text-2xl font-bold text-gray-900">Create Account</h1>
+            <p class="text-gray-600 text-sm">Join Mkalala Secondary School</p>
         </div>
 
-        <!-- Progress Indicator -->
+        <!-- PROGRESS -->
         <div class="mb-6">
             <div class="flex items-center justify-between mb-3">
                 <div class="step-indicator w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold active" data-step="1">1</div>
-                <div class="flex-1 h-1 bg-gray-200 mx-2 progress-bar" style="width: 0%"></div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
                 <div class="step-indicator w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold" data-step="2">2</div>
-                <div class="flex-1 h-1 bg-gray-200 mx-2 progress-bar" style="width: 0%"></div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
                 <div class="step-indicator w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold" data-step="3">3</div>
-                <div class="flex-1 h-1 bg-gray-200 mx-2 progress-bar" style="width: 0%"></div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
                 <div class="step-indicator w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold" data-step="4">4</div>
             </div>
-            <div class="flex justify-between text-xs text-gray-600">
-                <span>Account</span>
-                <span>Password</span>
-                <span>Personal</span>
-                <span>Academic</span>
-            </div>
         </div>
 
-        <!-- Register Card -->
+        <!-- CARD -->
         <div class="bg-white rounded-3xl shadow-xl p-6 md:p-8">
 
-            <!-- Messages -->
-            {% if messages %}
-            <div class="space-y-3 mb-6">
-                {% for message in messages %}
-                <div class="p-3 rounded-xl text-sm font-medium flex items-center space-x-3
-                    {% if message.tags == 'error' %}
-                        bg-red-50 text-red-600 border border-red-200
-                    {% else %}
-                        bg-green-50 text-green-600 border border-green-200
-                    {% endif %}">
-                    <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %}"></i>
-                    <span>{{ message }}</span>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- Multi-Stage Registration Form -->
-            <form method="post" class="register-form" id="multiStepForm">
+            <form method="post" id="multiStepForm">
                 {% csrf_token %}
-                
+
                 <div class="relative min-h-[400px]">
-                <!-- Step 1: Account Information -->
-                <div class="form-step active" data-step="1" style="display: block !important; opacity: 1 !important; visibility: visible !important; position: relative !important;">
-                    <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-user text-red-600"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800">Account Information</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-user text-red-500 mr-2"></i>
-                                First Name
-                            </label>
-                            {{ form.first_name }}
-                            {% if form.first_name.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.first_name.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-user text-red-500 mr-2"></i>
-                                Last Name
-                            </label>
-                            {{ form.last_name }}
-                            {% if form.last_name.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.last_name.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.username.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-at text-red-500 mr-2"></i>
-                                Username
-                            </label>
-                            {{ form.username }}
-                            {% if form.username.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.username.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.email.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-envelope text-red-500 mr-2"></i>
-                                Email Address
-                            </label>
-                            {{ form.email }}
-                            {% if form.email.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.email.errors.0 }}</p>{% endif %}
+
+                    <!-- STEP 1 -->
+                    <div class="form-step active" data-step="1">
+                        <h3 class="text-lg font-bold mb-4">Account Information</h3>
+
+                        {{ form.first_name }}
+                        {{ form.last_name }}
+                        {{ form.username }}
+                        {{ form.email }}
+
+                        <div class="flex justify-end mt-6">
+                            <button type="button"
+                                class="next-step bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-md flex items-center">
+                                Next Step <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <div class="flex justify-end mt-6">
-                        <button type="button" class="next-step btn-green px-8 py-4 rounded-xl flex items-center">
-                            Next Step <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
+                    <!-- STEP 2 -->
+                    <div class="form-step" data-step="2">
+                        <h3 class="text-lg font-bold mb-4">Password</h3>
+
+                        {{ form.password1 }}
+                        {{ form.password2 }}
+
+                        <div class="flex justify-between mt-6">
+                            <button type="button"
+                                class="prev-step bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl">
+                                <i class="fas fa-arrow-left mr-2"></i> Previous
+                            </button>
+
+                            <button type="button"
+                                class="next-step bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl">
+                                Next Step
+                            </button>
+                        </div>
                     </div>
+
+                    <!-- STEP 3 -->
+                    <div class="form-step" data-step="3">
+                        <h3 class="text-lg font-bold mb-4">Personal Information</h3>
+
+                        {{ form.phone }}
+                        {{ form.date_of_birth }}
+                        {{ form.address }}
+                        {{ form.gender }}
+
+                        <div class="flex justify-between mt-6">
+                            <button type="button"
+                                class="prev-step bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl">
+                                Previous
+                            </button>
+
+                            <button type="button"
+                                class="next-step bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl">
+                                Next Step
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div class="form-step" data-step="4">
+                        <h3 class="text-lg font-bold mb-4">Academic Information</h3>
+
+                        {{ form.previous_school }}
+                        {{ form.birth_certificate_number }}
+
+                        <div class="flex justify-between mt-6">
+                            <button type="button"
+                                class="prev-step bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl">
+                                Previous
+                            </button>
+
+                            <button type="submit"
+                                class="bg-green-600 hover:bg-green-700 text-white font-extrabold py-4 px-10 rounded-xl shadow-lg flex items-center">
+                                Create Account <i class="fas fa-check ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
-
-                <!-- Step 2: Password Information -->
-                <div class="form-step password-step" data-step="2" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
-                    <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-lock text-red-600"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800">Password</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div class="password-field">
-                            <label for="{{ form.password1.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-lock text-red-500 mr-2"></i>
-                                Password
-                            </label>
-                            {{ form.password1 }}
-                            {% if form.password1.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password1.errors.0 }}</p>{% endif %}
-                            <p class="text-xs text-gray-500 mt-2">Use at least 8 characters with letters and numbers</p>
-                        </div>
-                        <div class="password-field">
-                            <label for="{{ form.password2.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-check-circle text-red-500 mr-2"></i>
-                                Confirm Password
-                            </label>
-                            {{ form.password2 }}
-                            {% if form.password2.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.password2.errors.0 }}</p>{% endif %}
-                            <p class="text-xs text-gray-500 mt-2">Re-enter your password to confirm</p>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between mt-8 space-x-4">
-                        <button type="button" class="prev-step btn-red px-6 py-4 rounded-xl flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            Previous Step
-                        </button>
-                        <button type="button" class="next-step btn-green px-8 py-4 rounded-xl flex items-center">
-                            Next Step
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Step 3: Personal Information -->
-                <div class="form-step" data-step="3" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
-                    <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-id-card text-red-600"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800">Personal Information</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label for="{{ form.phone.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-phone text-red-500 mr-2"></i>
-                                Phone Number
-                            </label>
-                            {{ form.phone }}
-                            {% if form.phone.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.phone.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.date_of_birth.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-calendar text-red-500 mr-2"></i>
-                                Date of Birth
-                            </label>
-                            {{ form.date_of_birth }}
-                            {% if form.date_of_birth.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.date_of_birth.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.address.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-home text-red-500 mr-2"></i>
-                                Address
-                            </label>
-                            {{ form.address }}
-                            {% if form.address.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.address.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.gender.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-user text-red-500 mr-2"></i>
-                                Gender
-                            </label>
-                            {{ form.gender }}
-                            {% if form.gender.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.gender.errors.0 }}</p>{% endif %}
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between mt-6 space-x-4">
-                        <button type="button" class="prev-step btn-red px-6 py-4 rounded-xl flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            Previous
-                        </button>
-                        <button type="button" class="next-step btn-green px-8 py-4 rounded-xl flex items-center">
-                            Next Step
-                            <i class="fas fa-arrow-right ml-2"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Step 4: Academic Information -->
-                <div class="form-step" data-step="4" style="display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;">
-                    <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-graduation-cap text-red-600"></i>
-                        </div>
-                        <h3 class="text-lg font-bold text-gray-800">Academic Background</h3>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <div>
-                            <label for="{{ form.previous_school.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-school text-red-500 mr-2"></i>
-                                Previous School
-                            </label>
-                            {{ form.previous_school }}
-                            {% if form.previous_school.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.previous_school.errors.0 }}</p>{% endif %}
-                        </div>
-                        <div>
-                            <label for="{{ form.birth_certificate_number.id_for_label }}" class="block text-sm font-bold text-gray-700 mb-3 flex items-center">
-                                <i class="fas fa-certificate text-red-500 mr-2"></i>
-                                Birth Certificate Number
-                            </label>
-                            {{ form.birth_certificate_number }}
-                            {% if form.birth_certificate_number.errors %}<p class="text-xs font-bold text-red-500 mt-2 bg-red-50 p-2 rounded-lg">{{ form.birth_certificate_number.errors.0 }}</p>{% endif %}
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between mt-6 space-x-4">
-                        <button type="button" class="prev-step btn-red px-6 py-4 rounded-xl flex items-center">
-                            <i class="fas fa-arrow-left mr-2"></i>
-                            Previous
-                        </button>
-                        <button type="submit" class="btn-red-large px-10 py-4 rounded-xl flex items-center">
-                            Create Account <i class="fas fa-check ml-2"></i>
-                        </button>
-                    </div>
-                </div>
-                </div>
-
             </form>
 
-            <!-- Sign In Link -->
-            <div class="text-center pt-4 border-t border-gray-200 mt-6">
-                <p class="text-sm text-gray-600">
-                    Already have an account? 
-                    <a href="{% url 'login' %}" class="font-semibold text-red-600 hover:text-red-700 transition-colors">
-                        Sign In
-                    </a>
-                </p>
-            </div>
-
         </div>
-
-        <!-- Footer Info -->
-        <div class="text-center mt-6">
-            <p class="text-gray-500 text-xs">
-                By creating an account, you agree to our 
-                <a href="#" class="text-red-600 hover:text-red-700 font-medium">Terms</a> and 
-                <a href="#" class="text-red-600 hover:text-red-700 font-medium">Privacy Policy</a>
-            </p>
-        </div>
-
     </div>
-
 </div>
 
+<!-- SCRIPT -->
 <script>
-// Immediately hide all steps except the first one
-(function() {
-    'use strict';
-    
-    // Hide all steps immediately when script loads
-    document.addEventListener('DOMContentLoaded', function() {
-        const steps = document.querySelectorAll('.form-step');
-        const stepIndicators = document.querySelectorAll('.step-indicator');
-        const progressBars = document.querySelectorAll('.progress-bar');
-        const nextButtons = document.querySelectorAll('.next-step');
-        const prevButtons = document.querySelectorAll('.prev-step');
-        
-        let currentStep = 1;
-        const totalSteps = 4;
+document.addEventListener("DOMContentLoaded", function () {
 
-        console.log('Multi-step form script loaded');
-        console.log('Found steps:', steps.length);
-        console.log('Found next buttons:', nextButtons.length);
+    let currentStep = 1;
+    const steps = document.querySelectorAll(".form-step");
+    const indicators = document.querySelectorAll(".step-indicator");
 
-        function showStep(step) {
-            console.log('=== Showing step:', step, '===');
-            
-            // Hide all steps with inline styles
-            steps.forEach(s => {
-                s.classList.remove('active');
-                // Apply inline styles to hide
-                s.setAttribute('style', 'display: none !important; opacity: 0 !important; visibility: hidden !important; position: absolute !important; width: 100% !important; height: 0 !important; overflow: hidden !important; pointer-events: none !important; z-index: -1 !important;');
-                console.log('Hidden step:', s.dataset.step);
-            });
-            
-            // Remove active from all indicators
-            stepIndicators.forEach(indicator => indicator.classList.remove('active'));
-            
-            // Show current step with inline styles
-            const currentStepElement = document.querySelector(`.form-step[data-step="${step}"]`);
-            const currentIndicator = document.querySelector(`.step-indicator[data-step="${step}"]`);
-            
-            if (currentStepElement) {
-                currentStepElement.classList.add('active');
-                // Apply inline styles to show - remove all hiding properties
-                currentStepElement.setAttribute('style', 'display: block !important; opacity: 1 !important; visibility: visible !important; position: relative !important; width: 100% !important; height: auto !important; overflow: visible !important; pointer-events: auto !important; z-index: 1 !important;');
-                console.log('✓ Active step:', step);
-                
-                // Log buttons in this step
-                const buttonsInStep = currentStepElement.querySelectorAll('button');
-                console.log('Buttons in active step:', buttonsInStep.length);
-                
-                // Make sure buttons in active step are visible
-                buttonsInStep.forEach(button => {
-                    button.setAttribute('style', 'display: inline-flex !important; visibility: visible !important; pointer-events: auto !important;');
-                });
-                
-                // Hide buttons in inactive steps
-                steps.forEach(s => {
-                    if (s !== currentStepElement) {
-                        const buttons = s.querySelectorAll('button');
-                        buttons.forEach(button => {
-                            button.setAttribute('style', 'display: none !important; visibility: hidden !important; pointer-events: none !important;');
-                        });
-                    }
-                });
-                
-            } else {
-                console.error('Step element not found:', step);
-            }
-            
-            if (currentIndicator) {
-                currentIndicator.classList.add('active');
-            }
-            
-            // Update progress bars
-            const progress = ((step - 1) / (totalSteps - 1)) * 100;
-            progressBars.forEach(bar => {
-                bar.style.width = progress + '%';
-                if (step > 1) {
-                    bar.classList.add('bg-red-500');
-                    bar.classList.remove('bg-gray-200');
-                } else {
-                    bar.classList.remove('bg-red-500');
-                    bar.classList.add('bg-gray-200');
-                }
-            });
-            
-            // Mark completed steps
-            for (let i = 1; i < step; i++) {
-                const completedIndicator = document.querySelector(`.step-indicator[data-step="${i}"]`);
-                if (completedIndicator) {
-                    completedIndicator.classList.add('completed');
-                }
-            }
-            
-            currentStep = step;
-            
-            // Count visible buttons
-            const visibleButtons = document.querySelectorAll('.form-step.active button');
-            console.log('Visible buttons after step change:', visibleButtons.length);
-            
-            // Debug: Log the actual style of the active step
-            setTimeout(() => {
-                const activeStep = document.querySelector('.form-step.active');
-                if (activeStep) {
-                    console.log('Active step computed style:', window.getComputedStyle(activeStep).display);
-                    console.log('Active step style attribute:', activeStep.getAttribute('style'));
-                }
-            }, 100);
-        }
+    function showStep(step) {
 
-        // Add event listeners to next buttons
-        nextButtons.forEach((button, index) => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔘 Next button clicked, current step:', currentStep);
-                
-                if (currentStep < totalSteps) {
-                    showStep(currentStep + 1);
-                } else {
-                    console.log('Already at last step');
-                }
-            });
+        // HIDE ALL STEPS (STRICT)
+        steps.forEach(s => {
+            s.classList.remove("active");
+            s.style.display = "none";
         });
 
-        // Add event listeners to previous buttons
-        prevButtons.forEach((button, index) => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔘 Previous button clicked, current step:', currentStep);
-                
-                if (currentStep > 1) {
-                    showStep(currentStep - 1);
-                } else {
-                    console.log('Already at first step');
-                }
-            });
-        });
+        // SHOW ONLY CURRENT STEP
+        const activeStep = document.querySelector(`.form-step[data-step="${step}"]`);
+        activeStep.classList.add("active");
+        activeStep.style.display = "block";
 
-        // Initialize form immediately
-        console.log('🚀 Initializing multi-step form...');
-        showStep(1);
-        
-        // Double-check after a short delay
-        setTimeout(() => {
-            console.log('🔍 Double-checking form state...');
-            showStep(1);
-            
-            // Final verification
-            const visibleSteps = document.querySelectorAll('.form-step.active');
-            const visibleButtons = document.querySelectorAll('.form-step.active button');
-            console.log('✅ Final verification - Visible steps:', visibleSteps.length, 'Visible buttons:', visibleButtons.length);
-        }, 200);
+        // UPDATE INDICATORS
+        indicators.forEach(i => i.classList.remove("active"));
+        const activeIndicator = document.querySelector(`.step-indicator[data-step="${step}"]`);
+        activeIndicator.classList.add("active");
+
+        currentStep = step;
+    }
+
+    // NEXT BUTTONS
+    document.querySelectorAll(".next-step").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (currentStep < 4) {
+                showStep(currentStep + 1);
+            }
+        });
     });
 
-    // Also run immediately in case DOMContentLoaded already fired
-    if (document.readyState === 'loading') {
-        // DOM is still loading
-        console.log('DOM is loading, waiting for DOMContentLoaded...');
-    } else {
-        // DOM is already loaded
-        console.log('DOM already loaded, running immediately...');
-        // Trigger the initialization manually if needed
-    }
-})();
+    // PREVIOUS BUTTONS
+    document.querySelectorAll(".prev-step").forEach(btn => {
+        btn.addEventListener("click", () => {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        });
+    });
+
+    // INIT
+    showStep(1);
+
+});
 </script>
 
 {% endblock %}
