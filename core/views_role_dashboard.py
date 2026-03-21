@@ -2015,7 +2015,7 @@ def get_admin_timetable_context(user, admin_profile):
     # Get all timetable entries with related data
     timetable_entries = TimeTable.objects.select_related(
         'course_offering', 'course_offering__course', 'course_offering__faculty', 
-        'course_offering__faculty__user', 'student_class'
+        'course_offering__faculty__user', 'semester'
     ).order_by('day', 'start_time')
     
     # Get statistics
