@@ -208,6 +208,8 @@ def admin_unified_dashboard(request, page='overview'):
         context.update(get_admin_logs_context(user, admin_profile))
     elif page == 'profile':
         context.update(get_admin_profile_context(user, admin_profile))
+    elif page == 'pending-users':
+        context.update(get_admin_pending_users_context(user, admin_profile))
     
     return render(request, 'core/admin_unified_dashboard.html', context)
 
@@ -623,6 +625,29 @@ def get_admin_overview_context(user, admin_profile):
         # Real notifications
         'notifications': notifications,
         'unread_notifications': unread_notifications,
+    }
+    
+    return context
+
+def get_admin_pending_users_context(user, admin_profile):
+    """Get admin pending users page context"""
+    # Get pending users (inactive users who need approval)
+    pending_users = User.objects.filter(is_active=False).select_related(
+        'student_profile', 'faculty_profile', 'admin_profile', 'headmaster_profile'
+    ).order_by('-date_joined')
+    
+    # Get teacher statistics for template compatibility (same as overview)
+    teachers = User.objects.filter(role='teacher').select_related('faculty_profile').order_by('first_name', 'last_name')
+    
+    context = {
+        'pending_users': pending_users,
+        'pending_users_count': pending_users.count(),
+        # Add teacher statistics for template compatibility
+        'teachers': teachers,
+        'total_teachers': teachers.count(),
+        'active_teachers': teachers.filter(is_active=True).count(),
+        'total_users': User.objects.count(),
+        'total_students': User.objects.filter(role='student').count(),
     }
     
     return context

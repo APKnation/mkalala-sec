@@ -1,0 +1,164 @@
+{% load static %}
+<!-- Pending Users Dashboard Content -->
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+                <i class="fas fa-user-clock mr-3 text-orange-600"></i>
+                Pending Users
+            </h1>
+            <p class="mt-2 text-sm text-gray-600">Review and approve user registration requests</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <div class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                {{ pending_users_count }} pending
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Users</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_users|default:"0" }}</p>
+                    <p class="text-xs text-green-600 mt-1">
+                        <i class="fas fa-users"></i> All registered
+                    </p>
+                </div>
+                <div class="p-3 bg-blue-100 rounded-lg">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Students</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_students|default:"0" }}</p>
+                    <p class="text-xs text-blue-600 mt-1">
+                        <i class="fas fa-graduation-cap"></i> Registered
+                    </p>
+                </div>
+                <div class="p-3 bg-green-100 rounded-lg">
+                    <i class="fas fa-graduation-cap text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Teachers</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_teachers|default:"0" }}</p>
+                    <p class="text-xs text-blue-600 mt-1">
+                        <i class="fas fa-check-circle"></i> {{ active_teachers|default:"0" }} active
+                    </p>
+                </div>
+                <div class="p-3 bg-purple-100 rounded-lg">
+                    <i class="fas fa-chalkboard-teacher text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Pending</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ pending_users_count|default:"0" }}</p>
+                    <p class="text-xs text-orange-600 mt-1">
+                        <i class="fas fa-exclamation-triangle"></i> Need approval
+                    </p>
+                </div>
+                <div class="p-3 bg-orange-100 rounded-lg">
+                    <i class="fas fa-user-clock text-orange-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Users List -->
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Pending Approval Requests</h2>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registered</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in pending_users %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 flex-shrink-0">
+                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</div>
+                                    <div class="text-sm text-gray-500">@{{ user.username }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                {% if user.role == 'student' %}bg-green-100 text-green-800
+                                {% elif user.role == 'teacher' %}bg-blue-100 text-blue-800
+                                {% elif user.role == 'admin' %}bg-purple-100 text-purple-800
+                                {% elif user.role == 'headmaster' %}bg-orange-100 text-orange-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ user.get_role_display|default:user.role|title }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ user.email }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ user.date_joined|date:"M d, Y" }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                <i class="fas fa-clock mr-1"></i>
+                                Pending
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <button class="text-green-600 hover:text-green-900 font-medium">
+                                    <i class="fas fa-check mr-1"></i>Approve
+                                </button>
+                                <button class="text-red-600 hover:text-red-900 font-medium">
+                                    <i class="fas fa-times mr-1"></i>Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="text-center">
+                                <i class="fas fa-user-check text-4xl text-gray-400 mb-4"></i>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No Pending Users</h3>
+                                <p class="text-gray-500">All users have been approved. There are no pending registration requests.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

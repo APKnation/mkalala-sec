@@ -504,6 +504,11 @@
 <div id="profile-section" class="content-section {% if current_page == 'profile' %}active{% endif %} page-content">
     {% include 'core/admin_parts/profile.html' %}
 </div>
+
+<!-- Pending Users Section -->
+<div id="pending-users-section" class="content-section {% if current_page == 'pending-users' %}active{% endif %} page-content">
+    {% include 'core/admin_parts/pending_users.html' %}
+</div>
 {% endblock %}
 
 {% block extra_script %}
