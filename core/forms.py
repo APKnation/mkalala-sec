@@ -954,7 +954,7 @@ class MessageForm(forms.ModelForm):
     recipient = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500',
-            'placeholder': 'Enter username or use quick recipients below'
+            'placeholder': 'Enter username OR use quick recipients below (all_students, my_classes, admin, headmaster, all_faculty)'
         })
     )
     

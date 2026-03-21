@@ -705,37 +705,95 @@ def teacher_message_compose(request):
         form = MessageForm(request.POST)
         if form.is_valid():
             recipient_value = form.cleaned_data['recipient']
+            subject = form.cleaned_data['subject']
+            body = form.cleaned_data['body']
             
-            # Handle special recipient values
-            if recipient_value in ['all_students', 'my_classes', 'all_faculty']:
-                # For now, show a message that bulk messaging is not implemented
-                messages.info(request, f'Bulk messaging to {recipient_value.replace("_", " ")} is not yet implemented. Please enter individual usernames.')
-                return render(request, 'core/teacher_parts/message_compose.html', {
-                    'form': form,
-                    'title': 'Compose Message',
-                    'user': request.user,
-                    'role': 'Teacher',
-                })
-            
-            # Try to get the recipient user
-            try:
-                recipient_user = User.objects.get(username=recipient_value)
-                
-                # Create message manually since we're not using form.save()
-                message = Message.objects.create(
-                    sender=faculty_profile.user,
-                    recipient=recipient_user,
-                    subject=form.cleaned_data['subject'],
-                    body=form.cleaned_data['body']
-                )
-                
-                messages.success(request, 'Message sent successfully!')
+            # Handle bulk recipient options
+            if recipient_value == 'all_students':
+                recipients = User.objects.filter(role='student')
+                for recipient in recipients:
+                    Message.objects.create(
+                        sender=faculty_profile.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                messages.success(request, f'Message sent to all {recipients.count()} students!')
                 return redirect('teacher_dashboard')
                 
-            except User.DoesNotExist:
-                messages.error(request, f'User "{recipient_value}" not found. Please enter a valid username.')
-            except Exception as e:
-                messages.error(request, f'Error sending message: {str(e)}')
+            elif recipient_value == 'my_classes':
+                # Get students from teacher's courses
+                from .models import CourseOffering, Enrollment
+                course_offerings = CourseOffering.objects.filter(faculty=faculty_profile)
+                enrollments = Enrollment.objects.filter(course_offering__in=course_offerings)
+                recipients = User.objects.filter(id__in=enrollments.values('student__user_id'))
+                
+                for recipient in recipients:
+                    Message.objects.create(
+                        sender=faculty_profile.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                messages.success(request, f'Message sent to {recipients.count()} students in your classes!')
+                return redirect('teacher_dashboard')
+                
+            elif recipient_value == 'all_faculty':
+                recipients = User.objects.filter(role='teacher').exclude(id=faculty_profile.user.id)
+                for recipient in recipients:
+                    Message.objects.create(
+                        sender=faculty_profile.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                messages.success(request, f'Message sent to all {recipients.count()} faculty members!')
+                return redirect('teacher_dashboard')
+                
+            elif recipient_value == 'admin':
+                recipients = User.objects.filter(role='admin')
+                for recipient in recipients:
+                    Message.objects.create(
+                        sender=faculty_profile.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                messages.success(request, f'Message sent to {recipients.count()} administrators!')
+                return redirect('teacher_dashboard')
+                
+            elif recipient_value == 'headmaster':
+                recipients = User.objects.filter(role='headmaster')
+                for recipient in recipients:
+                    Message.objects.create(
+                        sender=faculty_profile.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                messages.success(request, f'Message sent to {recipients.count()} headmasters!')
+                return redirect('teacher_dashboard')
+            
+            # Handle individual username
+            else:
+                try:
+                    recipient_user = User.objects.get(username=recipient_value)
+                    
+                    # Create message manually since we're not using form.save()
+                    message = Message.objects.create(
+                        sender=faculty_profile.user,
+                        recipient=recipient_user,
+                        subject=subject,
+                        body=body
+                    )
+                    
+                    messages.success(request, 'Message sent successfully!')
+                    return redirect('teacher_dashboard')
+                    
+                except User.DoesNotExist:
+                    messages.error(request, f'User "{recipient_value}" not found. Please enter a valid username.')
+                except Exception as e:
+                    messages.error(request, f'Error sending message: {str(e)}')
     else:
         form = MessageForm()
     

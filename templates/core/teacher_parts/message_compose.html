@@ -157,12 +157,36 @@
                 <p class="text-sm font-medium text-slate-600 mt-2">My Classes</p>
             </a>
             
-            <!-- Faculty -->
-            <a href="#" onclick="setRecipient('faculty')" class="p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-all group">
+            <!-- All Faculty -->
+            <a href="#" onclick="setRecipient('all_faculty')" class="p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-all group">
                 <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-lg font-bold group-hover:bg-purple-600 group-hover:text-white transition-all">
                     <i class="fas fa-user-tie"></i>
                 </div>
                 <p class="text-sm font-medium text-slate-600 mt-2">All Faculty</p>
+            </a>
+            
+            <!-- Admin -->
+            <a href="#" onclick="setRecipient('admin')" class="p-4 rounded-xl bg-red-50 hover:bg-red-100 transition-all group">
+                <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-lg font-bold group-hover:bg-red-600 group-hover:text-white transition-all">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <p class="text-sm font-medium text-slate-600 mt-2">Admin</p>
+            </a>
+            
+            <!-- Headmaster -->
+            <a href="#" onclick="setRecipient('headmaster')" class="p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition-all group">
+                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-xl flex items-center justify-center text-lg font-bold group-hover:bg-yellow-600 group-hover:text-white transition-all">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <p class="text-sm font-medium text-slate-600 mt-2">Headmaster</p>
+            </a>
+            
+            <!-- Custom Recipient -->
+            <a href="#" onclick="clearRecipient()" class="p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all group">
+                <div class="w-12 h-12 bg-gray-100 text-gray-600 rounded-xl flex items-center justify-center text-lg font-bold group-hover:bg-gray-600 group-hover:text-white transition-all">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <p class="text-sm font-medium text-slate-600 mt-2">Custom User</p>
             </a>
         </div>
     </div>
@@ -176,9 +200,19 @@ function setRecipient(type) {
         recipientField.value = 'all_students';
     } else if (type === 'my_classes') {
         recipientField.value = 'my_classes';
-    } else if (type === 'faculty') {
+    } else if (type === 'all_faculty') {
         recipientField.value = 'all_faculty';
+    } else if (type === 'admin') {
+        recipientField.value = 'admin';
+    } else if (type === 'headmaster') {
+        recipientField.value = 'headmaster';
     }
+}
+
+function clearRecipient() {
+    const recipientField = document.getElementById('{{ form.recipient.id_for_label }}');
+    recipientField.value = '';
+    recipientField.focus();
 }
 </script>
 {% endblock %}
