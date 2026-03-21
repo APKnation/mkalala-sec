@@ -5,10 +5,3 @@ builder = "nixpacks"
 startCommand = "./start.sh"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
-
-[deploy.healthcheck]
-path = "/"
-port = $PORT
-checkInterval = 30
-timeout = 10
-retries = 3
