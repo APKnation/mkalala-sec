@@ -582,49 +582,8 @@ def teacher_dashboard(request):
     if not request.user.role == 'teacher':
         return redirect('public_home')
     
-    try:
-        # Get teacher profile
-        faculty_profile = request.user.faculty_profile
-    except FacultyProfile.DoesNotExist:
-        faculty_profile = None
-    
-    # Get courses assigned to this teacher
-    from .models import CourseOffering
-    my_courses = CourseOffering.objects.filter(
-        faculty=faculty_profile
-    ).select_related('course', 'semester').count()
-    
-    # Get total students in teacher's courses
-    from django.db.models import Count
-    courses_with_students = CourseOffering.objects.filter(
-        faculty=faculty_profile
-    ).annotate(student_count=Count('enrollments'))
-    
-    total_students = sum(course.student_count for course in courses_with_students)
-    
-    # Get pending assignments (mock data for now)
-    pending_assignments = 5
-    
-    # Get classes today (mock data for now)
-    classes_today = 3
-    
-    # Get actual courses for display
-    courses = CourseOffering.objects.filter(
-        faculty=faculty_profile
-    ).select_related('course', 'semester').prefetch_related('enrollments')
-    
-    context = {
-        'user': request.user,
-        'role': 'Teacher',
-        'faculty_profile': faculty_profile,
-        'my_subjects': my_courses,
-        'total_students': total_students,
-        'pending_assignments': pending_assignments,
-        'classes_today': classes_today,
-        'subjects': courses,
-        'school_info': get_school_info(),
-    }
-    return render(request, 'core/teacher_parts/dashboard_old.html', context)
+    # Redirect to unified dashboard with overview page
+    return redirect('unified_dashboard', page='overview')
 
 
 # Teacher Assignment Creation
