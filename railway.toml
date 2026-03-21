@@ -1,7 +1,0 @@
-[build]
-builder = "nixpacks"
-
-[deploy]
-startCommand = "./start.sh"
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 10
