@@ -2,6 +2,8 @@ from django import template
 from django.templatetags.static import static
 import os
 
+register = template.Library()
+
 @register.filter
 def image_exists(image_path):
     """Check if an image file exists in static folder"""
