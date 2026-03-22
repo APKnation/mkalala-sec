@@ -1615,12 +1615,12 @@ def get_admin_export_attendance_context(request, user, admin_profile):
                 
                 # Query attendance records
                 attendance_records = Attendance.objects.filter(
-                    date__gte=start_date,
-                    date__lte=end_date
-                ).select_related('enrollment__student__user', 'enrollment__course_offering__course')
-                
+                    Q(date__gte=start_date) & Q(date__lte=end_date)
+                )
                 if course_offering:
-                    attendance_records = attendance_records.filter(enrollment__course_offering=course_offering)
+                    attendance_records = attendance_records.filter(
+                        student__enrollment__course_offering=course_offering
+                    )
                 
                 print(f"Found {len(attendance_records)} attendance records")
                 
@@ -1635,9 +1635,9 @@ def get_admin_export_attendance_context(request, user, admin_profile):
                     
                     for record in attendance_records:
                         writer.writerow([
-                            record.enrollment.student.user.get_full_name(),
-                            record.enrollment.student.roll_number or '',
-                            record.enrollment.course_offering.course.name,
+                            record.student.user.get_full_name(),
+                            record.student.roll_number or '',
+                            record.student.enrollment.course_offering.course.name,
                             record.date,
                             record.get_status_display(),
                             record.check_in_time or '',
