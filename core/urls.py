@@ -103,6 +103,7 @@ path('teacher/book/return/<int:book_id>/', views.teacher_book_return, name='teac
     path('student/fees/', views.student_fees, name='student_fees'),
     path('student/fees/pay/', views.process_payment, name='process_payment'),
     path('student/messages/', views.student_messages, name='student_messages'),
+    path('student/messages/debug/', views.debug_users, name='debug_users'),
     path('admin/messages/', views.admin_messages, name='admin_messages'),
     path('student/announcements/', views.student_announcements, name='student_announcements'),
     path('student/activities/', views.student_activities, name='student_activities'),

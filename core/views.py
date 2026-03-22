@@ -3189,6 +3189,36 @@ def student_fees(request):
 
 @login_required
 @user_passes_test(is_student)
+def debug_users(request):
+    """Debug view to show all users and their roles"""
+    from .models import User
+    
+    all_users = User.objects.all().order_by('username')
+    
+    user_data = []
+    for user in all_users:
+        user_info = {
+            'username': user.username,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'role': user.role,
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+            'is_active': user.is_active,
+            'date_joined': user.date_joined,
+        }
+        user_data.append(user_info)
+    
+    context = {
+        'users': user_data,
+        'total_users': all_users.count(),
+    }
+    
+    return render(request, 'core/debug_users.html', context)
+
+@login_required
+@user_passes_test(is_student)
 def student_messages(request):
     """Student messages page"""
     try:
