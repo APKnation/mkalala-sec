@@ -1,24 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import View
+from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q, Count, Avg, Sum
-from django.contrib import messages
 from django.core.paginator import Paginator
+import json
 
 from .models import (
     User, StudentProfile, FacultyProfile, Announcement, 
     Attendance, StudentClass, CourseOffering, Enrollment, Grade,
-    AdminProfile, HeadmasterProfile
+    AdminProfile, HeadmasterProfile, Message
 )
 from .utils import is_student, is_faculty, is_admin, is_headmaster
 from .forms import AnnouncementForm, AttendanceForm
-import json
 
 @login_required
+@user_passes_test(is_student)
 def student_unified_dashboard(request, page='overview'):
     """
     Student unified dashboard view that handles all student dashboard pages
@@ -29,8 +27,46 @@ def student_unified_dashboard(request, page='overview'):
     try:
         student_profile = user.student_profile
     except StudentProfile.DoesNotExist:
-        student_profile = None
+        return redirect('student_dashboard')
     
+    # Handle message creation for messages page
+    if page == 'messages' and request.method == 'POST':
+        # Check if this is an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            recipient_id = request.POST.get('recipient')
+            subject = request.POST.get('subject')
+            body = request.POST.get('body')
+            
+            if recipient_id and subject and body:
+                try:
+                    recipient = User.objects.get(id=recipient_id)
+                    Message.objects.create(
+                        sender=user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                    return JsonResponse({
+                        'success': True,
+                        'message': 'Message sent successfully!'
+                    })
+                except User.DoesNotExist:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Recipient not found.'
+                    })
+                except Exception as e:
+                    return JsonResponse({
+                        'success': False,
+                        'message': f'Error sending message: {str(e)}'
+                    })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Please fill in all fields.'
+                })
+    
+    # Base context
     context = {
         'user': user,
         'student_profile': student_profile,
@@ -779,11 +815,115 @@ def get_student_library_context(user, student_profile):
 
 def get_student_messages_context(user, student_profile):
     """Get student messages page context"""
-    # Placeholder for message data - you may need to add Message model
+    from .models import User, Message
+    from django.utils import timezone
+    
+    print("=== GET STUDENT MESSAGES CONTEXT CALLED ===")
+    print(f"User: {user.username} (ID: {user.id})")
+    
+    # Get received messages
+    received_messages = Message.objects.filter(
+        recipient=user
+    ).select_related('sender').order_by('-sent_at')
+    
+    # Get sent messages
+    sent_messages = Message.objects.filter(
+        sender=user
+    ).select_related('recipient').order_by('-sent_at')
+    
+    # Count unread messages
+    unread_count = received_messages.filter(is_read=False).count()
+    
+    # Calculate total messages
+    total_messages = received_messages.count() + sent_messages.count()
+    
+    # Add helper methods to messages
+    for message in received_messages:
+        message.days_ago = (timezone.now().date() - message.sent_at.date()).days
+        message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
+        message.sender_name = message.sender.get_full_name() or message.sender.username
+        message.sender_role = 'Teacher' if message.sender.role == 'teacher' else ('Headmaster' if message.sender.role == 'headmaster' else ('Admin' if message.sender.is_staff and not message.sender.is_superuser else 'Staff'))
+    
+    for message in sent_messages:
+        message.days_ago = (timezone.now().date() - message.sent_at.date()).days
+        message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
+        message.recipient_name = message.recipient.get_full_name() or message.recipient.username
+        message.recipient_role = 'Teacher' if message.recipient.role == 'teacher' else ('Headmaster' if message.recipient.role == 'headmaster' else ('Admin' if message.recipient.is_staff and not message.recipient.is_superuser else 'Staff'))
+    
+    # Debug: Check all users and their roles
+    all_users = User.objects.all()
+    print(f"Total users in database: {all_users.count()}")
+    for user_obj in all_users:
+        print(f"User: {user_obj.username} - Role: {user_obj.role} - Staff: {user_obj.is_staff} - Superuser: {user_obj.is_superuser}")
+    
+    # Get teachers - users with role='teacher'
+    teachers = User.objects.filter(role='teacher').exclude(id=user.id).order_by('first_name', 'last_name')
+    print(f"Found {teachers.count()} teachers:")
+    for teacher in teachers:
+        print(f"  - {teacher.username} ({teacher.get_full_name()})")
+    
+    # Get headmasters - users with role='headmaster'  
+    headmasters = User.objects.filter(role='headmaster').exclude(id=user.id).order_by('first_name', 'last_name')
+    print(f"Found {headmasters.count()} headmasters:")
+    for headmaster in headmasters:
+        print(f"  - {headmaster.username} ({headmaster.get_full_name()})")
+    
+    # Get admins - more inclusive approach: staff users who are not students, teachers, or headmasters
+    admins = User.objects.filter(
+        is_staff=True
+    ).exclude(
+        id=user.id
+    ).exclude(
+        role__in=['student', 'teacher', 'headmaster']
+    ).order_by('first_name', 'last_name')
+    
+    # Also try alternative: superusers who are not students/teachers/headmasters
+    superusers = User.objects.filter(
+        is_superuser=True
+    ).exclude(
+        id=user.id
+    ).exclude(
+        role__in=['student', 'teacher', 'headmaster']
+    ).order_by('first_name', 'last_name')
+    
+    # Combine admins and superusers, removing duplicates
+    all_admins = (admins | superusers).distinct().order_by('first_name', 'last_name')
+    
+    print(f"Found {admins.count()} staff admins:")
+    for admin in admins:
+        print(f"  - {admin.username} ({admin.get_full_name()}) - Staff: {admin.is_staff}, Superuser: {admin.is_superuser}")
+    
+    print(f"Found {superusers.count()} superuser admins:")
+    for su in superusers:
+        print(f"  - {su.username} ({su.get_full_name()}) - Staff: {su.is_staff}, Superuser: {su.is_superuser}")
+    
+    print(f"Total combined admins: {all_admins.count()}")
+    for admin in all_admins:
+        print(f"  - {admin.username} ({admin.get_full_name()}) - Role: {admin.role}, Staff: {admin.is_staff}, Superuser: {admin.is_superuser}")
+    
+    # Use the combined list
+    admins = all_admins
+    
+    print("=== CONTEXT DATA FOR TEMPLATE ===")
+    print(f"Teachers count: {len(teachers)}")
+    print(f"Headmasters count: {len(headmasters)}")
+    print(f"Admins count: {len(admins)}")
+    print(f"Teachers: {[str(t) for t in teachers]}")
+    print(f"Headmasters: {[str(h) for h in headmasters]}")
+    print(f"Admins: {[str(a) for a in admins]}")
+    print("=== END CONTEXT DATA ===")
+    
     return {
-        'messages': [],
-        'unread_messages': 1,  # Calculate from actual data
-        'sent_messages': 0,
+        'student': student_profile,
+        'received_messages': received_messages,
+        'sent_messages': sent_messages,
+        'unread_count': unread_count,
+        'total_messages': total_messages,
+        'teachers': teachers,
+        'headmasters': headmasters,
+        'admins': admins,
+        'today': timezone.now().date(),
+        'yesterday': timezone.now().date() - timezone.timedelta(days=1),
     }
 
 def get_student_profile_context(user, student_profile):
