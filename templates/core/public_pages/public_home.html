@@ -530,164 +530,127 @@
 
 
 <!-- ================= STUDENT LIFE & GALLERY ================= -->
-<section class="relative bg-gray-50 text-school-black overflow-hidden">
-  
-  <!-- Top Wave Transition -->
-  <div class="absolute top-0 left-0 w-full transform -translate-y-1">
-    
-  </div>
+<section class="relative bg-school-light-blue text-school-black overflow-hidden">
 
   <div class="container mx-auto px-6 lg:px-8 relative z-10">
 
+    <!-- HEADER -->
     <div class="text-center mb-16">
       <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-6">
-        Experience <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Student Life</span> at Mkalala
+        Experience 
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          Student Life
+        </span> 
+        at Mkalala
       </h2>
       <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-        Explore our vibrant campus life through classrooms, sports activities, clubs, and memorable events that shape our students' journey.
+        Explore our vibrant campus life through classrooms, sports activities, clubs, and memorable events.
       </p>
     </div>
 
-    <!-- Gallery Grid -->
+    <!-- GRID -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-      
-      <!-- Clubs -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag 'images/science_fair.png' 'Science Fair' 'bg-gradient-to-br from-violet-400 to-violet-600' 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-500' %}>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/science_fair.png' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Science Club</h3>
-          <p class="text-gray-600 text-sm">Innovative projects and experiments that showcase scientific curiosity and discovery.</p>
+          <p class="text-gray-600 text-sm">Innovative projects and experiments showcasing discovery.</p>
         </div>
       </div>
 
-      <!-- Events -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-orange-400 to-red-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/news_athletics.jpg' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Athletics Meet</h3>
-          <p class="text-gray-600 text-sm">Annual sports competitions and athletic events bringing together schools from across the region.</p>
+          <p class="text-gray-600 text-sm">Regional competitions and sports excellence.</p>
         </div>
       </div>
 
-      <!-- Additional Image 1 -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag 'images/hero_main.jpg' 'School Campus' 'bg-gradient-to-br from-cyan-400 to-blue-500' 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-500' %}>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/hero_main.jpg' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Campus Life</h3>
-          <p class="text-gray-600 text-sm">Beautiful campus environment with modern facilities and green spaces for learning and relaxation.</p>
+          <p class="text-gray-600 text-sm">Beautiful environment and modern facilities.</p>
         </div>
       </div>
 
-      <!-- Additional Image 2 -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/hero_prestigious.jpg', 'Academic Excellence', 'bg-gradient-to-br from-indigo-400 to-purple-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/hero_prestigious.jpg' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Excellence Programs</h3>
-          <p class="text-gray-600 text-sm">Advanced academic programs and extracurricular activities for comprehensive student development.</p>
-        </div>
-      </div>
-
-      <!-- Additional Image 3 -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-400 to-orange-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-        </div>
-        <div class="mt-4 text-center">
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Rich Heritage</h3>
-          <p class="text-gray-600 text-sm">Decades of educational excellence and community impact since our establishment.</p>
+          <p class="text-gray-600 text-sm">Advanced academic and extracurricular programs.</p>
         </div>
       </div>
 
     </div>
 
-    <!-- Additional Gallery Row -->
+    <!-- SECOND ROW -->
     <div class="grid md:grid-cols-3 gap-8 mb-12">
-      
-      <!-- Classrooms -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/news_library.jpg', 'Modern Classroom', 'bg-gradient-to-br from-emerald-400 to-teal-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/news_library.jpg' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Modern Classrooms</h3>
-          <p class="text-gray-600 text-sm">Well-equipped learning spaces with modern technology and comfortable environments for effective education.</p>
+          <p class="text-gray-600 text-sm">Well-equipped learning environments.</p>
         </div>
       </div>
 
-      <!-- Sports -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/news_sports.jpg', 'Sports Excellence', 'bg-gradient-to-br from-lime-400 to-green-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/news_sports.jpg' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Sports Excellence</h3>
-          <p class="text-gray-600 text-sm">Championship teams, modern facilities, and comprehensive sports programs promoting physical fitness and teamwork.</p>
+          <p class="text-gray-600 text-sm">Fitness, teamwork, and championships.</p>
         </div>
       </div>
 
-      <!-- Events -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-orange-400 to-red-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
+      <!-- CARD -->
+      <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-blue-100">
+        <div class="h-56 bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
+             style="background-image: url('{% static 'images/history.jpg' %}')">
+          <div class="h-full w-full bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition"></div>
         </div>
-        <div class="mt-4 text-center">
-          <h3 class="text-xl font-bold text-gray-900 mb-2">Memorable Events</h3>
-          <p class="text-gray-600 text-sm">Cultural celebrations, competitions, and gatherings that create lasting memories and school spirit.</p>
-        </div>
-      </div>
-
-      <!-- Additional Image 3 -->
-      <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
-        <div class="aspect-widescreen overflow-hidden">
-          <div {% div_tag('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-400 to-orange-500') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-        </div>
-        <div class="mt-4 text-center">
+        <div class="p-5 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Rich Heritage</h3>
-          <p class="text-gray-600 text-sm">Decades of educational excellence and community impact since our establishment.</p>
+          <p class="text-gray-600 text-sm">Decades of educational excellence.</p>
         </div>
       </div>
 
     </div>
 
-    <!-- View Gallery Button -->
+    <!-- BUTTON -->
     <div class="text-center">
-      <a href="#" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-xl">
+      <a href="#"
+         class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:scale-105 transition shadow-xl">
         <i class="fas fa-images mr-3"></i>
         View Full Gallery
       </a>
     </div>
 
-  </div>
-  
-  <!-- Bottom Wave Transition to Footer -->
-  <div class="absolute bottom-0 left-0 w-full transform translate-y-1">
-   
   </div>
 </section>
 

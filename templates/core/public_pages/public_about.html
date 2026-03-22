@@ -159,25 +159,50 @@
 </section>
 
 <!-- ================= HISTORY (WHITE) ================= -->
-<section class="bg-white py-24 mb-28">
+<section class="bg-white py-28 mb-28">
+    <div class="container mx-auto px-6 lg:px-20 grid md:grid-cols-2 gap-16 items-center">
 
-    <div class="container mx-auto px-6 lg:px-20 grid md:grid-cols-2 gap-14 items-center">
-
-        <div>
+        <!-- IMAGE -->
+        <div class="relative group">
             <img src="{% static 'images/history.jpg' %}"
-                 class="rounded-2xl shadow-lg hover:scale-105 transition duration-700">
+                 class="rounded-3xl shadow-xl w-full object-cover transition duration-700 group-hover:scale-[1.03]">
+
+            <!-- subtle overlay glow -->
+            <div class="absolute inset-0 rounded-3xl bg-blue-500/10 opacity-0 group-hover:opacity-100 transition"></div>
         </div>
 
-        <div class="space-y-5">
-            <h3 class="text-3xl font-black">Our History</h3>
+        <!-- TEXT CONTENT -->
+        <div class="space-y-6">
 
-            <p class="text-school-black/70 leading-relaxed">
-                Since its establishment, Mkalala Secondary School has been dedicated to delivering high-quality education to students from diverse backgrounds.
+            <!-- Label -->
+            <span class="text-sm uppercase tracking-[3px] text-blue-600 font-semibold">
+                Our Story
+            </span>
+
+            <!-- Heading -->
+            <h3 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                Building Excellence Through Education
+            </h3>
+
+            <!-- Paragraphs -->
+            <p class="text-gray-600 text-lg leading-relaxed">
+                Since its establishment, Mkalala Secondary School has been committed to providing
+                high-quality education that nurtures academic growth, discipline, and character
+                development for students from diverse backgrounds.
             </p>
 
-            <p class="text-school-black/70 leading-relaxed">
-                Over the years, the school has built a strong reputation for academic excellence, discipline, and holistic development.
+            <p class="text-gray-600 text-lg leading-relaxed">
+                Over the years, the school has earned a strong reputation for excellence by
+                consistently promoting holistic learning, innovation, and strong moral values.
             </p>
+
+            <!-- Optional highlight line -->
+            <div class="pt-2">
+                <p class="text-blue-700 font-medium italic">
+                    “Education is not just learning facts, but shaping future leaders.”
+                </p>
+            </div>
+
         </div>
 
     </div>
