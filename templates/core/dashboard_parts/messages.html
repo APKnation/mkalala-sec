@@ -109,11 +109,11 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900 truncate">From: {{ message.sender.get_full_name|default:message.sender.username }}</p>
-                            <p class="text-xs text-gray-500">{{ message.sent_at|timesince }} ago</p>
+                            <p class="text-sm font-medium text-gray-900 truncate">From: {% if message.sender %}{{ message.sender.get_full_name|default:message.sender.username }}{% else %}System{% endif %}</p>
+                            <p class="text-xs text-gray-500">{{ message.sent_at|timesince|default:"Unknown time" }} ago</p>
                         </div>
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ message.subject }}</p>
-                        <p class="text-xs text-gray-600 truncate">{{ message.body|truncatewords:15 }}</p>
+                        <p class="text-sm font-medium text-gray-800 truncate">{{ message.subject|default:"No subject" }}</p>
+                        <p class="text-xs text-gray-600 truncate">{{ message.body|truncatewords:15|default:"No content" }}</p>
                         <div class="flex items-center justify-between mt-2">
                             <span class="text-xs text-gray-500">To: You</span>
                             <div class="flex space-x-2">
@@ -151,11 +151,11 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center justify-between">
-                            <p class="text-sm font-medium text-gray-900 truncate">To: {{ message.recipient.get_full_name|default:message.recipient.username }}</p>
-                            <p class="text-xs text-gray-500">{{ message.sent_at|timesince }} ago</p>
+                            <p class="text-sm font-medium text-gray-900 truncate">To: {% if message.recipient %}{{ message.recipient.get_full_name|default:message.recipient.username }}{% else %}Unknown{% endif %}</p>
+                            <p class="text-xs text-gray-500">{{ message.sent_at|timesince|default:"Unknown time" }} ago</p>
                         </div>
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ message.subject }}</p>
-                        <p class="text-xs text-gray-600 truncate">{{ message.body|truncatewords:15 }}</p>
+                        <p class="text-sm font-medium text-gray-800 truncate">{{ message.subject|default:"No subject" }}</p>
+                        <p class="text-xs text-gray-600 truncate">{{ message.body|truncatewords:15|default:"No content" }}</p>
                         <div class="flex items-center justify-between mt-2">
                             <span class="text-xs text-gray-500">From: You</span>
                             <div class="flex space-x-2">
