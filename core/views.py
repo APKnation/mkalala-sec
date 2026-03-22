@@ -3195,6 +3195,30 @@ def student_messages(request):
     except StudentProfile.DoesNotExist:
         return redirect('student_dashboard')
     
+    # Handle message creation
+    if request.method == 'POST':
+        recipient_id = request.POST.get('recipient')
+        subject = request.POST.get('subject')
+        body = request.POST.get('body')
+        
+        if recipient_id and subject and body:
+            try:
+                recipient = User.objects.get(id=recipient_id)
+                Message.objects.create(
+                    sender=request.user,
+                    recipient=recipient,
+                    subject=subject,
+                    body=body
+                )
+                messages.success(request, 'Message sent successfully!')
+                return redirect('student_messages')
+            except User.DoesNotExist:
+                messages.error(request, 'Recipient not found.')
+            except Exception as e:
+                messages.error(request, f'Error sending message: {str(e)}')
+        else:
+            messages.error(request, 'Please fill in all fields.')
+    
     # Get received messages
     received_messages = Message.objects.filter(
         recipient=request.user
@@ -3216,18 +3240,18 @@ def student_messages(request):
         message.days_ago = (timezone.now().date() - message.sent_at.date()).days
         message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
         message.sender_name = message.sender.get_full_name() or message.sender.username
-        message.sender_role = 'Staff' if message.sender.is_staff else ('Admin' if message.sender.is_superuser else 'User')
+        message.sender_role = 'Teacher' if message.sender.role == 'teacher' else ('Headmaster' if message.sender.role == 'headmaster' else ('Admin' if message.sender.role == 'admin' else 'Staff'))
     
     for message in sent_messages:
         message.days_ago = (timezone.now().date() - message.sent_at.date()).days
         message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
         message.recipient_name = message.recipient.get_full_name() or message.recipient.username
-        message.recipient_role = 'Staff' if message.recipient.is_staff else ('Admin' if message.recipient.is_superuser else 'User')
+        message.recipient_role = 'Teacher' if message.recipient.role == 'teacher' else ('Headmaster' if message.recipient.role == 'headmaster' else ('Admin' if message.recipient.role == 'admin' else 'Staff'))
     
-    # Get potential recipients (teachers and staff)
+    # Get potential recipients (teachers, headmaster, admin)
     from .models import User
     potential_recipients = User.objects.filter(
-        Q(is_staff=True) | Q(is_superuser=True)
+        Q(role='teacher') | Q(role='headmaster') | Q(role='admin')
     ).exclude(id=request.user.id).order_by('first_name', 'last_name')
     
     # Get current date for template comparisons
