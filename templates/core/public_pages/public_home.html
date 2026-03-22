@@ -48,14 +48,21 @@
         </div>
       </div>
 
-      <!-- RIGHT IMAGE -->
-      <div class="relative">
-        <img {{ image_with_fallback('images/hero_bg.png', 'Hero Background', 'bg-gradient-to-br from-blue-400 to-blue-600') }}
-             class="rounded-2xl shadow-2xl w-full object-cover hover:scale-105 transition duration-700"
-             alt="Students">
+     <div class="relative group overflow-hidden rounded-2xl">
 
-  
-      </div>
+    <img 
+        {{ image_with_fallback('images/hero_bg.png', 'Hero Background', 'bg-gradient-to-br from-blue-400 to-blue-600') }}
+        class="w-full h-full object-cover rounded-2xl shadow-2xl transition-transform duration-700 group-hover:scale-105"
+        alt="Students"
+    >
+
+    <!-- LIGHT BLUE OVERLAY -->
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-700/40 rounded-2xl"></div>
+
+    <!-- GLOW EFFECT -->
+    <div class="absolute inset-0 rounded-2xl ring-1 ring-blue-300/30"></div>
+
+</div>
 
     </div>
   </div>
