@@ -3288,11 +3288,19 @@ def student_messages(request):
     # Get potential recipients (teachers, headmaster, admin) - grouped by role
     from .models import User
     
+    # Debug: Check all users and their roles
+    all_users = User.objects.all()
+    print(f"Total users in database: {all_users.count()}")
+    for user in all_users:
+        print(f"User: {user.username} - Role: {user.role} - Staff: {user.is_staff} - Superuser: {user.is_superuser}")
+    
     # Get teachers - users with role='teacher'
     teachers = User.objects.filter(role='teacher').exclude(id=request.user.id).order_by('first_name', 'last_name')
+    print(f"Found {teachers.count()} teachers")
     
     # Get headmasters - users with role='headmaster'  
     headmasters = User.objects.filter(role='headmaster').exclude(id=request.user.id).order_by('first_name', 'last_name')
+    print(f"Found {headmasters.count()} headmasters")
     
     # Get admins - staff users (is_staff=True) who are not superusers and not students/teachers/headmasters
     admins = User.objects.filter(
@@ -3301,6 +3309,7 @@ def student_messages(request):
     ).exclude(id=request.user.id).exclude(
         role__in=['student', 'teacher', 'headmaster']
     ).order_by('first_name', 'last_name')
+    print(f"Found {admins.count()} admins")
     
     # Get current date for template comparisons
     today = timezone.now().date()
