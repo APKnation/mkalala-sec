@@ -1,84 +1,172 @@
 {% load static %}
-<!-- REDESIGNED FOOTER (FORCE DARK COLOR) -->
-<footer style="background-color: #0f172a; color: white;" class="pt-24 pb-12 relative overflow-hidden">
-    <!-- Top Border Line -->
-    <div class="absolute top-0 left-0 w-full h-px bg-white/10"></div>
+<!-- MODERN FOOTER WITH ENHANCED DESIGN -->
+<footer class="pt-20 pb-12 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
+    <!-- Top Border with Gradient -->
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-blue-500"></div>
     
-    <!-- Decorative Glows (Inline Styles for reliability) -->
-    <div style="background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%);" class="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"></div>
-    <div style="background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);" class="absolute bottom-0 left-0 w-[600px] h-[600px] pointer-events-none"></div>
+    <!-- Decorative Background Elements -->
+    <div class="absolute top-0 right-0 w-[800px] h-[800px] opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-transparent rounded-full blur-3xl"></div>
+    </div>
+    <div class="absolute bottom-0 left-0 w-[600px] h-[600px] opacity-20">
+        <div class="absolute inset-0 bg-gradient-to-tr from-purple-600 to-transparent rounded-full blur-3xl"></div>
+    </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
-            <!-- Brand Column -->
-            <div class="space-y-8">
+        <!-- Main Footer Content -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+            
+            <!-- School Brand Column -->
+            <div class="lg:col-span-2 space-y-6">
                 <div class="flex items-center space-x-4 group">
-                    <div style="background-color: #4f46e5;" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-indigo-500/50">
-                        <i class="fas fa-graduation-cap text-2xl"></i>
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-blue-500/30 transform group-hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-graduation-cap text-3xl"></i>
                     </div>
                     <div>
-                        <span class="text-2xl font-display font-black tracking-tight text-white block">MKALALA</span>
-                        <span style="color: #818cf8;" class="text-xs font-bold uppercase tracking-[0.2em]">Secondary School</span>
+                        <h3 class="text-3xl font-display font-black tracking-tight text-white">MKALALA</h3>
+                        <p class="text-sm font-bold text-blue-300 uppercase tracking-[0.3em]">Secondary School</p>
                     </div>
                 </div>
-                <p style="color: rgba(226, 232, 240, 0.7);" class="text-lg leading-relaxed font-medium">
-                    Where tradition meets the digital future. We empower students to become the innovative leaders of tomorrow.
+                
+                <p class="text-lg text-gray-300 leading-relaxed">
+                    Excellence in education since 1995. Nurturing minds, building futures, and creating tomorrow's leaders through innovative teaching and holistic development.
                 </p>
-                <!-- Social Icons -->
-                <div class="flex space-x-4">
-                    <a href="#" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" class="w-11 h-11 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300">
-                        <i class="fab fa-facebook-f"></i>
+                
+                <!-- Contact Information -->
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <i class="fas fa-map-marker-alt text-blue-400 w-5"></i>
+                        <span>123 Education Street, Mkalala City</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <i class="fas fa-phone text-blue-400 w-5"></i>
+                        <span>+255 123 456 789</span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-gray-300">
+                        <i class="fas fa-envelope text-blue-400 w-5"></i>
+                        <span>info@mkalala.sc.tz</span>
+                    </div>
+                </div>
+                
+                <!-- Social Media -->
+                <div class="flex space-x-3">
+                    <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center text-gray-300 hover:bg-blue-600 hover:text-white hover:scale-105 transition-all duration-300">
+                        <i class="fab fa-facebook-f text-lg"></i>
                     </a>
-                    <a href="#" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" class="w-11 h-11 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300">
-                        <i class="fab fa-x-twitter"></i>
+                    <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center text-gray-300 hover:bg-blue-600 hover:text-white hover:scale-105 transition-all duration-300">
+                        <i class="fab fa-x-twitter text-lg"></i>
                     </a>
-                    <a href="#" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" class="w-11 h-11 hover:bg-indigo-600 rounded-xl flex items-center justify-center text-slate-300 hover:text-white transition-all duration-300">
-                        <i class="fab fa-instagram"></i>
+                    <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center text-gray-300 hover:bg-blue-600 hover:text-white hover:scale-105 transition-all duration-300">
+                        <i class="fab fa-instagram text-lg"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl flex items-center justify-center text-gray-300 hover:bg-blue-600 hover:text-white hover:scale-105 transition-all duration-300">
+                        <i class="fab fa-youtube text-lg"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Quick Access -->
-            <div>
-                <h4 class="text-lg font-bold text-white mb-8 border-l-4 border-indigo-500 pl-4">Quick Access</h4>
-                <ul class="space-y-4">
-                    <li><a href="{% url 'public_home' %}" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-chevron-right text-[10px] mr-3 opacity-0 group-hover:opacity-100 transition-all"></i> Home</a></li>
-                    <li><a href="{% url 'public_about' %}" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-chevron-right text-[10px] mr-3 opacity-0 group-hover:opacity-100 transition-all"></i> About Us</a></li>
-                    <li><a href="{% url 'public_courses' %}" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-chevron-right text-[10px] mr-3 opacity-0 group-hover:opacity-100 transition-all"></i> Courses</a></li>
-                    <li><a href="{% url 'public_contact' %}" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-chevron-right text-[10px] mr-3 opacity-0 group-hover:opacity-100 transition-all"></i> Contact</a></li>
+            <!-- Quick Links -->
+            <div class="space-y-6">
+                <h4 class="text-xl font-bold text-white relative pb-3">
+                    <span class="absolute bottom-0 left-0 w-12 h-1 bg-blue-500 rounded-full"></span>
+                    Quick Links
+                </h4>
+                <ul class="space-y-3">
+                    <li><a href="{% url 'public_home' %}" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Home
+                    </a></li>
+                    <li><a href="{% url 'public_about' %}" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        About Us
+                    </a></li>
+                    <li><a href="{% url 'public_courses' %}" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Academic Programs
+                    </a></li>
+                    <li><a href="{% url 'public_admissions' %}" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Admissions
+                    </a></li>
+                    <li><a href="{% url 'public_contact' %}" class="text-gray-300 hover:text-blue-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Contact
+                    </a></li>
                 </ul>
             </div>
 
-            <!-- Portal Links -->
-            <div>
-                <h4 class="text-lg font-bold text-white mb-8 border-l-4 border-indigo-500 pl-4">School Portal</h4>
-                <ul class="space-y-4">
-                    <li><a href="{% url 'login' %}" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-lock text-[10px] mr-3"></i> Student Login</a></li>
-                    <li><a href="#" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-file-invoice-dollar text-[10px] mr-3"></i> Fee Payment</a></li>
-                    <li><a href="{% url 'register' %}" style="color: rgba(226, 232, 240, 0.6);" class="hover:text-indigo-400 transition-colors font-semibold flex items-center group"><i class="fas fa-user-plus text-[10px] mr-3"></i> Registration</a></li>
+            <!-- Student Portal -->
+            <div class="space-y-6">
+                <h4 class="text-xl font-bold text-white relative pb-3">
+                    <span class="absolute bottom-0 left-0 w-12 h-1 bg-purple-500 rounded-full"></span>
+                    Student Portal
+                </h4>
+                <ul class="space-y-3">
+                    <li><a href="{% url 'login' %}" class="text-gray-300 hover:text-purple-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-sign-in-alt text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Student Login
+                    </a></li>
+                    <li><a href="{% url 'register' %}" class="text-gray-300 hover:text-purple-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-user-plus text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        New Registration
+                    </a></li>
+                    <li><a href="#" class="text-gray-300 hover:text-purple-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-graduation-cap text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Results Portal
+                    </a></li>
+                    <li><a href="#" class="text-gray-300 hover:text-purple-400 transition-colors duration-300 flex items-center group">
+                        <i class="fas fa-calendar text-xs mr-2 opacity-0 group-hover:opacity-100 transition-all"></i>
+                        Academic Calendar
+                    </a></li>
                 </ul>
             </div>
 
             <!-- Newsletter -->
-            <div style="background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.07);" class="p-8 rounded-[2.5rem]">
-                <h4 class="text-xl font-bold text-white mb-4">Stay Connected</h4>
-                <p style="color: rgba(226, 232, 240, 0.5);" class="text-sm mb-6 font-medium leading-relaxed">Join our mailing list for important updates.</p>
+            <div class="bg-white/5 backdrop-blur-sm border border-white/10 p-8 rounded-3xl space-y-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <i class="fas fa-envelope text-2xl text-blue-400"></i>
+                    <h4 class="text-xl font-bold text-white">Stay Updated</h4>
+                </div>
+                <p class="text-gray-300 text-sm leading-relaxed">
+                    Get the latest news, events, and announcements delivered directly to your inbox.
+                </p>
                 <form class="space-y-4">
-                    <input type="email" placeholder="Your email address" style="background-color: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);" class="w-full rounded-2xl px-5 py-4 text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
-                    <button type="button" style="background-color: #4f46e5;" class="w-full hover:bg-indigo-500 py-4 rounded-2xl font-black text-white shadow-xl shadow-indigo-600/30 active:scale-95 transition-all tracking-wide uppercase text-sm">Subscribe Now</button>
+                    <input type="email" placeholder="Enter your email" 
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-3 rounded-xl font-bold text-white shadow-lg transform hover:scale-105 transition-all duration-300">
+                        Subscribe
+                    </button>
                 </form>
+                <p class="text-xs text-gray-400">We respect your privacy. Unsubscribe anytime.</p>
             </div>
         </div>
 
-        <!-- Bottom Copyright -->
-        <div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 text-slate-500 text-sm font-semibold">
-            <p>&copy; 2026 Mkalala Secondary School. All rights reserved.</p>
-            <div class="flex items-center space-x-6">
-                <a href="#" class="hover:text-white transition-colors">Privacy</a>
-                <a href="#" class="hover:text-white transition-colors">Terms</a>
-                <div class="flex items-center space-x-2 px-3 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] uppercase font-bold tracking-widest">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                    <span>System Online</span>
+        <!-- Bottom Section -->
+        <div class="pt-12 border-t border-white/10">
+            <div class="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
+                <!-- Copyright -->
+                <div class="text-center lg:text-left">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2026 Mkalala Secondary School. All rights reserved.
+                    </p>
+                    <p class="text-gray-500 text-xs mt-1">
+                        Empowering education for over 25 years
+                    </p>
+                </div>
+
+                <!-- Legal Links & Status -->
+                <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                    <div class="flex items-center space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Privacy Policy</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Terms of Service</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Cookie Policy</a>
+                    </div>
+                    
+                    <!-- System Status -->
+                    <div class="flex items-center space-x-2 px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-full text-xs font-medium">
+                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <span>System Online</span>
+                    </div>
                 </div>
             </div>
         </div>
