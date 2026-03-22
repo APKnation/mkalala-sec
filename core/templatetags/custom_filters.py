@@ -46,3 +46,23 @@ def img_tag(image_path, alt_text="", fallback_class="", extra_classes=""):
         image_path = image_path[8:]
     
     return mark_safe(f'<img src="/static/{image_path}" alt="{alt_text}" class="{fallback_class} {extra_classes}" onerror="this.className=\'{fallback_class} {extra_classes}\'; this.alt=\'{alt_text}\'">')
+
+@register.simple_tag
+def div_tag(image_path, alt_text="", fallback_class="", extra_classes=""):
+    """Generate div with background image for gallery items"""
+    if not image_path:
+        return mark_safe(f'<div class="{fallback_class} {extra_classes}"></div>')
+    
+    if not alt_text:
+        alt_text = "Image"
+    
+    if not fallback_class:
+        fallback_class = "bg-gray-300"
+    
+    # Clean image path
+    if image_path.startswith('static/'):
+        image_path = image_path[7:]
+    elif image_path.startswith('/static/'):
+        image_path = image_path[8:]
+    
+    return mark_safe(f'div style="background-image: url(\'/static/{image_path}\'); background-size: cover; background-position: center;" class="{fallback_class} {extra_classes}" onerror="this.style.background=\'{fallback_class}\'; this.className=\'{fallback_class} {extra_classes}\'"')

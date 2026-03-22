@@ -160,7 +160,7 @@
     <div class="grid md:grid-cols-3 gap-8">
 
       <article class="bg-white text-school-black rounded-2xl overflow-hidden shadow-xl hover:scale-[1.02] transition h-full flex flex-col">
-        <img {{ image_with_fallback('images/news_science.jpg', 'Science Lab', 'bg-gradient-to-br from-blue-100 to-blue-200') }} class="h-64 w-full object-cover">
+        {% img_tag 'images/news_science.jpg' 'Science Lab' 'bg-gradient-to-br from-blue-100 to-blue-200' 'h-64 w-full object-cover' %}
         <div class="p-6 flex-1 flex flex-col">
           <span class="text-xs font-bold text-school-blue uppercase">Academics</span>
           <h3 class="text-xl font-bold mt-2">Science Exhibition</h3>
@@ -171,7 +171,7 @@
       </article>
 
       <article class="bg-white text-school-black rounded-2xl overflow-hidden shadow-xl hover:scale-[1.02] transition h-full flex flex-col">
-        <img {{ image_with_fallback('images/news_sports.jpg', 'Sports Activities', 'bg-gradient-to-br from-green-100 to-green-200') }} class="h-64 w-full object-cover">
+        {% img_tag 'images/news_sports.jpg' 'Sports Activities' 'bg-gradient-to-br from-green-100 to-green-200' 'h-64 w-full object-cover' %}
         <div class="p-6 flex-1 flex flex-col">
           <span class="text-xs font-bold text-school-blue uppercase">Sports</span>
           <h3 class="text-xl font-bold mt-2">Regional Champions</h3>
@@ -182,7 +182,7 @@
       </article>
 
       <article class="bg-white text-school-black rounded-2xl overflow-hidden shadow-xl hover:scale-[1.02] transition h-full flex flex-col">
-        <img {{ image_with_fallback('images/news_admissions.jpg', 'Admissions Open', 'bg-gradient-to-br from-purple-100 to-purple-200') }} class="h-64 w-full object-cover">
+        {% img_tag 'images/news_admissions.jpg' 'Admissions Open' 'bg-gradient-to-br from-purple-100 to-purple-200' 'h-64 w-full object-cover' %}
         <div class="p-6 flex-1 flex flex-col">
           <span class="text-xs font-bold text-school-blue uppercase">Admissions</span>
           <h3 class="text-xl font-bold mt-2">2026 Intake Open</h3>
@@ -554,7 +554,7 @@
       <!-- Clubs -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/science_fair.png', 'Science Fair', 'bg-gradient-to-br from-purple-200 to-purple-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag 'images/science_fair.png' 'Science Fair' 'bg-gradient-to-br from-purple-200 to-purple-300' 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-500' %}>
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -567,7 +567,7 @@
       <!-- Events -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-red-200 to-red-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-red-200 to-red-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -580,7 +580,7 @@
       <!-- Additional Image 1 -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/hero_main.jpg', 'School Campus', 'bg-gradient-to-br from-blue-300 to-blue-400') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag 'images/hero_main.jpg' 'School Campus' 'bg-gradient-to-br from-blue-300 to-blue-400' 'w-full h-full object-cover group-hover:scale-110 transition-transform duration-500' %}>
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -593,7 +593,7 @@
       <!-- Additional Image 2 -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/hero_prestigious.jpg', 'Academic Excellence', 'bg-gradient-to-br from-indigo-300 to-indigo-400') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/hero_prestigious.jpg', 'Academic Excellence', 'bg-gradient-to-br from-indigo-300 to-indigo-400') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -606,7 +606,7 @@
       <!-- Additional Image 3 -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-200 to-amber-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-200 to-amber-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -624,7 +624,7 @@
       <!-- Classrooms -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/news_library.jpg', 'Modern Classroom', 'bg-gradient-to-br from-blue-200 to-blue-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/news_library.jpg', 'Modern Classroom', 'bg-gradient-to-br from-blue-200 to-blue-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -637,7 +637,7 @@
       <!-- Sports -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/news_sports.jpg', 'Sports Excellence', 'bg-gradient-to-br from-green-200 to-green-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/news_sports.jpg', 'Sports Excellence', 'bg-gradient-to-br from-green-200 to-green-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -650,7 +650,7 @@
       <!-- Events -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-red-200 to-red-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-red-200 to-red-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
@@ -663,7 +663,7 @@
       <!-- Additional Image 3 -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <div {{ image_with_fallback('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-200 to-amber-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+          <div {% div_tag('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-200 to-amber-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
         </div>
