@@ -1,102 +1,136 @@
 {% load static %}
-<!-- COMPACT FOOTER DESIGN -->
-<footer class="pt-12 pb-8 relative bg-slate-900 text-white border-t border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Main Footer Content -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-            
-            <!-- School Brand Column -->
-            <div class="lg:col-span-1 space-y-4">
+<!-- LIGHT BLUE THEMED FOOTER -->
+<footer class="relative bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 text-white border-t border-blue-700">
+
+    <!-- TOP GLOW LINE -->
+    <div class="h-1 w-full bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-500"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+
+        <!-- GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+
+            <!-- BRAND -->
+            <div class="space-y-5">
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-400/40">
                         <i class="fas fa-graduation-cap text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-white">MKALALA</h3>
-                        <p class="text-xs text-blue-300 uppercase tracking-wider">Secondary School</p>
+                        <h3 class="text-2xl font-extrabold tracking-wide">MKALALA</h3>
+                        <p class="text-xs text-blue-200 uppercase tracking-[3px]">Secondary School</p>
                     </div>
                 </div>
-                
-                <p class="text-sm text-gray-400 leading-relaxed">
-                    Excellence in education since 1995. Nurturing minds and building futures.
+
+                <p class="text-sm text-blue-100 leading-relaxed">
+                    Excellence in education since 1995. Inspiring students with knowledge, discipline, and innovation.
                 </p>
-                
-                <!-- Social Media -->
-                <div class="flex space-x-2">
-                    <a href="#" class="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-                        <i class="fab fa-facebook-f text-sm"></i>
+
+                <!-- SOCIAL -->
+                <div class="flex space-x-3 pt-2">
+                    <a href="#" class="group w-9 h-9 bg-blue-800 rounded-xl flex items-center justify-center hover:bg-blue-500 transition">
+                        <i class="fab fa-facebook-f text-sm text-blue-200 group-hover:text-white"></i>
                     </a>
-                    <a href="#" class="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-                        <i class="fab fa-x-twitter text-sm"></i>
+                    <a href="#" class="group w-9 h-9 bg-blue-800 rounded-xl flex items-center justify-center hover:bg-cyan-500 transition">
+                        <i class="fab fa-x-twitter text-sm text-blue-200 group-hover:text-white"></i>
                     </a>
-                    <a href="#" class="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:bg-blue-600 hover:text-white transition-colors">
-                        <i class="fab fa-instagram text-sm"></i>
+                    <a href="#" class="group w-9 h-9 bg-blue-800 rounded-xl flex items-center justify-center hover:bg-pink-500 transition">
+                        <i class="fab fa-instagram text-sm text-blue-200 group-hover:text-white"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Quick Links -->
-            <div class="space-y-4">
-                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Quick Links</h4>
-                <ul class="space-y-2">
-                    <li><a href="{% url 'public_home' %}" class="text-gray-400 hover:text-blue-400 transition-colors text-sm">Home</a></li>
-                    <li><a href="{% url 'public_about' %}" class="text-gray-400 hover:text-blue-400 transition-colors text-sm">About Us</a></li>
-                    <li><a href="{% url 'public_courses' %}" class="text-gray-400 hover:text-blue-400 transition-colors text-sm">Academics</a></li>
-                    <li><a href="{% url 'public_contact' %}" class="text-gray-400 hover:text-blue-400 transition-colors text-sm">Contact</a></li>
+            <!-- QUICK LINKS -->
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider mb-5 text-blue-100">Quick Links</h4>
+                <ul class="space-y-3">
+                    <li><a href="{% url 'public_home' %}" class="footer-link">Home</a></li>
+                    <li><a href="{% url 'public_about' %}" class="footer-link">About Us</a></li>
+                    <li><a href="{% url 'public_courses' %}" class="footer-link">Academics</a></li>
+                    <li><a href="{% url 'public_contact' %}" class="footer-link">Contact</a></li>
                 </ul>
             </div>
 
-            <!-- Student Portal -->
-            <div class="space-y-4">
-                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Student Portal</h4>
-                <ul class="space-y-2">
-                    <li><a href="{% url 'login' %}" class="text-gray-400 hover:text-purple-400 transition-colors text-sm">Student Login</a></li>
-                    <li><a href="{% url 'register' %}" class="text-gray-400 hover:text-purple-400 transition-colors text-sm">Registration</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-purple-400 transition-colors text-sm">Results</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-purple-400 transition-colors text-sm">Calendar</a></li>
+            <!-- PORTAL -->
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider mb-5 text-blue-100">Student Portal</h4>
+                <ul class="space-y-3">
+                    <li><a href="{% url 'login' %}" class="footer-link-light">Student Login</a></li>
+                    <li><a href="{% url 'register' %}" class="footer-link-light">Registration</a></li>
+                    <li><a href="#" class="footer-link-light">Results</a></li>
+                    <li><a href="#" class="footer-link-light">Calendar</a></li>
                 </ul>
             </div>
 
-            <!-- Contact Info -->
-            <div class="space-y-4">
-                <h4 class="text-sm font-bold text-white uppercase tracking-wider">Contact Info</h4>
-                <div class="space-y-2">
-                    <div class="flex items-center space-x-2 text-gray-400 text-sm">
-                        <i class="fas fa-map-marker-alt text-blue-400 w-4"></i>
-                        <span>123 Education Street</span>
+            <!-- CONTACT -->
+            <div>
+                <h4 class="text-sm font-bold uppercase tracking-wider mb-5 text-blue-100">Contact Info</h4>
+                <div class="space-y-4 text-sm text-blue-200">
+
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-map-marker-alt text-blue-300 mt-1"></i>
+                        <span>123 Education Street, Tanzania</span>
                     </div>
-                    <div class="flex items-center space-x-2 text-gray-400 text-sm">
-                        <i class="fas fa-phone text-blue-400 w-4"></i>
+
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-phone text-blue-300"></i>
                         <span>+255 123 456 789</span>
                     </div>
-                    <div class="flex items-center space-x-2 text-gray-400 text-sm">
-                        <i class="fas fa-envelope text-blue-400 w-4"></i>
+
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-envelope text-blue-300"></i>
                         <span>info@mkalala.sc.tz</span>
                     </div>
+
                 </div>
             </div>
+
         </div>
 
-        <!-- Bottom Section -->
-        <div class="pt-6 border-t border-gray-800">
-            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                <!-- Copyright -->
-                <div class="text-center md:text-left">
-                    <p class="text-gray-400 text-sm">
-                        &copy; 2026 Mkalala Secondary School. All rights reserved.
-                    </p>
-                </div>
+        <!-- BOTTOM -->
+        <div class="border-t border-blue-700 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
 
-                <!-- Legal Links -->
-                <div class="flex items-center space-x-6">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Privacy</a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors text-sm">Terms</a>
-                    <div class="flex items-center space-x-2 px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
-                        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                        <span>Online</span>
-                    </div>
+            <p class="text-blue-200 text-sm text-center md:text-left">
+                © 2026 Mkalala Secondary School. All rights reserved.
+            </p>
+
+            <div class="flex items-center gap-6">
+                <a href="#" class="text-blue-200 hover:text-white text-sm transition">Privacy</a>
+                <a href="#" class="text-blue-200 hover:text-white text-sm transition">Terms</a>
+
+                <!-- STATUS -->
+                <div class="flex items-center gap-2 px-3 py-1 bg-blue-400/20 text-blue-200 rounded-full text-xs font-medium">
+                    <span class="w-2 h-2 bg-blue-300 rounded-full animate-ping"></span>
+                    <span>System Online</span>
                 </div>
             </div>
+
         </div>
+
     </div>
 </footer>
+
+<!-- STYLES -->
+<style>
+.footer-link {
+    @apply text-blue-200 text-sm hover:text-white transition relative;
+}
+.footer-link::after {
+    content: '';
+    @apply block w-0 h-[2px] bg-blue-300 transition-all duration-300;
+}
+.footer-link:hover::after {
+    @apply w-full;
+}
+
+.footer-link-light {
+    @apply text-blue-300 text-sm hover:text-white transition relative;
+}
+.footer-link-light::after {
+    content: '';
+    @apply block w-0 h-[2px] bg-cyan-300 transition-all duration-300;
+}
+.footer-link-light:hover::after {
+    @apply w-full;
+}
+</style>
