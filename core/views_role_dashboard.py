@@ -2308,7 +2308,7 @@ def get_admin_settings_context(user, admin_profile):
 
 def get_admin_reports_context(user, admin_profile):
     """Get admin reports page context"""
-    from .models import StudentProfile, Grade, Fee, Payment, ExamSchedule, CourseOffering, Attendance
+    from .models import StudentProfile, Grade, Fee, Payment, ExamSchedule, CourseOffering, Attendance, FacultyProfile
     from django.db.models import Count, Avg, Sum, Q
     from django.utils import timezone
     from datetime import timedelta
@@ -2318,6 +2318,13 @@ def get_admin_reports_context(user, admin_profile):
     this_month_start = today.replace(day=1)
     last_month_start = (this_month_start - timedelta(days=1)).replace(day=1)
     last_month_end = this_month_start - timedelta(days=1)
+    
+    # Teacher statistics
+    total_teachers = FacultyProfile.objects.count()
+    active_teachers = FacultyProfile.objects.filter(user__is_active=True).count()
+    new_teachers_this_month = FacultyProfile.objects.filter(
+        user__date_joined__gte=this_month_start
+    ).count()
     
     # Student statistics
     total_students = StudentProfile.objects.count()
@@ -2406,6 +2413,9 @@ def get_admin_reports_context(user, admin_profile):
         'recent_exams': recent_exams,
         'course_stats': course_stats,
         'monthly_trends': monthly_trends,
+        'total_teachers': total_teachers,
+        'active_teachers': active_teachers,
+        'new_teachers_this_month': new_teachers_this_month,
         'generated_reports': 0,  # Placeholder for generated reports count
     }
 
