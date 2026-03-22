@@ -1,21 +1,23 @@
 <!-- Student Messages Dashboard Content -->
-<div class="flex h-full">
+<div class="flex flex-col lg:flex-row h-full gap-4">
     <!-- Left Side - Message Navigation and List -->
-    <div class="w-1/2 pr-4">
-        <div class="space-y-6">
-            <div class="flex justify-between items-center">
+    <div class="w-full lg:w-1/2 lg:pr-4">
+        <div class="space-y-4 sm:space-y-6">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
-                        <i class="fas fa-envelope mr-3 text-green-600"></i>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
+                        <i class="fas fa-envelope mr-2 sm:mr-3 text-green-600"></i>
                         Messages
                         {% if unread_count > 0 %}
-                        <span class="ml-3 px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ unread_count }}</span>
+                        <span class="ml-2 sm:ml-3 px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ unread_count }}</span>
                         {% endif %}
                     </h1>
-                    <p class="mt-2 text-sm text-gray-600">Communicate with teachers, headmaster, and staff</p>
+                    <p class="mt-1 sm:mt-2 text-sm text-gray-600">Communicate with teachers, headmaster, and staff</p>
                 </div>
-                <button onclick="showComposeForm()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
-                    <i class="fas fa-plus mr-2"></i> Compose
+                <button onclick="showComposeForm()" class="bg-green-600 hover:bg-green-700 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center justify-center sm:justify-start">
+                    <i class="fas fa-plus mr-2"></i> 
+                    <span class="hidden sm:inline">Compose</span>
+                    <span class="sm:hidden">New</span>
                 </button>
             </div>
 
@@ -23,37 +25,39 @@
             <div class="bg-white rounded-lg shadow border border-gray-200">
                 <div class="border-b border-gray-200">
                     <nav class="flex -mb-px">
-                        <button onclick="showTab('received')" id="received-tab" class="tab-button px-6 py-3 border-b-2 border-green-500 text-green-600 font-medium">
-                            <i class="fas fa-inbox mr-2"></i> Inbox
+                        <button onclick="showTab('received')" id="received-tab" class="tab-button flex-1 px-3 sm:px-6 py-3 border-b-2 border-green-500 text-green-600 font-medium text-sm sm:text-base">
+                            <i class="fas fa-inbox mr-1 sm:mr-2"></i> 
+                            <span>Inbox</span>
                             {% if unread_count > 0 %}
-                            <span class="ml-2 bg-red-500 text-white text-xs rounded-full px-2">{{ unread_count }}</span>
+                            <span class="ml-1 sm:ml-2 bg-red-500 text-white text-xs rounded-full px-1 sm:px-2">{{ unread_count }}</span>
                             {% endif %}
                         </button>
-                        <button onclick="showTab('sent')" id="sent-tab" class="tab-button px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium">
-                            <i class="fas fa-paper-plane mr-2"></i> Sent
+                        <button onclick="showTab('sent')" id="sent-tab" class="tab-button flex-1 px-3 sm:px-6 py-3 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm sm:text-base">
+                            <i class="fas fa-paper-plane mr-1 sm:mr-2"></i> 
+                            <span>Sent</span>
                         </button>
                     </nav>
                 </div>
 
                 <!-- Received Messages -->
-                <div id="received-content" class="tab-content p-6">
+                <div id="received-content" class="tab-content p-4 sm:p-6">
                     {% if received_messages %}
-                        <div class="space-y-4">
+                        <div class="space-y-3 sm:space-y-4">
                             {% for message in received_messages %}
-                            <div class="message-item {% if not message.is_read %}bg-blue-50 border-l-4 border-blue-500{% else %}bg-gray-50{% endif %} p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer" onclick="viewMessage('{{ message.id }}')">
-                                <div class="flex justify-between items-start">
+                            <div class="message-item {% if not message.is_read %}bg-blue-50 border-l-4 border-blue-500{% else %}bg-gray-50{% endif %} p-3 sm:p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer" onclick="viewMessage('{{ message.id }}')">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                                     <div class="flex-1">
-                                        <div class="flex items-center mb-2">
-                                            <span class="font-semibold text-gray-900">{{ message.sender_name }}</span>
-                                            <span class="ml-2 px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">{{ message.sender_role }}</span>
+                                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                                            <span class="font-semibold text-gray-900 text-sm sm:text-base">{{ message.sender_name }}</span>
+                                            <span class="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">{{ message.sender_role }}</span>
                                             {% if not message.is_read %}
-                                            <span class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full">New</span>
+                                            <span class="px-2 py-1 bg-blue-500 text-white text-xs rounded-full">New</span>
                                             {% endif %}
                                         </div>
-                                        <h4 class="font-medium text-gray-900 mb-1">{{ message.subject }}</h4>
+                                        <h4 class="font-medium text-gray-900 mb-1 text-sm sm:text-base">{{ message.subject }}</h4>
                                         <p class="text-gray-600 text-sm line-clamp-2">{{ message.body|truncatewords:20 }}</p>
                                     </div>
-                                    <div class="text-right ml-4">
+                                    <div class="text-right">
                                         <span class="text-xs text-gray-500">
                                             {% if message.days_ago == 0 %}Today{% elif message.days_ago == 1 %}Yesterday{% else %}{{ message.days_ago }} days ago{% endif %}
                                         </span>
@@ -63,29 +67,29 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="text-center py-8">
-                            <i class="fas fa-envelope-open text-4xl text-gray-300 mb-3"></i>
-                            <p class="text-gray-500">No messages in your inbox</p>
+                        <div class="text-center py-6 sm:py-8">
+                            <i class="fas fa-envelope-open text-3xl sm:text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 text-sm sm:text-base">No messages in your inbox</p>
                         </div>
                     {% endif %}
                 </div>
 
                 <!-- Sent Messages -->
-                <div id="sent-content" class="tab-content p-6 hidden">
+                <div id="sent-content" class="tab-content p-4 sm:p-6 hidden">
                     {% if sent_messages %}
-                        <div class="space-y-4">
+                        <div class="space-y-3 sm:space-y-4">
                             {% for message in sent_messages %}
-                            <div class="message-item bg-gray-50 p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer" onclick="viewMessage('{{ message.id }}')">
-                                <div class="flex justify-between items-start">
+                            <div class="message-item bg-gray-50 p-3 sm:p-4 rounded-lg hover:shadow-md transition-shadow cursor-pointer" onclick="viewMessage('{{ message.id }}')">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                                     <div class="flex-1">
-                                        <div class="flex items-center mb-2">
-                                            <span class="font-semibold text-gray-900">To: {{ message.recipient_name }}</span>
-                                            <span class="ml-2 px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">{{ message.recipient_role }}</span>
+                                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                                            <span class="font-semibold text-gray-900 text-sm sm:text-base">To: {{ message.recipient_name }}</span>
+                                            <span class="px-2 py-1 bg-gray-200 text-gray-600 text-xs rounded-full">{{ message.recipient_role }}</span>
                                         </div>
-                                        <h4 class="font-medium text-gray-900 mb-1">{{ message.subject }}</h4>
+                                        <h4 class="font-medium text-gray-900 mb-1 text-sm sm:text-base">{{ message.subject }}</h4>
                                         <p class="text-gray-600 text-sm line-clamp-2">{{ message.body|truncatewords:20 }}</p>
                                     </div>
-                                    <div class="text-right ml-4">
+                                    <div class="text-right">
                                         <span class="text-xs text-gray-500">
                                             {% if message.days_ago == 0 %}Today{% elif message.days_ago == 1 %}Yesterday{% else %}{{ message.days_ago }} days ago{% endif %}
                                         </span>
@@ -95,9 +99,9 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <div class="text-center py-8">
-                            <i class="fas fa-paper-plane text-4xl text-gray-300 mb-3"></i>
-                            <p class="text-gray-500">No sent messages</p>
+                        <div class="text-center py-6 sm:py-8">
+                            <i class="fas fa-paper-plane text-3xl sm:text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 text-sm sm:text-base">No sent messages</p>
                         </div>
                     {% endif %}
                 </div>
@@ -106,21 +110,21 @@
     </div>
 
     <!-- Right Side - Compose Form Panel -->
-    <div id="composePanel" class="w-1/2 pl-4">
+    <div id="composePanel" class="w-full lg:w-1/2 lg:pl-4 hidden">
         <div class="bg-white rounded-lg shadow border border-gray-200 h-full">
-            <div class="p-6 border-b border-gray-200">
+            <div class="p-4 sm:p-6 border-b border-gray-200">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-semibold text-gray-900 flex items-center">
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-900 flex items-center">
                         <i class="fas fa-pen-to-square mr-2 text-green-600"></i>
                         Compose Message
                     </h3>
-                    <button onclick="hideComposeForm()" class="text-gray-400 hover:text-gray-600">
-                        <i class="fas fa-times text-xl"></i>
+                    <button onclick="hideComposeForm()" class="text-gray-400 hover:text-gray-600 p-1">
+                        <i class="fas fa-times text-lg sm:text-xl"></i>
                     </button>
                 </div>
             </div>
             
-            <form id="composeForm" method="POST" class="p-6 space-y-4">
+            <form id="composeForm" method="POST" class="p-4 sm:p-6 space-y-4">
                 {% csrf_token %}
                 
                 <div>
@@ -131,10 +135,10 @@
                         <div class="border border-gray-200 rounded-lg p-3">
                             <div class="flex items-center mb-2">
                                 <i class="fas fa-chalkboard-teacher text-blue-600 mr-2"></i>
-                                <span class="font-medium text-gray-900">Teachers</span>
+                                <span class="font-medium text-gray-900 text-sm">Teachers</span>
                                 <span class="ml-2 text-xs text-gray-500">({{ teachers|length }} available)</span>
                             </div>
-                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
                                 <option value="">Select a teacher...</option>
                                 {% for teacher in teachers %}
                                 <option value="{{ teacher.id }}">
@@ -153,10 +157,10 @@
                         <div class="border border-gray-200 rounded-lg p-3">
                             <div class="flex items-center mb-2">
                                 <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>
-                                <span class="font-medium text-gray-900">Headmaster</span>
+                                <span class="font-medium text-gray-900 text-sm">Headmaster</span>
                                 <span class="ml-2 text-xs text-gray-500">({{ headmasters|length }} available)</span>
                             </div>
-                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
                                 <option value="">Select headmaster...</option>
                                 {% for headmaster in headmasters %}
                                 <option value="{{ headmaster.id }}">
@@ -173,10 +177,10 @@
                         <div class="border border-gray-200 rounded-lg p-3">
                             <div class="flex items-center mb-2">
                                 <i class="fas fa-user-shield text-red-600 mr-2"></i>
-                                <span class="font-medium text-gray-900">Administration</span>
+                                <span class="font-medium text-gray-900 text-sm">Administration</span>
                                 <span class="ml-2 text-xs text-gray-500">({{ admins|length }} available)</span>
                             </div>
-                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
                                 <option value="">Select admin...</option>
                                 {% for admin in admins %}
                                 <option value="{{ admin.id }}">
@@ -199,18 +203,19 @@
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                    <input type="text" name="subject" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter message subject...">
+                    <input type="text" name="subject" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" placeholder="Enter message subject...">
                 </div>
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                    <textarea name="body" required rows="8" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Type your message here..."></textarea>
+                    <textarea name="body" required rows="6 sm:rows-8" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" placeholder="Type your message here..."></textarea>
                 </div>
                 
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="clearForm()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Clear</button>
-                    <button type="submit" class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center">
-                        <i class="fas fa-paper-plane mr-2"></i> Send Message
+                <div class="flex flex-col sm:flex-row sm:justify-end sm:space-x-3 gap-2 pt-4">
+                    <button type="button" onclick="clearForm()" class="px-4 py-2 text-gray-600 hover:text-gray-800 text-sm">Clear</button>
+                    <button type="submit" class="px-4 sm:px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg flex items-center justify-center text-sm">
+                        <i class="fas fa-paper-plane mr-2"></i> 
+                        <span>Send Message</span>
                     </button>
                 </div>
             </form>
@@ -218,19 +223,24 @@
     </div>
 </div>
 
+<!-- Mobile Compose Button (Fixed Bottom) -->
+<button onclick="showComposeForm()" class="lg:hidden fixed bottom-4 right-4 bg-green-600 hover:bg-green-700 text-white p-4 rounded-full shadow-lg z-40 flex items-center justify-center">
+    <i class="fas fa-pen text-lg"></i>
+</button>
+
 <!-- Message View Modal -->
-<div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+<div id="messageModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-2 sm:p-4">
     <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200">
+        <div class="p-4 sm:p-6 border-b border-gray-200">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-gray-900">Message Details</h3>
-                <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times text-xl"></i>
+                <h3 class="text-lg sm:text-xl font-semibold text-gray-900">Message Details</h3>
+                <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600 p-1">
+                    <i class="fas fa-times text-lg sm:text-xl"></i>
                 </button>
             </div>
         </div>
         
-        <div id="messageContent" class="p-6">
+        <div id="messageContent" class="p-4 sm:p-6">
             <!-- Message content will be loaded here -->
         </div>
     </div>
@@ -260,6 +270,10 @@ function showTab(tab) {
 
 function showComposeForm() {
     document.getElementById('composePanel').classList.remove('hidden');
+    // On mobile, scroll to top of form
+    if (window.innerWidth < 1024) {
+        document.getElementById('composePanel').scrollIntoView({ behavior: 'smooth' });
+    }
 }
 
 function hideComposeForm() {
@@ -281,9 +295,9 @@ function viewMessage(messageId) {
     // For now, we'll show a simple placeholder
     const messageContent = document.getElementById('messageContent');
     messageContent.innerHTML = `
-        <div class="text-center py-8">
-            <i class="fas fa-spinner fa-spin text-4xl text-gray-300 mb-3"></i>
-            <p class="text-gray-500">Loading message...</p>
+        <div class="text-center py-6 sm:py-8">
+            <i class="fas fa-spinner fa-spin text-3xl sm:text-4xl text-gray-300 mb-3"></i>
+            <p class="text-gray-500 text-sm sm:text-base">Loading message...</p>
         </div>
     `;
     
@@ -297,8 +311,8 @@ function viewMessage(messageId) {
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <p class="text-sm text-gray-600">Message details would be displayed here.</p>
                 </div>
-                <div class="flex justify-end space-x-3">
-                    <button onclick="closeMessageModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg">Close</button>
+                <div class="flex justify-end">
+                    <button onclick="closeMessageModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm">Close</button>
                 </div>
             </div>
         `;
@@ -308,14 +322,14 @@ function viewMessage(messageId) {
 function showMessageAlert(message, type) {
     // Create alert element
     const alertDiv = document.createElement('div');
-    alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+    alertDiv.className = `fixed top-4 right-4 z-50 p-3 sm:p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full max-w-xs sm:max-w-md`;
     
     if (type === 'success') {
         alertDiv.classList.add('bg-green-500', 'text-white');
         alertDiv.innerHTML = `
             <div class="flex items-center">
                 <i class="fas fa-check-circle mr-2"></i>
-                <span>${message}</span>
+                <span class="text-sm">${message}</span>
             </div>
         `;
     } else {
@@ -323,7 +337,7 @@ function showMessageAlert(message, type) {
         alertDiv.innerHTML = `
             <div class="flex items-center">
                 <i class="fas fa-exclamation-circle mr-2"></i>
-                <span>${message}</span>
+                <span class="text-sm">${message}</span>
             </div>
         `;
     }
@@ -361,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show loading state
         submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> <span>Sending...</span>';
         
         fetch(window.location.href, {
             method: 'POST',
