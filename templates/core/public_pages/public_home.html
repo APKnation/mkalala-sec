@@ -50,11 +50,8 @@
 
      <div class="relative group overflow-hidden rounded-2xl">
 
-    <img 
-        {{ 'images/hero_bg.png'|image_with_fallback:'Hero Background':'bg-gradient-to-br from-blue-400 to-blue-600' }}
-        class="w-full h-full object-cover rounded-2xl shadow-2xl transition-transform duration-700 group-hover:scale-105"
-        alt="Students"
-    />
+    {% img_tag 'images/hero_bg.png' 'Hero Background' 'bg-gradient-to-br from-blue-400 to-blue-600' 'w-full h-full object-cover rounded-2xl shadow-2xl transition-transform duration-700 group-hover:scale-105' %}
+    
     <div class="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-700/40 rounded-2xl"></div>
 
     <!-- GLOW EFFECT -->
