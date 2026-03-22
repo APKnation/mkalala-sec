@@ -3188,6 +3188,31 @@ def student_fees(request):
     return render(request, 'core/student_parts/fees.html', context)
 
 @login_required
+def user_export(request):
+    """Export all users with their information including password hashes"""
+    from .models import User
+    
+    # Only allow admin or superuser to access this
+    if not (request.user.is_staff or request.user.is_superuser):
+        return redirect('login')
+    
+    # Get all users ordered by username
+    users = User.objects.all().order_by('username')
+    
+    # Calculate role counts
+    role_counts = {}
+    for user in users:
+        role = user.role or 'no_role'
+        role_counts[role] = role_counts.get(role, 0) + 1
+    
+    context = {
+        'users': users,
+        'role_counts': role_counts,
+    }
+    
+    return render(request, 'core/user_export.html', context)
+
+@login_required
 @user_passes_test(is_student)
 def debug_users(request):
     """Debug view to show all users and their roles"""
