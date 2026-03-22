@@ -532,7 +532,7 @@
 <section class="relative bg-school-light-blue text-school-black overflow-hidden">
   
   <!-- Top Wave Transition -->
-  <div class="absolute top-0 left-0 w-fully transform -translate-y-1">
+  <div class="absolute top-0 left-0 w-full transform -translate-y-1">
     
   </div>
 
@@ -649,8 +649,9 @@
       <!-- Events -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <img src="{% static 'images/news_athletics.jpg' %}" alt="School Events" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div {{ image_with_fallback('images/news_athletics.jpg', 'School Events', 'bg-gradient-to-br from-red-200 to-red-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
         </div>
         <div class="mt-4 text-center">
           <h3 class="text-xl font-bold text-gray-900 mb-2">Memorable Events</h3>
@@ -658,12 +659,16 @@
         </div>
       </div>
 
-    </div>
-
+      <!-- Additional Image 3 -->
       <div class="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300">
         <div class="aspect-widescreen overflow-hidden">
-          <img src="{% static 'images/history.jpg' %}" alt="School History" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div {{ image_with_fallback('images/history.jpg', 'School History', 'bg-gradient-to-br from-amber-200 to-amber-300') }} class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+        </div>
+        <div class="mt-4 text-center">
+          <h3 class="text-xl font-bold text-gray-900 mb-2">Rich Heritage</h3>
+          <p class="text-gray-600 text-sm">Decades of educational excellence and community impact since our establishment.</p>
         </div>
       </div>
 
