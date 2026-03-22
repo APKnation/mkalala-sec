@@ -10,7 +10,7 @@
             <p class="mt-2 text-sm text-gray-600">Communicate with students and faculty</p>
         </div>
         <div>
-            <a href="{% if user.role == 'teacher' %}{% url 'teacher_message_compose' %}{% elif user.role == 'admin' %}{% url 'admin_message_compose' %}{% else %}{% url 'student_message_compose' %}{% endif %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
+            <a href="{% if user.role == 'teacher' %}{% url 'teacher_message_compose' %}{% elif user.role == 'admin' %}{% url 'admin_message_compose' %}{% else %}{% url 'student_unified_dashboard' page='messages' %}{% endif %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
                 <i class="fas fa-plus mr-2"></i>
                 Compose Message
             </a>
