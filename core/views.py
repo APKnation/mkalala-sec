@@ -3248,11 +3248,11 @@ def student_messages(request):
         message.recipient_name = message.recipient.get_full_name() or message.recipient.username
         message.recipient_role = 'Teacher' if message.recipient.role == 'teacher' else ('Headmaster' if message.recipient.role == 'headmaster' else ('Admin' if message.recipient.role == 'admin' else 'Staff'))
     
-    # Get potential recipients (teachers, headmaster, admin)
+    # Get potential recipients (teachers, headmaster, admin) - grouped by role
     from .models import User
-    potential_recipients = User.objects.filter(
-        Q(role='teacher') | Q(role='headmaster') | Q(role='admin')
-    ).exclude(id=request.user.id).order_by('first_name', 'last_name')
+    teachers = User.objects.filter(role='teacher').exclude(id=request.user.id).order_by('first_name', 'last_name')
+    headmasters = User.objects.filter(role='headmaster').exclude(id=request.user.id).order_by('first_name', 'last_name')
+    admins = User.objects.filter(role='admin').exclude(id=request.user.id).order_by('first_name', 'last_name')
     
     # Get current date for template comparisons
     today = timezone.now().date()
@@ -3264,7 +3264,9 @@ def student_messages(request):
         'sent_messages': sent_messages,
         'unread_count': unread_count,
         'total_messages': total_messages,
-        'potential_recipients': potential_recipients,
+        'teachers': teachers,
+        'headmasters': headmasters,
+        'admins': admins,
         'today': today,
         'yesterday': yesterday,
     }
