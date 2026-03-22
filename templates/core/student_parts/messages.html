@@ -44,23 +44,23 @@
                     {% if received_messages %}
                         <div class="space-y-3 sm:space-y-4">
                             {% for message in received_messages %}
-                            <div class="message-item {% if not message.is_read %}bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500{% else %}bg-white border border-gray-200{% endif} p-4 sm:p-5 rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02]" onclick="viewMessage('{{ message.id }}')">
+                            <div class="message-item {% if not message.is_read %}bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500{% else %}bg-white border border-gray-200{% endif%} p-4 sm:p-5 rounded-xl hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02]" onclick="viewMessage('{{ message.id }}')">
                                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                                     <div class="flex-1">
                                         <div class="flex flex-wrap items-center gap-2 mb-3">
                                             <div class="flex items-center">
                                                 <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-2">
-                                                    {{ message.sender_name.0|upper }}
+                                                    {% if message.sender_name %}{{ message.sender_name.0|upper }}{% else %}U{% endif %}
                                                 </div>
-                                                <span class="font-semibold text-gray-900 text-sm sm:text-base">{{ message.sender_name }}</span>
+                                                <span class="font-semibold text-gray-900 text-sm sm:text-base">{{ message.sender_name|default:"Unknown" }}</span>
                                             </div>
-                                            <span class="px-2 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-xs rounded-full font-medium">{{ message.sender_role }}</span>
+                                            <span class="px-2 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-xs rounded-full font-medium">{{ message.sender_role|default:"Staff" }}</span>
                                             {% if not message.is_read %}
                                             <span class="px-2 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs rounded-full font-semibold animate-pulse">New</span>
                                             {% endif %}
                                         </div>
-                                        <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{{ message.subject }}</h4>
-                                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">{{ message.body|truncatewords:20 }}</p>
+                                        <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{{ message.subject|default:"No Subject" }}</h4>
+                                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">{{ message.body|truncatewords:20|default:"No content" }}</p>
                                     </div>
                                     <div class="text-right flex flex-col items-end">
                                         <span class="text-xs text-gray-500 font-medium">
@@ -69,7 +69,7 @@
                                             {% elif message.days_ago == 1 %}
                                             <span class="text-gray-600">Yesterday</span>
                                             {% else %}
-                                            <span class="text-gray-500">{{ message.days_ago }} days ago</span>
+                                            <span class="text-gray-500">{{ message.days_ago|default:0 }} days ago</span>
                                             {% endif %}
                                         </span>
                                         {% if message.is_recent %}
@@ -104,12 +104,12 @@
                                                 <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-sm font-bold mr-2">
                                                     <i class="fas fa-paper-plane text-xs"></i>
                                                 </div>
-                                                <span class="font-semibold text-gray-900 text-sm sm:text-base">To: {{ message.recipient_name }}</span>
+                                                <span class="font-semibold text-gray-900 text-sm sm:text-base">To: {{ message.recipient_name|default:"Unknown" }}</span>
                                             </div>
-                                            <span class="px-2 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-xs rounded-full font-medium">{{ message.recipient_role }}</span>
+                                            <span class="px-2 py-1 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-xs rounded-full font-medium">{{ message.recipient_role|default:"Staff" }}</span>
                                         </div>
-                                        <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{{ message.subject }}</h4>
-                                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">{{ message.body|truncatewords:20 }}</p>
+                                        <h4 class="font-semibold text-gray-900 mb-2 text-sm sm:text-base">{{ message.subject|default:"No Subject" }}</h4>
+                                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">{{ message.body|truncatewords:20|default:"No content" }}</p>
                                     </div>
                                     <div class="text-right flex flex-col items-end">
                                         <span class="text-xs text-gray-500 font-medium">
@@ -118,7 +118,7 @@
                                             {% elif message.days_ago == 1 %}
                                             <span class="text-gray-600">Yesterday</span>
                                             {% else %}
-                                            <span class="text-gray-500">{{ message.days_ago }} days ago</span>
+                                            <span class="text-gray-500">{{ message.days_ago|default:0 }} days ago</span>
                                             {% endif %}
                                         </span>
                                         {% if message.is_recent %}
