@@ -112,7 +112,7 @@
                 </div>
             </div>
             
-            <form method="POST" class="p-6 space-y-4">
+            <form id="composeForm" method="POST" class="p-6 space-y-4">
                 {% csrf_token %}
                 
                 <div>
@@ -258,6 +258,8 @@ function openComposeModal() {
 function closeComposeModal() {
     document.getElementById('composeModal').classList.add('hidden');
     document.getElementById('composeModal').classList.remove('flex');
+    // Reset form
+    document.getElementById('composeForm').reset();
 }
 
 function closeMessageModal() {
@@ -294,8 +296,92 @@ function viewMessage(messageId) {
     }, 500);
 }
 
+function showMessageAlert(message, type) {
+    // Create alert element
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+    
+    if (type === 'success') {
+        alertDiv.classList.add('bg-green-500', 'text-white');
+        alertDiv.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+    } else {
+        alertDiv.classList.add('bg-red-500', 'text-white');
+        alertDiv.innerHTML = `
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span>${message}</span>
+            </div>
+        `;
+    }
+    
+    document.body.appendChild(alertDiv);
+    
+    // Animate in
+    setTimeout(() => {
+        alertDiv.classList.remove('translate-x-full');
+        alertDiv.classList.add('translate-x-0');
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        alertDiv.classList.remove('translate-x-0');
+        alertDiv.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(alertDiv);
+        }, 300);
+    }, 3000);
+}
+
 // Initialize with received tab active
 document.addEventListener('DOMContentLoaded', function() {
     showTab('received');
+    
+    // Handle form submission with AJAX
+    document.getElementById('composeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        
+        // Show loading state
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showMessageAlert(data.message, 'success');
+                closeComposeModal();
+                // Optionally refresh the messages list
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            } else {
+                showMessageAlert(data.message || 'Error sending message', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showMessageAlert('Error sending message. Please try again.', 'error');
+        })
+        .finally(() => {
+            // Reset button state
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        });
+    });
 });
 </script>

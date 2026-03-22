@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.views.generic import CreateView
 from django.contrib.auth.decorators import user_passes_test
 from django.middleware.csrf import get_token
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import AuthenticationForm
@@ -3197,27 +3198,63 @@ def student_messages(request):
     
     # Handle message creation
     if request.method == 'POST':
-        recipient_id = request.POST.get('recipient')
-        subject = request.POST.get('subject')
-        body = request.POST.get('body')
-        
-        if recipient_id and subject and body:
-            try:
-                recipient = User.objects.get(id=recipient_id)
-                Message.objects.create(
-                    sender=request.user,
-                    recipient=recipient,
-                    subject=subject,
-                    body=body
-                )
-                messages.success(request, 'Message sent successfully!')
-                return redirect('student_messages')
-            except User.DoesNotExist:
-                messages.error(request, 'Recipient not found.')
-            except Exception as e:
-                messages.error(request, f'Error sending message: {str(e)}')
+        # Check if this is an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            recipient_id = request.POST.get('recipient')
+            subject = request.POST.get('subject')
+            body = request.POST.get('body')
+            
+            if recipient_id and subject and body:
+                try:
+                    recipient = User.objects.get(id=recipient_id)
+                    Message.objects.create(
+                        sender=request.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                    return JsonResponse({
+                        'success': True,
+                        'message': 'Message sent successfully!'
+                    })
+                except User.DoesNotExist:
+                    return JsonResponse({
+                        'success': False,
+                        'message': 'Recipient not found.'
+                    })
+                except Exception as e:
+                    return JsonResponse({
+                        'success': False,
+                        'message': f'Error sending message: {str(e)}'
+                    })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Please fill in all fields.'
+                })
         else:
-            messages.error(request, 'Please fill in all fields.')
+            # Handle regular form submission (fallback)
+            recipient_id = request.POST.get('recipient')
+            subject = request.POST.get('subject')
+            body = request.POST.get('body')
+            
+            if recipient_id and subject and body:
+                try:
+                    recipient = User.objects.get(id=recipient_id)
+                    Message.objects.create(
+                        sender=request.user,
+                        recipient=recipient,
+                        subject=subject,
+                        body=body
+                    )
+                    messages.success(request, 'Message sent successfully!')
+                    return redirect('student_messages')
+                except User.DoesNotExist:
+                    messages.error(request, 'Recipient not found.')
+                except Exception as e:
+                    messages.error(request, f'Error sending message: {str(e)}')
+            else:
+                messages.error(request, 'Please fill in all fields.')
     
     # Get received messages
     received_messages = Message.objects.filter(
