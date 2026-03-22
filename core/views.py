@@ -3240,19 +3240,28 @@ def student_messages(request):
         message.days_ago = (timezone.now().date() - message.sent_at.date()).days
         message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
         message.sender_name = message.sender.get_full_name() or message.sender.username
-        message.sender_role = 'Teacher' if message.sender.role == 'teacher' else ('Headmaster' if message.sender.role == 'headmaster' else ('Admin' if message.sender.role == 'admin' else 'Staff'))
+        message.sender_role = 'Teacher' if message.sender.role == 'teacher' else ('Headmaster' if message.sender.role == 'headmaster' else ('Admin' if message.sender.is_staff and not message.sender.is_superuser else 'Staff'))
     
     for message in sent_messages:
         message.days_ago = (timezone.now().date() - message.sent_at.date()).days
         message.is_recent = message.sent_at.date() >= timezone.now().date() - timezone.timedelta(days=7)
         message.recipient_name = message.recipient.get_full_name() or message.recipient.username
-        message.recipient_role = 'Teacher' if message.recipient.role == 'teacher' else ('Headmaster' if message.recipient.role == 'headmaster' else ('Admin' if message.recipient.role == 'admin' else 'Staff'))
+        message.recipient_role = 'Teacher' if message.recipient.role == 'teacher' else ('Headmaster' if message.recipient.role == 'headmaster' else ('Admin' if message.recipient.is_staff and not message.recipient.is_superuser else 'Staff'))
     
     # Get potential recipients (teachers, headmaster, admin) - grouped by role
     from .models import User
+    # Debug: Check all users and their roles
+    all_users = User.objects.all()
+    print(f"DEBUG: All users: {[(u.username, u.role, u.is_staff, u.is_superuser) for u in all_users]}")
+    
     teachers = User.objects.filter(role='teacher').exclude(id=request.user.id).order_by('first_name', 'last_name')
     headmasters = User.objects.filter(role='headmaster').exclude(id=request.user.id).order_by('first_name', 'last_name')
-    admins = User.objects.filter(role='admin').exclude(id=request.user.id).order_by('first_name', 'last_name')
+    # For admin, check is_staff=True since 'admin' role doesn't exist in choices
+    admins = User.objects.filter(is_staff=True, is_superuser=False).exclude(id=request.user.id).order_by('first_name', 'last_name')
+    
+    print(f"DEBUG: Teachers found: {teachers.count()} - {[t.username for t in teachers]}")
+    print(f"DEBUG: Headmasters found: {headmasters.count()} - {[h.username for h in headmasters]}")
+    print(f"DEBUG: Admins found: {admins.count()} - {[a.username for a in admins]}")
     
     # Get current date for template comparisons
     today = timezone.now().date()
