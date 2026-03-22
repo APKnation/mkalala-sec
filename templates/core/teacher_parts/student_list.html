@@ -148,7 +148,7 @@
             {% if students %}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {% for student in students %}
-                    <a href="{% url 'teacher_student_detail' student.id=student.user.id %}" 
+                    <a href="{% url 'teacher_student_detail' pk=student.user.id %}" 
                        class="student-card bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg">
                         <div class="flex items-center space-x-4">
                             <!-- Student Avatar -->
