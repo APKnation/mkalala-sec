@@ -5,59 +5,102 @@
 
 {% block content %}
 
-<!-- ================= HERO (LIGHT BLUE DOMINANT) ================= -->
-<section class="relative bg-school-light-blue text-school-black overflow-hidden">
+<!-- ================= HERO (ENHANCED WITH GRADIENTS AND ANIMATIONS) ================= -->
+<section class="relative bg-gradient-to-br from-blue-50 via-white to-blue-100 text-school-black overflow-hidden">
+  
+  <!-- Decorative Background Elements -->
+  <div class="absolute top-0 right-0 w-[600px] h-[600px] opacity-30">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-400 to-transparent rounded-full blur-3xl"></div>
+  </div>
+  <div class="absolute bottom-0 left-0 w-[400px] h-[400px] opacity-20">
+    <div class="absolute inset-0 bg-gradient-to-tr from-blue-300 to-transparent rounded-full blur-2xl"></div>
+  </div>
 
-  <div class="container mx-auto px-6 lg:px-8">
-    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh] py-16">
+  <div class="container mx-auto px-6 lg:px-8 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh] py-20">
 
       <!-- LEFT CONTENT -->
-      <div class="space-y-8">
+      <div class="space-y-8 animate-fade-in">
 
-        <div>
-  <h2 class="text-4xl font-bold tracking-[3px] uppercase text-school-blue">
-    mkalala secondary school
-  </h2>
+        <div class="space-y-4">
+          <div class="inline-flex items-center px-4 py-2 bg-blue-100 rounded-full">
+            <span class="text-sm font-bold text-blue-800">🎓 Excellence in Education Since 1995</span>
+          </div>
+          
+          <h2 class="text-4xl font-bold tracking-[3px] uppercase text-blue-600">
+            mkalala secondary school
+          </h2>
 
-  <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black leading-tight mt-6">
-    Empowering Students for a
-    <span class="text-school-blue">Brighter Future</span>
-  </h1>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-black leading-tight">
+            Empowering Students for a
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Brighter Future</span>
+          </h1>
 
-  <p class="text-lg text-school-black/70 leading-relaxed mt-6 max-w-2xl">
-    At Mkalala Secondary School, we are committed to nurturing well-rounded students through quality education, strong moral values, and practical skills. 
-    Our dedicated teachers create a supportive learning environment that inspires academic excellence, critical thinking, and leadership, preparing students 
-    to succeed in higher education and life beyond the classroom.
-  </p>
+          <p class="text-lg text-gray-700 leading-relaxed max-w-2xl">
+            At Mkalala Secondary School, we are committed to nurturing well-rounded students through quality education, strong moral values, and practical skills. 
+            Our dedicated teachers create a supportive learning environment that inspires academic excellence, critical thinking, and leadership.
+          </p>
 
-  <p class="text-lg text-school-black/70 leading-relaxed mt-4 max-w-2xl">
-    We believe every student has the potential to achieve greatness — and we guide them every step of the way.
-  </p>
-</div>
+          <p class="text-lg text-gray-600 leading-relaxed max-w-2xl">
+            We believe every student has the potential to achieve greatness — and we guide them every step of the way.
+          </p>
+        </div>
 
         <div class="flex flex-col sm:flex-row gap-4">
           <a href="{% url 'register' %}"
-             class="bg-school-blue text-white px-8 py-4 font-bold rounded-xl hover:bg-school-black transition">
+             class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 font-bold rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg">
+            <i class="fas fa-graduation-cap mr-2"></i>
             Enroll Now
           </a>
 
           <a href="{% url 'public_about' %}"
-             class="border-2 border-school-blue text-school-blue px-8 py-4 font-bold rounded-xl hover:bg-school-blue hover:text-white transition">
+             class="border-2 border-blue-600 text-blue-600 px-8 py-4 font-bold rounded-xl hover:bg-blue-600 hover:text-white transform hover:scale-105 transition-all duration-300">
+            <i class="fas fa-info-circle mr-2"></i>
             Learn More
           </a>
+        </div>
+
+        <!-- Key Stats -->
+        <div class="grid grid-cols-3 gap-6 pt-8">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-blue-600">25+</div>
+            <div class="text-sm text-gray-600">Years of Excellence</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-purple-600">1000+</div>
+            <div class="text-sm text-gray-600">Students</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-blue-600">95%</div>
+            <div class="text-sm text-gray-600">Success Rate</div>
+          </div>
         </div>
       </div>
 
       <!-- RIGHT IMAGE -->
-      <div class="relative">
+      <div class="relative animate-fade-in-delay">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-2xl transform rotate-3"></div>
         <img src="{% static 'images/hero_bg.png' %}"
-             class="rounded-2xl shadow-2xl w-full object-cover hover:scale-105 transition duration-700"
+             class="relative rounded-2xl shadow-2xl w-full object-cover transform hover:scale-105 transition duration-700"
              alt="Students">
-
-  
+        
+        <!-- Floating Elements -->
+        <div class="absolute -top-4 -right-4 w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+          <i class="fas fa-star text-white text-2xl"></i>
+        </div>
+        <div class="absolute -bottom-4 -left-4 w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+          <i class="fas fa-check text-white text-xl"></i>
+        </div>
       </div>
 
     </div>
+  </div>
+  
+  <!-- Bottom Wave Transition -->
+  <div class="absolute bottom-0 left-0 w-full">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V120Z" fill="white"/>
+    </svg>
   </div>
 </section>
 
