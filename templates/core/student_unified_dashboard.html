@@ -112,6 +112,22 @@
     <span class="notification-badge">{{ unread_messages }}</span>
     {% endif %}
 </a>
+<a href="{% url 'student_unified_dashboard' page='courses' %}" data-page="courses" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-book"></i>
+    <span>Courses</span>
+</a>
+<a href="{% url 'student_unified_dashboard' page='results' %}" data-page="results" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-chart-line"></i>
+    <span>Results</span>
+</a>
+<a href="{% url 'student_unified_dashboard' page='assignments' %}" data-page="assignments" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-tasks"></i>
+    <span>Assignments</span>
+</a>
+<a href="{% url 'student_unified_dashboard' page='timetable' %}" data-page="timetable" class="sidebar-item text-slate-400 font-sans">
+    <i class="fas fa-calendar"></i>
+    <span>Timetable</span>
+</a>
 <a href="{% url 'student_unified_dashboard' page='fees' %}" data-page="fees" class="sidebar-item text-slate-400 font-sans">
     <i class="fas fa-dollar-sign"></i>
     <span>Fees</span>
