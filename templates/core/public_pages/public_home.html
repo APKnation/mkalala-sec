@@ -105,53 +105,132 @@
 </section>
 
 
-<!-- ================= FEATURES (WHITE + BLUE ACCENTS) ================= -->
-<section class="py-24 bg-white">
+<!-- ================= FEATURES (ENHANCED WITH MODERN DESIGN) ================= -->
+<section class="py-24 bg-white relative overflow-hidden">
+  
+  <!-- Top Wave Transition -->
+  <div class="absolute top-0 left-0 w-full transform -translate-y-1">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V0H1380C1320 0 1200 0 1080 0C960 0 840 0 720 0C600 0 480 0 360 0C240 0 120 0 60 0H0V120Z" fill="url(#gradient1)"/>
+      <defs>
+        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:0.1" />
+          <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:0.1" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
 
-  <div class="container mx-auto px-6 lg:px-8">
+  <!-- Decorative Background -->
+  <div class="absolute top-20 left-10 w-32 h-32 bg-blue-100 rounded-full opacity-50"></div>
+  <div class="absolute top-40 right-20 w-24 h-24 bg-purple-100 rounded-full opacity-50"></div>
 
-    <div class="text-center mb-16">
-      <h2 class="text-3xl md:text-4xl font-black text-school-black">
-        Why Choose Mkalala?
+  <div class="container mx-auto px-6 lg:px-8 relative z-10">
+
+    <div class="text-center mb-20">
+      <div class="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full mb-4">
+        <span class="text-sm font-bold text-blue-800">🌟 Why Choose Us</span>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-6">
+        Why Choose <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Mkalala?</span>
       </h2>
-      <p class="text-school-black/60 mt-4 max-w-2xl mx-auto">
-        We combine academic excellence with discipline and innovation.
+      <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        We combine academic excellence with discipline and innovation to create a transformative learning experience.
       </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8">
-
-      <div class="p-8 rounded-2xl bg-school-light-blue hover:bg-white border border-transparent hover:border-school-blue transition">
-        <div class="w-14 h-14 bg-school-blue text-white rounded-xl flex items-center justify-center mb-6">
-          <i class="fas fa-book text-xl"></i>
+    <div class="grid md:grid-cols-3 gap-8 relative">
+      
+      <!-- Feature 1: Academic Excellence -->
+      <div class="group relative">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-300 transform group-hover:scale-105"></div>
+        <div class="relative bg-white border border-gray-200 hover:border-blue-300 rounded-3xl p-8 transition-all duration-300 hover:shadow-2xl group-hover:shadow-blue-200/50">
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300">
+            <i class="fas fa-book text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">Academic Excellence</h3>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Strong curriculum guided by experienced teachers focused on student success and holistic development.
+          </p>
+          <div class="flex items-center text-blue-600 font-semibold group-hover:text-blue-700 transition-colors">
+            <span class="mr-2">Learn More</span>
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
         </div>
-        <h3 class="text-xl font-bold text-school-black mb-2">Academic Excellence</h3>
-        <p class="text-school-black/60">
-          Strong curriculum guided by experienced teachers focused on student success.
-        </p>
       </div>
 
-      <div class="p-8 rounded-2xl bg-school-light-blue hover:bg-white border border-transparent hover:border-school-blue transition">
-        <div class="w-14 h-14 bg-school-blue text-white rounded-xl flex items-center justify-center mb-6">
-          <i class="fas fa-users text-xl"></i>
+      <!-- Feature 2: Character Building -->
+      <div class="group relative">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-300 transform group-hover:scale-105"></div>
+        <div class="relative bg-white border border-gray-200 hover:border-purple-300 rounded-3xl p-8 transition-all duration-300 hover:shadow-2xl group-hover:shadow-purple-200/50">
+          <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300">
+            <i class="fas fa-users text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">Character Building</h3>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            We shape responsible leaders with strong moral values and ethical foundations for lifelong success.
+          </p>
+          <div class="flex items-center text-purple-600 font-semibold group-hover:text-purple-700 transition-colors">
+            <span class="mr-2">Learn More</span>
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
         </div>
-        <h3 class="text-xl font-bold text-school-black mb-2">Character Building</h3>
-        <p class="text-school-black/60">
-          We shape responsible leaders with strong moral values.
-        </p>
       </div>
 
-      <div class="p-8 rounded-2xl bg-school-light-blue hover:bg-white border border-transparent hover:border-school-blue transition">
-        <div class="w-14 h-14 bg-school-blue text-white rounded-xl flex items-center justify-center mb-6">
-          <i class="fas fa-running text-xl"></i>
+      <!-- Feature 3: Sports & Talent -->
+      <div class="group relative">
+        <div class="absolute inset-0 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl opacity-0 group-hover:opacity-10 transition-all duration-300 transform group-hover:scale-105"></div>
+        <div class="relative bg-white border border-gray-200 hover:border-green-300 rounded-3xl p-8 transition-all duration-300 hover:shadow-2xl group-hover:shadow-green-200/50">
+          <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300">
+            <i class="fas fa-running text-2xl"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">Sports & Talent</h3>
+          <p class="text-gray-600 leading-relaxed mb-6">
+            Encouraging creativity, teamwork, and physical growth through diverse extracurricular activities.
+          </p>
+          <div class="flex items-center text-green-600 font-semibold group-hover:text-green-700 transition-colors">
+            <span class="mr-2">Learn More</span>
+            <i class="fas fa-arrow-right text-sm"></i>
+          </div>
         </div>
-        <h3 class="text-xl font-bold text-school-black mb-2">Sports & Talent</h3>
-        <p class="text-school-black/60">
-          Encouraging creativity, teamwork, and physical growth.
-        </p>
       </div>
 
     </div>
+
+    <!-- Additional Features Row -->
+    <div class="grid md:grid-cols-3 gap-8 mt-12">
+      <div class="text-center p-6 bg-blue-50 rounded-2xl">
+        <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-certificate text-lg"></i>
+        </div>
+        <h4 class="font-bold text-gray-900 mb-2">Certified Teachers</h4>
+        <p class="text-sm text-gray-600">Highly qualified and experienced faculty</p>
+      </div>
+      
+      <div class="text-center p-6 bg-purple-50 rounded-2xl">
+        <div class="w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-laptop text-lg"></i>
+        </div>
+        <h4 class="font-bold text-gray-900 mb-2">Modern Facilities</h4>
+        <p class="text-sm text-gray-600">State-of-the-art learning environment</p>
+      </div>
+      
+      <div class="text-center p-6 bg-green-50 rounded-2xl">
+        <div class="w-12 h-12 bg-green-600 text-white rounded-xl flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-globe text-lg"></i>
+        </div>
+        <h4 class="font-bold text-gray-900 mb-2">Global Perspective</h4>
+        <p class="text-sm text-gray-600">Preparing students for international success</p>
+      </div>
+    </div>
+
+  </div>
+  
+  <!-- Bottom Wave Transition -->
+  <div class="absolute bottom-0 left-0 w-full transform translate-y-1">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0L60 10C120 20 240 40 360 50C480 60 600 60 720 55C840 50 960 40 1080 35C1200 30 1320 30 1380 30L1440 30V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="#EFF6FF"/>
+    </svg>
   </div>
 </section>
 
