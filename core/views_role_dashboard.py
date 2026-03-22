@@ -833,10 +833,14 @@ def get_student_messages_context(user, student_profile):
         recipient=user
     ).select_related('sender').order_by('-sent_at')
     
+    print(f"Found {received_messages.count()} received messages")
+    
     # Get sent messages
     sent_messages = Message.objects.filter(
         sender=user
     ).select_related('recipient').order_by('-sent_at')
+    
+    print(f"Found {sent_messages.count()} sent messages")
     
     # Count unread messages
     unread_count = received_messages.filter(is_read=False).count()
