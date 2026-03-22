@@ -129,76 +129,58 @@
                 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Recipient</label>
-                    <div class="space-y-3">
-                        <!-- Teachers Section -->
+                    <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
+                        <option value="">Select a recipient...</option>
+                        
+                        <!-- Teachers Group -->
                         {% if teachers %}
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <div class="flex items-center mb-2">
-                                <i class="fas fa-chalkboard-teacher text-blue-600 mr-2"></i>
-                                <span class="font-medium text-gray-900 text-sm">Teachers</span>
-                                <span class="ml-2 text-xs text-gray-500">({{ teachers|length }} available)</span>
-                            </div>
-                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
-                                <option value="">Select a teacher...</option>
-                                {% for teacher in teachers %}
-                                <option value="{{ teacher.id }}">
-                                    {{ teacher.get_full_name|default:teacher.username }}
-                                    {% if teacher.faculty_profile.department %}
-                                    - {{ teacher.faculty_profile.department.name }}
-                                    {% endif %}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                        <optgroup label="👨‍🏫 Teachers">
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">
+                                {{ teacher.get_full_name|default:teacher.username }}
+                                {% if teacher.faculty_profile.department %}
+                                - {{ teacher.faculty_profile.department.name }}
+                                {% endif %}
+                            </option>
+                            {% endfor %}
+                        </optgroup>
                         {% endif %}
-
-                        <!-- Headmaster Section -->
+                        
+                        <!-- Headmaster Group -->
                         {% if headmasters %}
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <div class="flex items-center mb-2">
-                                <i class="fas fa-graduation-cap text-purple-600 mr-2"></i>
-                                <span class="font-medium text-gray-900 text-sm">Headmaster</span>
-                                <span class="ml-2 text-xs text-gray-500">({{ headmasters|length }} available)</span>
-                            </div>
-                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
-                                <option value="">Select headmaster...</option>
-                                {% for headmaster in headmasters %}
-                                <option value="{{ headmaster.id }}">
-                                    {{ headmaster.get_full_name|default:headmaster.username }}
-                                    - Headmaster
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                        <optgroup label="🎓 Headmaster">
+                            {% for headmaster in headmasters %}
+                            <option value="{{ headmaster.id }}">
+                                {{ headmaster.get_full_name|default:headmaster.username }}
+                                - Headmaster
+                            </option>
+                            {% endfor %}
+                        </optgroup>
                         {% endif %}
-
-                        <!-- Admin Section -->
+                        
+                        <!-- Admin Group -->
                         {% if admins %}
-                        <div class="border border-gray-200 rounded-lg p-3">
-                            <div class="flex items-center mb-2">
-                                <i class="fas fa-user-shield text-red-600 mr-2"></i>
-                                <span class="font-medium text-gray-900 text-sm">Administration</span>
-                                <span class="ml-2 text-xs text-gray-500">({{ admins|length }} available)</span>
-                            </div>
-                            <select name="recipient" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm">
-                                <option value="">Select admin...</option>
-                                {% for admin in admins %}
-                                <option value="{{ admin.id }}">
-                                    {{ admin.get_full_name|default:admin.username }}
-                                    - Administrator
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                        <optgroup label="👨‍💼 Administration">
+                            {% for admin in admins %}
+                            <option value="{{ admin.id }}">
+                                {{ admin.get_full_name|default:admin.username }}
+                                - Administrator
+                            </option>
+                            {% endfor %}
+                        </optgroup>
                         {% endif %}
-
+                        
                         {% if not teachers and not headmasters and not admins %}
-                        <div class="text-center py-4 bg-gray-50 rounded-lg">
-                            <i class="fas fa-users text-gray-400 text-2xl mb-2"></i>
-                            <p class="text-gray-500 text-sm">No staff members available to contact</p>
-                        </div>
+                        <option value="" disabled>No staff members available</option>
                         {% endif %}
+                    </select>
+                    
+                    {% if not teachers and not headmasters and not admins %}
+                    <div class="text-center py-4 bg-gray-50 rounded-lg mt-3">
+                        <i class="fas fa-users text-gray-400 text-2xl mb-2"></i>
+                        <p class="text-gray-500 text-sm">No staff members available to contact</p>
                     </div>
+                    {% endif %}
                 </div>
                 
                 <div>
