@@ -2338,8 +2338,8 @@ def get_admin_reports_context(user, admin_profile):
     # Fee statistics
     fee_data = Fee.objects.aggregate(
         total_fees=Sum('amount'),
-        pending_fees=Sum('amount', filter=Q(status='pending')),
-        collected_fees=Sum('amount', filter=Q(status='paid')),
+        pending_fees=Sum('amount', filter=Q(is_paid=False)),
+        collected_fees=Sum('amount', filter=Q(is_paid=True)),
     )
     
     payment_data = Payment.objects.filter(
