@@ -44,6 +44,7 @@ urlpatterns = [
     path('notifications/', include('core.urls_notifications')),
     
     # Role-Specific Dashboard URLs (put first to be more specific)
+    path('student/', lambda request: redirect('student_unified_dashboard', page='overview') if request.user.is_authenticated else redirect('login'), name='student_base'),
     path('student/dashboard/<str:page>/', views_role_dashboard.student_unified_dashboard, name='student_unified_dashboard'),
     path('student/dashboard/load/<str:page>/', views_role_dashboard.load_student_dashboard_page, name='load_student_dashboard_page'),
     path('student/dashboard/notifications', views_role_dashboard.get_student_notifications, name='student_dashboard_notifications'),
