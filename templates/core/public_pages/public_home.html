@@ -202,7 +202,7 @@
 </section>
 
 
-<!-- ================= CTA (BLUE) ================= -->
+<!-- ================= CTA (ENHANCED DESIGN) ================= -->
 <section class="py-24 bg-school-blue text-white text-center relative overflow-hidden">
   
   <!-- Top Wave Transition -->
@@ -214,18 +214,82 @@
 
   <div class="container mx-auto px-6 lg:px-8 relative z-10">
 
-    <h2 class="text-3xl md:text-4xl font-black">
+    <!-- Badge -->
+    <div class="inline-flex items-center px-4 py-2 bg-white/20 rounded-full mb-6">
+      <span class="text-sm font-semibold">🎓 Start Your Journey Today</span>
+    </div>
+
+    <h2 class="text-4xl md:text-5xl font-black mb-6">
       Join Mkalala Secondary School Today
     </h2>
 
-    <p class="text-white/80 mt-4 max-w-2xl mx-auto">
-      Build your future with quality education and strong values.
+    <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed mb-12">
+      Build your future with quality education, strong values, and endless opportunities for growth and success.
     </p>
 
-    <a href="{% url 'register' %}"
-       class="inline-block mt-8 bg-white text-school-blue px-10 py-4 font-bold rounded-xl hover:bg-school-light-blue hover:text-school-black transition">
-      Apply Now
-    </a>
+    <!-- Key Benefits -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 max-w-4xl mx-auto">
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-certificate text-xl"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2">Quality Education</h3>
+        <p class="text-white/80 text-sm">Experienced teachers and modern curriculum</p>
+      </div>
+      
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-users text-xl"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2">Supportive Environment</h3>
+        <p class="text-white/80 text-sm">Nurturing atmosphere for holistic growth</p>
+      </div>
+      
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-trophy text-xl"></i>
+        </div>
+        <h3 class="font-bold text-lg mb-2">Success Track Record</h3>
+        <p class="text-white/80 text-sm">95% pass rate and university placements</p>
+      </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
+      <a href="{% url 'register' %}"
+         class="group bg-white text-school-blue px-8 py-4 font-bold rounded-xl hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-xl">
+        <i class="fas fa-graduation-cap mr-2"></i>
+        Apply Now
+        <span class="block text-sm font-normal mt-1">Limited Seats Available</span>
+      </a>
+
+      <a href="{% url 'public_contact' %}"
+         class="group border-2 border-white text-white px-8 py-4 font-bold rounded-xl hover:bg-white hover:text-school-blue transform hover:scale-105 transition-all duration-300">
+        <i class="fas fa-phone mr-2"></i>
+        Contact Us
+        <span class="block text-sm font-normal mt-1">Get Information</span>
+      </a>
+    </div>
+
+    <!-- Trust Indicators -->
+    <div class="flex flex-wrap justify-center items-center gap-8 text-white/70 text-sm">
+      <div class="flex items-center">
+        <i class="fas fa-check-circle mr-2 text-green-400"></i>
+        <span>No Registration Fee</span>
+      </div>
+      <div class="flex items-center">
+        <i class="fas fa-check-circle mr-2 text-green-400"></i>
+        <span>Scholarship Available</span>
+      </div>
+      <div class="flex items-center">
+        <i class="fas fa-check-circle mr-2 text-green-400"></i>
+        <span>Free Trial Class</span>
+      </div>
+      <div class="flex items-center">
+        <i class="fas fa-check-circle mr-2 text-green-400"></i>
+        <span>Transport Available</span>
+      </div>
+    </div>
 
   </div>
   
