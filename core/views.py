@@ -686,6 +686,11 @@ def teacher_student_detail(request, student_id):
     except StudentProfile.DoesNotExist:
         messages.error(request, 'Student not found.')
         return redirect('teacher_students')
+
+# Teacher Assignment Creation
+@login_required
+@user_passes_test(is_faculty)
+def teacher_assignment_create(request):
     """Create new assignment for teacher's courses"""
     try:
         faculty_profile = request.user.faculty_profile
@@ -697,18 +702,16 @@ def teacher_student_detail(request, student_id):
         form = AssignmentForm(request.POST, teacher=faculty_profile)
         if form.is_valid():
             assignment = form.save(commit=False)
-            assignment.created_by = faculty_profile
             assignment.save()
-            messages.success(request, f'Assignment "{assignment.title}" created successfully!')
+            messages.success(request, 'Assignment created successfully!')
             return redirect('teacher_dashboard')
     else:
         form = AssignmentForm(teacher=faculty_profile)
     
     context = {
-        'form': form,
         'title': 'Create Assignment',
-        'user': request.user,
-        'role': 'Teacher',
+        'form': form,
+        'school_info': get_school_info(),
     }
     return render(request, 'core/teacher_parts/assignment_create.html', context)
 
