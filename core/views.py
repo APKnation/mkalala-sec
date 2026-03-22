@@ -3250,18 +3250,20 @@ def student_messages(request):
     
     # Get potential recipients (teachers, headmaster, admin) - grouped by role
     from .models import User
-    # Debug: Check all users and their roles
-    all_users = User.objects.all()
-    print(f"DEBUG: All users: {[(u.username, u.role, u.is_staff, u.is_superuser) for u in all_users]}")
     
+    # Get teachers - users with role='teacher'
     teachers = User.objects.filter(role='teacher').exclude(id=request.user.id).order_by('first_name', 'last_name')
-    headmasters = User.objects.filter(role='headmaster').exclude(id=request.user.id).order_by('first_name', 'last_name')
-    # For admin, check is_staff=True since 'admin' role doesn't exist in choices
-    admins = User.objects.filter(is_staff=True, is_superuser=False).exclude(id=request.user.id).order_by('first_name', 'last_name')
     
-    print(f"DEBUG: Teachers found: {teachers.count()} - {[t.username for t in teachers]}")
-    print(f"DEBUG: Headmasters found: {headmasters.count()} - {[h.username for h in headmasters]}")
-    print(f"DEBUG: Admins found: {admins.count()} - {[a.username for a in admins]}")
+    # Get headmasters - users with role='headmaster'  
+    headmasters = User.objects.filter(role='headmaster').exclude(id=request.user.id).order_by('first_name', 'last_name')
+    
+    # Get admins - staff users (is_staff=True) who are not superusers and not students/teachers/headmasters
+    admins = User.objects.filter(
+        is_staff=True,
+        is_superuser=False
+    ).exclude(id=request.user.id).exclude(
+        role__in=['student', 'teacher', 'headmaster']
+    ).order_by('first_name', 'last_name')
     
     # Get current date for template comparisons
     today = timezone.now().date()
