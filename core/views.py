@@ -3194,7 +3194,9 @@ def user_export(request):
     
     # Only allow admin or superuser to access this
     if not (request.user.is_staff or request.user.is_superuser):
-        return redirect('login')
+        from django.contrib import messages
+        messages.error(request, "Access denied. You don't have permission to access user export.")
+        return redirect('student_dashboard')
     
     # Get all users ordered by username
     users = User.objects.all().order_by('username')
