@@ -1,484 +1,111 @@
 {% load static %}
-<nav class="navbar-advanced">
-  <!-- Top Bar -->
-  <div class="top-bar bg-gradient-to-r from-school-blue/10 to-school-light-blue/10 border-b border-school-light/20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-2 text-sm">
-        <div class="flex items-center space-x-4 text-school-gray/70">
-          <span class="flex items-center">
-            <i class="fas fa-envelope mr-2 text-school-blue"></i>
-            info@mkalala.sc.tz
-          </span>
-          <span class="flex items-center">
-            <i class="fas fa-phone mr-2 text-school-blue"></i>
-            +255 123 456 789
-          </span>
-        </div>
-        <div class="flex items-center space-x-3">
-          <a href="#" class="text-school-gray hover:text-school-blue transition-colors">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-school-gray hover:text-school-blue transition-colors">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-school-gray hover:text-school-blue transition-colors">
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a href="#" class="text-school-gray hover:text-school-blue transition-colors">
-            <i class="fab fa-youtube"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Navigation -->
-  <div class="main-nav bg-white/80 backdrop-blur-xl border-b border-school-light/20 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <!-- Logo -->
-        <div class="flex items-center">
-          <a href="{% url 'public_home' %}" class="flex items-center space-x-3 group">
-            <div class="relative">
-              <div class="w-12 h-12 bg-gradient-to-br from-school-blue to-school-light-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                <i class="fas fa-graduation-cap text-xl"></i>
-              </div>
-              <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-            </div>
-            <div class="flex flex-col">
-              <span class="text-xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-school-blue to-school-light-blue">Mkalala</span>
-              <span class="text-xs text-school-gray/60 font-medium">Secondary School</span>
-            </div>
-          </a>
-        </div>
-        
-        <!-- Desktop Navigation -->
-        <div class="hidden lg:flex items-center space-x-1">
-          <div class="flex items-center space-x-1">
-            <a href="{% url 'public_home' %}" class="nav-item-advanced active">
-              <i class="fas fa-home mr-2"></i>Home
-            </a>
-            <div class="nav-dropdown">
-              <button class="nav-item-advanced dropdown-toggle">
-                <i class="fas fa-info-circle mr-2"></i>About
-                <i class="fas fa-chevron-down ml-1 text-xs"></i>
-              </button>
-              <div class="dropdown-menu">
-                <a href="{% url 'public_about' %}" class="dropdown-item">
-                  <i class="fas fa-school mr-2"></i>Our School
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-history mr-2"></i>History
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-trophy mr-2"></i>Achievements
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-users mr-2"></i>Leadership
-                </a>
-              </div>
-            </div>
-            <div class="nav-dropdown">
-              <button class="nav-item-advanced dropdown-toggle">
-                <i class="fas fa-book mr-2"></i>Academics
-                <i class="fas fa-chevron-down ml-1 text-xs"></i>
-              </button>
-              <div class="dropdown-menu">
-                <a href="{% url 'public_courses' %}" class="dropdown-item">
-                  <i class="fas fa-graduation-cap mr-2"></i>Subjects
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-calendar mr-2"></i>Academic Calendar
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-chart-line mr-2"></i>Results
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-book-open mr-2"></i>Resources
-                </a>
-              </div>
-            </div>
-            <a href="{% url 'public_contact' %}" class="nav-item-advanced">
-              <i class="fas fa-envelope mr-2"></i>Contact
-            </a>
+<nav class="navbar-modern">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="{% url 'public_home' %}" class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-school-blue rounded-lg flex items-center justify-center text-white">
+            <i class="fas fa-graduation-cap text-lg"></i>
           </div>
-          
-          <div class="h-8 w-px bg-school-light mx-3"></div>
-          
-          <!-- Auth Buttons -->
-          {% if user.is_authenticated %}
-            <div class="nav-dropdown">
-              <button class="nav-item-advanced user-dropdown">
-                <div class="flex items-center space-x-2">
-                  <div class="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
-                    {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
-                  </div>
-                  <span class="text-sm font-medium">{{ user.get_full_name|default:user.username }}</span>
-                </div>
-                <i class="fas fa-chevron-down ml-2 text-xs"></i>
-              </button>
-              <div class="dropdown-menu dropdown-menu-right">
-                <a href="{% url 'dashboard' %}" class="dropdown-item">
-                  <i class="fas fa-th-large mr-2"></i>Dashboard
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-user mr-2"></i>Profile
-                </a>
-                <a href="#" class="dropdown-item">
-                  <i class="fas fa-cog mr-2"></i>Settings
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="{% url 'logout' %}" class="dropdown-item text-red-600">
-                  <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                </a>
-              </div>
-            </div>
-          {% else %}
-            <a href="{% url 'login' %}" class="nav-item-advanced">
-              <i class="fas fa-sign-in-alt mr-2"></i>Sign In
-            </a>
-            <a href="{% url 'register' %}" class="btn-school-advanced ml-2">
-              <i class="fas fa-rocket mr-2"></i>Get Started
-            </a>
-          {% endif %}
-        </div>
+          <span class="text-xl font-bold text-gray-900">Mkalala Secondary</span>
+        </a>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="{% url 'public_home' %}" class="nav-link-simple">Home</a>
+        <a href="{% url 'public_about' %}" class="nav-link-simple">About</a>
+        <a href="{% url 'public_courses' %}" class="nav-link-simple">Subjects</a>
+        <a href="{% url 'public_contact' %}" class="nav-link-simple">Contact</a>
         
-        <!-- Mobile menu button -->
-        <div class="lg:hidden flex items-center space-x-3">
-          <button class="mobile-search-btn text-school-gray hover:text-school-blue p-2 rounded-lg hover:bg-school-light transition-colors">
-            <i class="fas fa-search text-lg"></i>
-          </button>
-          <button id="mobile-menu-button" class="text-school-gray hover:text-school-blue focus:outline-none p-2 rounded-lg hover:bg-school-light transition-colors">
-            <i class="fas fa-bars text-xl"></i>
-          </button>
-        </div>
+        {% if user.is_authenticated %}
+          <a href="{% url 'dashboard' %}" class="btn-simple">Dashboard</a>
+          <a href="{% url 'logout' %}" class="nav-link-simple">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="nav-link-simple">Sign In</a>
+          <a href="{% url 'register' %}" class="btn-simple">Get Started</a>
+        {% endif %}
+      </div>
+      
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-btn" class="text-gray-600 hover:text-gray-900 p-2">
+          <i class="fas fa-bars text-xl"></i>
+        </button>
       </div>
     </div>
   </div>
   
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-school-light/20 shadow-lg">
-    <!-- Mobile Search -->
-    <div class="px-4 py-3 border-b border-school-light/20">
-      <div class="relative">
-        <input type="text" placeholder="Search..." class="w-full pl-10 pr-4 py-2 border border-school-light/30 rounded-xl focus:outline-none focus:border-school-blue focus:ring-2 focus:ring-school-blue/20">
-        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-school-gray/40"></i>
-      </div>
-    </div>
-    
-    <div class="px-4 py-4 space-y-2">
-      <a href="{% url 'public_home' %}" class="mobile-nav-item active">
-        <i class="fas fa-home mr-3"></i>Home
-      </a>
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+    <div class="px-4 py-2 space-y-1">
+      <a href="{% url 'public_home' %}" class="block py-2 text-gray-600">Home</a>
+      <a href="{% url 'public_about' %}" class="block py-2 text-gray-600">About</a>
+      <a href="{% url 'public_courses' %}" class="block py-2 text-gray-600">Subjects</a>
+      <a href="{% url 'public_contact' %}" class="block py-2 text-gray-600">Contact</a>
       
-      <!-- Mobile Accordion Menu -->
-      <div class="mobile-accordion">
-        <button class="mobile-accordion-toggle">
-          <i class="fas fa-info-circle mr-3"></i>About
-          <i class="fas fa-chevron-down transition-transform duration-300"></i>
-        </button>
-        <div class="mobile-accordion-content hidden">
-          <a href="{% url 'public_about' %}" class="mobile-sub-item">
-            <i class="fas fa-school mr-3"></i>Our School
-          </a>
-          <a href="#" class="mobile-sub-item">
-            <i class="fas fa-history mr-3"></i>History
-          </a>
-          <a href="#" class="mobile-sub-item">
-            <i class="fas fa-trophy mr-3"></i>Achievements
-          </a>
-        </div>
-      </div>
-      
-      <div class="mobile-accordion">
-        <button class="mobile-accordion-toggle">
-          <i class="fas fa-book mr-3"></i>Academics
-          <i class="fas fa-chevron-down transition-transform duration-300"></i>
-        </button>
-        <div class="mobile-accordion-content hidden">
-          <a href="{% url 'public_courses' %}" class="mobile-sub-item">
-            <i class="fas fa-graduation-cap mr-3"></i>Subjects
-          </a>
-          <a href="#" class="mobile-sub-item">
-            <i class="fas fa-calendar mr-3"></i>Academic Calendar
-          </a>
-          <a href="#" class="mobile-sub-item">
-            <i class="fas fa-chart-line mr-3"></i>Results
-          </a>
-        </div>
-      </div>
-      
-      <a href="{% url 'public_contact' %}" class="mobile-nav-item">
-        <i class="fas fa-envelope mr-3"></i>Contact
-      </a>
-      
-      <div class="border-t border-school-light/20 pt-4 mt-4">
-        {% if user.is_authenticated %}
-          <a href="{% url 'dashboard' %}" class="mobile-nav-item bg-school-blue text-white">
-            <i class="fas fa-th-large mr-3"></i>Dashboard
-          </a>
-          <a href="{% url 'logout' %}" class="mobile-nav-item text-red-600">
-            <i class="fas fa-sign-out-alt mr-3"></i>Logout
-          </a>
-        {% else %}
-          <a href="{% url 'login' %}" class="mobile-nav-item">
-            <i class="fas fa-sign-in-alt mr-3"></i>Sign In
-          </a>
-          <a href="{% url 'register' %}" class="mobile-nav-item bg-school-blue text-white">
-            <i class="fas fa-rocket mr-3"></i>Get Started
-          </a>
-        {% endif %}
-      </div>
+      {% if user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="block py-2 text-gray-600">Dashboard</a>
+        <a href="{% url 'logout' %}" class="block py-2 text-gray-600">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="block py-2 text-gray-600">Sign In</a>
+        <a href="{% url 'register' %}" class="block py-2 text-gray-600">Get Started</a>
+      {% endif %}
     </div>
   </div>
 </nav>
 
 <style>
-/* Advanced Navbar Styles */
-.navbar-advanced {
+.navbar-modern {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.nav-item-advanced {
-  position: relative;
-  padding: 0.625rem 1rem;
-  color: #64748b;
+.nav-link-simple {
+  color: #6b7280;
   font-weight: 500;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
+  transition: color 0.2s;
+  position: relative;
 }
 
-.nav-item-advanced:hover {
+.nav-link-simple:hover {
   color: #2563eb;
-  background: rgba(59, 130, 246, 0.1);
-  transform: translateY(-1px);
 }
 
-.nav-item-advanced.active {
+.nav-link-simple.active {
   color: #2563eb;
-  background: rgba(59, 130, 246, 0.15);
 }
 
-.nav-item-advanced.active::after {
+.nav-link-simple.active::after {
   content: '';
   position: absolute;
-  bottom: -0.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2rem;
-  height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-  border-radius: 2px;
-}
-
-.btn-school-advanced {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  border: none;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-}
-
-.btn-school-advanced:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-}
-
-/* Dropdown Styles */
-.nav-dropdown {
-  position: relative;
-}
-
-.dropdown-toggle {
-  cursor: pointer;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
+  bottom: -16px;
   left: 0;
-  min-width: 12rem;
-  background: white;
-  border: 1px solid rgba(59, 130, 246, 0.1);
-  border-radius: 0.75rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: all 0.3s ease;
-  margin-top: 0.5rem;
-}
-
-.nav-dropdown:hover .dropdown-menu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  color: #64748b;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  border-bottom: 1px solid rgba(59, 130, 246, 0.05);
-}
-
-.dropdown-item:first-child {
-  border-radius: 0.75rem 0.75rem 0 0;
-}
-
-.dropdown-item:last-child {
-  border-bottom: none;
-  border-radius: 0 0 0.75rem 0.75rem;
-}
-
-.dropdown-item:hover {
-  color: #2563eb;
-  background: rgba(59, 130, 246, 0.05);
-}
-
-.dropdown-menu-right {
   right: 0;
-  left: auto;
+  height: 2px;
+  background: #2563eb;
 }
 
-.dropdown-divider {
-  height: 1px;
-  background: rgba(59, 130, 246, 0.1);
-  margin: 0.5rem 0;
-}
-
-/* Mobile Menu Styles */
-.mobile-nav-item {
-  display: flex;
-  align-items: center;
-  padding: 0.875rem 1rem;
-  color: #64748b;
-  font-weight: 500;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.mobile-nav-item:hover {
-  color: #2563eb;
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.mobile-nav-item.active {
-  color: #2563eb;
-  background: rgba(59, 130, 246, 0.15);
-}
-
-.mobile-accordion-toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.875rem 1rem;
-  color: #64748b;
-  font-weight: 500;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  background: none;
-  border: none;
-  text-align: left;
-}
-
-.mobile-accordion-toggle:hover {
-  color: #2563eb;
-  background: rgba(59, 130, 246, 0.1);
-}
-
-.mobile-accordion-content {
-  margin-top: 0.5rem;
-  margin-left: 1rem;
-  border-left: 2px solid rgba(59, 130, 246, 0.2);
-}
-
-.mobile-sub-item {
-  display: flex;
-  align-items: center;
-  padding: 0.625rem 1rem;
-  color: #64748b;
-  font-size: 0.875rem;
+.btn-simple {
+  background: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
   border-radius: 0.375rem;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
-.mobile-sub-item:hover {
-  color: #2563eb;
-  background: rgba(59, 130, 246, 0.05);
-}
-
-/* Animations */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.mobile-accordion-content.show {
-  animation: slideDown 0.3s ease;
+.btn-simple:hover {
+  background: #1d4ed8;
 }
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Mobile menu toggle
-  const mobileMenuButton = document.getElementById('mobile-menu-button');
-  const mobileMenu = document.getElementById('mobile-menu');
-  
-  if (mobileMenuButton && mobileMenu) {
-    mobileMenuButton.addEventListener('click', function() {
-      mobileMenu.classList.toggle('hidden');
-    });
-  }
-  
-  // Mobile accordion
-  const accordionToggles = document.querySelectorAll('.mobile-accordion-toggle');
-  accordionToggles.forEach(toggle => {
-    toggle.addEventListener('click', function() {
-      const content = this.nextElementSibling;
-      const icon = this.querySelector('.fa-chevron-down');
-      
-      content.classList.toggle('hidden');
-      icon.classList.toggle('rotate-180');
-    });
-  });
-  
-  // Close mobile menu when clicking outside
-  document.addEventListener('click', function(event) {
-    if (!mobileMenu.contains(event.target) && !mobileMenuButton.contains(event.target)) {
-      mobileMenu.classList.add('hidden');
-    }
-  });
-  
-  // Active nav item detection
-  const currentPath = window.location.pathname;
-  const navItems = document.querySelectorAll('.nav-item-advanced, .mobile-nav-item');
-  
-  navItems.forEach(item => {
-    const href = item.getAttribute('href');
-    if (href && currentPath.includes(href) && href !== '#') {
-      item.classList.add('active');
-    }
-  });
+document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
 });
 </script>
