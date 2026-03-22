@@ -3326,20 +3326,52 @@ def student_messages(request):
     
     # Get teachers - users with role='teacher'
     teachers = User.objects.filter(role='teacher').exclude(id=request.user.id).order_by('first_name', 'last_name')
-    print(f"Found {teachers.count()} teachers")
+    print(f"Found {teachers.count()} teachers:")
+    for teacher in teachers:
+        print(f"  - {teacher.username} ({teacher.get_full_name()})")
     
     # Get headmasters - users with role='headmaster'  
     headmasters = User.objects.filter(role='headmaster').exclude(id=request.user.id).order_by('first_name', 'last_name')
-    print(f"Found {headmasters.count()} headmasters")
+    print(f"Found {headmasters.count()} headmasters:")
+    for headmaster in headmasters:
+        print(f"  - {headmaster.username} ({headmaster.get_full_name()})")
     
-    # Get admins - staff users (is_staff=True) who are not superusers and not students/teachers/headmasters
+    # Get admins - more inclusive approach: staff users who are not students, teachers, or headmasters
+    # This will catch admin users regardless of superuser status
     admins = User.objects.filter(
-        is_staff=True,
-        is_superuser=False
-    ).exclude(id=request.user.id).exclude(
+        is_staff=True
+    ).exclude(
+        id=request.user.id
+    ).exclude(
         role__in=['student', 'teacher', 'headmaster']
     ).order_by('first_name', 'last_name')
-    print(f"Found {admins.count()} admins")
+    
+    # Also try alternative: superusers who are not students/teachers/headmasters
+    superusers = User.objects.filter(
+        is_superuser=True
+    ).exclude(
+        id=request.user.id
+    ).exclude(
+        role__in=['student', 'teacher', 'headmaster']
+    ).order_by('first_name', 'last_name')
+    
+    # Combine admins and superusers, removing duplicates
+    all_admins = (admins | superusers).distinct().order_by('first_name', 'last_name')
+    
+    print(f"Found {admins.count()} staff admins:")
+    for admin in admins:
+        print(f"  - {admin.username} ({admin.get_full_name()}) - Staff: {admin.is_staff}, Superuser: {admin.is_superuser}")
+    
+    print(f"Found {superusers.count()} superuser admins:")
+    for su in superusers:
+        print(f"  - {su.username} ({su.get_full_name()}) - Staff: {su.is_staff}, Superuser: {su.is_superuser}")
+    
+    print(f"Total combined admins: {all_admins.count()}")
+    for admin in all_admins:
+        print(f"  - {admin.username} ({admin.get_full_name()}) - Role: {admin.role}, Staff: {admin.is_staff}, Superuser: {admin.is_superuser}")
+    
+    # Use the combined list
+    admins = all_admins
     
     # Get current date for template comparisons
     today = timezone.now().date()
