@@ -3221,9 +3221,14 @@ def debug_users(request):
 @user_passes_test(is_student)
 def student_messages(request):
     """Student messages page"""
+    print("=== STUDENT MESSAGES VIEW CALLED ===")
+    print(f"User: {request.user.username} (ID: {request.user.id})")
+    
     try:
         student = request.user.student_profile
+        print(f"Student profile found: {student}")
     except StudentProfile.DoesNotExist:
+        print("No student profile found, redirecting to dashboard")
         return redirect('student_dashboard')
     
     # Handle message creation
@@ -3389,6 +3394,15 @@ def student_messages(request):
         'today': today,
         'yesterday': yesterday,
     }
+    
+    print("=== CONTEXT DATA FOR TEMPLATE ===")
+    print(f"Teachers count: {len(teachers)}")
+    print(f"Headmasters count: {len(headmasters)}")
+    print(f"Admins count: {len(admins)}")
+    print(f"Teachers: {[str(t) for t in teachers]}")
+    print(f"Headmasters: {[str(h) for h in headmasters]}")
+    print(f"Admins: {[str(a) for a in admins]}")
+    print("=== END CONTEXT DATA ===")
     
     return render(request, 'core/student_parts/messages.html', context)
 
