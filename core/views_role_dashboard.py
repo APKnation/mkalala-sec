@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib import messages
 from django.utils import timezone
 from django.db.models import Q, Count, Avg, Sum
@@ -18,6 +18,7 @@ from .forms import AnnouncementForm, AttendanceForm
 
 @login_required
 @user_passes_test(is_student)
+@csrf_protect
 def student_unified_dashboard(request, page='overview'):
     """
     Student unified dashboard view that handles all student dashboard pages

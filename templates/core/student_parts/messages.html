@@ -393,14 +393,23 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true;
         submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> <span>Sending...</span>';
         
+        // Get CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
         fetch(window.location.href, {
             method: 'POST',
             body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 showMessageAlert(data.message, 'success');
@@ -416,7 +425,11 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            showMessageAlert('Error sending message. Please try again.', 'error');
+            if (error.message.includes('403')) {
+                showMessageAlert('CSRF token error. Please refresh the page and try again.', 'error');
+            } else {
+                showMessageAlert('Error sending message. Please try again.', 'error');
+            }
         })
         .finally(() => {
             // Reset button state
