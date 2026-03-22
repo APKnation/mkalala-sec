@@ -23,6 +23,11 @@ def student_unified_dashboard(request, page='overview'):
     """
     Student unified dashboard view that handles all student dashboard pages
     """
+    print(f"=== STUDENT UNIFIED DASHBOARD CALLED ===")
+    print(f"Page: {page}")
+    print(f"User: {request.user.username}")
+    print(f"Method: {request.method}")
+    
     user = request.user
     
     # Get student profile
