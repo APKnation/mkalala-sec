@@ -54,29 +54,34 @@
     
     <div class="absolute inset-0 bg-gradient-to-br from-blue-500/30 to-blue-700/40 rounded-2xl"></div>
 
-    <!-- SCHOOL MOTTO IMAGE OVERLAY -->
-     <div class="absolute inset-0 flex items-start justify-center rounded-2xl pt-8">
-      <div class="text-center px-6 py-4 bg-white/90 backdrop-blur-sm rounded-xl border border-school-blue/50 shadow-2xl">
-        <div class="flex items-center space-x-3">
-          <i class="fas fa-star text-yellow-500 text-lg"></i>
-          <h3 class="text-xl md:text-2xl font-bold text-school-blue tracking-wide drop-shadow-lg">
-            To the Stars Through Hardworking
-          </h3>
-          <i class="fas fa-star text-yellow-500 text-lg"></i>
+    <!-- SCHOOL MOTTO -->
+    <div class="absolute inset-0 flex items-start justify-center pt-8">
+        <div class="text-center px-6 py-4 bg-white/90 backdrop-blur-sm rounded-xl border border-school-blue/50 shadow-2xl">
+            <div class="flex items-center space-x-3">
+                <i class="fas fa-star text-yellow-500 text-lg"></i>
+                <h3 class="text-xl md:text-2xl font-bold text-school-blue tracking-wide drop-shadow-lg">
+                    To the Stars Through Hardworking
+                </h3>
+                <i class="fas fa-star text-yellow-500 text-lg"></i>
+            </div>
+            <p class="text-gray-800 text-sm font-medium mt-3 italic">
+                Our School Motto
+            </p>
         </div>
-        
-        <!-- Image Motto -->
-        <div class="w-48 h-32 bg-white rounded-lg border-2 border-school-blue overflow-hidden mx-auto">
-          {% img_tag 'images/WhatsApp Image 2026-03-23 at 10.44.52 PM.jpeg' 'Motto Image' 'bg-gradient-to-br from-cyan-400 to-blue-500' 'w-full h-full object-cover' %}
-          <div class="absolute inset-0 bg-school-blue/10"></div>
-        </div>
-        
-        <p class="text-gray-800 text-sm font-medium mt-3 italic">
-          Our School Motto
-        </p>
-      </div>
     </div>
 
+    <!-- RIGHT SIDE HALF IN / HALF OUT -->
+    <div class="absolute top-1/2 -right-12 -translate-y-1/2 
+                w-48 h-32 bg-white rounded-xl border-2 border-school-blue 
+                overflow-hidden shadow-2xl z-10">
+
+        {% img_tag 'images/WhatsApp Image 2026-03-23 at 10.44.52 PM.jpeg' 
+        'Motto Image' 
+        'bg-gradient-to-br from-cyan-400 to-blue-500' 
+        'w-full h-full object-cover' %}
+
+        <div class="absolute inset-0 bg-school-blue/10"></div>
+    </div>
     <!-- RIGHT SIDE HALF IN HALF OUT -->
 
     <!-- GLOW EFFECT -->
