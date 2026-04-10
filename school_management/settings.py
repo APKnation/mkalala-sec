@@ -26,12 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-icspmxc%%)0_zh$(mka!+
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
-    '127.0.0.1', 
-    'localhost', 
-    '0.0.0.0',
-    'mkalala-sec-production.up.railway.app',
-    'mkalala-sec.up.railway.app',
-    '.railway.app'
+   'mkalala-sec.pythonanywhere.com'
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -173,7 +168,8 @@ LOGGING = {
     },
 }
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# Use simpler whitenoise storage for PythonAnywhere compatibility
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # Production Security Settings
 if not DEBUG:
