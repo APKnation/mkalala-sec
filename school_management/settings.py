@@ -26,7 +26,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-icspmxc%%)0_zh$(mka!+
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = [
-   'mkalala-sec.pythonanywhere.com'
+    '127.0.0.1',
+    'localhost',
+    '.pages.dev',
+    'mkalala-sec.pages.dev',
+    'mkalala-sec.com',
+    'www.mkalala-sec.com',
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -183,22 +188,16 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
 
-# CORS Settings for Railway
+# CORS Settings for Cloudflare Pages
 CORS_ALLOWED_ORIGINS = [
-    "https://mkalala-sec-production.up.railway.app",
-    "https://mkalala-sec.up.railway.app",
     "http://localhost:3000",  # For development
     "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
-# CSRF Trusted Origins for Railway.app
-CSRF_TRUSTED_ORIGINS = [
-    "https://mkalala-sec-production.up.railway.app",
-    "https://mkalala-sec.up.railway.app",
-    "https://*.railway.app",
-]
+# CSRF Trusted Origins - will be configured for Cloudflare
+CSRF_TRUSTED_ORIGINS = []
 
 # Additional CSRF Settings
 CSRF_COOKIE_SECURE = not DEBUG  # Secure in production, not in development
